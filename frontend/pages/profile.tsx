@@ -3,14 +3,14 @@ import { NextPage, NextPageContext, GetServerSideProps } from "next";
 import { Button } from "../components/common/Button";
 import { Input } from "../components/common/Input";
 import PhoneInput from "../components/common/PhoneInput";
-import Profile from "../model/User";
+import Profile from "../model/Profile";
 import FormGroup from "../components/common/FormGroup";
 import { useAppState } from "../components/api/AppStateProvider";
 import { useUpdateProfile } from "../components/api/ApiHooks";
 import { getProfileRequest } from "../components/api/ApiService";
 
 interface EditProfileProps {
-    user?: Profile;
+    profile?: Profile;
 }
 
 type Error<T> = {
@@ -19,12 +19,12 @@ type Error<T> = {
 
 const validate = (user: Profile) => {
     const errors: Error<Profile> = {};
-    if (!user.firstName) {
-        errors.firstName = "Required";
+    if (!user.first_name) {
+        errors.first_name = "Required";
     }
 
-    if (!user.lastName) {
-        errors.lastName = "Required";
+    if (!user.last_name) {
+        errors.last_name = "Required";
     }
 
     if (!user.phone) {
@@ -35,15 +35,15 @@ const validate = (user: Profile) => {
 };
 
 const EditProfilePage: NextPage<EditProfileProps> = (props) => {
-    const user = props.user || {
-        firstName: "",
-        lastName: "",
+    const user = props.profile || {
+        first_name: "",
+        last_name: "",
         phone: "",
     };
-    const isUserCreation = !props.user;
+    const isUserCreation = !props.profile;
 
     const { dispatch } = useAppState();
-    const { loading, updateProfile } = useUpdateProfile();
+    const { loading, success, updateProfile, } = useUpdateProfile();
 
 
     const formik = useFormik({
@@ -69,10 +69,10 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     label="Vorname"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.firstName}
+                    value={formik.values.first_name}
                     disabled={!isUserCreation}
                     focus={isUserCreation}
-                    error={formik.touched.firstName && formik.errors.firstName}
+                    error={formik.touched.first_name && formik.errors.first_name}
                 />
 
                 <Input
@@ -80,9 +80,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     label="Nachname"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    value={formik.values.lastName}
+                    value={formik.values.last_name}
                     disabled={!isUserCreation}
-                    error={formik.touched.lastName && formik.errors.lastName}
+                    error={formik.touched.last_name && formik.errors.last_name}
                 />
             </FormGroup>
             <FormGroup>
@@ -108,14 +108,11 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    // api call
-    // const profile: Profile = {
-    //     firstName: "test",
-    //     lastName: "test",
-    //     phone: "01412312",
-    //     authenticated: true,
-    // };
-    const { status, data: profile, error } = await getProfileRequest();
+    const cookie = context.req.headers.cookie;
+    const { status, data: profile, error } = await getProfileRequest({cookie});
+
+    console.error(status, error, profile)
+
 
     if (error) return { props: {} };
     
