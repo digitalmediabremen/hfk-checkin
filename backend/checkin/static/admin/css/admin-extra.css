@@ -38,7 +38,7 @@
   font-style:italic;  
 }
 
-body, td, th, a {
+body, td, th, a, button {
     font-family: "DINWebPro",sans-serif;
 }
 
@@ -51,6 +51,14 @@ a:link, a:visited {
 
 a:focus, a:hover {
     color: #D81830;
+}
+
+.button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: #D81830;
+}
+
+.button:active, input[type=submit]:active, input[type=button]:active, .button:focus, input[type=submit]:focus, input[type=button]:focus, .button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background: #D81830;
 }
 
 /* HEADER */
