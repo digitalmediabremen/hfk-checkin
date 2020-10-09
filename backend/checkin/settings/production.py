@@ -89,7 +89,7 @@ EMAIL_SUBJECT_PREFIX = getenv(
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.
-ADMIN_URL = getenv("DJANGO_ADMIN_URL")
+ADMIN_URL = getenv("DJANGO_ADMIN_URL", default="/admin/")
 
 # Anymail (Mailgun)
 # ------------------------------------------------------------------------------
