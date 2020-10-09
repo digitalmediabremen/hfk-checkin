@@ -4,8 +4,8 @@ import { useFormik } from "formik";
 const RegisterGuestForm = () => {
     const formik = useFormik({
         initialValues: {
-            surname: "",
-            lastName: "",
+            first_name: "",
+            last_name: "",
             phone: "",
         },
         onSubmit: (values) => {

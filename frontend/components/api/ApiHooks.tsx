@@ -1,13 +1,20 @@
 import { useState } from "react";
 import Profile, { ProfileUpdate } from "../../model/Profile";
 import { useAppState } from "../common/AppStateProvider";
-import { updateProfileRequest, getProfileRequest, Response } from "./ApiService";
+import {
+    updateProfileRequest,
+    getProfileRequest,
+    Response,
+    doCheckinRequest,
+    getLocationRequest,
+} from "./ApiService";
 
 export const useApi = <RT extends unknown>() => {
     const { dispatch } = useAppState();
     const [result, setResult] = useState<RT | undefined>(undefined);
     const [error, setError] = useState(undefined);
-    const loading = !error || !result;
+    const [requestInProgress, setRequestInProgress] = useState(false);
+    const loading = requestInProgress;
     const success = !error && !!result;
 
     const handleError = (error: string) => {
@@ -18,8 +25,12 @@ export const useApi = <RT extends unknown>() => {
         setError(error);
     };
 
-    const handleRequest = async <R extends () => Promise<Response<RT>>>(request: R) => {
-        const {error, data, status } = await request();
+    const handleRequest = async <R extends () => Promise<Response<RT>>>(
+        request: R
+    ) => {
+        setRequestInProgress(true);
+        const { error, data, status } = await request();
+        setRequestInProgress(false);
         if (status > 400) handleError(error);
         setResult(data);
     };
@@ -39,7 +50,7 @@ export const useUpdateProfile = () => {
     return {
         updateProfile: (profile: ProfileUpdate) =>
             request(() => updateProfileRequest(profile)),
-        ...other
+        ...other,
     };
 };
 
@@ -49,6 +60,24 @@ export const useProfile = () => {
     return {
         profile,
         getProfile: () => request(() => getProfileRequest()),
+        ...other,
+    };
+};
+
+export const useLocation = () => {
+    const { request, result, ...other } = useApi<{}>();
+    return {
+        getLocation: (locationCode: string) =>
+            request(() => getLocationRequest(locationCode)),
+        ...other,
+    };
+};
+
+export const useCheckin = () => {
+    const { request, result, ...other } = useApi<{}>();
+    return {
+        doCheckin: (locationCode: string) =>
+            request(() => doCheckinRequest(locationCode)),
         ...other,
     };
 };

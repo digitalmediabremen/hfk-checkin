@@ -28,10 +28,11 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             },
             ...requestData,
         });
-
+        console.log("request ok", request.ok)
         const response = (await (request.json() as unknown)) as ApiResponse<
             ResultType
         >;
+
         if (request.status >= 400) {
             return {
                 error: response.detail,
@@ -41,12 +42,13 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
 
         if (!!isTypeOrThrow) isTypeOrThrow(response);
 
+        console.log(response);
         return {
             status: request.status,
             data: response as ResultType,
         };
     } catch (error) {
-        console.error("network error", error.message);
+        console.error(error);
         // client error
         return {
             error: error.message || error,
@@ -59,9 +61,27 @@ export const updateProfileRequest = async (
     profile: ProfileUpdate,
     headers?: HeadersInit
 ) =>
-    await apiRequest("profile", {
+    await apiRequest("profile/", {
         method: "POST",
         body: JSON.stringify(profile),
+        headers,
+    });
+
+export const doCheckinRequest = async (
+    locationCode: string,
+    headers?: HeadersInit
+) =>
+    await apiRequest("checkin/", {
+        method: "POST",
+        body: JSON.stringify({ locationCode }),
+        headers,
+    });
+
+export const getLocationRequest = async (
+    locationCode: string,
+    headers?: HeadersInit
+) =>
+    await apiRequest(`location/${locationCode}/`, {
         headers,
     });
 
