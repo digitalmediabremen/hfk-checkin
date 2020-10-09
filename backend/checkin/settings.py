@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = '3lf+h+$$l6!7!6meyv0vw*0p=)z^zw&wl2(ac&^=r2f75s-f&@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'microsoft_auth',
+    'checkin.tracking',
+    'mptt',
+    'qr_code',
+    'wkhtmltopdf',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'microsoft_auth.context_processors.microsoft',
             ],
         },
     },
@@ -99,13 +108,32 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'microsoft_auth.backends.MicrosoftAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend' # if you also want to use Django's authentication
+    # I recommend keeping this with at least one database superuser in case of unable to use others
+]
+
+# values you got from step 2 from your Mirosoft app
+MICROSOFT_AUTH_CLIENT_ID = '94b11d1a-f375-46aa-9b1f-e9da0de19114'
+MICROSOFT_AUTH_CLIENT_SECRET = '~X4Wkfb2w3eiK8-0.Mbz_CJHA07VlWR4el'
+# Tenant ID is also needed for single tenant applications
+MICROSOFT_AUTH_TENANT_ID = '09e769ef-38f0-4cf4-a9e2-194cccd24761'
+
+# pick one MICROSOFT_AUTH_LOGIN_TYPE value
+# Microsoft authentication
+# include Microsoft Accounts, Office 365 Enterpirse and Azure AD accounts
+MICROSOFT_AUTH_LOGIN_TYPE = 'ma'
+
+SITE_ID = 1
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'de-de'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 
@@ -118,3 +146,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = str(Path.joinpath(BASE_DIR, 'media'))
+STATIC_ROOT = str(Path.joinpath(BASE_DIR, 'static'))
+
+# TODO split production and local settings: see other projects
+django_heroku.settings(locals())

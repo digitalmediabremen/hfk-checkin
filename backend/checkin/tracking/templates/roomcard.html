@@ -1,0 +1,21 @@
+{% load qr_code %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ object|default:"HfK Checkin" }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static "tracking/css/room-card.css" %}">
+</head>
+<body>
+
+<p><b>{{ object.org_number }}</b> {{ object.org_name }}</p><br/>
+
+{% qr_from_text object.get_checkin_url size="H" error_correction="M" border=0 %}<br/>
+<h1>R{{ object.code }}</h1>
+
+<p>Maximale Belegung: {{ object.capacity }}</p>
+
+</body>
+</html>
