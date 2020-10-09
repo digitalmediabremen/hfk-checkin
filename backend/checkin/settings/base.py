@@ -7,8 +7,8 @@ from pathlib import Path
 from os import environ
 getenv = environ.get
 
-ROOT_DIR = Path(__file__).resolve().parent.parent.parent
-APPS_DIR = Path.joinpath(ROOT_DIR, "checkin")
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+APPS_DIR = Path.joinpath(BASE_DIR, "checkin")
 
 READ_DOT_ENV_FILE = getenv("DJANGO_READ_DOT_ENV_FILE", default=False)
 
@@ -32,7 +32,7 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
-LOCALE_PATHS = [Path.joinpath(ROOT_DIR,"locale")]
+LOCALE_PATHS = [Path.joinpath(BASE_DIR, "locale")]
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ MIDDLEWARE = [
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
-STATIC_ROOT = str(Path.joinpath(ROOT_DIR,"staticfiles"))
+STATIC_ROOT = str(Path.joinpath(BASE_DIR, "staticfiles"))
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS

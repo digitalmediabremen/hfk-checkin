@@ -25,7 +25,7 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': Path.joinpath(ROOT_DIR,'db.sqlite3'),
+        'NAME': Path.joinpath(BASE_DIR, 'db.sqlite3'),
     }
 }
 
