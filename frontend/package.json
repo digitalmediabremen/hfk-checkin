@@ -12,6 +12,7 @@
     "next": "9.5.3",
     "normalize.css": "^8.0.1",
     "react": "16.13.1",
+    "react-digit-input": "^2.1.0",
     "react-dom": "16.13.1",
     "react-number-format": "^4.4.1"
   },

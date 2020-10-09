@@ -1,13 +1,21 @@
 import { useState } from "react";
-import { ProfileUpdate } from "../../model/User";
-import { useAppState } from "./AppStateProvider";
-import { updateProfileRequest, getProfileRequest, ApiResponse } from "./ApiService";
+import Profile, { ProfileUpdate } from "../../model/Profile";
+import { useAppState } from "../common/AppStateProvider";
+import {
+    updateProfileRequest,
+    getProfileRequest,
+    Response,
+    doCheckinRequest,
+    getLocationRequest,
+} from "./ApiService";
 
-export const useApi = () => {
+export const useApi = <RT extends unknown>() => {
     const { dispatch } = useAppState();
-    const [result, setResult] = useState<{} | undefined>(undefined);
+    const [result, setResult] = useState<RT | undefined>(undefined);
     const [error, setError] = useState(undefined);
-    const loading = !error || !result;
+    const [requestInProgress, setRequestInProgress] = useState(false);
+    const loading = requestInProgress;
+    const success = !error && !!result;
 
     const handleError = (error: string) => {
         dispatch({
@@ -17,43 +25,59 @@ export const useApi = () => {
         setError(error);
     };
 
-    const handleRequest = async (request: () => Promise<ApiResponse>) => {
-        try {
-            const {error, data, status } = await request();
-            if (status > 400) handleError(error);
-            setResult(data);
-        } catch (error) {
-            // client error
-            handleError("Ein Netzwerkfehler ist aufgetreten.");
-        }
+    const handleRequest = async <R extends () => Promise<Response<RT>>>(
+        request: R
+    ) => {
+        setRequestInProgress(true);
+        const { error, data, status } = await request();
+        setRequestInProgress(false);
+        if (status > 400) handleError(error);
+        setResult(data);
     };
-
-    // useEffect(() => { requestImmediatly && handleRequest() }, []);
 
     return {
         loading,
         result,
+        success,
         error,
         request: handleRequest,
     };
 };
 
 export const useUpdateProfile = () => {
-    const { request, loading } = useApi();
+    const { request, ...other } = useApi();
 
     return {
         updateProfile: (profile: ProfileUpdate) =>
             request(() => updateProfileRequest(profile)),
-        loading
+        ...other,
     };
 };
 
 export const useProfile = () => {
-    const { request, result: profile, ...other } = useApi();
+    const { request, result: profile, ...other } = useApi<Profile>();
 
     return {
         profile,
         getProfile: () => request(() => getProfileRequest()),
+        ...other,
+    };
+};
+
+export const useLocation = () => {
+    const { request, result, ...other } = useApi<{}>();
+    return {
+        getLocation: (locationCode: string) =>
+            request(() => getLocationRequest(locationCode)),
+        ...other,
+    };
+};
+
+export const useCheckin = () => {
+    const { request, result, ...other } = useApi<{}>();
+    return {
+        doCheckin: (locationCode: string) =>
+            request(() => doCheckinRequest(locationCode)),
         ...other,
     };
 };

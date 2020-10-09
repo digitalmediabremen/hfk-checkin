@@ -1,7 +1,7 @@
 import "normalize.css";
 import "../styles/globals.css";
 import AppWrapper from "../components/common/AppWrapper";
-import { AppStateProvider } from "../components/api/AppStateProvider";
+import { AppStateProvider } from "../components/common/AppStateProvider";
 
 function MyApp({ Component, pageProps }) {
     return (
