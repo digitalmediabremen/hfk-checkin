@@ -37,10 +37,10 @@ LOCALE_PATHS = [Path.joinpath(ROOT_DIR,"locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-# DATABASES = {
-#     "default": env.db("DATABASE_URL", default="postgres:///checkin")
-# }
-# DATABASES["default"]["ATOMIC_REQUESTS"] = True
+DATABASES = {
+    "default": getenv("DATABASE_URL", default="postgres:///checkin")
+}
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
 # ------------------------------------------------------------------------------
