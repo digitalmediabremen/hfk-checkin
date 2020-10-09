@@ -3,7 +3,8 @@ Base settings to build other settings files upon.
 """
 
 from pathlib import Path
-from os import getenv
+from os import environ
+getenv = environ.get
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 APPS_DIR = Path.joinpath(ROOT_DIR, "checkin")
