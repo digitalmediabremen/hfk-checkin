@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3f973cf76317ebc569434123c961399d4fb071022934a80a26c952ae91405f23"
+            "sha256": "8564c7e4e99558689411a6988b5b38c6a52bd9f7c62ec86ff576f9fa43aa19c4"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,13 @@
         ]
     },
     "default": {
+        "argon2": {
+            "hashes": [
+                "sha256:523a3d3b88f3a46244b4976a6ca81994705848538bbe9e41426ea54ccb75eb90"
+            ],
+            "index": "pypi",
+            "version": "==0.1.10"
+        },
         "asgiref": {
             "hashes": [
                 "sha256:7e51911ee147dd685c3c8b805c0ad0cb58d360987b56953878f8c06d2d1c6f1a",
