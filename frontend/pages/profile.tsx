@@ -5,7 +5,7 @@ import { Input } from "../components/common/Input";
 import PhoneInput from "../components/common/PhoneInput";
 import Profile from "../model/Profile";
 import FormGroup from "../components/common/FormGroup";
-import { useAppState } from "../components/api/AppStateProvider";
+import { useAppState } from "../components/common/AppStateProvider";
 import { useUpdateProfile } from "../components/api/ApiHooks";
 import { getProfileRequest } from "../components/api/ApiService";
 

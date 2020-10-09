@@ -1,6 +1,6 @@
 import React, { SFC } from "react";
 import theme from "../../styles/theme";
-import { useAppState } from "../api/AppStateProvider";
+import { useAppState } from "./AppStateProvider";
 
 const AppWrapper: SFC = (props) => {
     const { children } = props;

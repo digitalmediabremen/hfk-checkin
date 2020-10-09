@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Profile, { ProfileUpdate } from "../../model/Profile";
-import { useAppState } from "./AppStateProvider";
+import { useAppState } from "../common/AppStateProvider";
 import { updateProfileRequest, getProfileRequest, Response } from "./ApiService";
 
 export const useApi = <RT extends unknown>() => {
