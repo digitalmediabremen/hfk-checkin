@@ -8,9 +8,9 @@
 @font-face
 {
   font-family: 'DINWebPro';
-  src:url('../font/DINWebPro.eot');
-  src:url('../font/DINWebPro.eot?#iefix') format('embedded-opentype'),
-    url('../font/DINWebPro.woff') format('woff');
+  src:url('../../checkin/font/DINWebPro.eot');
+  src:url('../../checkin/font/DINWebPro.eot?#iefix') format('embedded-opentype'),
+    url('../../checkin/font/DINWebPro.woff') format('woff');
   font-weight:normal;
   font-style:normal;
 }
@@ -18,9 +18,9 @@
 @font-face
 {
   font-family: 'DINWebPro';
-  src: url('../font/DINWebPro-Ita.eot');
-  src: url('../font/DINWebPro-Ita.eot?#iefix') format('embedded-opentype'),
-    url('../font/DINWebPro-Ita.woff') format('woff');
+  src: url('../../checkin/font/DINWebPro-Ita.eot');
+  src: url('../../checkin/font/DINWebPro-Ita.eot?#iefix') format('embedded-opentype'),
+    url('../../checkin/font/DINWebPro-Ita.woff') format('woff');
   font-weight:normal;
   font-style:italic;
 }
@@ -28,9 +28,9 @@
 @font-face
 {
   font-family: 'DINWebPro';
-  src:url('../font/DINWebPro-Bold.eot');
-  src:url('../font/DINWebPro-Bold.eot?#iefix') format('embedded-opentype'),
-    url('../font/DINWebPro-Bold.woff') format('woff');
+  src:url('../../checkin/font/DINWebPro-Bold.eot');
+  src:url('../../checkin/font/DINWebPro-Bold.eot?#iefix') format('embedded-opentype'),
+    url('../../checkin/font/DINWebPro-Bold.woff') format('woff');
   font-weight:bold;
   font-style:normal;
 }
@@ -38,9 +38,9 @@
 @font-face
 {
   font-family: 'DINWebPro';
-  src:url('../font/DINWebPro-BoldIta.eot');
-  src:url('../font/DINWebPro-BoldIta.eot?#iefix') format('embedded-opentype'),
-    url('../font/DINWebPro-BoldIta.woff') format('woff');
+  src:url('../../checkin/font/DINWebPro-BoldIta.eot');
+  src:url('../../checkin/font/DINWebPro-BoldIta.eot?#iefix') format('embedded-opentype'),
+    url('../../checkin/font/DINWebPro-BoldIta.woff') format('woff');
   font-weight:bold;
   font-style:italic;  
 }
