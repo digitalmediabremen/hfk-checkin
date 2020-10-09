@@ -56,7 +56,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = getenv(
 
 # STATIC
 # ------------------------
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # MEDIA
 # ------------------------------------------------------------------------------
