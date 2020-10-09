@@ -65,4 +65,12 @@ INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS  # noqa F405
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 # INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
+CORS_ALLOWED_ORIGINS = [
+    '*',
+]
+
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    '*',
+]
