@@ -42,6 +42,7 @@ django-cors-headers = "*"
 django = "*"
 dj-database-url = "*"
 whitenoise = "*"
+argon2 = "*"
 
 [requires]
 python_version = "3.8.5"
