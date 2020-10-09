@@ -57,6 +57,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = getenv(
 # STATIC
 # ------------------------
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 # MEDIA
 # ------------------------------------------------------------------------------
 

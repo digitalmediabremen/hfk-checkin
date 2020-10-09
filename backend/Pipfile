@@ -41,6 +41,7 @@ django-debug-toolbar = "*"
 django-cors-headers = "*"
 django = "*"
 dj-database-url = "*"
+whitenoise = "*"
 
 [requires]
 python_version = "3.8.5"

@@ -228,7 +228,7 @@ ADMINS = []
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # We are currently English only: The default language middleware was disabled. See MIDDLEWARE
-# ADMIN_LANGUAGE_CODE="US-en"
+ADMIN_LANGUAGE_CODE="DE-de"
 
 # LOGGING
 # ------------------------------------------------------------------------------
