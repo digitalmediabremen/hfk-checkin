@@ -21,7 +21,7 @@ const DigitInputElement = React.forwardRef<
                     position: relative;
                     width: 1em;
                     height: 1.3em;
-                    font-size: 18vw;
+                    font-size: 1em;
                 }
                 input {
                     position: absolute;
@@ -103,8 +103,12 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
         <>
             <style jsx>{`
                 div {
+                    font-size: 18vw;
+                    margin-left: -3vw;
                     display: flex;
                     align-items: center;
+                    width: 100%;
+                    justify-content: center;
                 }
             `}</style>
             <div>

@@ -8,6 +8,7 @@ import {
     doCheckinRequest,
     getLocationRequest,
 } from "./ApiService";
+import { Location } from "../../model/Location";
 
 export const useApi = <RT extends unknown>() => {
     const { dispatch } = useAppState();
@@ -65,10 +66,11 @@ export const useProfile = () => {
 };
 
 export const useLocation = () => {
-    const { request, result, ...other } = useApi<{}>();
+    const { request, result, ...other } = useApi<Location>();
     return {
-        getLocation: (locationCode: string) =>
+        requestLocation: (locationCode: string) =>
             request(() => getLocationRequest(locationCode)),
+        location: result,
         ...other,
     };
 };

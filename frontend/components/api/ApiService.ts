@@ -1,6 +1,7 @@
 import Profile, { ProfileUpdate, assertProfile } from "../../model/Profile";
 import * as config from "../../config";
 import { NextPageContext } from "next";
+import { Location } from "../../model/Location";
 
 export type ApiResponse<T> =
     | {
@@ -26,6 +27,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                 "Content-Type": "application/json",
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
+            credentials: 'include',
             ...requestData,
         });
         console.log("request ok", request.ok)
@@ -62,7 +64,7 @@ export const updateProfileRequest = async (
     headers?: HeadersInit
 ) =>
     await apiRequest("profile/", {
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify(profile),
         headers,
     });
@@ -71,9 +73,7 @@ export const doCheckinRequest = async (
     locationCode: string,
     headers?: HeadersInit
 ) =>
-    await apiRequest("checkin/", {
-        method: "POST",
-        body: JSON.stringify({ locationCode }),
+    await apiRequest(`checkin/${locationCode}/do/`, {
         headers,
     });
 
@@ -81,7 +81,7 @@ export const getLocationRequest = async (
     locationCode: string,
     headers?: HeadersInit
 ) =>
-    await apiRequest(`location/${locationCode}/`, {
+    await apiRequest<Location>(`location/${locationCode}/`, {
         headers,
     });
 

@@ -8,6 +8,7 @@ import FormGroup from "../components/common/FormGroup";
 import { useAppState } from "../components/common/AppStateProvider";
 import { useUpdateProfile } from "../components/api/ApiHooks";
 import { getProfileRequest } from "../components/api/ApiService";
+import { profile } from "console";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -43,8 +44,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const isUserCreation = !props.profile;
 
     const { dispatch } = useAppState();
-    const { loading, success, updateProfile, } = useUpdateProfile();
-
+    const { loading, success, updateProfile } = useUpdateProfile();
 
     const formik = useFormik({
         initialValues: {
@@ -52,7 +52,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         },
         validate,
         onSubmit: (values) => {
-            updateProfile(formik.values)
+            updateProfile({ id:  props?.profile.id, ...formik.values });
             // alert(JSON.stringify(values, null, 2));
         },
     });
@@ -72,7 +72,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     value={formik.values.first_name}
                     disabled={!isUserCreation}
                     focus={isUserCreation}
-                    error={formik.touched.first_name && formik.errors.first_name}
+                    error={
+                        formik.touched.first_name && formik.errors.first_name
+                    }
                 />
 
                 <Input
@@ -109,16 +111,17 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const cookie = context.req.headers.cookie;
-    const { status, data: profile, error } = await getProfileRequest({cookie});
+    const { status, data: profile, error } = await getProfileRequest({
+        cookie,
+    });
 
-    console.error(status, error, profile)
-
+    console.error(status, error, profile);
 
     if (error) return { props: {} };
-    
+
     return {
         props: {
-            profile
+            profile,
         },
     };
 };
