@@ -1,10 +1,6 @@
 from .base import *  # noqa
 from .base import getenv
 
-print("Production Settings")
-print(getenv("DJANGO_SECRET_KEY"))
-print(getenv("DJANGO_SECRET_KEY", default="default"))
-
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
