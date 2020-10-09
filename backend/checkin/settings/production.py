@@ -15,8 +15,8 @@ ALLOWED_HOSTS = getenv("DJANGO_ALLOWED_HOSTS", default=["*"])
 # DATABASES
 # ------------------------------------------------------------------------------
 DATABASES["default"] = getenv("DATABASE_URL")  # noqa F405
-DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
-DATABASES["default"]["CONN_MAX_AGE"] = getenv("CONN_MAX_AGE", default=60)  # noqa F405
+#DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
+#DATABASES["default"]["CONN_MAX_AGE"] = getenv("CONN_MAX_AGE", default=60)  # noqa F405
 
 # CACHES
 # ------------------------------------------------------------------------------

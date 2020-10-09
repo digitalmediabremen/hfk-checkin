@@ -40,7 +40,7 @@ LOCALE_PATHS = [Path.joinpath(ROOT_DIR,"locale")]
 DATABASES = {
     "default": getenv("DATABASE_URL", default="postgres:///checkin")
 }
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
+#DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
 # ------------------------------------------------------------------------------
