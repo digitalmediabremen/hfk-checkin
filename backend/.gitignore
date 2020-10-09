@@ -120,3 +120,4 @@ media/
 # django backend
 /media
 /static
+/staticfiles
