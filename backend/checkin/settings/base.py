@@ -2,6 +2,7 @@
 Base settings to build other settings files upon.
 """
 
+import dj_database_url
 from pathlib import Path
 from os import environ
 getenv = environ.get
@@ -38,9 +39,9 @@ LOCALE_PATHS = [Path.joinpath(ROOT_DIR,"locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
 DATABASES = {
-    "default": getenv("DATABASE_URL", default="postgres:///checkin")
+    "default": dj_database_url.config(default='postgres:///checkin')
 }
-#DATABASES["default"]["ATOMIC_REQUESTS"] = True
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
 # ------------------------------------------------------------------------------
