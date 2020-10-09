@@ -1,6 +1,10 @@
 from .base import *  # noqa
 from .base import getenv
 
+print("Production Settings")
+print(BASE_DIR)
+print(STATIC_ROOT)
+
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
@@ -56,7 +60,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = getenv(
 
 # STATIC
 # ------------------------
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 # MEDIA
 # ------------------------------------------------------------------------------
