@@ -52,6 +52,7 @@ export const Input: SFC<InputProps> = (props) => {
                     font-size: 1.3em;
                     font-weight: bold;
                     width: 100%;
+                    box-shadow: none;
                 }
                 input:focus {
                     border: 2px solid ${theme.primaryColor};
