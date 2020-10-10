@@ -1,9 +1,9 @@
 from .base import *  # noqa
 from .base import getenv
-
-# print("Production Settings")
+("Production Settings")
 # print(BASE_DIR)
-# print(STATIC_ROOT)
+# print(
+# printSTATIC_ROOT)
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = getenv(
 
 # STATIC
 # ------------------------
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # MEDIA
 # ------------------------------------------------------------------------------

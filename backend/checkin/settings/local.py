@@ -25,7 +25,7 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': Path.joinpath(BASE_DIR, 'db.sqlite3'),
+        'NAME': Path.joinpath(BASE_DIR,'db.sqlite3'),
     }
 }
 
@@ -59,10 +59,17 @@ INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS  # noqa F405
 # # # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
 # INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
 
-
 # django-extensions
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 # INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    '*',
+]
