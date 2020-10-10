@@ -20,6 +20,7 @@ const NewProfilePage: NextPage = () => {
     return (
         <>
             <Subtitle>HFK BREMEN</Subtitle>
+            
             <p>
                 Nur mit Kontaktnachverfolgung sind Präsenzlehe, Nutzung der
                 Überäume, Ateliers und Werkstätten möglich. Bitte Unterstütze
