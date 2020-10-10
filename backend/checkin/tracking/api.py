@@ -9,12 +9,21 @@ from .models import *
 from .serializers import *
 from rest_framework.exceptions import PermissionDenied, NotFound
 from django.http import Http404
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+
+
+class CSRFExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening
+
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     lookup_field = 'code'
+    authentication_classes = (CSRFExemptSessionAuthentication,)
 
     @action(detail=True, methods=['get','post','put'])
     def checkin(self, request, pk=None, **kwargs):
@@ -32,11 +41,13 @@ class CheckinViewSet(viewsets.ModelViewSet):
     queryset = Checkin.objects.all()
     serializer_class = CheckinSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = (CSRFExemptSessionAuthentication,)
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = PersonSerializer
+    authentication_classes = (CSRFExemptSessionAuthentication,)
 
     @action(detail=False, methods=['get'])
     def me(self, request, pk=None):
