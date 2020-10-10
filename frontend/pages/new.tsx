@@ -2,7 +2,6 @@ import { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import * as config from "../config";
 import { useState } from "react";
-import RegisterGuestForm from "../components/new/RegisterGuestForm";
 import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
