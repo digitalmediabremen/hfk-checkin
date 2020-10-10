@@ -274,7 +274,8 @@ MICROSOFT_AUTH_TENANT_ID = '09e769ef-38f0-4cf4-a9e2-194cccd24761'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://app.chechin.hfk-bremen.de",
-    "https://chechin.hfk-bremen.de",
-    "http://chechin.hfk-bremen.de",
+    "https://checkin.hfk-bremen.de",
+    "http://checkin.hfk-bremen.de",
+    "https://hfk-checkin-frontend.herokuapp.com",
+    "https://checkin.uiuiui.digital"
 ]
