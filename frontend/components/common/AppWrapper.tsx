@@ -12,7 +12,7 @@ const AppWrapper: SFC = (props) => {
                 <style jsx>
                     {`
                         div {
-                            margin: ${theme.spacing(2)}px;
+                            margin: ${theme.spacing(3)}px;
                         }
                     `}
                 </style>

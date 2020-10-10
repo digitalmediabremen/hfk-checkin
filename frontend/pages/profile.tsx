@@ -7,7 +7,7 @@ import Profile from "../model/Profile";
 import FormGroup from "../components/common/FormGroup";
 import { useAppState } from "../components/common/AppStateProvider";
 import { useUpdateProfile } from "../components/api/ApiHooks";
-import { getProfileRequest } from "../components/api/ApiService";
+import { getProfileRequest, redirectServerSide } from "../components/api/ApiService";
 import { profile } from "console";
 
 interface EditProfileProps {
@@ -21,15 +21,15 @@ type Error<T> = {
 const validate = (user: Profile) => {
     const errors: Error<Profile> = {};
     if (!user.first_name) {
-        errors.first_name = "Required";
+        errors.first_name = "erforderlich";
     }
 
     if (!user.last_name) {
-        errors.last_name = "Required";
+        errors.last_name = "erforderlich";
     }
 
     if (!user.phone) {
-        errors.phone = "Required";
+        errors.phone = "erforderlich";
     }
 
     return errors;
@@ -52,7 +52,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         },
         validate,
         onSubmit: (values) => {
-            updateProfile({ id:  props?.profile.id, ...formik.values });
+            updateProfile(formik.values);
             // alert(JSON.stringify(values, null, 2));
         },
     });
@@ -65,8 +65,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         >
             <FormGroup>
                 <Input
-                    name="firstName"
-                    label="Vorname"
+                    name="first_name"
+                    label={"Vorname"}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.first_name}
@@ -78,7 +78,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 />
 
                 <Input
-                    name="lastName"
+                    name="last_name"
                     label="Nachname"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -115,9 +115,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         cookie,
     });
 
-    console.error(status, error, profile);
-
     if (error) return { props: {} };
+    if (!!profile.phone) redirectServerSide(context.res, "new");
+
 
     return {
         props: {

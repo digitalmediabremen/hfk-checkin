@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { profile } from "console";
-import { getProfileRequest } from "../components/api/ApiService";
+import { getProfileRequest, redirectServerSide } from "../components/api/ApiService";
 import { useState, SFC, useCallback } from "react";
 import Profile from "../model/Profile";
 import LocationCodeInput from "../components/common/LocationCodeInput";
@@ -66,11 +66,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     // redirect when not logged in
     if (status === 403) {
-        const { res } = context;
-        res.writeHead(302, {
-            Location: "new",
-        });
-        res.end();
+        redirectServerSide(context.res, "new");
         return { props: {} };
     }
 

@@ -7,6 +7,7 @@ import {
     Response,
     doCheckinRequest,
     getLocationRequest,
+    doCheckoutRequest,
 } from "./ApiService";
 import { Location } from "../../model/Location";
 
@@ -18,12 +19,14 @@ export const useApi = <RT extends unknown>() => {
     const loading = requestInProgress;
     const success = !error && !!result;
 
-    const handleError = (error: string) => {
-        dispatch({
-            type: "apiError",
-            error: error,
-        });
+    const handleError = (error: string, status: number) => {
         setError(error);
+        if (status >= 500) {
+            dispatch({
+                type: "apiError",
+                error: error,
+            });
+        }
     };
 
     const handleRequest = async <R extends () => Promise<Response<RT>>>(
@@ -32,7 +35,7 @@ export const useApi = <RT extends unknown>() => {
         setRequestInProgress(true);
         const { error, data, status } = await request();
         setRequestInProgress(false);
-        if (status > 400) handleError(error);
+        if (status > 400) handleError(error, status);
         setResult(data);
     };
 
@@ -80,6 +83,15 @@ export const useCheckin = () => {
     return {
         doCheckin: (locationCode: string) =>
             request(() => doCheckinRequest(locationCode)),
+        ...other,
+    };
+};
+
+export const useCheckout = () => {
+    const { request, result, ...other } = useApi<{}>();
+    return {
+        doCheckout: (locationCode: string) =>
+            request(() => doCheckoutRequest(locationCode)),
         ...other,
     };
 };

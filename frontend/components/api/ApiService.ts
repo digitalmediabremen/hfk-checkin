@@ -2,6 +2,8 @@ import Profile, { ProfileUpdate, assertProfile } from "../../model/Profile";
 import * as config from "../../config";
 import { NextPageContext } from "next";
 import { Location } from "../../model/Location";
+import { ServerResponse } from "http";
+import { Checkin } from "../../model/Checkin";
 
 export type ApiResponse<T> =
     | {
@@ -27,10 +29,13 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                 "Content-Type": "application/json",
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            credentials: 'include',
+            credentials: "include",
             ...requestData,
         });
-        console.log("request ok", request.ok)
+
+        console.log("request ok", request.ok);
+        if (request.status === 404)
+            return { error: "Api method not found", status: 404 };
         const response = (await (request.json() as unknown)) as ApiResponse<
             ResultType
         >;
@@ -63,8 +68,8 @@ export const updateProfileRequest = async (
     profile: ProfileUpdate,
     headers?: HeadersInit
 ) =>
-    await apiRequest("profile/", {
-        method: "PUT",
+    await apiRequest("profile/me/", {
+        method: "POST",
         body: JSON.stringify(profile),
         headers,
     });
@@ -73,7 +78,15 @@ export const doCheckinRequest = async (
     locationCode: string,
     headers?: HeadersInit
 ) =>
-    await apiRequest(`checkin/${locationCode}/do/`, {
+    await apiRequest<Checkin>(`location/${locationCode}/checkin/`, {
+        headers,
+    });
+
+export const doCheckoutRequest = async (
+    locationCode: string,
+    headers?: HeadersInit
+) =>
+    await apiRequest<Checkin>(`location/${locationCode}/checkout/`, {
         headers,
     });
 
@@ -86,4 +99,14 @@ export const getLocationRequest = async (
     });
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
-    await apiRequest<Profile>("profile/me", { headers }, assertProfile);
+    await apiRequest<Profile>("profile/me/", { headers }, assertProfile);
+
+export const redirectServerSide = (
+    serverResponse: ServerResponse,
+    toPath: string
+) => {
+    serverResponse.writeHead(302, {
+        Location: toPath,
+    });
+    serverResponse.end();
+};

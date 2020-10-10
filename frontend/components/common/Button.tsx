@@ -5,23 +5,30 @@ import FormElementWrapper from "./FormElementWrapper";
 interface ButtonProps {
     onClick: () => void;
     disabled?: boolean;
+    outline?: true;
 }
 
 export const Button: SFC<ButtonProps> = (props) => {
-    const { children, ...otherProps } = props;
+    const { children, outline, ...otherProps } = props;
 
     return (
         <>
             <style jsx>{`
                 .button {
-                    border-radius: ${theme.borderRadius}px;
                     background-color: ${theme.primaryColor};
+                    border-radius: ${theme.borderRadius}px;
                     color: ${theme.secondaryColor};
                     border: none;
                     padding: ${theme.spacing(2)}px ${theme.spacing(1)}px};
                     font-size: 1.3em;
                     font-weight: bold;
                     width: 100%;
+                }
+
+                .button.outline {
+                    border: 2px solid ${theme.primaryColor};
+                    background-color: inherit;
+                    color: ${theme.primaryColor}
                 }
 
                 .button[disabled] {
@@ -33,7 +40,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                 }
             `}</style>
             <FormElementWrapper>
-                <button {...otherProps} className="button">
+                <button className={`button ${outline ? "outline" : ""}`} {...otherProps}>
                     {children}
                 </button>
             </FormElementWrapper>
