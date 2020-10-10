@@ -94,7 +94,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     @action(url_path="me/save", detail=False, methods=['post','put'], permission_classes=[AllowAny])
     def save(self, request, pk=None):
-        if request.user and not request.user.is_anonymous:
+        if request.user and request.user.is_anonymous:
             profile = ProfileSerializer(data=request.data)
             if not profile.is_valid():
                 raise ValidationError
