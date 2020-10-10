@@ -279,3 +279,5 @@ CORS_ALLOWED_ORIGINS = [
     "https://hfk-checkin-frontend.herokuapp.com",
     "https://checkin.uiuiui.digital"
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
