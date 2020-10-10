@@ -9,60 +9,31 @@ class ProfileAdmin(admin.ModelAdmin):
 
 class LocationAdmin(MPTTModelAdmin):
     readonly_fields = ('code',)
-    list_display = ('org_name', 'org_number', 'capacity', 'code')
+    list_display = ('org_name', 'org_number', 'capacity', 'load', 'load_descendants', 'code')
 
 
 class CheckinAdmin(admin.ModelAdmin):
     """Disables all editing capabilities."""
-    change_form_template = "admin/view.html"
+    list_display = ('location','profile','time_entered','time_left','origin')
 
-    # def __init__(self, *args, **kwargs):
-    #     super(CheckinAdmin, self).__init__(*args, **kwargs)
-    #     self.readonly_fields = self.model._meta.get_all_field_names()
+    actions = None
 
-    def get_actions(self, request):
-        actions = super(CheckinAdmin, self).get_actions(request)
-        del_action = "delete_selected"
-        if del_action in actions:
-            del actions[del_action]
-        return actions
+    # We cannot call super().get_fields(request, obj) because that method calls
+    # get_readonly_fields(request, obj), causing infinite recursion. Ditto for
+    # super().get_form(request, obj). So we  assume the default ModelForm.
+    def get_readonly_fields(self, request, obj=None):
+        return self.fields or [f.name for f in self.model._meta.fields]
 
     def has_add_permission(self, request):
         return False
 
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    def save_model(self, request, obj, form, change):
-        pass
-
-    def delete_model(self, request, obj):
-        pass
-
-    def save_related(self, request, form, formsets, change):
-        pass
-
-    def get_actions(self, request):
-        actions = super(CheckinAdmin, self).get_actions(request)
-        del_action = "delete_selected"
-        if del_action in actions:
-            del actions[del_action]
-        return actions
-
-    def has_add_permission(self, request):
-        return False
+    # Allow viewing objects but not actually changing them.
+    def has_change_permission(self, request, obj=None):
+        return (request.method in ['GET', 'HEAD'] and
+                super().has_change_permission(request, obj))
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-    def save_model(self, request, obj, form, change):
-        pass
-
-    def delete_model(self, request, obj):
-        pass
-
-    def save_related(self, request, form, formsets, change):
-        pass
 
 admin.site.register(Location,LocationAdmin)
 admin.site.register(Checkin,CheckinAdmin)

@@ -9,17 +9,21 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
 from django.core.validators import RegexValidator
+from django.utils import timezone
+from datetime import timedelta
+
+LOAD_LOOKBACK_TIME = timedelta(hours=24)
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True,editable=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
     first_name = models.CharField(_("Vorname"), max_length=255)
     last_name = models.CharField(_("Nachname"), max_length=255)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                  message=_("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=17, blank=True) # validators should be a list
-    email = models.EmailField(_("E-Mail Adresse"))
-    verified = models.BooleanField(_("Identität geprüft"), blank=True, null=True, editable=False, default=False)
+    email = models.EmailField(_("E-Mail Adresse"), blank=True)
+    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
@@ -33,6 +37,10 @@ class Profile(models.Model):
     class Meta:
         verbose_name = _("Person")
         verbose_name_plural = _("Personen")
+
+    @property
+    def last_checkins(self):
+        return Checkin.objects.filter(profile=self)[:5]
 
 
 @receiver(post_save, sender=User)
@@ -67,7 +75,11 @@ class Location(MPTTModel):
         verbose_name_plural = _("Räume / Standorte")
 
     def load(self):
-        return 0
+        return Checkin.objects.filter(location=self,time_entered__lte=timezone.now()-LOAD_LOOKBACK_TIME, time_left=None).count()
+
+    def load_descendants(self):
+        locations = self.get_descendants(include_self=True)
+        return Checkin.objects.filter(location__in=locations,time_entered__lte=timezone.now()-LOAD_LOOKBACK_TIME, time_left=None).distinct('profile').count()
 
     def __str__(self):
         return "%s (%s)" % (self.org_name, self.org_number)
@@ -86,17 +98,25 @@ class Checkin(models.Model):
         ('USER_MANUAL', "Manuelle Eingabe durch Nutzer",),
         ('ADMIN_MANUAL', "Manuelle Eingabe durch Betreiber",),
         ('FOREIGN_SCAN', "Scan eines QR-Codes durch andere Person",),
+        ('PARENT_CHECKOUT', "Checkout durch übergeordnetes Objekt",),
         ('IMPORT', "Datenimport",),
     ]
 
-    person = models.ForeignKey(Profile, on_delete=models.PROTECT)
-    location = models.ForeignKey(Location, on_delete=models.PROTECT)
-    time = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    origin = models.CharField(choices=CHECKIN_ORIGINS, default='QR_SCAN', max_length=100)
+    profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT)
+    location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.PROTECT)
+    time_entered = models.DateTimeField(_("Checkin"), auto_now=True)
+    time_left = models.DateTimeField(_("Checkout"), blank=True, null=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    origin = models.CharField(_("Datenquelle"), choices=CHECKIN_ORIGINS, blank=True, max_length=100)
 
     class Meta:
         verbose_name = _("Checkin")
+        ordering = ('-time_entered',)
 
     def __str__(self):
-        return "Checkin in %s am %s" % (self.location, self.time)
+        return "Checkin in %s" % (self.location)
+
+    def checkout(self):
+        if not self.time_left:
+            self.time_left = timezone.now()
+            self.save()
