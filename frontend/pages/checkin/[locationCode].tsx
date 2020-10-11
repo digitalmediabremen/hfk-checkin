@@ -11,6 +11,7 @@ import { Button } from "../../components/common/Button";
 import LastCheckins from "../../components/common/LastCheckinsList";
 import Title from "../../components/common/Title";
 import { Checkin } from "../../model/Checkin";
+import Subtitle from "../../components/common/Subtitle";
 
 interface CheckinProps {
     checkin?: Checkin;
@@ -40,7 +41,6 @@ export const CheckinComponent: React.FunctionComponent<{
 
     return (
         <>
-            <LastCheckins checkins={profile.last_checkins.slice(1).reverse()} />
             <Title bold subtext={org_number}>{org_name}</Title>
             <Title subtext="mit dir eingecheckt">
                 {load !== 0 && "ca."} {load} / {capacity}
@@ -50,6 +50,10 @@ export const CheckinComponent: React.FunctionComponent<{
                 CHECK OUT
             </Button>
             <br />
+            <br />
+            <br />
+            <Subtitle>Letzte Checkins</Subtitle>
+            <LastCheckins checkins={profile.last_checkins.slice(1).reverse()} />
             {/* <Button outline onClick={() => doCheckout(code)}>
                 CHECK OUT 1.20.100
             </Button> */}

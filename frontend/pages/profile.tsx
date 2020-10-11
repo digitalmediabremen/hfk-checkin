@@ -7,7 +7,10 @@ import Profile, { ProfileUpdate } from "../model/Profile";
 import FormGroup from "../components/common/FormGroup";
 import { useAppState } from "../components/common/AppStateProvider";
 import { useUpdateProfile } from "../components/api/ApiHooks";
-import { getProfileRequest, redirectServerSide } from "../components/api/ApiService";
+import {
+    getProfileRequest,
+    redirectServerSide,
+} from "../components/api/ApiService";
 import { profile } from "console";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -51,11 +54,11 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
     useEffect(() => {
         if (success) router.push("/");
-    }, [success])
+    }, [success]);
 
     const formik = useFormik<ProfileUpdate>({
         initialValues: {
-            ...user
+            ...user,
         },
         validate,
         onSubmit: (values) => {
@@ -81,6 +84,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     focus={isUserCreation}
                     error={
                         formik.touched.first_name && formik.errors.first_name
+                            ? formik.errors.first_name
+                            : undefined
                     }
                 />
 
@@ -91,7 +96,11 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     onBlur={formik.handleBlur}
                     value={formik.values.last_name}
                     disabled={!isUserCreation}
-                    error={formik.touched.last_name && formik.errors.last_name}
+                    error={
+                        formik.touched.last_name && formik.errors.last_name
+                            ? formik.errors.last_name
+                            : undefined
+                    }
                 />
             </FormGroup>
             <FormGroup>
@@ -102,7 +111,11 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     onBlur={formik.handleBlur}
                     value={formik.values.phone}
                     focus={!isUserCreation}
-                    error={formik.touched.phone && formik.errors.phone}
+                    error={
+                        formik.touched.phone && formik.errors.phone
+                            ? formik.errors.phone
+                            : undefined
+                    }
                 />
             </FormGroup>
             <Button disabled={!formik.isValid} onClick={() => {}}>
@@ -118,18 +131,18 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const cookie = context.req.headers.cookie!;
-    const empty = {props:{}};
+    const empty = { props: {} };
 
     const { status, data: profile, error } = await getProfileRequest({
         cookie,
     });
 
     // if (status === 403) {
-    //     redirectServerSide(context.res, "new"); 
+    //     redirectServerSide(context.res, "new");
     //     return empty;
     // }
 
-    if (!!error) return empty
+    if (!!error) return empty;
 
     // redirect if phone already present
     if (!!profile?.phone) redirectServerSide(context.res, "new");

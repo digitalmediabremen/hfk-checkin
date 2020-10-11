@@ -1,5 +1,5 @@
 
-const presentOrThrow = (envvar) => {
+const presentOrThrow = (envvar: string | undefined) => {
     if (!envvar) throw "env variable not set";
     return envvar;
 }
