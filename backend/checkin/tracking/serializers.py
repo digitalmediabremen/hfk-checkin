@@ -6,7 +6,8 @@ from rest_framework import serializers
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ['id', 'code', 'org_number', 'org_name', 'capacity', 'load','parent']
+        fields = ['id', 'code', 'org_number', 'org_name', 'capacity', 'load', 'parent']
+
 
 class SimpleCheckinSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
@@ -14,11 +15,15 @@ class SimpleCheckinSerializer(serializers.ModelSerializer):
         model = Checkin
         fields = ['id','time_entered', 'time_left', 'location']
 
+
 class ProfileSerializer(serializers.ModelSerializer):
-    last_checkins = SimpleCheckinSerializer(many=True)
+    last_checkins = SimpleCheckinSerializer(many=True, read_only=True)
     class Meta:
         model = Profile
         fields = ['id','first_name', 'last_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']
+
+    def validate_phone(self, value):
+        return value.strip()
 
 
 class CheckinSerializer(serializers.ModelSerializer):
@@ -26,4 +31,4 @@ class CheckinSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
     class Meta:
         model = Checkin
-        fields = ['id','time_entered', 'time_left', 'profile', 'location']
+        fields = ['id','time_entered', 'time_left', 'origin_entered', 'origin_left', 'profile', 'location']

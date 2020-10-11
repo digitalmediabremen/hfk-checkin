@@ -14,7 +14,7 @@ class LocationAdmin(MPTTModelAdmin):
 
 class CheckinAdmin(admin.ModelAdmin):
     """Disables all editing capabilities."""
-    list_display = ('location','profile','time_entered','time_left','origin')
+    list_display = ('location','profile','time_entered','origin_entered','time_left','origin_left')
 
     actions = None
 

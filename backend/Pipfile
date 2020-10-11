@@ -43,6 +43,7 @@ django = "*"
 dj-database-url = "*"
 whitenoise = "*"
 argon2 = "*"
+netaddr = "*"
 
 [requires]
 python_version = "3.8.5"
