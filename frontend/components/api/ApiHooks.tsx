@@ -11,10 +11,16 @@ import {
 } from "./ApiService";
 import { Location } from "../../model/Location";
 
-export const useApi = <RT extends unknown>() => {
+export const useApi = <RT extends {}>(): {
+    loading: boolean;
+    result?: RT
+    success: boolean;
+    error?: string;
+    request: (request: () => Promise<Response<RT>>) => void;
+} => {
     const { dispatch } = useAppState();
-    const [result, setResult] = useState<RT | undefined>(undefined);
-    const [error, setError] = useState(undefined);
+    const [result, setResult] = useState<RT>(undefined);
+    const [error, setError] = useState<string | undefined>(undefined);
     const [requestInProgress, setRequestInProgress] = useState(false);
     const loading = requestInProgress;
     const success = !error && !!result;
