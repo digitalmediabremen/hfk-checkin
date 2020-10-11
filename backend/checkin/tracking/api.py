@@ -112,7 +112,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def me(self, request, pk=None):
         if not request.user or request.user.is_anonymous:
             raise PermissionDenied(ERROR_NO_PROFILE)
