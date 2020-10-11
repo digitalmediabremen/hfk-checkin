@@ -44,7 +44,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
 
     useEffect(() => {
         if (location) {
-            router.push("checkin/[locationCode]", `checkin/${location.code}`);
+            router.push("/checkin/[locationCode]", `/checkin/${location.code}`);
         } else {
             setLocationCode("");
         }
