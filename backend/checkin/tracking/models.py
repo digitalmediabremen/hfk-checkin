@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from django.core.validators import RegexValidator
 from django.utils import timezone
 from datetime import timedelta
+from django.core.exceptions import ValidationError
 
 LOAD_LOOKBACK_TIME = timedelta(hours=24)
 
@@ -19,8 +20,8 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
     first_name = models.CharField(_("Vorname"), max_length=255)
     last_name = models.CharField(_("Nachname"), max_length=255)
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
-                                 message=_("Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed."))
+    phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
+                                 message=_("Phone number must be entered in the format: '+(00) 999999999'. Up to 15 digits allowed."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=17, blank=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True)
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
@@ -75,11 +76,16 @@ class Location(MPTTModel):
         verbose_name_plural = _("Räume / Standorte")
 
     def load(self):
-        return Checkin.objects.filter(location=self,time_entered__lte=timezone.now()-LOAD_LOOKBACK_TIME, time_left=None).count()
+        return Checkin.objects.filter(location=self,time_entered__lte=timezone.now()-LOAD_LOOKBACK_TIME).count()
 
     def load_descendants(self):
         locations = self.get_descendants(include_self=True)
-        return Checkin.objects.filter(location__in=locations,time_entered__lte=timezone.now()-LOAD_LOOKBACK_TIME, time_left=None).distinct('profile').count()
+        # only works in postgres: .distinct('profile')
+        return Checkin.objects.filter(location__in=locations).not_older_then(LOAD_LOOKBACK_TIME).active().count()
+
+    @property
+    def current_checkins(self):
+        return Checkin.objects.filter(location=self)
 
     def __str__(self):
         return "%s (%s)" % (self.org_name, self.org_number)
@@ -91,15 +97,44 @@ class Location(MPTTModel):
         return reverse('location-checkin', kwargs={'code': self.code})
 
 
+class CheckinQuerySet(models.QuerySet):
+    def active(self):
+        return self.filter(time_left=None)
+
+    def not_older_then(self, oldest=LOAD_LOOKBACK_TIME):
+        return self.filter(time_entered__lte=timezone.now()-oldest)
+
+    def last_checkin_for_profile_at_location(self, profile, location):
+        return self.order_by('-time_entered').filter(profile=profile, location=location)[:1]
+
+    def checkin_or_return(self, profile, location, origin):
+        """
+        Like get_or_create()
+        Looks up existing checkin or creates a new one.
+        Return a tuple of (object, created), where created is a boolean
+        specifying whether an object was created.
+        """
+        already_made_checkin = self.active().last_checkin_for_profile_at_location(location=location, profile=profile)
+        if already_made_checkin.count() > 0:
+            return already_made_checkin.get(), False
+        return self.create(profile=profile, location=location, origin_entered=origin), True
+
+
 class Checkin(models.Model):
+    QR_SCAN = 'QR_SCAN'
+    USER_MANUAL = 'USER_MANUAL'
+    ADMIN_MANUAL = 'ADMIN_MANUAL'
+    FOREIGN_SCAN = 'FOREIGN_SCAN'
+    PARENT_CHECKOUT = 'PARENT_CHECKOUT'
+    IMPORT = 'IMPORT'
 
     CHECKIN_ORIGINS = [
-        ('QR_SCAN', "Scan eines QR-Codes",),
-        ('USER_MANUAL', "Manuelle Eingabe durch Nutzer",),
-        ('ADMIN_MANUAL', "Manuelle Eingabe durch Betreiber",),
-        ('FOREIGN_SCAN', "Scan eines QR-Codes durch andere Person",),
-        ('PARENT_CHECKOUT', "Checkout durch übergeordnetes Objekt",),
-        ('IMPORT', "Datenimport",),
+        ('QR_SCAN', _("Scan eines QR-Codes")),
+        ('USER_MANUAL', _("Manuelle Eingabe durch Nutzer")),
+        ('ADMIN_MANUAL', _("Manuelle Eingabe durch Betreiber")),
+        ('FOREIGN_SCAN', _("Scan eines QR-Codes durch andere Person")),
+        ('PARENT_CHECKOUT', _("Checkout durch übergeordnetes Objekt")),
+        ('IMPORT', _("Datenimport")),
     ]
 
     profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT)
@@ -107,7 +142,10 @@ class Checkin(models.Model):
     time_entered = models.DateTimeField(_("Checkin"), auto_now=True)
     time_left = models.DateTimeField(_("Checkout"), blank=True, null=True)
     # created_at = models.DateTimeField(auto_now_add=True)
-    origin = models.CharField(_("Datenquelle"), choices=CHECKIN_ORIGINS, blank=True, max_length=100)
+    origin_entered = models.CharField(_("Datenquelle Checkin"), choices=CHECKIN_ORIGINS, blank=True, null=True, max_length=100)
+    origin_left = models.CharField(_("Datenquelle Checkout"), choices=CHECKIN_ORIGINS, blank=True, null=True, max_length=100)
+
+    objects = CheckinQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Checkin")
@@ -116,7 +154,22 @@ class Checkin(models.Model):
     def __str__(self):
         return "Checkin in %s" % (self.location)
 
-    def checkout(self):
-        if not self.time_left:
+    def checkout(self, origin=None, include_descendants=True):
+        if self.is_active():
             self.time_left = timezone.now()
-            self.save()
+            self.origin_left = origin
+            if include_descendants:
+                locations = self.location.get_descendants(include_self=False)
+                descendant_checkins = self.__class__.objects.active().filter(location__in=locations).filter(profile=self.profile)
+                descendant_checkins.update(time_left=self.time_left, origin_left=Checkin.PARENT_CHECKOUT)
+            self.save(ignore_double=True)
+
+    def is_active(self):
+        return not self.time_left
+
+    def save(self, ignore_double=False, *args, **kwargs):
+        if not ignore_double:
+            already_made_checkin = self.__class__.objects.active().last_checkin_for_profile_at_location(location=self.location, profile=self.profile)
+            if already_made_checkin.count() > 0:
+                raise ValidationError(_("Mehrfache Checkins am gleichen Ort sind nicht möglich."))
+        return super(Checkin, self).save(*args, **kwargs)

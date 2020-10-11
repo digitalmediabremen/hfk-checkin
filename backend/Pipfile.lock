@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8564c7e4e99558689411a6988b5b38c6a52bd9f7c62ec86ff576f9fa43aa19c4"
+            "sha256": "136eee1d50816575bd57ba06ceaaf7aa78ca49fb28dbf10e9fd0696e06dda05f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -239,6 +239,14 @@
         "microsoft-auth": {
             "git": "https://github.com/AngellusMortis/django_microsoft_auth.git",
             "ref": "caf419afba2d523395bf4ecfa4539429ef991503"
+        },
+        "netaddr": {
+            "hashes": [
+                "sha256:9666d0232c32d2656e5e5f8d735f58fd6c7457ce52fc21c98d45f2af78f990ac",
+                "sha256:d6cc57c7a07b1d9d2e917aa8b36ae8ce61c35ba3fcd1b83ca31c5a0ee2b5a243"
+            ],
+            "index": "pypi",
+            "version": "==0.8.0"
         },
         "oauthlib": {
             "hashes": [
