@@ -23,45 +23,50 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     requestData?: RequestInit,
     isTypeOrThrow?: (p: any) => asserts p is ResultType
 ): Promise<Response<ResultType>> => {
-    try {
-        const request = await fetch(`${config.apiUrl}/${endpoint}`, {
-            headers: {
-                "Content-Type": "application/json",
-                // 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            credentials: "include",
-            ...requestData,
-        });
-
-        console.log("request ok", request.ok);
-        if (request.status === 404)
-            return { error: "Api method not found", status: 404 };
-        const response = (await (request.json() as unknown)) as ApiResponse<
-            ResultType
-        >;
-
-        if (request.status >= 400) {
+    const url = `${config.apiUrl}/${endpoint}`;
+    console.log("request: ", url);
+    return await fetch(url, {
+        headers: {
+            "Content-Type": "application/json",
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        credentials: "include",
+        ...requestData,
+    })
+        .then(async (response) => ({
+            data: (await (response.json() as unknown)) as ApiResponse<
+                ResultType
+            >,
+            status: response.status,
+        }))
+        .then(({ data, status }) => {
+            if (status > 400) {
+                throw {
+                    status: status,
+                    ...data
+                };
+            }
+            return { data, status };
+        })
+        .then(({ data: typedData, status }) => {
+            if (!!isTypeOrThrow) isTypeOrThrow(typedData);
             return {
-                error: response.detail,
-                status: request.status,
+                typedData,
+                status,
             };
-        }
-
-        if (!!isTypeOrThrow) isTypeOrThrow(response);
-
-        console.log(response);
-        return {
-            status: request.status,
-            data: response as ResultType,
-        };
-    } catch (error) {
-        console.error(error);
-        // client error
-        return {
-            error: error.message || error,
-            status: 600,
-        };
-    }
+        })
+        .then(({ typedData, status }) => ({
+            status: status,
+            data: typedData as ResultType,
+        }))
+        .catch((error) => {
+            console.error(error);
+            if (error.detail !== undefined) return error;
+            return {
+                error: error.message || error,
+                status: 0,
+            };
+        });
 };
 
 export const updateProfileRequest = async (
