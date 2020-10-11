@@ -120,6 +120,11 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                         {profile.phone && `(${profile.phone})`}
                     </div>
                 )}
+                {!profile && (
+                    <div className="bar">
+                        HFK
+                    </div>
+                )}
                 <CSSTransition
                     timeout={300}
                     classNames="status"

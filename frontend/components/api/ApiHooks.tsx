@@ -23,7 +23,7 @@ export const useApi = <RT extends {}>(): {
     const [error, setError] = useState<string | undefined>(undefined);
     const [requestInProgress, setRequestInProgress] = useState(false);
     const loading = requestInProgress;
-    const success = !error && !!result;
+    const success = !error && !!result && !loading;
 
     const handleError = (error: string, status: number) => {
         setError(error);
@@ -42,6 +42,8 @@ export const useApi = <RT extends {}>(): {
     const handleRequest = <R extends () => Promise<Response<RT>>>(
         request: R
     ) => {
+        setError(undefined);
+        setResult(undefined);
         (async () => {
             setRequestInProgress(true);
             const { error, data, status } = await request();

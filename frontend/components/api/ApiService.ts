@@ -41,7 +41,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             status: response.status,
         }))
         .then(({ data, status }) => {
-            if (status > 400) {
+            if (status >= 400) {
                 throw {
                     status: status,
                     error: data.detail,
