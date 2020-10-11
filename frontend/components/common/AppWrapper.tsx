@@ -1,13 +1,17 @@
-import React, { SFC } from "react";
+import React, { SFC, useEffect } from "react";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
-import ErrorBar from "./ErrorBar";
+import StatusBar from "./StatusBar";
+import { useProfile } from "../api/ApiHooks";
 
 const AppWrapper: SFC = (props) => {
     const { children } = props;
+    const { profile, getProfile } = useProfile();
+    useEffect(() => getProfile(), []);
+
     return (
         <>
-            <ErrorBar />
+            <StatusBar profile={profile} />
             <div>
                 <style jsx>
                     {`

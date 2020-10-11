@@ -11,6 +11,7 @@ import LocationCodeInput from "../components/common/LocationCodeInput";
 import { useCheckin, useLocation } from "../components/api/ApiHooks";
 import theme from "../styles/theme";
 import { useRouter } from "next/router";
+import Subtitle from "../components/common/Subtitle";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -56,12 +57,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                 }
             `}</style>
 
-            <div className="profile">
-                {profile.first_name} {profile.last_name}
-                <br />
-                {profile.phone || ""}
-                <br />
-            </div>
+            <Subtitle>Checkin per Raumcode</Subtitle>
 
             <div className="location-code-container">
                 <LocationCodeInput
@@ -77,7 +73,7 @@ export default CheckInPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     // api call
-    const cookie = context.req.headers.cookie;
+    const cookie = context.req.headers.cookie!;
     const { data: profile, error, status } = await getProfileRequest({
         cookie,
     });

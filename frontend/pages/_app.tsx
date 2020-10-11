@@ -2,8 +2,9 @@ import "normalize.css";
 import "../styles/globals.css";
 import AppWrapper from "../components/common/AppWrapper";
 import { AppStateProvider } from "../components/common/AppStateProvider";
+import { AppProps } from "next/dist/next-server/lib/router/router";
 
-function MyApp({ Component, pageProps }) {
+const MyApp = ({ Component, pageProps }: AppProps) => {
     return (
         <AppStateProvider>
             <AppWrapper>

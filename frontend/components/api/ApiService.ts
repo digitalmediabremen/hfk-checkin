@@ -7,7 +7,6 @@ import { Checkin } from "../../model/Checkin";
 
 export type ApiResponse<T> =
     | {
-          error: string;
           detail: string;
       }
     | T;
@@ -20,18 +19,20 @@ export type Response<ResultType extends Record<string, any> = {}> = {
 
 export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     endpoint: string,
-    requestData?: RequestInit,
+    requestData: RequestInit,
     isTypeOrThrow?: (p: any) => asserts p is ResultType
 ): Promise<Response<ResultType>> => {
     const url = `${config.apiUrl}/${endpoint}`;
     console.log("request: ", url);
+    const { headers, ...otherRequestData } = requestData;
     return await fetch(url, {
         headers: {
-            "Content-Type": "application/json",
+            "content-type": "application/json",
+            ...headers
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         credentials: "include",
-        ...requestData,
+        ...otherRequestData,
     })
         .then(async (response) => ({
             data: (await (response.json() as unknown)) as ApiResponse<
@@ -43,12 +44,13 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             if (status > 400) {
                 throw {
                     status: status,
-                    ...data
+                    error: data.detail,
                 };
             }
             return { data, status };
         })
         .then(({ data: typedData, status }) => {
+            // @ts-ignore
             if (!!isTypeOrThrow) isTypeOrThrow(typedData);
             return {
                 typedData,
@@ -61,7 +63,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         }))
         .catch((error) => {
             console.error(error);
-            if (error.detail !== undefined) return error;
+            if (error.error !== undefined) return error;
             return {
                 error: error.message || error,
                 status: 0,
@@ -73,10 +75,10 @@ export const updateProfileRequest = async (
     profile: ProfileUpdate,
     headers?: HeadersInit
 ) =>
-    await apiRequest("profile/me/", {
+    await apiRequest("profile/me/save/", {
         method: "POST",
         body: JSON.stringify(profile),
-        headers,
+        headers
     });
 
 export const doCheckinRequest = async (

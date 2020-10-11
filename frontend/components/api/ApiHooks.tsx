@@ -13,13 +13,13 @@ import { Location } from "../../model/Location";
 
 export const useApi = <RT extends {}>(): {
     loading: boolean;
-    result?: RT
+    result?: RT;
     success: boolean;
     error?: string;
     request: (request: () => Promise<Response<RT>>) => void;
 } => {
     const { dispatch } = useAppState();
-    const [result, setResult] = useState<RT>(undefined);
+    const [result, setResult] = useState<RT | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(undefined);
     const [requestInProgress, setRequestInProgress] = useState(false);
     const loading = requestInProgress;
@@ -27,7 +27,8 @@ export const useApi = <RT extends {}>(): {
 
     const handleError = (error: string, status: number) => {
         setError(error);
-        if (status >= 500) {
+        if (status >= 400) {
+            console.log("error")
             dispatch({
                 type: "apiError",
                 error: error,
@@ -35,14 +36,24 @@ export const useApi = <RT extends {}>(): {
         }
     };
 
-    const handleRequest = async <R extends () => Promise<Response<RT>>>(
+    const handleRequest = <R extends () => Promise<Response<RT>>>(
         request: R
     ) => {
-        setRequestInProgress(true);
-        const { error, data, status } = await request();
-        setRequestInProgress(false);
-        if (status > 400) handleError(error, status);
-        setResult(data);
+        (async () => {
+            setRequestInProgress(true);
+            const { error, data, status } = await request();
+            setRequestInProgress(false);
+            if (!!error || status >= 400) {
+                handleError(error || `Unknown Error (${status})`, status);
+            } else {
+                // reset error message
+                dispatch({
+                    type: "apiError",
+                    error: undefined
+                })
+            }
+            setResult(data);
+        })();
     };
 
     return {
