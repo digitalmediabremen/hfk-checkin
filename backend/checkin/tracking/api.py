@@ -8,6 +8,7 @@ from rest_framework.renderers import JSONRenderer
 from .models import *
 from .serializers import *
 from rest_framework.exceptions import PermissionDenied, NotFound, ValidationError
+from django.db.utils import IntegrityError
 from django.http import Http404
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.contrib.auth import login
@@ -143,10 +144,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         if request.user and request.user.is_anonymous:
             username = "%s@gast.hfk-bremen.de" % (profile.validated_data['phone'],)
             username = username.lower()
-            user = User.objects.create_user(first_name=profile.validated_data['first_name'], last_name=profile.validated_data['last_name'], username=username)
-            # FIXME This is might be crap!
-            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-
+            try:
+                user = User.objects.create_user(first_name=profile.validated_data['first_name'], last_name=profile.validated_data['last_name'], username=username)
+                # FIXME This is might be crap!
+                login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+            except (ValidationError, IntegrityError) as e:
+                return Response({'detail': ERROR_NOT_VALID}, status=status.HTTP_400_BAD_REQUEST)
         else:
             user = request.user
 
