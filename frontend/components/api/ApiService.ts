@@ -27,7 +27,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     const { headers, ...otherRequestData } = requestData;
     return await fetch(url, {
         headers: {
-            "content-type": "application/json",
+            "Content-Type": "application/json",
             ...headers
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },

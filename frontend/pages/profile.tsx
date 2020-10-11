@@ -145,7 +145,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (!!error) return empty;
 
     // redirect if phone already present
-    if (!!profile?.phone) redirectServerSide(context.res, "new");
+    if (!!profile?.phone) redirectServerSide(context.res, "/new");
 
     return {
         props: {

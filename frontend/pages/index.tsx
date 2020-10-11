@@ -95,7 +95,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     // redirect when not logged in
     if (status === 403) {
-        redirectServerSide(context.res, "new");
+        redirectServerSide(context.res, "/new");
         return empty;
     }
 
