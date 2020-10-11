@@ -112,9 +112,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def me(self, request, pk=None):
-        if not request.user or request.user.is_anonymous:
+        if request.user.is_anonymous:
             raise PermissionDenied(ERROR_NO_PROFILE)
 
         try:
@@ -122,7 +122,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
         except AttributeError:
             raise NotFound(ERROR_NO_PROFILE)
         return Response(serializer.data)
-
 
     @action(url_path="me/save", detail=False, methods=['post','put'], permission_classes=[AllowAny])
     def save(self, request, pk=None):
