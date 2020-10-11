@@ -127,6 +127,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
@@ -273,11 +274,13 @@ MICROSOFT_AUTH_CLIENT_SECRET = '~X4Wkfb2w3eiK8-0.Mbz_CJHA07VlWR4el'
 MICROSOFT_AUTH_TENANT_ID = '09e769ef-38f0-4cf4-a9e2-194cccd24761'
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
     "https://checkin.hfk-bremen.de",
     "http://checkin.hfk-bremen.de",
     "https://hfk-checkin-frontend.herokuapp.com",
-    "https://hfk-checkin-frontend.herokuapp.com",
+    "http://hfk-checkin-frontend.herokuapp.com",
     "https://checkin.uiuiui.digital",
+    "http://checkin.uiuiui.digital",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
