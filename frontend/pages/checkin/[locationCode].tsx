@@ -11,7 +11,9 @@ interface CheckinProps {
     checkin: Checkin;
 }
 
-const CheckinPage: React.FunctionComponent<CheckinProps> = ({ checkin }) => {
+export const CheckinComponent: React.FunctionComponent<{ checkin: Checkin }> = ({
+    checkin,
+}) => {
     const { location, profile } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
     const { doCheckout } = useCheckout();
@@ -19,12 +21,21 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ checkin }) => {
         <>
             <Title>{org_name}</Title>
             <Subtitle>{org_number}</Subtitle>
-
-            <Title bold>{load !== 0 && "ca."} {load} / {capacity}</Title>
+            <Title bold>
+                {load !== 0 && "ca."} {load} / {capacity}
+            </Title>
             <Subtitle>mit dir eingecheckt</Subtitle>
-            <Button outline onClick={() => doCheckout(code)}>CHECK OUT</Button>
+            <Button outline onClick={() => doCheckout(code)}>
+                CHECK OUT
+            </Button>
             toll ein checkin in {checkin.location.org_number}
         </>
+    );
+};
+
+const CheckinPage: React.FunctionComponent<CheckinProps> = (props) => {
+    return (
+        <CheckinComponent {...props} />
     );
 };
 

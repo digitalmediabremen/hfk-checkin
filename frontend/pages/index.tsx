@@ -1,12 +1,16 @@
 import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { profile } from "console";
-import { getProfileRequest, redirectServerSide } from "../components/api/ApiService";
-import { useState, SFC, useCallback } from "react";
+import {
+    getProfileRequest,
+    redirectServerSide,
+} from "../components/api/ApiService";
+import { useState, SFC, useCallback, useEffect } from "react";
 import Profile from "../model/Profile";
 import LocationCodeInput from "../components/common/LocationCodeInput";
 import { useCheckin, useLocation } from "../components/api/ApiHooks";
 import theme from "../styles/theme";
+import { useRouter } from "next/router";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -18,20 +22,33 @@ const isValidLocationCode = (locationCode: string) =>
 const CheckInPage: SFC<CheckInPageProps> = (props) => {
     const { profile } = props;
     const [locationCode, setLocationCode] = useState<string>("");
-    const { doCheckin } = useCheckin();
-    const { requestLocation, loading, location, success } = useLocation();
+    const {
+        requestLocation,
+        loading,
+        location,
+        success,
+        error,
+    } = useLocation();
+    const router = useRouter();
 
     const handleLocationCodeChange = useCallback((code: string) => {
+        if (location !== undefined) return;
         setLocationCode(code);
         const validCode = isValidLocationCode(code);
-        if (validCode) requestLocation(code);
+        if (validCode) {
+            requestLocation(code);
+        }
     }, []);
+
+    useEffect(() => {
+        if (!location) return;
+        router.push("checkin/[locationCode]", `checkin/${location.code}`);
+    }, [location]);
 
     return (
         <>
             <style jsx>{`
                 .location-code-container {
-
                 }
 
                 .profile {
@@ -40,9 +57,10 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
             `}</style>
 
             <div className="profile">
-                {profile.first_name} {profile.last_name}<br/>
-                {profile.phone || ""}<br />
-                {success && location.org_number}
+                {profile.first_name} {profile.last_name}
+                <br />
+                {profile.phone || ""}
+                <br />
             </div>
 
             <div className="location-code-container">
