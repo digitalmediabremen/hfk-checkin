@@ -157,4 +157,5 @@ LOGGING = {
 # Your stuff...
 # ------------------------------------------------------------------------------
 
-SESSION_COOKIE_DOMAIN=".herokuapp.com"
+SESSION_COOKIE_SAMESITE = 'None'
+# SESSION_COOKIE_DOMAIN=".herokuapp.com"
