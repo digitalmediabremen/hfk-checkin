@@ -23,10 +23,19 @@ export const CheckinComponent: React.FunctionComponent<{
     const { location, profile } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
     const { doCheckout, success } = useCheckout();
+    const { dispatch } = useAppState();
     const router = useRouter();
 
     React.useEffect(() => {
-        if (success) router.push("/");
+        if (!success) return;
+        dispatch({
+            type: "status",
+            status: {
+                message: "Erfolgreich ausgecheckt",
+                isError: false
+            }
+        })
+        router.push("/");
     }, [success]);
 
     return (
@@ -41,9 +50,9 @@ export const CheckinComponent: React.FunctionComponent<{
                 CHECK OUT
             </Button>
             <br />
-            <Button outline onClick={() => doCheckout(code)}>
+            {/* <Button outline onClick={() => doCheckout(code)}>
                 CHECK OUT 1.20.100
-            </Button>
+            </Button> */}
         </>
     );
 };
@@ -57,8 +66,11 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
         if (!checkin) {
             if (!!error)
                 dispatch({
-                    type: "apiError",
-                    error: error,
+                    type: "status",
+                    status: {
+                        message: error,
+                        isError: true
+                    },
                 });
         }
     }, []);

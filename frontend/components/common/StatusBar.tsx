@@ -19,8 +19,18 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
         Array<{ message: string; isError: boolean; id?: number }>
     >(!!status ? [status] : []);
 
+    const [timeoutId, setTimeoutId] = React.useState<any>(undefined);
+
     React.useEffect(() => {
         if (status) {
+            if (!status.isError) {
+                const tid = setTimeout(() => {
+                    dispatch({ type: "status", status: undefined });
+                }, 2000);
+                setTimeoutId(tid);
+            } else {
+                clearTimeout(timeoutId);
+            }
             states.push({ ...status, id: Math.random() });
             setStates(states.slice());
         }
@@ -52,7 +62,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     font-weight: bold;
                 }
 
-                .error {
+                .status.error {
                     background-color: ${theme.primaryColor};
                     color: ${theme.secondaryColor};
                     font-weight: bold;
@@ -64,6 +74,8 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                 }
 
                 .status {
+                    background-color: #fff;
+                    color: ${theme.primaryColor};
                     transition: transform 500ms;
                     transform: translateY(-100%);
                     position: absolute;
@@ -71,19 +83,22 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     left: 0;
                     width: 100%;
                 }
-                .status-enter, .status-second-enter {
+                .status-enter,
+                .status-second-enter {
                     transform: translateY(-100%);
                     transition: none;
                 }
-                .status-enter-active, .status-second-enter-active  {
+                .status-enter-active,
+                .status-second-enter-active {
                     transform: translateY(0%);
                     transition: transform 300ms;
                 }
-                .status-enter-done, .status-second-enter-done  {
+                .status-enter-done,
+                .status-second-enter-done {
                     transform: translateY(0%);
                     transition: none;
                 }
-                .status-exit{
+                .status-exit {
                     transform: translateY(0%);
                     transition: none;
                 }
@@ -116,7 +131,9 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                         style={{ zIndex: 1000 }}
                         onClick={handleClose}
                         key="error"
-                        className="status error bar"
+                        className={`${
+                            states[0]?.isError ? "error" : ""
+                        } status bar`}
                     >
                         {states[0]?.message}
                     </div>
@@ -132,7 +149,9 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                         style={{ zIndex: 1000 + 1 }}
                         onClick={handleClose}
                         key="error"
-                        className="status error bar"
+                        className={`${
+                            states[1]?.isError ? "error" : ""
+                        } status bar`}
                     >
                         {states[1]?.message}
                     </div>
