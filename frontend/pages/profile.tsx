@@ -55,7 +55,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
     const formik = useFormik<ProfileUpdate>({
         initialValues: {
-            ...user,
+            ...user
         },
         validate,
         onSubmit: (values) => {
@@ -118,13 +118,21 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const cookie = context.req.headers.cookie!;
+    const empty = {props:{}};
+
     const { status, data: profile, error } = await getProfileRequest({
         cookie,
     });
 
-    if (error) return { props: {} };
-    if (!!profile?.phone) redirectServerSide(context.res, "new");
+    // if (status === 403) {
+    //     redirectServerSide(context.res, "new"); 
+    //     return empty;
+    // }
 
+    if (!!error) return empty
+
+    // redirect if phone already present
+    if (!!profile?.phone) redirectServerSide(context.res, "new");
 
     return {
         props: {

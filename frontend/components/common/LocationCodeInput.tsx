@@ -1,4 +1,4 @@
-import React, { SFC, useRef } from "react";
+import React, { SFC, useRef, useEffect } from "react";
 import useDigitInput, { InputAttributes } from "react-digit-input";
 import theme from "../../styles/theme";
 
@@ -92,11 +92,14 @@ const DigitInputElement = React.forwardRef<
 
 const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
     const { code, onChange } = props;
+
+    const handleChange = (code: string) => onChange(code.replace(/ /g, ''))
+
     const digits = useDigitInput({
         acceptedCharacters: /^[0-9]$/,
         length: 4,
         value: code,
-        onChange,
+        onChange: handleChange,
     });
 
     return (
@@ -112,7 +115,7 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
                 }
             `}</style>
             <div>
-                <DigitInputElement value="R" />
+                <DigitInputElement value="#" />
                 <DigitInputElement outline autoFocus {...digits[0]} />
                 <DigitInputElement outline {...digits[1]} />
                 <DigitInputElement outline {...digits[2]} />

@@ -8,6 +8,7 @@
     "start": "next start -p $PORT"
   },
   "dependencies": {
+    "@types/react-transition-group": "^4.4.0",
     "formik": "^2.1.7",
     "next": "9.5.3",
     "normalize.css": "^8.0.1",

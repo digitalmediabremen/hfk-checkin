@@ -27,11 +27,14 @@ export const useApi = <RT extends {}>(): {
 
     const handleError = (error: string, status: number) => {
         setError(error);
-        if (status >= 400) {
-            console.log("error")
+        if (status >= 400 || status === 0) {
+            console.log("error");
             dispatch({
-                type: "apiError",
-                error: error,
+                type: "status",
+                status: {
+                    message: error,
+                    isError: true,
+                },
             });
         }
     };
@@ -48,9 +51,9 @@ export const useApi = <RT extends {}>(): {
             } else {
                 // reset error message
                 dispatch({
-                    type: "apiError",
-                    error: undefined
-                })
+                    type: "status",
+                    status: undefined,
+                });
             }
             setResult(data);
         })();

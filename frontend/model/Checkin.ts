@@ -2,8 +2,11 @@ import Profile from "./Profile";
 import { Location } from "./Location";
 
 export interface ProfileWithLastCheckins extends Profile {
-    last_checkins: Array<Omit<Checkin, "profile">>
-}
+    last_checkins: Array<LastCheckin>
+
+};
+
+export type LastCheckin = Omit<Checkin, "profile">;
 
 export interface Checkin {
     time_rntered: string;

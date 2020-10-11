@@ -12,6 +12,7 @@ import { useCheckin, useLocation } from "../components/api/ApiHooks";
 import theme from "../styles/theme";
 import { useRouter } from "next/router";
 import Subtitle from "../components/common/Subtitle";
+import { Button } from "../components/common/Button";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -42,22 +43,33 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
     }, []);
 
     useEffect(() => {
-        if (!location) return;
-        router.push("checkin/[locationCode]", `checkin/${location.code}`);
-    }, [location]);
+        if (location) {
+            router.push("checkin/[locationCode]", `checkin/${location.code}`);
+        } else {
+            setLocationCode("");
+        }
+    }, [loading, location]);
 
     return (
         <>
             <style jsx>{`
                 .location-code-container {
+                    margin-bottom: ${theme.spacing(6)}px;
                 }
 
                 .profile {
                     margin-bottom: ${theme.spacing(10)}px;
                 }
+
+                .desc {
+                    margin-bottom: ${theme.spacing(3)}px;
+                    color: ${theme.primaryColor};
+                    display: inline-block;
+                    font-style: italic;
+                }
             `}</style>
 
-            <Subtitle>Checkin per Raumcode</Subtitle>
+            <span className="desc">Checkin per Raumcode</span>
 
             <div className="location-code-container">
                 <LocationCodeInput
@@ -65,6 +77,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                     code={locationCode}
                 ></LocationCodeInput>
             </div>
+            <Button onClick={() => {}}>CHECK IN</Button>
         </>
     );
 };
@@ -74,6 +87,8 @@ export default CheckInPage;
 export const getServerSideProps: GetServerSideProps = async (context) => {
     // api call
     const cookie = context.req.headers.cookie!;
+    const empty = {props:{}}
+
     const { data: profile, error, status } = await getProfileRequest({
         cookie,
     });
@@ -81,7 +96,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // redirect when not logged in
     if (status === 403) {
         redirectServerSide(context.res, "new");
-        return { props: {} };
+        return empty;
     }
 
     return {

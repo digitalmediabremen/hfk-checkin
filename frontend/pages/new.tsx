@@ -20,7 +20,7 @@ const NewProfilePage: NextPage = () => {
     return (
         <>
             <Subtitle>HFK BREMEN</Subtitle>
-            
+
             <p>
                 Nur mit Kontaktnachverfolgung sind Präsenzlehe, Nutzung der
                 Überäume, Ateliers und Werkstätten möglich. Bitte Unterstütze
@@ -31,7 +31,7 @@ const NewProfilePage: NextPage = () => {
             <FormGroup>
                 <Subtitle>Hfk-Angehörige</Subtitle>
                 <Button outline onClick={handleIntern}>
-                HFK-LOGIN
+                    HFK-LOGIN
                 </Button>
             </FormGroup>
             <FormGroup>

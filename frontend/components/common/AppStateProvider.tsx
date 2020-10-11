@@ -14,10 +14,10 @@ export const AppStateProvider: SFC<{}> = ({ children }) => {
     const [state, dispatch] = useReducer<Reducer<AppState, AppAction>>(
         (previousState, action) => {
             switch (action.type) {
-                case "apiError":
+                case "status":
                     return {
                         ...previousState,
-                        error: action.error,
+                        status: action.status,
                     };
                 default:
                     throw new Error();

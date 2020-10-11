@@ -1,14 +1,20 @@
-import * as React from "react";
 import { GetServerSideProps } from "next";
-import { doCheckinRequest } from "../../components/api/ApiService";
-import { Checkin } from "../../model/Checkin";
-import Title from "../../components/common/Title";
-import Subtitle from "../../components/common/Subtitle";
-import { Button } from "../../components/common/Button";
+import { useRouter } from "next/router";
+import * as React from "react";
 import { useCheckout } from "../../components/api/ApiHooks";
+import {
+    doCheckinRequest,
+    redirectServerSide
+} from "../../components/api/ApiService";
+import { useAppState } from "../../components/common/AppStateProvider";
+import { Button } from "../../components/common/Button";
+import LastCheckins from "../../components/common/LastCheckinsList";
+import Title from "../../components/common/Title";
+import { Checkin } from "../../model/Checkin";
 
 interface CheckinProps {
-    checkin: Checkin;
+    checkin?: Checkin;
+    error?: string;
 }
 
 export const CheckinComponent: React.FunctionComponent<{
@@ -16,57 +22,81 @@ export const CheckinComponent: React.FunctionComponent<{
 }> = ({ checkin }) => {
     const { location, profile } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
-    const { doCheckout } = useCheckout();
-    console.log(profile.last_checkins);
+    const { doCheckout, success } = useCheckout();
+    const router = useRouter();
 
-    const LastCheckins: React.SFC<{}> = React.useCallback(
-        () => (
-            <>
-                {profile.last_checkins.map((checkin, index) => {
-                    const { org_name, org_number, id } = checkin.location;
-                    return (
-                        <div key={`${id}${index}`}>
-                            {org_number} - {org_name}
-                        </div>
-                    );
-                })}
-            </>
-        ),
-        [profile]
-    );
+    React.useEffect(() => {
+        if (success) router.push("/");
+    }, [success]);
+
     return (
         <>
-            <LastCheckins />
-            <Title>{org_name}</Title>
-            <Subtitle>{org_number}</Subtitle>
-            <Title bold>
+            <LastCheckins checkins={profile.last_checkins.slice(1).reverse()} />
+            <Title bold subtext={org_number}>{org_name}</Title>
+            <Title subtext="mit dir eingecheckt">
                 {load !== 0 && "ca."} {load} / {capacity}
             </Title>
-            <Subtitle>mit dir eingecheckt</Subtitle>
-            <Button outline onClick={() => doCheckout(code)}>
+            <br />
+            <Button  onClick={() => doCheckout(code)}>
                 CHECK OUT
             </Button>
-            toll ein checkin in {checkin.location.org_number}
+            <br />
+            <Button outline onClick={() => doCheckout(code)}>
+                CHECK OUT 1.20.100
+            </Button>
         </>
     );
 };
 
-const CheckinPage: React.FunctionComponent<CheckinProps> = (props) => {
-    return <CheckinComponent {...props} />;
+const CheckinPage: React.FunctionComponent<CheckinProps> = ({
+    checkin,
+    error,
+}) => {
+    const { dispatch } = useAppState();
+    React.useEffect(() => {
+        if (!checkin) {
+            if (!!error)
+                dispatch({
+                    type: "apiError",
+                    error: error,
+                });
+        }
+    }, []);
+    if (!checkin) return null;
+    return <CheckinComponent checkin={checkin} />;
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    const cookie = context.req.headers.cookie;
+    const cookie = context.req.headers.cookie!;
     const { locationCode: locationCodePossiblyArray } = context.query;
+    const empty = { props: {} };
     const locationCode = Array.isArray(locationCodePossiblyArray)
         ? locationCodePossiblyArray[0]
         : locationCodePossiblyArray;
 
-    const { error, data: checkin } = await doCheckinRequest(locationCode, {
-        cookie,
-    });
+    if (!locationCode) {
+        redirectServerSide(context.res, "/");
+        return empty;
+    }
 
-    if (error) return { props: {} };
+    const { error, data: checkin, status } = await doCheckinRequest(
+        locationCode,
+        {
+            cookie,
+        }
+    );
+
+    // redirect when not logged in
+    if (status === 403) {
+        redirectServerSide(context.res, "new");
+        return empty;
+    }
+
+    if (!!error) return {
+        props: {
+            error
+        },
+    };
 
     return {
         props: {
