@@ -4,6 +4,8 @@ const presentOrThrow = (envvar: string | undefined) => {
     return envvar;
 }
 
-export const authRedirectUrl = presentOrThrow(process.env.NEXT_PUBLIC_AUTH_REDIRECT_URL);
-export const apiUrl = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
+const uri = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
+
+export const authRedirectUrl = `${uri}/login/redirect`;
+export const apiUrl = `${uri}/api`;
 export const appUrl = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
