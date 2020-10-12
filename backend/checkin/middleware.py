@@ -17,7 +17,7 @@ class JSON404Middleware(object):
             response = HttpResponse(json.dumps(data), content_type='application/json', status=404)
 
         if response.status_code == 500 and 'application/json' not in response['content-type']:
-            data = {'detail': 'Unknown sever error'.format(request.path)}
+            data = {'detail': 'server error'.format(request.path)}
             response = HttpResponse(json.dumps(data), content_type='application/json', status=500)
 
         return response
