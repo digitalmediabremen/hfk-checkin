@@ -67,14 +67,14 @@ class LocationViewSet(viewsets.ModelViewSet):
             raise PermissionDenied(ERROR_NO_PROFILE)
 
         if not profile.verified:
-            raise PermissionDenied(ERROR_NOT_VERIFIED)
+            raise PermissionDenied(ERROR_NOT_VERIFIED, status=status.HTTP_403_FORBIDDEN)
 
         origin = request.data.get('origin', None)
         checkin, new = Checkin.objects.checkin_or_return(profile=profile, location=self.get_object(), origin=origin)
         serializer = CheckinSerializer(checkin)
         if not new:
-            return Response(serializer.data, status=status.HTTP_409_CONFLICT)
-        return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=['get', 'post', 'put'])
     def checkout(self, request, pk=None, **kwargs):
@@ -90,8 +90,8 @@ class LocationViewSet(viewsets.ModelViewSet):
             if checkin.is_active():
                 checkin.checkout(origin=origin)
             else:
-                return Response(serializer.data, status=status.HTTP_409_CONFLICT)
-            return Response(serializer.data)
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Checkin.DoesNotExist:
             return Response({'detail': ERROR_NOT_CHECKED_IN_HERE}, status=status.HTTP_400_BAD_REQUEST)
 
