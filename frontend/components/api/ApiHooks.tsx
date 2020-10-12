@@ -55,10 +55,10 @@ export const useApi = <RT extends {}>(config?: {
             setRequestInProgress(false);
             if (!!error || status >= 400) {
                 handleError(error || `Unknown Error (${status})`, status);
-            } else {
+            } else if (!c.onlyLocalErrorReport) {
                 // reset error message
                 // but only if request is reporting globally
-                if (c.onlyLocalErrorReport) return;
+                ;
                 dispatch({
                     type: "status",
                     status: undefined,
