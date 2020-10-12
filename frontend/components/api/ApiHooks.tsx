@@ -58,7 +58,7 @@ export const useApi = <RT extends {}>(config?: {
             } else if (!c.onlyLocalErrorReport) {
                 // reset error message
                 // but only if request is reporting globally
-                ;
+                
                 dispatch({
                     type: "status",
                     status: undefined,

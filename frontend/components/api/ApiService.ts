@@ -41,7 +41,12 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             status: response.status,
         }))
         .then(({ data, status }) => {
+            console.log("this is the data", data)
             if (status >= 400) {
+                if (!data.detail) throw {
+                    status: status,
+                    error: "Api responded with wrong format.\n Http Error Codes should contain a detail field"
+                }
                 throw {
                     status: status,
                     error: data.detail,
