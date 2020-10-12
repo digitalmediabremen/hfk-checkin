@@ -12,6 +12,7 @@ import LastCheckins from "../../components/common/LastCheckinsList";
 import Title from "../../components/common/Title";
 import { Checkin } from "../../model/Checkin";
 import Subtitle from "../../components/common/Subtitle";
+import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 
 interface CheckinProps {
     checkin?: Checkin;
@@ -41,6 +42,7 @@ export const CheckinComponent: React.FunctionComponent<{
 
     return (
         <>
+            <CheckinSucessIcon />
             <Title bold subtext={org_number}>{org_name}</Title>
             <Title subtext="mit dir eingecheckt">
                 {load !== 0 && "ca."} {load} / {capacity}
@@ -78,7 +80,9 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
                 });
         }
     }, []);
-    if (!checkin) return null;
+    if (!checkin) return <>
+
+    </>;
     return <CheckinComponent checkin={checkin} />;
 };
 
@@ -107,6 +111,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         redirectServerSide(context.res, "/new");
         return empty;
     }
+
+    console.log("this is an error:", error);
 
     if (!!error) return {
         props: {
