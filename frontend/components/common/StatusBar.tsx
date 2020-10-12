@@ -13,7 +13,6 @@ interface ErrorBarProps {
 
 const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
     const { appState, dispatch } = useAppState();
-    const router = useRouter();
     const { status } = appState;
     const [states, setStates] = React.useState<
         Array<{ message: string; isError: boolean; id?: number }>
@@ -70,7 +69,18 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                 }
 
                 .bar {
-                    padding: ${theme.spacing(2)}px ${theme.spacing(3)}px;
+                    padding: ${theme.spacing(3)}px ${theme.spacing(3)}px;
+                }
+
+                .status.bar {
+                    padding: ${theme.spacing(0)}px ${theme.spacing(3)}px;
+                    height: 100%;
+                }
+
+                .status span {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
                 }
 
                 .status {
@@ -140,7 +150,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                             states[0]?.isError ? "error" : ""
                         } status bar`}
                     >
-                        {states[0]?.message}
+                        <span>{states[0]?.message}</span>
                     </div>
                 </CSSTransition>
                 <CSSTransition
@@ -158,7 +168,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                             states[1]?.isError ? "error" : ""
                         } status bar`}
                     >
-                        {states[1]?.message}
+                       <span>{states[1]?.message}</span>
                     </div>
                 </CSSTransition>
             </div>
