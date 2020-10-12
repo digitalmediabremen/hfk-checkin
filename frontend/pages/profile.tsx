@@ -131,7 +131,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     console.log("cookie: ",context.req.headers.cookie);
-    console.log("headers", context.req.headers);
+    // console.log("headers", context.req.headers);
     const cookie = context.req.headers.cookie!;
     const empty = { props: {} };
 
