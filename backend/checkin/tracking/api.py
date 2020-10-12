@@ -67,7 +67,7 @@ class LocationViewSet(viewsets.ModelViewSet):
             raise PermissionDenied(ERROR_NO_PROFILE)
 
         if not profile.verified:
-            raise Response({'detail': ERROR_NOT_VERIFIED}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'detail': ERROR_NOT_VERIFIED}, status=status.HTTP_401_UNAUTHORIZED)
 
         origin = request.data.get('origin', None)
         checkin, new = Checkin.objects.checkin_or_return(profile=profile, location=self.get_object(), origin=origin)
