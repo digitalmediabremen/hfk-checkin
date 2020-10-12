@@ -101,7 +101,7 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#password-hashers
 PASSWORD_HASHERS = [
     # https://docs.djangoproject.com/en/dev/topics/auth/passwords/#using-argon2-with-django
-    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    # "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
@@ -281,8 +281,19 @@ CORS_ALLOWED_ORIGINS = [
     "http://hfk-checkin-frontend.herokuapp.com",
     "https://checkin.uiuiui.digital",
     "http://checkin.uiuiui.digital",
+    "http://hfk-bremen.de",
 ]
-
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
