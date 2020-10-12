@@ -3,7 +3,7 @@ import theme from "../../styles/theme";
 import FormElementWrapper from "./FormElementWrapper";
 
 export interface InputProps {
-    onChange: (e: ChangeEvent<any>) => void;
+    onChange?: (e: ChangeEvent<any>) => void;
     value: string;
     name: string;
     label: string;
@@ -11,6 +11,7 @@ export interface InputProps {
     disabled?: boolean;
     focus?: boolean;
     error?: string;
+    type?: string;
 }
 
 export const Input: SFC<InputProps> = (props) => {
@@ -24,11 +25,12 @@ export const Input: SFC<InputProps> = (props) => {
         focus,
         disabled,
         error,
+        type,
         ...otherProps
     } = props;
 
     const handleChange = (e: ChangeEvent<any>) => {
-        onChange(e);
+        if(onChange) onChange(e);
     };
 
     const handleBlur = (e: any) => {
@@ -68,7 +70,7 @@ export const Input: SFC<InputProps> = (props) => {
                     {...otherProps}
                     id={name}
                     name={name}
-                    type="text"
+                    type={type || "text"}
                     value={value}
                     disabled={disabled}
                     onBlur={handleBlur}

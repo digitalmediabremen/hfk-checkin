@@ -107,7 +107,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 <PhoneInput
                     name="phone"
                     label="Telefonnummer"
-                    onChange={formik.handleChange}
+                    onPhoneNumberChange={(phone) => formik.setFieldValue("phone", phone)}
                     onBlur={formik.handleBlur}
                     value={formik.values.phone}
                     focus={!isUserCreation}

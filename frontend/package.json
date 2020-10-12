@@ -10,12 +10,12 @@
   "dependencies": {
     "@types/react-transition-group": "^4.4.0",
     "formik": "^2.1.7",
-    "next": "9.5.3",
+    "libphonenumber-js": "^1.8.4",
+    "next": "^9.5.5",
     "normalize.css": "^8.0.1",
     "react": "16.13.1",
     "react-digit-input": "^2.1.0",
     "react-dom": "16.13.1",
-    "react-number-format": "^4.4.1",
     "react-transition-group": "^4.4.1"
   },
   "devDependencies": {

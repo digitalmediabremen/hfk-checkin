@@ -1,12 +1,18 @@
-import { SFC } from "react";
+import { SFC, ChangeEvent, InputHTMLAttributes } from "react";
 import { InputProps, Input } from "./Input";
-import NumberFormat from 'react-number-format';
+import { AsYouType } from 'libphonenumber-js'
 
 
 
-const PhoneInput: SFC<InputProps> = (props) => {
+const PhoneInput: SFC<InputProps & {
+    onPhoneNumberChange: (number: string) => string
+}> = (props) => {
+    const {type, onChange, onPhoneNumberChange, ...other} = props;
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        onPhoneNumberChange(new AsYouType().input(e.currentTarget.value))
+    }
     return (
-        <NumberFormat {...props} placeholder="+(49) 1573 0000000" customInput={Input} format="+(##) #### #######" mask=" "/>
+        <Input {...other} type="tel" onChange={handleChange} />
     )
 }
 
