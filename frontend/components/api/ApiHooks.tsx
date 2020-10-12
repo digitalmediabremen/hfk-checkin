@@ -11,7 +11,9 @@ import {
 } from "./ApiService";
 import { Location } from "../../model/Location";
 
-export const useApi = <RT extends {}>(): {
+export const useApi = <RT extends {}>(config?: {
+    onlyLocalErrorReport?: boolean
+}): {
     loading: boolean;
     result?: RT;
     success: boolean;
@@ -24,10 +26,13 @@ export const useApi = <RT extends {}>(): {
     const [requestInProgress, setRequestInProgress] = useState(false);
     const loading = requestInProgress;
     const success = !error && !!result && !loading;
+    const c = config || {
+        onlyLocalErrorReport: false
+    };
 
     const handleError = (error: string, status: number) => {
         setError(error);
-        if (status >= 400 || status === 0) {
+        if ((status >= 400 || status === 0) && !c.onlyLocalErrorReport) {
             console.log("error");
             dispatch({
                 type: "status",
@@ -81,7 +86,9 @@ export const useUpdateProfile = () => {
 };
 
 export const useProfile = () => {
-    const { request, result: profile, ...other } = useApi<Profile>();
+    const { request, result: profile, ...other } = useApi<Profile>({
+         onlyLocalErrorReport: true
+    });
 
     return {
         profile,
