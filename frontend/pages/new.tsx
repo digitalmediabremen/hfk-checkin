@@ -5,6 +5,7 @@ import { useState } from "react";
 import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
+import Text from "../components/common/Text";
 
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
@@ -19,27 +20,25 @@ const NewProfilePage: NextPage = () => {
 
     return (
         <>
-            <Subtitle>HFK BREMEN</Subtitle>
+            <FormGroup>
+                <Subtitle>HFK BREMEN</Subtitle>
 
-            <p>
-                Nur mit Kontaktnachverfolgung sind Präsenzlehe, Nutzung der
-                Überäume, Ateliers und Werkstätten möglich. Bitte Unterstütze
-                die Maßnahmen durch Tragen einer Mund-Nase-Bedeckung,
-                Abstandsregeln und eigenverantwortlicher Protokollierung deiner
-                Anwesenheit.
-            </p>
-            <FormGroup>
-                <Subtitle>Hfk-Angehörige</Subtitle>
-                <Button outline onClick={handleIntern}>
-                    HFK-LOGIN
-                </Button>
+                <Text paragraph>
+                    Nur mit Kontaktnachverfolgung sind Präsenzlehe, Nutzung der
+                    Überäume, Ateliers und Werkstätten möglich. Bitte
+                    Unterstütze die Maßnahmen durch Tragen einer
+                    Mund-Nase-Bedeckung, Abstandsregeln und
+                    eigenverantwortlicher Protokollierung deiner Anwesenheit.
+                </Text>
             </FormGroup>
-            <FormGroup>
-                <Subtitle>Gäste</Subtitle>
-                <Button outline onClick={handleGuest}>
-                    GASTZUGANG
-                </Button>
-            </FormGroup>
+            <Subtitle>Hfk-Angehörige</Subtitle>
+            <Button outline onClick={handleIntern}>
+                HFK-LOGIN
+            </Button>
+            <Subtitle>Gäste</Subtitle>
+            <Button outline onClick={handleGuest}>
+                GASTZUGANG
+            </Button>
         </>
     );
 };
