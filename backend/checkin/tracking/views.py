@@ -11,5 +11,5 @@ class RoomCardView(PDFTemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object'] = self.model.objects.get(pk=kwargs['pk'])
+        context['object'] = self.model.objects.get(code=kwargs['code'])
         return context

@@ -29,7 +29,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', include('microsoft_auth.urls', namespace='microsoft')),
     path('login/redirect/', to_ms_redirect),
-    path('room-card/<int:pk>/', RoomCardView.as_view(), name='pdf-view'),
+    path('room-card/<int:code>/', RoomCardView.as_view(), name='pdf-view'),
     path('api/', include(router.urls)),
 ]
 
