@@ -75,12 +75,41 @@ class ActivityProfile(models.Model):
 def pkgen():
     return "%04d" % randint(1000,9999)
 
+
+class LocationUsage(models.Model):
+    name = models.CharField(_("Bezeichnung"), max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Raumnutzungsart")
+        verbose_name_plural = _("Raumnutzungsarten")
+
+
+class BookingMethod(models.Model):
+    name = models.CharField(_("Bezeichnung"), max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("Buchungsmethode")
+        verbose_name_plural = _("Buchungsmethoden")
+
+
 class Location(MPTTModel):
     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
-    org_number = models.CharField(_("Raumnummer"), max_length=30, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
-    org_name = models.CharField(_("Raumname / Standort"), max_length=255, blank=True)
     parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children')
-    activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
+    org_number = models.CharField(_("Raumnummer"), max_length=30, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
+    org_name = models.CharField(_("Raumname / Standort"), max_length=255)
+    org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
+    org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
+    org_usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
+    org_capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Kapazität"), blank=True, null=True)
+    org_bookable = models.BooleanField(_("Buchbar / Reservierbar"))
+    org_book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True, blank=True)
+    org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
 
     class MPTTMeta:
         order_insertion_by = ['org_name']
@@ -103,9 +132,9 @@ class Location(MPTTModel):
 
     @property
     def capacity(self):
-        activites = self.activities.through.objects.all()
-        if activites:
-            max_capacity = max([act.capacity for act in activites])
+        activities = self.org_activities.through.objects.filter(location=self).all()
+        if activities:
+            max_capacity = max([act.capacity for act in activities])
             return max_capacity
         return None
 
@@ -126,7 +155,7 @@ class Location(MPTTModel):
 class CapacityForActivityProfile(models.Model):
     profile = models.ForeignKey(ActivityProfile, on_delete=models.CASCADE, verbose_name=_("Profil"))
     location = models.ForeignKey(Location, on_delete=models.CASCADE, verbose_name=_("Standort"))
-    capacity = models.IntegerField(_("Maximalkapazität"))
+    capacity = models.PositiveIntegerField(_("Maximalkapazität"))
 
     class Meta:
         verbose_name = _("Aktivitätsprofil und Kapzitäten")

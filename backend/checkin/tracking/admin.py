@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from mptt.admin import MPTTModelAdmin
 from .models import *
 
@@ -49,3 +50,5 @@ admin.site.register(Location,LocationAdmin)
 admin.site.register(Checkin,CheckinAdmin)
 admin.site.register(Profile,ProfileAdmin)
 admin.site.register(ActivityProfile,ActivityProfileAdmin)
+admin.site.register(LocationUsage)
+admin.site.register(BookingMethod)
