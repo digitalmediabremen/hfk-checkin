@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 # admin.site.site_title = _("HFK CHECKIN")
 # admin.site.index_title = _("Übersicht")
 
-from checkin.tracking.views import RoomCardView
+from checkin.tracking.views import RoomCardView, MyModelPrintView
 from rest_framework import routers
 from checkin.tracking.api import LocationViewSet, CheckinViewSet, ProfileViewSet
 from microsoft_auth.models import MicrosoftAccount
@@ -31,7 +31,8 @@ urlpatterns = [
     path('login/', include('microsoft_auth.urls', namespace='microsoft')),
     path('login/redirect/', to_ms_redirect),
     path('logout/', LogoutView.as_view()),
-    path('room-card/<int:code>/', RoomCardView.as_view(), name='pdf-view'),
+    path('room/<int:code>/', RoomCardView.as_view(), name='room-view'),
+    path('pdf/<int:code>/', MyModelPrintView.as_view(), name='pdf-view'),
     path('api/', include(router.urls)),
 ]
 

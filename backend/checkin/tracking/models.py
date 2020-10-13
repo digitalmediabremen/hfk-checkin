@@ -140,6 +140,11 @@ class Location(MPTTModel):
             return max_capacity
         return None
 
+    @property
+    def capacities(self):
+        activities = self.org_activities.through.objects.filter(location=self).all()
+        return activities
+
 
     def __str__(self):
         if self.org_number:

@@ -1,4 +1,3 @@
-{% load qr_code %}
 {% load static %}
 
 <!DOCTYPE html>
@@ -6,16 +5,37 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ object|default:"HfK Checkin" }}</title>
-    <link rel="stylesheet" type="text/css" href="{% static "tracking/css/room-card.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "tracking/css/roomcard.css" %}">
 </head>
 <body>
 
-<p><b>{{ object.org_number }}</b> {{ object.org_name }}</p><br/>
+<div class="info-container">
+    <p class="room-number">{{ object.org_number }}</p>
+    <p class="room-name">{{ object.org_name }}</p>
+</div>
+<br/>
 
-{% qr_from_text object.get_checkin_url size="H" error_correction="M" border=0 %}<br/>
-<h1>R{{ object.code }}</h1>
+{% if object.capacities %}
+    <table class="capacity-table">
+    {% for cap in object.capacities %}
+        <tr>
+            <td><p class="capacity">{{ cap.capacity }}</p></td>
+            <td class="capacity-label-cell"><p class="capacity-label">{{ cap.profile.name }}<br/> mit 1,5 m Abstand</p></td>
+            <td class="capacity-label-cell"><p class="capacity-label en">{{ cap.profile.name }}<br/> with 1,5 m distance</p></td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endif %}
 
-<p>Maximale Belegung: {{ object.capacity }}</p>
+<footer>
+    <div class="checkin-container">
+        <p class="code">{{ object.code }}</p><div class="qr"><img src="{{ qr_svg_uri }}"/></div>
+    </div>
+    <p class="footer-remark">Bitte dokumentiere deinen Aufenthalt auf checkin.hfk-bremen.de oder mit Stift & Papier.</p>
+    <p class="footer-remark en">Please document your visit on checkin.hfk-bremen.de or with pen and paper.</p>
+</footer>
+
+<small class="generator">Diese Beschilderung wurde generiert am {% now "d.m.Y H:i" %}. Fehlende Beschilderung oder Korrekturen? Bitte schreibe eine E-Mail an checkin@hfk-bremen.de.</small>
 
 </body>
 </html>

@@ -71,7 +71,6 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'mptt',
-    'qr_code',
     'wkhtmltopdf',
     'rest_framework',
     'microsoft_auth',
