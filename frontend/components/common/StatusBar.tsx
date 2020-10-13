@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { CSSTransition } from "react-transition-group";
 import { setNestedObjectValues } from "formik";
+import { useTranslation } from "../../localization";
 
 interface ErrorBarProps {
     profile?: Profile;
@@ -17,6 +18,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
     const [states, setStates] = React.useState<
         Array<{ message: string; isError: boolean; id?: number }>
     >(!!status ? [status] : []);
+    const { t } = useTranslation();
 
     const [timeoutId, setTimeoutId] = React.useState<any>(undefined);
 
@@ -138,9 +140,9 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     <div className="bar">
                         {/* <span onClick={() => router.back()}>Back</span>{" "}-{" "} */}
                         <span className="profile">
-                            {profile.first_name} {profile.last_name} {!profile.verified && " (nicht verifiziert)"}
+                            {profile.first_name} {profile.last_name} {!profile.verified && ` (${t("nicht verifiziert")})`}
                         </span>
-                        {profile.phone && ` (${profile.phone})`}
+                        {profile.phone && ` tel: (${profile.phone})`}
                     </div>
                 )}
                 {!profile && (

@@ -49,17 +49,17 @@ type PatternInput = string | number;
 
 export const useTranslation = (inModule: TranslationModules = "enterCode") => {
     const { locale } = useContext(localeContext);
-    const t = (s: string, data?: Record<string, PatternInput>) => {
-        const sp = s.replace(
+    const t = (s: string, data?: Record<string, PatternInput>, alternativeId?: string) => {
+        const id = alternativeId || s;
+        const replace = (string?: string) => string?.replace(
             /{([A-Za-z]+)}/g,
-            (s: string, match: string) => `${(!!data && data[match] !== undefined) ? data[match] : s}`
+            (string: string, match: string) => `${(!!data && data[match] !== undefined) ? data[match] : string}`
         );
-        if (locale === defaultLocale) return sp;
+        if (locale === defaultLocale) return replace(s)!;
         return (
-            // @ts-ignore
-            translation[locale]?.[inModule]?.[sp] ||
-            translation[locale]?.["common"]?.[sp] ||
-            `${locale}.${inModule}.["${s}"]`
+            replace(translation[locale]?.[inModule]?.[id]) ||
+            replace(translation[locale]?.["common"]?.[id]) ||
+            `${locale}.${inModule}.["${id}"]`
         );
     };
     // @ts-ignore

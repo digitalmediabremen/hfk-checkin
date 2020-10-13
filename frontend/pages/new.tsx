@@ -6,6 +6,7 @@ import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import Text from "../components/common/Text";
+import { useTranslation } from "../localization";
 
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
@@ -18,28 +19,34 @@ const NewProfilePage: NextPage = () => {
         router.push(config.appUrls.profile);
     };
 
+    const { t } = useTranslation("createProfile");
+
     return (
         <>
             <FormGroup>
                 <Subtitle>HFK BREMEN</Subtitle>
 
                 <Text paragraph>
-                    Nur mit Kontaktnachverfolgung sind Präsenzlehe, Nutzung der
+                    {t(
+                        `Nur mit Kontaktnachverfolgung sind Präsenzlehe, Nutzung der
                     Überäume, Ateliers und Werkstätten möglich. Bitte
                     Unterstütze die Maßnahmen durch Tragen einer
                     Mund-Nase-Bedeckung, Abstandsregeln und
-                    eigenverantwortlicher Protokollierung deiner Anwesenheit.
+                    eigenverantwortlicher Protokollierung deiner Anwesenheit.`,
+                        {},
+                        "follow-the-rules"
+                    )}
                 </Text>
             </FormGroup>
             <FormGroup>
-                <Subtitle>Hfk-Angehörige</Subtitle>
+                <Subtitle>{t("Hfk-Angehörige")}</Subtitle>
                 <Button outline onClick={handleIntern}>
-                    HFK-LOGIN
+                    HfK-Login
                 </Button>
             </FormGroup>
-            <Subtitle>Gäste</Subtitle>
+            <Subtitle>{t("Gäste")}</Subtitle>
             <Button outline onClick={handleGuest}>
-                GASTZUGANG
+                {t("Gastzugang")}
             </Button>
         </>
     );

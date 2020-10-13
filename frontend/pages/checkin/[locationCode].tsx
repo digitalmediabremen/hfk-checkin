@@ -15,6 +15,7 @@ import Subtitle from "../../components/common/Subtitle";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import Notice from "../../components/common/Notice";
 import { appUrls, httpStatuses } from "../../config";
+import { useTranslation } from "../../localization";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: Checkin;
@@ -25,13 +26,14 @@ export const CheckinComponent: React.FunctionComponent<{
     const { doCheckout, success, loading: checkoutInProgress } = useCheckout();
     const { dispatch } = useAppState();
     const router = useRouter();
+    const { t } = useTranslation("checkin");
 
     React.useEffect(() => {
         if (!success) return;
         dispatch({
             type: "status",
             status: {
-                message: "Erfolgreich ausgecheckt",
+                message: t("Erfolgreich ausgecheckt"),
                 isError: false,
             },
         });
@@ -41,19 +43,19 @@ export const CheckinComponent: React.FunctionComponent<{
     return (
         <>
             {!alreadyCheckedIn && <CheckinSucessIcon />}
-            {alreadyCheckedIn && <Notice>Du bist bereits eingecheckt.</Notice>}
+            {alreadyCheckedIn && <Notice>{t("Du bist bereits eingecheckt")}.</Notice>}
             <Title bold subtext={org_number}>
                 {org_name}
             </Title>
-            <Title subtext="mit dir eingecheckt">
+            <Title subtext={t("mit dir eingecheckt")}>
                 {load !== 0 && "ca."} {load} / {capacity}
             </Title>
             <br />
-            <ButtonWithLoading loading={checkoutInProgress} onClick={() => doCheckout(code)}>CHECK OUT</ButtonWithLoading>
+            <ButtonWithLoading loading={checkoutInProgress} onClick={() => doCheckout(code)}>{t("check out")}</ButtonWithLoading>
             <br />
             <br />
             <br />
-            <Subtitle>Letzte Checkins</Subtitle>
+            <Subtitle>{t("Letzte Checkins")}</Subtitle>
             <LastCheckins checkins={profile.last_checkins.slice(1).reverse()} />
             {/* <Button outline onClick={() => doCheckout(code)}>
                 CHECK OUT 1.20.100

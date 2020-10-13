@@ -41,6 +41,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                     font-weight: bold;
                     width: 100%;
                     transition: transform .05s;
+                    text-transform: uppercase;
                 }
 
                 .button.outline {

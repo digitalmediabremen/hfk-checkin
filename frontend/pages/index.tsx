@@ -15,6 +15,7 @@ import Subtitle from "../components/common/Subtitle";
 import { Button, ButtonWithLoading } from "../components/common/Button";
 import Notice from "../components/common/Notice";
 import { appUrls, httpStatuses } from "../config";
+import { withTranslation, withLocaleProp, useTranslation } from "../localization";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -24,16 +25,15 @@ const isValidLocationCode = (locationCode: string) =>
     parseInt(locationCode).toString().length === 4;
 
 const CheckInPage: SFC<CheckInPageProps> = (props) => {
-    const { profile } = props;
     const [locationCode, setLocationCode] = useState<string>("");
     const {
         requestLocation,
         loading,
         location,
-        success,
-        error,
     } = useLocation();
     const router = useRouter();
+
+    const { t } = useTranslation("enterCode");
 
     const handleLocationCodeChange = useCallback((code: string) => {
         if (location !== undefined) return;
@@ -47,8 +47,8 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
     useEffect(() => {
         if (location) {
             router.push(...appUrls.checkin(location.code));
-        } else if(!loading) {
-            // reset location if not found 
+        } else if (!loading) {
+            // reset location if not found
             setLocationCode("");
         }
     }, [location, loading]);
@@ -72,7 +72,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                 }
             `}</style>
 
-            <Notice>Checkin per Raumcode</Notice>
+            <Notice>{t("Check in with Roomcode")}</Notice>
 
             <div className="location-code-container">
                 <LocationCodeInput
@@ -81,31 +81,35 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                     disabled={loading}
                 ></LocationCodeInput>
             </div>
-            <ButtonWithLoading loading={loading} onClick={() => {}}>CHECK IN</ButtonWithLoading>
+            <ButtonWithLoading loading={loading} onClick={() => {}}>
+                {t("Check in")}
+            </ButtonWithLoading>
         </>
     );
 };
 
 export default CheckInPage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    // api call
-    const cookie = context.req.headers.cookie!;
-    const empty = {props:{}}
+export const getServerSideProps: GetServerSideProps = withLocaleProp(
+    async (context) => {
+        // api call
+        const cookie = context.req.headers.cookie!;
+        const empty = { props: {} };
 
-    const { data: profile, error, status } = await getProfileRequest({
-        cookie,
-    });
+        const { data: profile, error, status } = await getProfileRequest({
+            cookie,
+        });
 
-    // redirect when not logged in
-    if (status === httpStatuses.notAuthorized) {
-        redirectServerSide(context.res, appUrls.createProfile);
-        return empty;
+        // redirect when not logged in
+        if (status === httpStatuses.notAuthorized) {
+            redirectServerSide(context.res, appUrls.createProfile);
+            return empty;
+        }
+
+        return {
+            props: {
+                profile,
+            },
+        };
     }
-
-    return {
-        props: {
-            profile,
-        },
-    };
-};
+);

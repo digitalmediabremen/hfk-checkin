@@ -15,6 +15,7 @@ import { profile } from "console";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { appUrls } from "../config";
+import { useTranslation } from "../localization";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -52,6 +53,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const { dispatch } = useAppState();
     const { loading, success, updateProfile } = useUpdateProfile();
     const router = useRouter();
+    const { t } = useTranslation("profile");
 
     useEffect(() => {
         if (success) router.push(appUrls.enterCode);
@@ -64,7 +66,6 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         validate,
         onSubmit: (values) => {
             updateProfile(formik.values);
-            // alert(JSON.stringify(values, null, 2));
         },
     });
     return (
@@ -77,7 +78,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             <FormGroup>
                 <Input
                     name="first_name"
-                    label={"Vorname"}
+                    label={t("Vorname")}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.first_name}
@@ -92,7 +93,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
                 <Input
                     name="last_name"
-                    label="Nachname"
+                    label={t("Nachname")}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.last_name}
@@ -107,8 +108,10 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             <FormGroup>
                 <PhoneInput
                     name="phone"
-                    label="Telefonnummer"
-                    onPhoneNumberChange={(phone) => formik.setFieldValue("phone", phone)}
+                    label={t("Telefonnummer")}
+                    onPhoneNumberChange={(phone) =>
+                        formik.setFieldValue("phone", phone)
+                    }
                     onBlur={formik.handleBlur}
                     value={formik.values.phone}
                     focus={!isUserCreation}
@@ -119,19 +122,27 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     }
                 />
             </FormGroup>
-            <ButtonWithLoading loading={loading} disabled={!formik.isValid} onClick={() => {}}>
-                Registrieren
+            <ButtonWithLoading
+                loading={loading}
+                disabled={!formik.isValid}
+                onClick={() => {}}
+            >
+                {t("Registrieren")}
             </ButtonWithLoading>
             <p>
-                Deine Angaben werden ausschließlich zur Nachverfolgung im
-                Infektionsfall verwendet.
+                {t(
+                    `Deine Angaben werden ausschließlich 
+                    zur Nachverfolgung im Infektionsfall verwendet.`,
+                    {},
+                    "data-protection-notice"
+                )}
             </p>
         </form>
     );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-    console.log("cookie: ",context.req.headers.cookie);
+    console.log("cookie: ", context.req.headers.cookie);
     // console.log("headers", context.req.headers);
     const cookie = context.req.headers.cookie!;
     const empty = { props: {} };
@@ -143,7 +154,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (!!error) return empty;
 
     // redirect if phone already present
-    if (!!profile?.phone) redirectServerSide(context.res, appUrls.enterCode);
+    // if (!!profile?.phone) redirectServerSide(context.res, appUrls.enterCode);
 
     return {
         props: {
