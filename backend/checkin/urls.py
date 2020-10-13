@@ -17,6 +17,7 @@ from checkin.tracking.api import LocationViewSet, CheckinViewSet, ProfileViewSet
 from microsoft_auth.models import MicrosoftAccount
 
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 
 router = routers.SimpleRouter()
 router.register(r'location', LocationViewSet)
@@ -29,6 +30,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', include('microsoft_auth.urls', namespace='microsoft')),
     path('login/redirect/', to_ms_redirect),
+    path('logout/', LogoutView.as_view()),
     path('room-card/<int:code>/', RoomCardView.as_view(), name='pdf-view'),
     path('api/', include(router.urls)),
 ]
