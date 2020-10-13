@@ -21,7 +21,7 @@ class Profile(models.Model):
     first_name = models.CharField(_("Vorname"), max_length=255)
     last_name = models.CharField(_("Nachname"), max_length=255)
     phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
-                                 message=_("Phone number must be entered in the format: '+(00) 999999999'. Up to 15 digits allowed."))
+                                 message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True)
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
@@ -58,6 +58,20 @@ def create_profile(sender, instance, created, **kwargs):
     profile.save()
 
 
+class ActivityProfile(models.Model):
+    name = models.CharField(_("Bezeichnung"), max_length=255)
+    description = models.TextField(_("Beschreibung"))
+    distance_rule = models.CharField(_("Mindestabstand"), max_length=50, default="1,5 m", blank=True, null=True)
+    other_rules = models.TextField(_("Regeln, Sonstige Maßnahmen"), blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Aktivitätsprofil")
+        verbose_name_plural = _("Aktivitätsprofile")
+
+    def __str__(self):
+        return self.name
+
+
 def pkgen():
     return "%04d" % randint(1000,9999)
 
@@ -65,8 +79,8 @@ class Location(MPTTModel):
     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
     org_number = models.CharField(_("Raumnummer"), max_length=30, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
     org_name = models.CharField(_("Raumname / Standort"), max_length=255, blank=True)
-    capacity = models.IntegerField(_("Maximalkapazität"), blank=True, null=True)
     parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
 
     class MPTTMeta:
         order_insertion_by = ['org_name']
@@ -87,14 +101,36 @@ class Location(MPTTModel):
     def current_checkins(self):
         return Checkin.objects.filter(location=self)
 
+    @property
+    def capacity(self):
+        activites = self.activities.through.objects.all()
+        if activites:
+            max_capacity = max([act.capacity for act in activites])
+            return max_capacity
+        return None
+
+
     def __str__(self):
-        return "%s (%s)" % (self.org_name, self.org_number)
+        if self.org_number:
+            return "%s (%s)" % (self.org_name, self.org_number)
+        else:
+            return "%s" % (self.org_name,)
 
     def get_absolute_url(self):
         return reverse('pdf-view', kwargs={'pk': self.pk }) + "?as=html"
 
     def get_checkin_url(self):
         return reverse('location-checkin', kwargs={'code': self.code})
+
+
+class CapacityForActivityProfile(models.Model):
+    profile = models.ForeignKey(ActivityProfile, on_delete=models.CASCADE, verbose_name=_("Profil"))
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, verbose_name=_("Standort"))
+    capacity = models.IntegerField(_("Maximalkapazität"))
+
+    class Meta:
+        verbose_name = _("Aktivitätsprofil und Kapzitäten")
+        verbose_name_plural = _("Aktivitätsprofile und Kapzitäten")
 
 
 class CheckinQuerySet(models.QuerySet):

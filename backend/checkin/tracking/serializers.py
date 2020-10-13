@@ -1,12 +1,33 @@
 from __future__ import unicode_literals
-from .models import Location, Checkin, Profile
+from .models import *
 from rest_framework import serializers
 
 
+class ActivityProfileSerializier(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityProfile
+        fields = ['name', 'description', 'distance_rule', 'other_rules']
+
+
+class CapacityForActivityProfileSerializier(serializers.ModelSerializer):
+    capacity = serializers.ReadOnlyField()
+    profile = ActivityProfileSerializier()
+
+    class Meta:
+        model = CapacityForActivityProfile
+        fields = ['capacity', 'profile']
+
+
 class LocationSerializer(serializers.ModelSerializer):
+    capacities = serializers.SerializerMethodField()
+
     class Meta:
         model = Location
-        fields = ['id', 'code', 'org_number', 'org_name', 'capacity', 'load', 'parent']
+        fields = ['id', 'code', 'org_number', 'org_name', 'capacity', 'load', 'parent', 'capacities']
+
+    def get_capacities(self, obj):
+        qset = CapacityForActivityProfile.objects.filter(location=obj)
+        return [CapacityForActivityProfileSerializier(m).data for m in qset]
 
 
 class SimpleCheckinSerializer(serializers.ModelSerializer):

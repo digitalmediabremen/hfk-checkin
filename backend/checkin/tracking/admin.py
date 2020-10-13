@@ -1,15 +1,25 @@
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
-from .models import Location, Checkin, Profile
+from .models import *
+
 
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name','verified','last_checkin')
     readonly_fields = ('last_checkin',)
 
 
+class ActivityProfileAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+
+
+class CapacityForActivityProfileInline(admin.TabularInline):
+    model = CapacityForActivityProfile
+
+
 class LocationAdmin(MPTTModelAdmin):
     readonly_fields = ('code',)
     list_display = ('org_name', 'org_number', 'capacity', 'load', 'load_descendants', 'code')
+    inlines = [CapacityForActivityProfileInline]
 
 
 class CheckinAdmin(admin.ModelAdmin):
@@ -38,3 +48,4 @@ class CheckinAdmin(admin.ModelAdmin):
 admin.site.register(Location,LocationAdmin)
 admin.site.register(Checkin,CheckinAdmin)
 admin.site.register(Profile,ProfileAdmin)
+admin.site.register(ActivityProfile,ActivityProfileAdmin)

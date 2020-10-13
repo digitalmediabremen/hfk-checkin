@@ -26,6 +26,7 @@ ERROR_NOT_COMPLETE = _("Ihr Profil ist unvollständig.")
 ERROR_NOT_VALID = _("Ihre Eingaben sind nicht korrekt.")
 ERROR_NOT_VALID_WITH_SUMMARY = _("Bitte korregieren Sie: %s")
 ERROR_NOT_CHECKED_IN_HERE = _("Sie sind hier nicht eingecheckt.")
+ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein fehler aufgetreten.")
 
 ON_CAMPUS_IP_NETWORKS_WHITELIST = [
     IPNetwork("172.16.0.0/24"),
@@ -126,12 +127,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
     @action(url_path="me/save", detail=False, methods=['post','put'], permission_classes=[AllowAny])
     def save(self, request, pk=None):
-        profile = ProfileSerializer(data=request.data)
-        if not profile.is_valid():
+        profile_serializer = ProfileSerializer(data=request.data)
+        if request.user and request.user.profile:
+            profile = request.user.profile
+            profile_serializer = ProfileSerializer(profile, data=request.data)
+        if not profile_serializer.is_valid():
             return Response({
-                'detail': ERROR_NOT_VALID_WITH_SUMMARY % ", ".join([", ".join(err) for key, err in profile.errors.items()]) if profile.errors else ERROR_NOT_VALID,
-                'errors': profile.errors,
-                'non_field_errors': getattr(profile, 'non_field_errors', None),
+                'detail': ERROR_NOT_VALID_WITH_SUMMARY % ", ".join([", ".join(err) for key, err in profile_serializer.errors.items()]) if profile_serializer.errors else ERROR_NOT_VALID,
+                'errors': profile_serializer.errors,
+                'non_field_errors': getattr(profile_serializer, 'non_field_errors', None),
             }, status=status.HTTP_400_BAD_REQUEST)
 
         # TODO join User + Profile model OR session against Profile OR custom User without username etc. OR subclass User
@@ -142,19 +146,22 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         #if new / anonymous user
         if request.user and request.user.is_anonymous:
-            username = "%s@gast.hfk-bremen.de" % (profile.validated_data['phone'],)
+            username = "%s-%s@gast.hfk-bremen.de" % (profile_serializer.validated_data['phone'],timezone.now().strftime("%Y-%m-%d-%H-%M-%S"))
             username = username.lower()
             try:
-                user = User.objects.create_user(first_name=profile.validated_data['first_name'], last_name=profile.validated_data['last_name'], username=username)
+                user = User.objects.create_user(first_name=profile_serializer.validated_data['first_name'], last_name=profile_serializer.validated_data['last_name'], username=username)
                 # FIXME This is might be crap!
                 login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             except (ValidationError, IntegrityError) as e:
                 return Response({'detail': ERROR_NOT_VALID}, status=status.HTTP_400_BAD_REQUEST)
         else:
             user = request.user
+        try:
+            profile = profile_serializer.save()
+            profile.user = user
+            profile.save()
 
-        profile_instance = profile.save()
-        profile_instance.user = user
-        profile_instance.save()
+            return Response(profile_serializer.data)
 
-        return Response(profile.data)
+        except (ValidationError, IntegrityError) as e:
+            return Response({'detail': ERROR_PROFILE_NOT_SAVED}, status=status.HTTP_400_BAD_REQUEST)
