@@ -16,6 +16,7 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                     margin: 0 auto;
                     margin-bottom: ${theme.spacing(6)}px;
                     transform: scale(0.9);
+                    opacity: 0;
                     animation: appear .1s .4s linear forwards;
                 }
 
@@ -34,6 +35,7 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                   @keyframes appear {
                     to {
                       transform: scale(1);
+                      opacity: 1;
                     }
                   }
             `}</style>

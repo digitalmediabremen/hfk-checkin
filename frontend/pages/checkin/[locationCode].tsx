@@ -4,7 +4,7 @@ import * as React from "react";
 import { useCheckout } from "../../components/api/ApiHooks";
 import {
     doCheckinRequest,
-    redirectServerSide
+    redirectServerSide,
 } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { Button } from "../../components/common/Button";
@@ -13,15 +13,12 @@ import Title from "../../components/common/Title";
 import { Checkin } from "../../model/Checkin";
 import Subtitle from "../../components/common/Subtitle";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
-
-interface CheckinProps {
-    checkin?: Checkin;
-    error?: string;
-}
+import Notice from "../../components/common/Notice";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: Checkin;
-}> = ({ checkin }) => {
+    alreadyCheckedIn: boolean;
+}> = ({ checkin, alreadyCheckedIn }) => {
     const { location, profile } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
     const { doCheckout, success } = useCheckout();
@@ -34,23 +31,24 @@ export const CheckinComponent: React.FunctionComponent<{
             type: "status",
             status: {
                 message: "Erfolgreich ausgecheckt",
-                isError: false
-            }
-        })
+                isError: false,
+            },
+        });
         router.push("/");
     }, [success]);
 
     return (
         <>
-            <CheckinSucessIcon />
-            <Title bold subtext={org_number}>{org_name}</Title>
+            {!alreadyCheckedIn && <CheckinSucessIcon />}
+            {alreadyCheckedIn && <Notice>Du bist bereits eingecheckt.</Notice>}
+            <Title bold subtext={org_number}>
+                {org_name}
+            </Title>
             <Title subtext="mit dir eingecheckt">
                 {load !== 0 && "ca."} {load} / {capacity}
             </Title>
             <br />
-            <Button  onClick={() => doCheckout(code)}>
-                CHECK OUT
-            </Button>
+            <Button onClick={() => doCheckout(code)}>CHECK OUT</Button>
             <br />
             <br />
             <br />
@@ -63,9 +61,16 @@ export const CheckinComponent: React.FunctionComponent<{
     );
 };
 
+interface CheckinProps {
+    checkin?: Checkin;
+    error?: string;
+    alreadyCheckedIn?: boolean;
+}
+
 const CheckinPage: React.FunctionComponent<CheckinProps> = ({
     checkin,
     error,
+    alreadyCheckedIn,
 }) => {
     const { dispatch } = useAppState();
     React.useEffect(() => {
@@ -75,15 +80,18 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
                     type: "status",
                     status: {
                         message: error,
-                        isError: true
+                        isError: true,
                     },
                 });
         }
     }, []);
-    if (!checkin) return <>
-
-    </>;
-    return <CheckinComponent checkin={checkin} />;
+    if (!checkin) return <></>;
+    return (
+        <CheckinComponent
+            checkin={checkin}
+            alreadyCheckedIn={alreadyCheckedIn || false}
+        />
+    );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -114,15 +122,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     console.log("this is an error:", error);
 
-    if (!!error) return {
-        props: {
-            error
-        },
-    };
+    if (!!error)
+        return {
+            props: {
+                error,
+            },
+        };
 
     return {
         props: {
             checkin,
+            alreadyCheckedIn: status === 408
         },
     };
 };
