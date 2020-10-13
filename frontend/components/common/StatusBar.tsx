@@ -54,7 +54,13 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
                     overflow: hidden;
-                    position: relative;
+                    position: fixed;
+                    width: 100%;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    z-index: 200;
+                    background: #fff;
                 }
 
                 .profile {
@@ -70,6 +76,12 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
 
                 .bar {
                     padding: ${theme.spacing(3)}px ${theme.spacing(3)}px;
+                }
+
+                .status-bar-spacer {
+                    width: 100%;
+                    height: calc(${theme.spacing(6)}px + 1.15em + 1px);
+                    display: block;
                 }
 
                 .status.bar {
@@ -120,14 +132,15 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     transition: none;
                 }
             `}</style>
+            <div className="status-bar-spacer"></div>
             <div className="status-bar">
                 {profile && (
                     <div className="bar">
                         {/* <span onClick={() => router.back()}>Back</span>{" "}-{" "} */}
                         <span className="profile">
-                            {profile.first_name} {profile.last_name}
+                            {profile.first_name} {profile.last_name} {!profile.verified && " (nicht verifiziert)"}
                         </span>
-                        {profile.phone && `(${profile.phone})`}
+                        {profile.phone && ` (${profile.phone})`}
                     </div>
                 )}
                 {!profile && (
