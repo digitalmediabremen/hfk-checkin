@@ -31,10 +31,12 @@ const NewProfilePage: NextPage = () => {
                     eigenverantwortlicher Protokollierung deiner Anwesenheit.
                 </Text>
             </FormGroup>
-            <Subtitle>Hfk-Angehörige</Subtitle>
-            <Button outline onClick={handleIntern}>
-                HFK-LOGIN
-            </Button>
+            <FormGroup>
+                <Subtitle>Hfk-Angehörige</Subtitle>
+                <Button outline onClick={handleIntern}>
+                    HFK-LOGIN
+                </Button>
+            </FormGroup>
             <Subtitle>Gäste</Subtitle>
             <Button outline onClick={handleGuest}>
                 GASTZUGANG
