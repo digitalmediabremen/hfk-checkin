@@ -20,6 +20,7 @@ const translation: Translation = {
             ["mit dir eingecheckt"]: "with you checked in",
             ["Letzte Checkins"]: "Past checkins",
             ["Auschecken"]: "Check out",
+            ["Erfolgreich ausgecheckt"]: "Checkout successful"
         },
         profile: {
             ["Vorname"]: "First name",

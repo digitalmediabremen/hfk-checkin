@@ -69,10 +69,12 @@ export const useTranslation = (inModule: TranslationModules = "common") => {
         const translatedString =
             replace(translation[locale]?.[inModule]?.[id]) ||
             replace(translation[locale]?.["common"]?.[id]);
-        const translationId = `${locale}.${inModule}.["${id}"]${alternativeId ? ` to "${s}"` : ""}`;
+        const translationId = `${locale}.${inModule}.["${id}"]${
+            alternativeId ? ` to "${s}"` : ""
+        }`;
         if (production && translatedString === undefined)
-            throw new Error(`No translation for ${translationId} provided`);
-         
+            console.error(`No translation for ${translationId} provided`);
+
         return translatedString || translationId;
     };
     return { locale, t };
