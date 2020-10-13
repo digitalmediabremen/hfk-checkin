@@ -23,7 +23,6 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     isTypeOrThrow?: (p: any) => asserts p is ResultType
 ): Promise<Response<ResultType>> => {
     const url = `${config.apiUrl}/${endpoint}`;
-    console.log("request: ", url);
     const { headers, ...otherRequestData } = requestData;
     return await fetch(url, {
         headers: {
@@ -41,7 +40,6 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             status: response.status,
         }))
         .then(({ data, status }) => {
-            console.log("this is the data", data)
             if (status >= 400) {
                 if (!data.detail) throw {
                     status: status,
