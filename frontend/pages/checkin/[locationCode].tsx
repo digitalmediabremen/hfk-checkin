@@ -30,6 +30,7 @@ export const CheckinComponent: React.FunctionComponent<{
 
     React.useEffect(() => {
         if (!success) return;
+        window.navigator.vibrate(200);
         dispatch({
             type: "status",
             status: {
@@ -50,7 +51,7 @@ export const CheckinComponent: React.FunctionComponent<{
                 {org_name}
             </Title>
             <Title subtext={t("mit dir eingecheckt")}>
-                {load !== 0 && "ca."} {load} / {capacity}
+                {load !== 0 && "ca."} {load}{!!capacity && ` / ${capacity}`}
             </Title>
             <br />
             <ButtonWithLoading
