@@ -1,12 +1,21 @@
 import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
-import { NextPage } from "next";
+import {
+    NextPage,
+    GetServerSideProps,
+    GetServerSidePropsContext,
+    GetServerSidePropsResult,
+} from "next";
 import { createContext, SFC, useContext } from "react";
 import { defaultLocale } from "../config";
 import translation from "./translation";
+import { getServerSideProps } from "../pages";
+import { ParsedUrlQuery } from "querystring";
 
-export type Translation = Record<string, Record<string, Record<string, string>>>;
-
+export type Translation = Record<
+    string,
+    Record<string, Record<string, string>>
+>;
 
 export const localeContext = createContext<{ locale: string }>({
     locale: defaultLocale,
@@ -21,7 +30,7 @@ export const getInitialLocale = (headers?: IncomingHttpHeaders) => {
         );
     }
     // maybe client
-    return getUserLocale() || defaultLocale;
+    return getUserLocale()?.split("-")[0] || defaultLocale;
 };
 
 const { Provider } = localeContext;
@@ -45,6 +54,21 @@ export const useTranslation = (inModule: string = "common") => {
     };
     // @ts-ignore
     return { locale, t };
+};
+
+export const withLocaleProp = (    
+    func: (
+        context: GetServerSidePropsContext<ParsedUrlQuery>
+    ) => Promise<GetServerSidePropsResult<{ [key: string]: any }>>
+) => {
+    return async function withLocalPropHandler(context: GetServerSidePropsContext) {
+        return {
+            props: {
+                locale: getInitialLocale(context.req.headers),
+                ...(await func(context)).props
+            }
+        }
+    };
 };
 
 export const withTranslation = <P extends {}>(
