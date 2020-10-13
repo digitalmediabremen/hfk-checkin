@@ -140,11 +140,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         cookie,
     });
 
-    // if (status === 403) {
-    //     redirectServerSide(context.res, "new");
-    //     return empty;
-    // }
-
     if (!!error) return empty;
 
     // redirect if phone already present

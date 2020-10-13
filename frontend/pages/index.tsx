@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
 import Notice from "../components/common/Notice";
-import { appUrls } from "../config";
+import { appUrls, httpStatuses } from "../config";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -96,7 +96,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
 
     // redirect when not logged in
-    if (status === 403) {
+    if (status === httpStatuses.notAuthorized) {
         redirectServerSide(context.res, appUrls.createProfile);
         return empty;
     }

@@ -14,7 +14,7 @@ import { Checkin } from "../../model/Checkin";
 import Subtitle from "../../components/common/Subtitle";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import Notice from "../../components/common/Notice";
-import { appUrls } from "../../config";
+import { appUrls, httpStatuses } from "../../config";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: Checkin;
@@ -116,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     );
 
     // redirect when not logged in
-    if (status === 403) {
+    if (status === httpStatuses.notAuthorized) {
         redirectServerSide(context.res, appUrls.createProfile);
         return empty;
     }
@@ -133,7 +133,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
         props: {
             checkin,
-            alreadyCheckedIn: status === 408
+            alreadyCheckedIn: status === httpStatuses.alreadyCheckedIn
         },
     };
 };

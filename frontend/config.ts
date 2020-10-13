@@ -9,6 +9,10 @@ const uri = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
 export const authRedirectUrl = `${uri}/login/redirect`;
 export const apiUrl = `${uri}/api`;
 export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
+export const httpStatuses = {
+    "notAuthorized": 403,
+    "alreadyCheckedIn": 202,
+} as const;
 export const appUrls = {
     "profile": "/profile",
     "notVerified": "/check-identity",
@@ -17,4 +21,4 @@ export const appUrls = {
     "enterCode": "/",
     "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],
     "introduction": "/intro",
-}
+} as const;
