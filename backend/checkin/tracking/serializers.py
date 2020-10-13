@@ -3,15 +3,15 @@ from .models import *
 from rest_framework import serializers
 
 
-class ActivityProfileSerializier(serializers.ModelSerializer):
+class ActivityProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityProfile
         fields = ['name', 'description', 'distance_rule', 'other_rules']
 
 
-class CapacityForActivityProfileSerializier(serializers.ModelSerializer):
+class CapacityForActivityProfileSerializer(serializers.ModelSerializer):
     capacity = serializers.ReadOnlyField()
-    profile = ActivityProfileSerializier()
+    profile = ActivityProfileSerializer()
 
     class Meta:
         model = CapacityForActivityProfile
@@ -19,7 +19,7 @@ class CapacityForActivityProfileSerializier(serializers.ModelSerializer):
 
 
 class LocationSerializer(serializers.ModelSerializer):
-    capacities = serializers.SerializerMethodField()
+    capacities = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Location
@@ -27,7 +27,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
     def get_capacities(self, obj):
         qset = CapacityForActivityProfile.objects.filter(location=obj)
-        return [CapacityForActivityProfileSerializier(m).data for m in qset]
+        return [CapacityForActivityProfileSerializer(m).data for m in qset]
 
 
 class SimpleCheckinSerializer(serializers.ModelSerializer):
@@ -50,6 +50,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class CheckinSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
     location = LocationSerializer(read_only=True)
+
     class Meta:
         model = Checkin
         fields = ['id','time_entered', 'time_left', 'origin_entered', 'origin_left', 'profile', 'location']

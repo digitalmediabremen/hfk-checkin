@@ -27,6 +27,7 @@ ERROR_NOT_VALID = _("Ihre Eingaben sind nicht korrekt.")
 ERROR_NOT_VALID_WITH_SUMMARY = _("Bitte korregieren Sie: %s")
 ERROR_NOT_CHECKED_IN_HERE = _("Sie sind hier nicht eingecheckt.")
 ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein fehler aufgetreten.")
+ERROR_PROFILE_INCOMPLETE = _("Ihr Profil ist unvollstädnig.")
 
 ON_CAMPUS_IP_NETWORKS_WHITELIST = [
     IPNetwork("172.16.0.0/24"),
@@ -53,6 +54,19 @@ class OnCampusPermission(permissions.BasePermission):
         return False
 
 
+def profile_is_verified_and_complete(request):
+    try:
+        profile = request.user.profile
+    except AttributeError:
+        raise PermissionDenied(ERROR_NO_PROFILE)
+
+    if not profile.verified:
+        return Response({'detail': ERROR_NOT_VERIFIED}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if not profile.complete:
+        return Response({'detail': ERROR_PROFILE_INCOMPLETE}, status=status.HTTP_401_UNAUTHORIZED)
+
+
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
@@ -60,39 +74,42 @@ class LocationViewSet(viewsets.ModelViewSet):
     lookup_field = 'code'
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
-    @action(detail=True, methods=['get','post','put'])
+    @action(detail=True, methods=['get','post'])
+    # fails with method 'PUT' because of call to get_serializer() in renderers.py:552
     def checkin(self, request, pk=None, **kwargs):
-        try:
-            profile = request.user.profile
-        except AttributeError:
-            raise PermissionDenied(ERROR_NO_PROFILE)
 
-        if not profile.verified:
-            return Response({'detail': ERROR_NOT_VERIFIED}, status=status.HTTP_401_UNAUTHORIZED)
+        check = profile_is_verified_and_complete(request)
+        if check:
+            return check
 
-        origin = request.data.get('origin', None)
+        profile = request.user.profile
+
+        origin = request.query_params.get('origin', None)
         checkin, new = Checkin.objects.checkin_or_return(profile=profile, location=self.get_object(), origin=origin)
-        serializer = CheckinSerializer(checkin)
+        checkin_serializer = CheckinSerializer(checkin)
         if not new:
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(checkin_serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(checkin_serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['get', 'post', 'put'])
+    @action(detail=True, methods=['get', 'post'])
+    # fails with method 'PUT' because of call to get_serializer() in renderers.py:552
     def checkout(self, request, pk=None, **kwargs):
-        try:
-            profile = request.user.profile
-        except AttributeError:
-            raise PermissionDenied(ERROR_NO_PROFILE)
 
-        origin = request.data.get('origin', None)
+        check = profile_is_verified_and_complete(request)
+        if check:
+            return check
+
+        profile = request.user.profile
+
+        origin = request.query_params.get('origin', None)
         try:
             checkin = Checkin.objects.last_checkin_for_profile_at_location(profile=profile, location=self.get_object()).get()
-            serializer = CheckinSerializer(checkin)
+            checkin_serializer = CheckinSerializer(checkin)
             if checkin.is_active():
                 checkin.checkout(origin=origin)
             else:
-                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(checkin_serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response(checkin_serializer.data, status=status.HTTP_201_CREATED)
         except Checkin.DoesNotExist:
             return Response({'detail': ERROR_NOT_CHECKED_IN_HERE}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -136,7 +153,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
                 'detail': ERROR_NOT_VALID_WITH_SUMMARY % ", ".join([", ".join(err) for key, err in profile_serializer.errors.items()]) if profile_serializer.errors else ERROR_NOT_VALID,
                 'errors': profile_serializer.errors,
                 'non_field_errors': getattr(profile_serializer, 'non_field_errors', None),
-            }, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_403_BAD_REQUEST)
 
         # TODO join User + Profile model OR session against Profile OR custom User without username etc. OR subclass User
         # FIXME unique user will now fail

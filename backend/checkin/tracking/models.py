@@ -22,8 +22,8 @@ class Profile(models.Model):
     last_name = models.CharField(_("Nachname"), max_length=255)
     phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
                                  message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
-    phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True) # validators should be a list
-    email = models.EmailField(_("E-Mail Adresse"), blank=True)
+    phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
+    email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -32,8 +32,9 @@ class Profile(models.Model):
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
 
+    @property
     def complete(self):
-        return bool(self.first_name and self.last_name and self.phone and self.email)
+        return (bool(self.first_name) and bool(self.last_name) and bool(self.phone))
 
     class Meta:
         verbose_name = _("Person")
