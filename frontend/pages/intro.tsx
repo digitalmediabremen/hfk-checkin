@@ -11,11 +11,10 @@ interface IntroPageProps {}
 
 const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
     const router  = useRouter();
-    const { t, locale }  = useTranslation('introduction');
     return (
         <>
             <FormGroup>
-                <Title>Welcome / Intro {t("test")}</Title>
+                <Title>Welcome / Intro</Title>
                 <Text paragraph>
                     This is the start page which will explain what this is and
                     how it works.

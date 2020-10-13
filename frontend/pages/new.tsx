@@ -19,7 +19,7 @@ const NewProfilePage: NextPage = () => {
         router.push(config.appUrls.profile);
     };
 
-    const { t } = useTranslation("createProfile");
+    const { t, locale} = useTranslation("createProfile");
 
     return (
         <>
@@ -53,6 +53,3 @@ const NewProfilePage: NextPage = () => {
 };
 
 export default NewProfilePage;
-NewProfilePage.getInitialProps = async (ctx: NextPageContext) => {
-    return {};
-};

@@ -24,5 +24,7 @@ export const appUrls = {
     "introduction": "/intro",
 } as const;
 
+export const production = process.env.NODE_ENV === "production"
+
 // language
-export const defaultLocale = "en" as const;
+export const defaultLocale = "de" as const;

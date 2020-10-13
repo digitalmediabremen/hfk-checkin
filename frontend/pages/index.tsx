@@ -15,7 +15,7 @@ import Subtitle from "../components/common/Subtitle";
 import { Button, ButtonWithLoading } from "../components/common/Button";
 import Notice from "../components/common/Notice";
 import { appUrls, httpStatuses } from "../config";
-import { withTranslation, withLocaleProp, useTranslation } from "../localization";
+import { withLocaleProp, useTranslation } from "../localization";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -72,7 +72,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                 }
             `}</style>
 
-            <Notice>{t("Check in with Roomcode")}</Notice>
+            <Notice>{t("Mit Raumcode einchecken")}</Notice>
 
             <div className="location-code-container">
                 <LocationCodeInput
@@ -82,7 +82,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                 ></LocationCodeInput>
             </div>
             <ButtonWithLoading loading={loading} onClick={() => {}}>
-                {t("Check in")}
+                {t("Einchecken")}
             </ButtonWithLoading>
         </>
     );

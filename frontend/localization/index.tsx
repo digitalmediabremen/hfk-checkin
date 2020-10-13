@@ -7,7 +7,7 @@ import {
     GetServerSidePropsResult,
 } from "next";
 import { createContext, SFC, useContext } from "react";
-import { defaultLocale, appUrls } from "../config";
+import { defaultLocale, appUrls, production } from "../config";
 import translation from "./translation";
 import { getServerSideProps } from "../pages";
 import { ParsedUrlQuery } from "querystring";
@@ -47,22 +47,34 @@ export const LocaleProvider: SFC<{ locale: string }> = ({
 
 type PatternInput = string | number;
 
-export const useTranslation = (inModule: TranslationModules = "enterCode") => {
+export const useTranslation = (inModule: TranslationModules = "common") => {
     const { locale } = useContext(localeContext);
-    const t = (s: string, data?: Record<string, PatternInput>, alternativeId?: string) => {
+    const t = (
+        s: string,
+        data?: Record<string, PatternInput>,
+        alternativeId?: string
+    ): string => {
         const id = alternativeId || s;
-        const replace = (string?: string) => string?.replace(
-            /{([A-Za-z]+)}/g,
-            (string: string, match: string) => `${(!!data && data[match] !== undefined) ? data[match] : string}`
-        );
+        const replace = (string?: string) =>
+            string?.replace(
+                /{([A-Za-z]+)}/g,
+                (string: string, match: string) =>
+                    `${
+                        !!data && data[match] !== undefined
+                            ? data[match]
+                            : string
+                    }`
+            );
         if (locale === defaultLocale) return replace(s)!;
-        return (
+        const translatedString =
             replace(translation[locale]?.[inModule]?.[id]) ||
-            replace(translation[locale]?.["common"]?.[id]) ||
-            `${locale}.${inModule}.["${id}"]`
-        );
+            replace(translation[locale]?.["common"]?.[id]);
+        const translationId = `${locale}.${inModule}.["${id}"]${alternativeId ? ` to "${s}"` : ""}`;
+        if (production && translatedString === undefined)
+            throw new Error(`No translation for ${translationId} provided`);
+         
+        return translatedString || translationId;
     };
-    // @ts-ignore
     return { locale, t };
 };
 

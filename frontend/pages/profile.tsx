@@ -15,7 +15,7 @@ import { profile } from "console";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { appUrls } from "../config";
-import { useTranslation } from "../localization";
+import { useTranslation, withLocaleProp } from "../localization";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -141,26 +141,28 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    console.log("cookie: ", context.req.headers.cookie);
-    // console.log("headers", context.req.headers);
-    const cookie = context.req.headers.cookie!;
-    const empty = { props: {} };
+export const getServerSideProps: GetServerSideProps = withLocaleProp(
+    async (context) => {
+        console.log("cookie: ", context.req.headers.cookie);
+        // console.log("headers", context.req.headers);
+        const cookie = context.req.headers.cookie!;
+        const empty = { props: {} };
 
-    const { status, data: profile, error } = await getProfileRequest({
-        cookie,
-    });
+        const { status, data: profile, error } = await getProfileRequest({
+            cookie,
+        });
 
-    if (!!error) return empty;
+        if (!!error) return empty;
 
-    // redirect if phone already present
-    // if (!!profile?.phone) redirectServerSide(context.res, appUrls.enterCode);
+        // redirect if phone already present
+        // if (!!profile?.phone) redirectServerSide(context.res, appUrls.enterCode);
 
-    return {
-        props: {
-            profile,
-        },
-    };
-};
+        return {
+            props: {
+                profile,
+            },
+        };
+    }
+);
 
 export default EditProfilePage;

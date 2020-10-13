@@ -15,7 +15,7 @@ import Subtitle from "../../components/common/Subtitle";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import Notice from "../../components/common/Notice";
 import { appUrls, httpStatuses } from "../../config";
-import { useTranslation } from "../../localization";
+import { useTranslation, withLocaleProp } from "../../localization";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: Checkin;
@@ -43,7 +43,9 @@ export const CheckinComponent: React.FunctionComponent<{
     return (
         <>
             {!alreadyCheckedIn && <CheckinSucessIcon />}
-            {alreadyCheckedIn && <Notice>{t("Du bist bereits eingecheckt")}.</Notice>}
+            {alreadyCheckedIn && (
+                <Notice>{t("Du bist bereits eingecheckt")}.</Notice>
+            )}
             <Title bold subtext={org_number}>
                 {org_name}
             </Title>
@@ -51,7 +53,12 @@ export const CheckinComponent: React.FunctionComponent<{
                 {load !== 0 && "ca."} {load} / {capacity}
             </Title>
             <br />
-            <ButtonWithLoading loading={checkoutInProgress} onClick={() => doCheckout(code)}>{t("check out")}</ButtonWithLoading>
+            <ButtonWithLoading
+                loading={checkoutInProgress}
+                onClick={() => doCheckout(code)}
+            >
+                {t("Auschecken")}
+            </ButtonWithLoading>
             <br />
             <br />
             <br />
@@ -97,47 +104,49 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const cookie = context.req.headers.cookie!;
-    const { locationCode: locationCodePossiblyArray } = context.query;
-    const empty = { props: {} };
-    const locationCode = Array.isArray(locationCodePossiblyArray)
-        ? locationCodePossiblyArray[0]
-        : locationCodePossiblyArray;
+export const getServerSideProps: GetServerSideProps = withLocaleProp(
+    async (context) => {
+        const cookie = context.req.headers.cookie!;
+        const { locationCode: locationCodePossiblyArray } = context.query;
+        const empty = { props: {} };
+        const locationCode = Array.isArray(locationCodePossiblyArray)
+            ? locationCodePossiblyArray[0]
+            : locationCodePossiblyArray;
 
-    if (!locationCode) {
-        redirectServerSide(context.res, appUrls.enterCode);
-        return empty;
-    }
-
-    const { error, data: checkin, status } = await doCheckinRequest(
-        locationCode,
-        {
-            cookie,
+        if (!locationCode) {
+            redirectServerSide(context.res, appUrls.enterCode);
+            return empty;
         }
-    );
 
-    // redirect when not logged in
-    if (status === httpStatuses.notAuthorized) {
-        redirectServerSide(context.res, appUrls.createProfile);
-        return empty;
-    }
+        const { error, data: checkin, status } = await doCheckinRequest(
+            locationCode,
+            {
+                cookie,
+            }
+        );
 
-    console.log("this is an error:", error);
+        // redirect when not logged in
+        if (status === httpStatuses.notAuthorized) {
+            redirectServerSide(context.res, appUrls.createProfile);
+            return empty;
+        }
 
-    if (!!error)
+        console.log("this is an error:", error);
+
+        if (!!error)
+            return {
+                props: {
+                    error,
+                },
+            };
+
         return {
             props: {
-                error,
+                checkin,
+                alreadyCheckedIn: status === httpStatuses.alreadyCheckedIn,
             },
         };
-
-    return {
-        props: {
-            checkin,
-            alreadyCheckedIn: status === httpStatuses.alreadyCheckedIn
-        },
-    };
-};
+    }
+);
 
 export default CheckinPage;
