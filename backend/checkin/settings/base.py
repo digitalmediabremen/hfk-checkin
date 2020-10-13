@@ -22,7 +22,7 @@ DEBUG = getenv("DJANGO_DEBUG", False)
 # In Windows, this must be set to your system time zone.
 TIME_ZONE = "Europe/Berlin"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "de-de"
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
@@ -33,6 +33,13 @@ USE_L10N = True
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [Path.joinpath(BASE_DIR, "locale")]
+
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGES = [
+    ('de-de', _('German')),
+    ('en-en', _('English')),
+]
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -230,7 +237,8 @@ ADMINS = []
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # We are currently English only: The default language middleware was disabled. See MIDDLEWARE
-ADMIN_LANGUAGE_CODE="DE-de"
+ADMIN_LANGUAGE_CODE="de-de"
+LANGUAGE_CODE = "de-de"
 
 # LOGGING
 # ------------------------------------------------------------------------------
