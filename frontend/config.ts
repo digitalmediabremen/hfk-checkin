@@ -8,4 +8,13 @@ const uri = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
 
 export const authRedirectUrl = `${uri}/login/redirect`;
 export const apiUrl = `${uri}/api`;
-export const appUrl = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
+export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
+export const appUrls = {
+    "profile": "/profile",
+    "notVerified": "/check-identity",
+    "redirect": `${authRedirectUrl}/?next=${appBase}/profile`,
+    "createProfile": "/new",
+    "enterCode": "/",
+    "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],
+    "introduction": "/intro",
+}

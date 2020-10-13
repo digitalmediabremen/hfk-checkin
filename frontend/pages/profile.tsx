@@ -14,6 +14,7 @@ import {
 import { profile } from "console";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { appUrls } from "../config";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -53,7 +54,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const router = useRouter();
 
     useEffect(() => {
-        if (success) router.push("/");
+        if (success) router.push(appUrls.enterCode);
     }, [success]);
 
     const formik = useFormik<ProfileUpdate>({
@@ -147,7 +148,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (!!error) return empty;
 
     // redirect if phone already present
-    if (!!profile?.phone) redirectServerSide(context.res, "/");
+    if (!!profile?.phone) redirectServerSide(context.res, appUrls.enterCode);
 
     return {
         props: {

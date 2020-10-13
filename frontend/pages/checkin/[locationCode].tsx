@@ -14,6 +14,7 @@ import { Checkin } from "../../model/Checkin";
 import Subtitle from "../../components/common/Subtitle";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import Notice from "../../components/common/Notice";
+import { appUrls } from "../../config";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: Checkin;
@@ -34,7 +35,7 @@ export const CheckinComponent: React.FunctionComponent<{
                 isError: false,
             },
         });
-        router.push("/");
+        router.push(appUrls.enterCode);
     }, [success]);
 
     return (
@@ -85,7 +86,7 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
                 });
         }
     }, []);
-    if (!checkin) return <></>;
+    if (!checkin) return <>Checkin Failed</>;
     return (
         <CheckinComponent
             checkin={checkin}
@@ -103,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         : locationCodePossiblyArray;
 
     if (!locationCode) {
-        redirectServerSide(context.res, "/");
+        redirectServerSide(context.res, appUrls.enterCode);
         return empty;
     }
 
@@ -116,7 +117,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     // redirect when not logged in
     if (status === 403) {
-        redirectServerSide(context.res, "/new");
+        redirectServerSide(context.res, appUrls.createProfile);
         return empty;
     }
 

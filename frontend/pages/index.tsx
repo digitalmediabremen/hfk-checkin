@@ -13,6 +13,8 @@ import theme from "../styles/theme";
 import { useRouter } from "next/router";
 import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
+import Notice from "../components/common/Notice";
+import { appUrls } from "../config";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -44,7 +46,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
 
     useEffect(() => {
         if (location) {
-            router.push("/checkin/[locationCode]", `/checkin/${location.code}`);
+            router.push(...appUrls.checkin(location.code));
         } else {
             setLocationCode("");
         }
@@ -69,7 +71,7 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                 }
             `}</style>
 
-            <span className="desc">Checkin per Raumcode</span>
+            <Notice>Checkin per Raumcode</Notice>
 
             <div className="location-code-container">
                 <LocationCodeInput
@@ -95,7 +97,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     // redirect when not logged in
     if (status === 403) {
-        redirectServerSide(context.res, "/new");
+        redirectServerSide(context.res, appUrls.createProfile);
         return empty;
     }
 

@@ -10,12 +10,12 @@ import Text from "../components/common/Text";
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
     const handleIntern = () => {
-        const url = `${config.authRedirectUrl}/?next=${config.appUrl}/profile`;
+        const url = config.appUrls.redirect;
         router.replace(url);
         console.log(url);
     };
     const handleGuest = () => {
-        router.push("/profile");
+        router.push(config.appUrls.profile);
     };
 
     return (

@@ -4,6 +4,7 @@ import Text from "../components/common/Text";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import { useRouter } from "next/router";
+import { appUrls } from "../config";
 
 interface IntroPageProps {}
 
@@ -18,7 +19,7 @@ const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
                     how it works.
                 </Text>
             </FormGroup>
-            <Button outline onClick={() => router.push("/new")}>
+            <Button outline onClick={() => router.push(appUrls.createProfile)}>
                 Anmelden
             </Button>
         </>
