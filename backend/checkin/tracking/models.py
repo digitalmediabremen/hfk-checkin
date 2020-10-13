@@ -27,7 +27,7 @@ class Profile(models.Model):
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
+    # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
 
     def __str__(self):
         return "%s %s" % (self.first_name, self.last_name)
@@ -105,6 +105,7 @@ class Location(MPTTModel):
     org_number = models.CharField(_("Raumnummer"), max_length=30, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
     org_name = models.CharField(_("Raumname / Standort"), max_length=255)
     org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
+    org_size = models.DecimalField(verbose_name=_("Größe in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
     org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
     org_usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
     org_capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Kapazität"), blank=True, null=True)

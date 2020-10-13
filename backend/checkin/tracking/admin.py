@@ -5,8 +5,8 @@ from .models import *
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name','verified','last_checkin')
-    readonly_fields = ('last_checkin',)
+    list_display = ('first_name', 'last_name','verified')
+    # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
 
 
@@ -20,7 +20,7 @@ class CapacityForActivityProfileInline(admin.TabularInline):
 
 class LocationAdmin(MPTTModelAdmin):
     readonly_fields = ('code',)
-    list_display = ('org_name', 'org_number', 'capacity', 'load', 'load_descendants', 'code')
+    list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'load', 'load_descendants', 'code')
     inlines = [CapacityForActivityProfileInline]
 
 
