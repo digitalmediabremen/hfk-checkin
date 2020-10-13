@@ -28,9 +28,10 @@ export const CheckinComponent: React.FunctionComponent<{
     const router = useRouter();
     const { t } = useTranslation("checkin");
 
+    React.useEffect(() => { window?.navigator?.vibrate?.(200) }, []);
+
     React.useEffect(() => {
         if (!success) return;
-        window.navigator.vibrate(200);
         dispatch({
             type: "status",
             status: {
