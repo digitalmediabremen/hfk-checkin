@@ -7,7 +7,7 @@ import {
     redirectServerSide,
 } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
-import { Button } from "../../components/common/Button";
+import { Button, ButtonWithLoading } from "../../components/common/Button";
 import LastCheckins from "../../components/common/LastCheckinsList";
 import Title from "../../components/common/Title";
 import { Checkin } from "../../model/Checkin";
@@ -22,7 +22,7 @@ export const CheckinComponent: React.FunctionComponent<{
 }> = ({ checkin, alreadyCheckedIn }) => {
     const { location, profile } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
-    const { doCheckout, success } = useCheckout();
+    const { doCheckout, success, loading: checkoutInProgress } = useCheckout();
     const { dispatch } = useAppState();
     const router = useRouter();
 
@@ -49,7 +49,7 @@ export const CheckinComponent: React.FunctionComponent<{
                 {load !== 0 && "ca."} {load} / {capacity}
             </Title>
             <br />
-            <Button onClick={() => doCheckout(code)}>CHECK OUT</Button>
+            <ButtonWithLoading loading={checkoutInProgress} onClick={() => doCheckout(code)}>CHECK OUT</ButtonWithLoading>
             <br />
             <br />
             <br />

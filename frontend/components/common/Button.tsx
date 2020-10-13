@@ -8,6 +8,23 @@ interface ButtonProps {
     outline?: true;
 }
 
+export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
+    loading,
+    children,
+    onClick,
+    ...props
+}) => {
+    const handleClick = () => {
+        if (!loading) onClick();
+    };
+    return (
+        <Button {...props} onClick={handleClick}>
+            {children}
+            {loading && " ..."}
+        </Button>
+    );
+};
+
 export const Button: SFC<ButtonProps> = (props) => {
     const { children, outline, ...otherProps } = props;
 
@@ -23,6 +40,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                     font-size: 1.3em;
                     font-weight: bold;
                     width: 100%;
+                    transition: transform .05s;
                 }
 
                 .button.outline {
@@ -37,10 +55,14 @@ export const Button: SFC<ButtonProps> = (props) => {
 
                 .button:hover {
                     cursor: pointer;
+                    transform: scale(1.025);
                 }
             `}</style>
             <FormElementWrapper>
-                <button className={`button ${outline ? "outline" : ""}`} {...otherProps}>
+                <button
+                    className={`button ${outline ? "outline" : ""}`}
+                    {...otherProps}
+                >
                     {children}
                 </button>
             </FormElementWrapper>

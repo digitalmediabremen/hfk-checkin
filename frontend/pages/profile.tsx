@@ -1,6 +1,6 @@
 import { useFormik, FormikValues } from "formik";
 import { NextPage, NextPageContext, GetServerSideProps } from "next";
-import { Button } from "../components/common/Button";
+import { Button, ButtonWithLoading } from "../components/common/Button";
 import { Input } from "../components/common/Input";
 import PhoneInput from "../components/common/PhoneInput";
 import Profile, { ProfileUpdate } from "../model/Profile";
@@ -119,9 +119,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     }
                 />
             </FormGroup>
-            <Button disabled={!formik.isValid} onClick={() => {}}>
+            <ButtonWithLoading loading={loading} disabled={!formik.isValid} onClick={() => {}}>
                 Registrieren
-            </Button>
+            </ButtonWithLoading>
             <p>
                 Deine Angaben werden ausschließlich zur Nachverfolgung im
                 Infektionsfall verwendet.

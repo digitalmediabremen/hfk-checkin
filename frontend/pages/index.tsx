@@ -12,7 +12,7 @@ import { useCheckin, useLocation } from "../components/api/ApiHooks";
 import theme from "../styles/theme";
 import { useRouter } from "next/router";
 import Subtitle from "../components/common/Subtitle";
-import { Button } from "../components/common/Button";
+import { Button, ButtonWithLoading } from "../components/common/Button";
 import Notice from "../components/common/Notice";
 import { appUrls, httpStatuses } from "../config";
 
@@ -47,10 +47,11 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
     useEffect(() => {
         if (location) {
             router.push(...appUrls.checkin(location.code));
-        } else {
+        } else if(!loading) {
+            // reset location if not found 
             setLocationCode("");
         }
-    }, [loading, location]);
+    }, [location, loading]);
 
     return (
         <>
@@ -77,9 +78,10 @@ const CheckInPage: SFC<CheckInPageProps> = (props) => {
                 <LocationCodeInput
                     onChange={handleLocationCodeChange}
                     code={locationCode}
+                    disabled={loading}
                 ></LocationCodeInput>
             </div>
-            <Button onClick={() => {}}>CHECK IN</Button>
+            <ButtonWithLoading loading={loading} onClick={() => {}}>CHECK IN</ButtonWithLoading>
         </>
     );
 };

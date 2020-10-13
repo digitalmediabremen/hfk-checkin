@@ -5,6 +5,7 @@ import theme from "../../styles/theme";
 interface LocationCodeInputProps {
     code: string;
     onChange: (code: string) => void;
+    disabled?: boolean;
 }
 
 const DigitInputElement = React.forwardRef<
@@ -12,8 +13,9 @@ const DigitInputElement = React.forwardRef<
     Omit<InputAttributes, "ref"> & {
         autoFocus?: boolean;
         outline?: true;
+        disabled?: boolean;
     }
->(({ outline, ...props }, ref) => {
+>(({ outline, disabled, ...props }, ref) => {
     return (
         <>
             <style jsx>{`
@@ -84,16 +86,19 @@ const DigitInputElement = React.forwardRef<
             <label>
                 <div className={`digit ${outline ? "outline" : "" }`}>{props.value}</div>
                 <div className="cursor"></div>
-                {outline && <input {...props} ref={ref} inputMode="decimal" />}
+                {outline && <input disabled={disabled} {...props} ref={ref} inputMode="decimal" />}
             </label>
         </>
     );
 });
 
 const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
-    const { code, onChange } = props;
+    const { code, onChange, disabled } = props;
 
-    const handleChange = (code: string) => onChange(code.replace(/ /g, ''))
+    const handleChange = (code: string) => {
+        if(disabled) return;
+        onChange(code.replace(/ /g, ''))
+    }
 
     const digits = useDigitInput({
         acceptedCharacters: /^[0-9]$/,
