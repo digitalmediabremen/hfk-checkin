@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/react-transition-group": "^4.4.0",
     "formik": "^2.1.7",
+    "get-user-locale": "^1.4.0",
     "libphonenumber-js": "^1.8.4",
     "next": "^9.5.5",
     "normalize.css": "^8.0.1",
