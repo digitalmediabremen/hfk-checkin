@@ -7,6 +7,7 @@ from .models import *
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name','verified','last_checkin')
     readonly_fields = ('last_checkin',)
+    list_editable = ('verified',)
 
 
 class ActivityProfileAdmin(admin.ModelAdmin):
