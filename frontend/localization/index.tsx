@@ -7,15 +7,18 @@ import {
     GetServerSidePropsResult,
 } from "next";
 import { createContext, SFC, useContext } from "react";
-import { defaultLocale } from "../config";
+import { defaultLocale, appUrls } from "../config";
 import translation from "./translation";
 import { getServerSideProps } from "../pages";
 import { ParsedUrlQuery } from "querystring";
+import { config } from "process";
 
 export type Translation = Record<
     string,
-    Record<string, Record<string, string>>
+    Partial<Record<TranslationModules, Record<string, string>>>
 >;
+
+export type TranslationModules = Partial<keyof typeof appUrls> | "common";
 
 export const localeContext = createContext<{ locale: string }>({
     locale: defaultLocale,
@@ -42,54 +45,63 @@ export const LocaleProvider: SFC<{ locale: string }> = ({
     return <Provider value={{ locale: locale }}>{children}</Provider>;
 };
 
-export const useTranslation = (inModule: string = "common") => {
+type PatternInput = string | number;
+
+export const useTranslation = (inModule: TranslationModules = "enterCode") => {
     const { locale } = useContext(localeContext);
-    const t = (s: string, overwriteModule?: string) => {
-        const m = overwriteModule || inModule;
+    const t = (s: string, data?: Record<string, PatternInput>) => {
+        const sp = s.replace(
+            /{([A-Za-z]+)}/g,
+            (s: string, match: string) => `${(!!data && data[match] !== undefined) ? data[match] : s}`
+        );
+        if (locale === defaultLocale) return sp;
         return (
-            translation[locale]?.[m]?.[s] ||
-            translation[locale]?.["common"]?.[s] ||
-            `t(${locale}.${m}.${s})`
+            // @ts-ignore
+            translation[locale]?.[inModule]?.[sp] ||
+            translation[locale]?.["common"]?.[sp] ||
+            `${locale}.${inModule}.["${s}"]`
         );
     };
     // @ts-ignore
     return { locale, t };
 };
 
-export const withLocaleProp = (    
+export const withLocaleProp = (
     func: (
         context: GetServerSidePropsContext<ParsedUrlQuery>
     ) => Promise<GetServerSidePropsResult<{ [key: string]: any }>>
 ) => {
-    return async function withLocalPropHandler(context: GetServerSidePropsContext) {
+    return async function withLocalPropHandler(
+        context: GetServerSidePropsContext
+    ) {
         return {
             props: {
                 locale: getInitialLocale(context.req.headers),
-                ...(await func(context)).props
-            }
-        }
-    };
-};
-
-export const withTranslation = <P extends {}>(
-    WrappedComponent: React.ComponentType<P>
-) => {
-    const Comp2: NextPage<{ locale: string }> = ({ locale, ...props }) => {
-        return (
-            <LocaleProvider locale={locale}>
-                <WrappedComponent {...(props as P)} />
-            </LocaleProvider>
-        );
-    };
-
-    Comp2.getInitialProps = async (context) => {
-        const locale = getInitialLocale(context.req?.headers);
-        return {
-            locale,
+                ...(await func(context)).props,
+            },
         };
     };
-
-    return Comp2;
 };
+
+// export const withTranslation = <P extends {}>(
+//     WrappedComponent: React.ComponentType<P>
+// ) => {
+//     const Comp2: NextPage<{ locale: string }> = ({ locale, ...props }) => {
+//         return (
+//             <LocaleProvider locale={locale}>
+//                 <WrappedComponent {...(props as P)} />
+//             </LocaleProvider>
+//         );
+//     };
+
+//     Comp2.getInitialProps = async (context) => {
+//         const locale = getInitialLocale(context.req?.headers);
+//         return {
+//             locale,
+//         };
+//     };
+
+//     return Comp2;
+// };
 
 export default translation;

@@ -3,12 +3,14 @@ import { Translation } from ".";
 
 const translation: Translation = {
     de: {
-        test: {
-            hallo: "test",
+        enterCode: {
+            checkinWithRoomCode: "Checkin per Raumcode {room}",
         },
     },
     en: {
-        test: {},
+        enterCode: {
+            checkinWithRoomCode: "Checkin with roomcode",
+        },
     },
 };
 
