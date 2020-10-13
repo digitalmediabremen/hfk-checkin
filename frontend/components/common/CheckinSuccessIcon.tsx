@@ -11,10 +11,12 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
             <style jsx>{`
                 .icon {
                     display: block;
-                    width: 10em;
-                    height: 10em;
+                    width: 30vw;
+                    max-width: 150px;
+                    height: 30vw;
+                    max-height: 150px;
                     margin: 0 auto;
-                    margin-bottom: ${theme.spacing(6)}px;
+                    margin-bottom: ${theme.spacing(4)}px;
                     transform: scale(0.9);
                     opacity: 0;
                     animation: appear .1s .4s linear forwards;
@@ -55,12 +57,14 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                     <g
                         id="icon"
                         transform="translate(62.000000, 128.000000)"
-                        strokeWidth="2"
+                        strokeWidth="4"
                         stroke="#D81830"
+                        vectorEffect="non-scaling-stroke"
                     >
                         <circle id="circle" cx="96" cy="96" r="96"></circle>
                         <polyline
                             strokeWidth="4"
+                            vectorEffect="non-scaling-stroke"
                             id="checkmark"
                             strokeLinecap="round"
                             strokeLinejoin="round"
