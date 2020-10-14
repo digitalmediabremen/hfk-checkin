@@ -7,6 +7,7 @@ import Link from "next/link";
 import { CSSTransition } from "react-transition-group";
 import { setNestedObjectValues } from "formik";
 import { useTranslation } from "../../localization";
+import { appUrls } from "../../config";
 
 interface ErrorBarProps {
     profile?: Profile;
@@ -137,19 +138,19 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
             <div className="status-bar-spacer"></div>
             <div className="status-bar">
                 {profile && (
-                    <div className="bar">
-                        {/* <span onClick={() => router.back()}>Back</span>{" "}-{" "} */}
-                        <span className="profile">
-                            {profile.first_name} {profile.last_name} {!profile.verified && ` (${t("nicht verifiziert")})`}
-                        </span>
-                        {profile.phone && ` tel: (${profile.phone})`}
-                    </div>
+                    <Link href={appUrls.profile}>
+                        <div className="bar">
+                            {/* <span onClick={() => router.back()}>Back</span>{" "}-{" "} */}
+                            <span className="profile">
+                                {profile.first_name} {profile.last_name}{" "}
+                                {!profile.verified &&
+                                    ` (${t("nicht verifiziert")})`}
+                            </span>
+                            {profile.phone && ` tel: (${profile.phone})`}
+                        </div>
+                    </Link>
                 )}
-                {!profile && (
-                    <div className="bar">
-                        HFK
-                    </div>
-                )}
+                {!profile && <div className="bar">HFK</div>}
                 <CSSTransition
                     timeout={300}
                     classNames="status"
@@ -183,7 +184,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                             states[1]?.isError ? "error" : ""
                         } status bar`}
                     >
-                       <span>{states[1]?.message}</span>
+                        <span>{states[1]?.message}</span>
                     </div>
                 </CSSTransition>
             </div>
