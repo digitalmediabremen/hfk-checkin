@@ -1,21 +1,16 @@
-import { useFormik, FormikValues } from "formik";
-import { NextPage, NextPageContext, GetServerSideProps } from "next";
-import { Button, ButtonWithLoading } from "../components/common/Button";
+import { useFormik } from "formik";
+import { GetServerSideProps, NextPage } from "next";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useUpdateProfile } from "../components/api/ApiHooks";
+import { getProfileRequest } from "../components/api/ApiService";
+import { ButtonWithLoading } from "../components/common/Button";
+import FormGroup from "../components/common/FormGroup";
 import { Input } from "../components/common/Input";
 import PhoneInput from "../components/common/PhoneInput";
-import Profile, { ProfileUpdate } from "../model/Profile";
-import FormGroup from "../components/common/FormGroup";
-import { useAppState } from "../components/common/AppStateProvider";
-import { useUpdateProfile } from "../components/api/ApiHooks";
-import {
-    getProfileRequest,
-    redirectServerSide,
-} from "../components/api/ApiService";
-import { profile } from "console";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { appUrls } from "../config";
 import { useTranslation, withLocaleProp } from "../localization";
+import Profile, { ProfileUpdate } from "../model/Profile";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -50,7 +45,6 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     };
     const isUserCreation = !props.profile;
 
-    const { dispatch } = useAppState();
     const { loading, success, updateProfile } = useUpdateProfile();
     const router = useRouter();
     const { t } = useTranslation("profile");

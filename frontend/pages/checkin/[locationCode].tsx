@@ -4,18 +4,18 @@ import * as React from "react";
 import { useCheckout } from "../../components/api/ApiHooks";
 import {
     doCheckinRequest,
-    redirectServerSide,
+    redirectServerSide
 } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
-import { Button, ButtonWithLoading } from "../../components/common/Button";
-import LastCheckins from "../../components/common/LastCheckinsList";
-import Title from "../../components/common/Title";
-import { Checkin } from "../../model/Checkin";
-import Subtitle from "../../components/common/Subtitle";
+import { ButtonWithLoading } from "../../components/common/Button";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
+import LastCheckins from "../../components/common/LastCheckinsList";
 import Notice from "../../components/common/Notice";
+import Subtitle from "../../components/common/Subtitle";
+import Title from "../../components/common/Title";
 import { appUrls, httpStatuses } from "../../config";
 import { useTranslation, withLocaleProp } from "../../localization";
+import { Checkin } from "../../model/Checkin";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: Checkin;
@@ -84,20 +84,8 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
     error,
     alreadyCheckedIn,
 }) => {
-    const { dispatch } = useAppState();
-    React.useEffect(() => {
-        if (!checkin) {
-            if (!!error)
-                dispatch({
-                    type: "status",
-                    status: {
-                        message: error,
-                        isError: true,
-                    },
-                });
-        }
-    }, []);
     if (!checkin) return <>Checkin Failed</>;
+
     return (
         <CheckinComponent
             checkin={checkin}

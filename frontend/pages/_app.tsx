@@ -1,12 +1,15 @@
-import "normalize.css";
-import "../styles/globals.css";
-import AppWrapper from "../components/common/AppWrapper";
-import { AppStateProvider } from "../components/common/AppStateProvider";
 import { AppProps } from "next/dist/next-server/lib/router/router";
-import { LocaleProvider, getInitialLocale } from "../localization";
 import Head from "next/head";
+import "normalize.css";
+import { AppStateProvider } from "../components/common/AppStateProvider";
+import AppWrapper from "../components/common/AppWrapper";
+import ErrorDispatcher from "../components/common/ErrorDispatcher";
+import { getInitialLocale, LocaleProvider } from "../localization";
+import "../styles/globals.css";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+    const { error, locale, ...props } = pageProps;
+
     return (
         <>
             <Head>
@@ -17,10 +20,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             </Head>
             <AppStateProvider>
                 <AppWrapper>
-                    <LocaleProvider
-                        locale={pageProps.locale || getInitialLocale()}
-                    >
-                        <Component {...pageProps} />
+                    <LocaleProvider locale={locale || getInitialLocale()}>
+                        <ErrorDispatcher error={error}>
+                            <Component error={error} {...props} />
+                        </ErrorDispatcher>
                     </LocaleProvider>
                 </AppWrapper>
             </AppStateProvider>

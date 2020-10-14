@@ -27,24 +27,30 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     return await fetch(url, {
         headers: {
             "Content-Type": "application/json",
-            ...headers
+            ...headers,
             // 'Content-Type': 'application/x-www-form-urlencoded',
         },
         credentials: "include",
         ...otherRequestData,
     })
         .then(async (response) => ({
-            data: (await (response.json() as unknown)) as ApiResponse<
-                ResultType
-            >,
+            data: ((await response?.json?.()) as unknown) as
+                | ApiResponse<ResultType>
+                | undefined,
             status: response.status,
         }))
         .then(({ data, status }) => {
+            if (data === undefined) throw {
+                status: 1,
+                error: "Response could not be serialized"
+            } 
             if (status >= 400) {
-                if (!data.detail) throw {
-                    status: status,
-                    error: "Api responded with wrong format.\n Http Error Codes should contain a detail field"
-                }
+                if (!data.detail)
+                    throw {
+                        status: status,
+                        error:
+                            "Api responded with wrong format.\n Http Error Codes should contain a detail field",
+                    };
                 throw {
                     status: status,
                     error: data.detail,
@@ -81,7 +87,7 @@ export const updateProfileRequest = async (
     await apiRequest("profile/me/save/", {
         method: "POST",
         body: JSON.stringify(profile),
-        headers
+        headers,
     });
 
 export const doCheckinRequest = async (

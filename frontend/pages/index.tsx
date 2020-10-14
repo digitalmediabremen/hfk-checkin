@@ -18,13 +18,14 @@ import { appUrls, httpStatuses } from "../config";
 import { withLocaleProp, useTranslation } from "../localization";
 
 interface CheckInPageProps {
-    profile: Profile;
+    profile?: Profile;
+    error?: string;
 }
 
 const isValidLocationCode = (locationCode: string) =>
     parseInt(locationCode).toString().length === 4;
 
-const CheckInPage: SFC<CheckInPageProps> = (props) => {
+const CheckInPage: SFC<CheckInPageProps> = ({error}) => {
     const [locationCode, setLocationCode] = useState<string>("");
     const {
         requestLocation,
@@ -101,9 +102,18 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
         });
 
         // redirect when not logged in
+        console.log("status", status);
         if (status === httpStatuses.notAuthorized) {
             redirectServerSide(context.res, appUrls.createProfile);
             return empty;
+        }
+
+        if (!!error) {
+            return {
+                props: {
+                    error
+                }
+            }
         }
 
         return {

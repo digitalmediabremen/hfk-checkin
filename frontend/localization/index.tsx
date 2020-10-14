@@ -1,17 +1,13 @@
 import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
 import {
-    NextPage,
-    GetServerSideProps,
     GetServerSidePropsContext,
-    GetServerSidePropsResult,
+    GetServerSidePropsResult
 } from "next";
-import { createContext, SFC, useContext } from "react";
-import { defaultLocale, appUrls, production } from "../config";
-import translation from "./translation";
-import { getServerSideProps } from "../pages";
 import { ParsedUrlQuery } from "querystring";
-import { config } from "process";
+import { createContext, SFC, useContext } from "react";
+import { appUrls, defaultLocale, production } from "../config";
+import translation from "./translation";
 
 export type Translation = Record<
     string,
