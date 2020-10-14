@@ -20,6 +20,11 @@ class MyDocument extends Document {
             <Html>
                 <Head>
                     <link rel="manifest" href="/manifest.json" />
+                    <link
+                        rel="icon"
+                        type="image/x-icon"
+                        href="/favicon.ico"
+                    ></link>
 
                     <meta name="mobile-web-app-capable" content="yes" />
                     <meta name="apple-mobile-web-app-capable" content="yes" />
