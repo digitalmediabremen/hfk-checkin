@@ -41,37 +41,37 @@ class MyDocument extends Document {
                         rel="icon"
                         type="image/png"
                         sizes="512x512"
-                        href="icon-512x512"
+                        href="icons/icon-512x512"
                     />
                     <link
                         rel="apple-touch-icon"
                         type="image/png"
                         sizes="512x512"
-                        href="icon-512x512"
+                        href="icons/icon-512x512"
                     />
                     <link
                         rel="icon"
                         type="image/png"
                         sizes="192x192"
-                        href="icon-192x192"
+                        href="icons/icon-192x192"
                     />
                     <link
                         rel="apple-touch-icon"
                         type="image/png"
                         sizes="192x192"
-                        href="icon-192x192"
+                        href="icons/icon-192x192"
                     />
                     <link
                         rel="icon"
                         type="image/png"
                         sizes="144x144"
-                        href="icon-144x144"
+                        href="icons/icon-144x144"
                     />
                     <link
                         rel="apple-touch-icon"
                         type="image/png"
                         sizes="144x144"
-                        href="icon-144x144"
+                        href="icons/icon-144x144"
                     />
                 </Head>
                 <body>
