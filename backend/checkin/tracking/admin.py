@@ -2,6 +2,9 @@ from django.contrib import admin
 from django import forms
 from mptt.admin import MPTTModelAdmin
 from .models import *
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 
 
 class ProfileAdmin(admin.ModelAdmin):
@@ -16,12 +19,20 @@ class ActivityProfileAdmin(admin.ModelAdmin):
 
 class CapacityForActivityProfileInline(admin.TabularInline):
     model = CapacityForActivityProfile
+    max_num = 3
 
+
+def generate_pdfs_for_selected_objects(modeladmin, request, queryset):
+    selected = queryset.values_list('code', flat=True)
+    return HttpResponseRedirect(reverse('pdf-export') + '?codes=%s' % ','.join(str(code) for code in selected))
+
+generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für ausgewählte Standorte generieren")
 
 class LocationAdmin(MPTTModelAdmin):
     readonly_fields = ('code',)
     list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'load', 'load_descendants', 'code')
     inlines = [CapacityForActivityProfileInline]
+    actions = [generate_pdfs_for_selected_objects]
 
 
 class CheckinAdmin(admin.ModelAdmin):

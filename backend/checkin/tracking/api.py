@@ -15,6 +15,7 @@ from django.contrib.auth import login
 from django.contrib.auth.backends import ModelBackend
 from django.utils.translation import gettext as _
 from netaddr import IPNetwork, IPAddress
+from django.utils import timezone
 
 from .models import Profile
 

@@ -4,10 +4,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ object|default:"HfK Checkin" }}</title>
+    <title>HfK Checkin Beschilderungen generiert {% now "d.m.Y H:i" %}</title>
     <link rel="stylesheet" type="text/css" href="{% static "tracking/css/roomcard.css" %}">
 </head>
 <body>
+{% for object in objects %}
 
 <div class="info-container">
     <p class="room-number">{{ object.org_number }}</p>
@@ -28,14 +29,21 @@
 {% endif %}
 
 <footer>
-    <div class="checkin-container">
-        <p class="code">{{ object.code }}</p><div class="qr"><img src="{{ qr_svg_uri }}"/></div>
-    </div>
     <p class="footer-remark">Bitte dokumentiere deinen Aufenthalt auf checkin.hfk-bremen.de oder mit Stift & Papier.</p>
     <p class="footer-remark en">Please document your visit on checkin.hfk-bremen.de or with pen and paper.</p>
+    <div class="checkin-container">
+        <p class="code">{{ object.code }}</p><div class="qr"><img src="{{ object.qr_svg_uri }}"/></div>
+    </div>
+    <div class="notice">
+        <p class="generator">Fehlende Beschilderung oder Korrekturen? Bitte schreibe eine E-Mail an checkin@hfk-bremen.de.</p>
+        <p class="generator">Diese Beschilderung wurde generiert am {% now "d.m.Y H:i" %}.</p>
+    </div>
 </footer>
 
-<small class="generator">Diese Beschilderung wurde generiert am {% now "d.m.Y H:i" %}. Fehlende Beschilderung oder Korrekturen? Bitte schreibe eine E-Mail an checkin@hfk-bremen.de.</small>
 
+    {% if not forloop.last %}
+        <p style="page-break-before: always" ></p>
+    {% endif %}
+{% endfor %}
 </body>
 </html>

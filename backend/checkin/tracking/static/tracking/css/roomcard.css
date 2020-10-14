@@ -77,12 +77,10 @@ footer {
   position: absolute;
   bottom: 0;
 }
-.generator {
+.notice {
+  margin-bottom: -25px;
+}
+.notice p {
   font-size: 10px;
-  position: absolute;
-  bottom: 0;
-  left: -20px;
-  transform: rotate(-90deg);
-  transform-origin: left bottom;
   color: gray;
 }

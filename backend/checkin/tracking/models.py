@@ -152,8 +152,8 @@ class Location(MPTTModel):
         else:
             return "%s" % (self.org_name,)
 
-    def get_absolute_url(self):
-        return reverse('pdf-view', kwargs={'pk': self.pk }) + "?as=html"
+    # def get_absolute_url(self):
+    #     return reverse('pdf-view', kwargs={'pk': self.pk }) + "?as=html"
 
     def get_checkin_url(self):
         return reverse('location-checkin', kwargs={'code': self.code})
@@ -167,6 +167,9 @@ class CapacityForActivityProfile(models.Model):
     class Meta:
         verbose_name = _("Aktivitätsprofil und Kapzitäten")
         verbose_name_plural = _("Aktivitätsprofile und Kapzitäten")
+
+    def __str__(self):
+        return self.profile.name
 
 
 class CheckinQuerySet(models.QuerySet):
