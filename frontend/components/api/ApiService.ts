@@ -75,7 +75,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             console.error(error);
             if (error.error !== undefined) return error;
             return {
-                error: error.message || error,
+                error: "You are offline." || error,
                 status: config.httpStatuses.unprocessable,
             };
         });
