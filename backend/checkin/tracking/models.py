@@ -121,7 +121,7 @@ class Location(MPTTModel):
         verbose_name_plural = _("Räume / Standorte")
 
     def load(self):
-        return Checkin.objects.filter(location=self,time_entered__lte=timezone.now()-LOAD_LOOKBACK_TIME).count()
+        return Checkin.objects.filter(location=self).not_older_then(LOAD_LOOKBACK_TIME).active().count()
 
     def load_descendants(self):
         locations = self.get_descendants(include_self=True)
