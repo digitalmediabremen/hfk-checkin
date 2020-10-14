@@ -146,9 +146,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action(url_path="me/save", detail=False, methods=['post','put'], permission_classes=[AllowAny])
     def save(self, request, pk=None):
         profile_serializer = ProfileSerializer(data=request.data)
-        if request.user and request.user.profile:
-            profile = request.user.profile
-            profile_serializer = ProfileSerializer(profile, data=request.data)
+        if request.user:
+            try:
+                profile = request.user.profile
+                profile_serializer = ProfileSerializer(profile, data=request.data)
+            except AttributeError:
+                pass
+
         if not profile_serializer.is_valid():
             return Response({
                 'detail': ERROR_NOT_VALID_WITH_SUMMARY % ", ".join([", ".join(err) for key, err in profile_serializer.errors.items()]) if profile_serializer.errors else ERROR_NOT_VALID,
