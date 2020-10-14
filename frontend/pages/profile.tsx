@@ -137,8 +137,6 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = withLocaleProp(
     async (context) => {
-        console.log("cookie: ", context.req.headers.cookie);
-        // console.log("headers", context.req.headers);
         const cookie = context.req.headers.cookie!;
         const empty = { props: {} };
 
@@ -146,7 +144,12 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
             cookie,
         });
 
-        if (!!error) return empty;
+        if (!!error) return {
+            props: {
+                error,
+                status
+            }
+        };
 
         // redirect if phone already present
         // if (!!profile?.phone) redirectServerSide(context.res, appUrls.enterCode);

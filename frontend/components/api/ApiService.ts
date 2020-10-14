@@ -41,7 +41,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         }))
         .then(({ data, status }) => {
             if (data === undefined) throw {
-                status: 1,
+                status: config.httpStatuses.unprocessable,
                 error: "Response could not be serialized"
             } 
             if (status >= 400) {
@@ -56,6 +56,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                     error: data.detail,
                 };
             }
+
             return { data, status };
         })
         .then(({ data: typedData, status }) => {
@@ -75,7 +76,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             if (error.error !== undefined) return error;
             return {
                 error: error.message || error,
-                status: 0,
+                status: config.httpStatuses.unprocessable,
             };
         });
 };

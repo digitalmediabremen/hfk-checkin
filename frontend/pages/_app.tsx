@@ -6,9 +6,10 @@ import AppWrapper from "../components/common/AppWrapper";
 import ErrorDispatcher from "../components/common/ErrorDispatcher";
 import { getInitialLocale, LocaleProvider } from "../localization";
 import "../styles/globals.css";
+import ErrorBoundary from "../components/common/ErrorBoundary";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-    const { error, locale, ...props } = pageProps;
+    const { error, status, locale, ...props } = pageProps;
 
     return (
         <>
@@ -18,15 +19,17 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                     content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
                 />
             </Head>
-            <AppStateProvider>
-                <AppWrapper>
-                    <LocaleProvider locale={locale || getInitialLocale()}>
-                        <ErrorDispatcher error={error}>
-                            <Component error={error} {...props} />
-                        </ErrorDispatcher>
-                    </LocaleProvider>
-                </AppWrapper>
-            </AppStateProvider>
+            <ErrorBoundary>
+                <AppStateProvider>
+                    <AppWrapper>
+                        <LocaleProvider locale={locale || getInitialLocale()}>
+                            <ErrorDispatcher status={status} error={error}>
+                                <Component error={error} {...props} />
+                            </ErrorDispatcher>
+                        </LocaleProvider>
+                    </AppWrapper>
+                </AppStateProvider>
+            </ErrorBoundary>
         </>
     );
 };

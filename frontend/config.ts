@@ -13,6 +13,7 @@ export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
 export const httpStatuses = {
     "notAuthorized": 403,
     "alreadyCheckedIn": 202,
+    "unprocessable": 500
 } as const;
 export const appUrls = {
     "profile": "/profile",

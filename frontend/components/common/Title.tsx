@@ -3,7 +3,7 @@ import theme from "../../styles/theme";
 
 interface TitleProps {
     bold?: true;
-    subtext?: string;
+    subtext?: string | React.ReactNode;
 }
 
 const Title: React.FunctionComponent<TitleProps> = ({ children, bold, subtext }) => {

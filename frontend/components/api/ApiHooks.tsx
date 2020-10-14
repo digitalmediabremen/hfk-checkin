@@ -32,8 +32,7 @@ export const useApi = <RT extends {}>(config?: {
 
     const handleError = (error: string, status: number) => {
         setError(error);
-        if ((status >= 400 || status === 0) && !c.onlyLocalErrorReport) {
-            console.log("error");
+        if (!c.onlyLocalErrorReport) {
             dispatch({
                 type: "status",
                 status: {
@@ -53,8 +52,10 @@ export const useApi = <RT extends {}>(config?: {
             setRequestInProgress(true);
             const { error, data, status } = await request();
             setRequestInProgress(false);
-            if (!!error || status >= 400) {
+            if (error && status <= 500) {
                 handleError(error || `Unknown Error (${status})`, status);
+            } else if(!!error && status > 500) {
+                throw(error)
             } else if (!c.onlyLocalErrorReport) {
                 // reset error message
                 // but only if request is reporting globally

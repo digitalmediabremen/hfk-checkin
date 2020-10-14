@@ -101,8 +101,6 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
             cookie,
         });
 
-        // redirect when not logged in
-        console.log("status", status);
         if (status === httpStatuses.notAuthorized) {
             redirectServerSide(context.res, appUrls.createProfile);
             return empty;
@@ -111,7 +109,8 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
         if (!!error) {
             return {
                 props: {
-                    error
+                    error,
+                    status
                 }
             }
         }

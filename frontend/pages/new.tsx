@@ -13,7 +13,6 @@ const NewProfilePage: NextPage = () => {
     const handleIntern = () => {
         const url = config.appUrls.redirect;
         router.replace(url);
-        console.log(url);
     };
     const handleGuest = () => {
         router.push(config.appUrls.profile);

@@ -3,14 +3,17 @@ import { useAppState } from "./AppStateProvider";
 
 interface ErrorDispatcherProps {
     error?: string;
+    status?: number;
 }
 
 const ErrorDispatcher: React.FunctionComponent<ErrorDispatcherProps> = ({
     children,
     error,
+    status
 }) => {
     const { dispatch } = useAppState();
     React.useEffect(() => {
+        if (!!status && status >= 500) throw(error);
         if (!!error)
             dispatch({
                 type: "status",
@@ -19,7 +22,7 @@ const ErrorDispatcher: React.FunctionComponent<ErrorDispatcherProps> = ({
                     isError: true,
                 },
             });
-    }, [error]);
+    }, [error, status]);
 
     return <>{children || null}</>;
 };

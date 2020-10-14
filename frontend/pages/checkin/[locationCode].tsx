@@ -121,12 +121,11 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
             return empty;
         }
 
-        console.log("this is an error:", error);
-
         if (!!error)
             return {
                 props: {
                     error,
+                    status
                 },
             };
 
