@@ -1,0 +1,86 @@
+* {
+  margin:0;
+  padding:0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-size: 35px;
+}
+
+@page {
+  size: A4; margin: 1.3cm;
+}
+
+body {
+  font-family: 'DINPro', sans-serif;
+  color: black;
+}
+
+.en {
+  font-style: italic;
+}
+
+.room-number {
+  font-size: 1rem;
+}
+.room-name {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+table.capacity-table {
+}
+td {
+  vertical-align: bottom;
+}
+
+.capacity {
+  font-size: 4rem;
+  text-align: center;
+}
+.capacity-label {
+  font-size: 0.5rem;
+  margin-left: 2em;
+}
+.capacity-label-cell {
+  padding-bottom: 0.8em;
+}
+.footer-remark {
+  font-size: 0.5rem;
+}
+.domain-remark {
+  font-size: 0.5rem;
+  float: right;
+}
+.checkin-container {
+  margin: 1em 0;
+  vertical-align: bottom;
+  position: relative;
+  width: 100%;
+}
+.code {
+  font-size: 4.8rem;
+  font-weight: bold;
+  border: 8px solid black;
+  border-radius: 8px;
+  display: inline-block;
+  padding: 0 40px;
+}
+.qr {
+  display: inline-block;
+  position: absolute;
+  bottom: -25px;
+}
+.qr, .qr img {
+  height: 280px;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+}
+.notice {
+  margin-bottom: -25px;
+}
+.notice p {
+  font-size: 10px;
+  color: gray;
+}
