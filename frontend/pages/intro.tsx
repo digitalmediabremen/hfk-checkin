@@ -14,14 +14,13 @@ const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
     return (
         <>
             <FormGroup>
-                <Title>Welcome / Intro</Title>
+                <Title>Willkommen</Title>
                 <Text paragraph>
-                    This is the start page which will explain what this is and
-                    how it works.
+                    Hier wird dir die App vorgestellt
                 </Text>
             </FormGroup>
             <Button outline onClick={() => router.push(appUrls.createProfile)}>
-                Anmelden
+                Los gehts
             </Button>
         </>
     );

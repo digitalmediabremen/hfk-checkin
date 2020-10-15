@@ -18,22 +18,26 @@ const NewProfilePage: NextPage = () => {
         router.push(config.appUrls.setprofile);
     };
 
-    const { t, locale} = useTranslation("createProfile");
+    const { t, locale } = useTranslation("createProfile");
 
     return (
         <>
             <FormGroup>
-                <Subtitle>HFK BREMEN</Subtitle>
-
                 <Text paragraph>
                     {t(
-                        `Nur mit Kontaktnachverfolgung sind Präsenzlehe, Nutzung der
-                    Überäume, Ateliers und Werkstätten möglich. Bitte
-                    Unterstütze die Maßnahmen durch Tragen einer
-                    Mund-Nase-Bedeckung, Abstandsregeln und
-                    eigenverantwortlicher Protokollierung deiner Anwesenheit.`,
+                        `Nur mit Kontaktnachverfolgung sind Präsenzlehe, 
+                        Nutzung der Überäume, Ateliers und Werkstätten möglich.`,
                         {},
-                        "follow-the-rules"
+                        "follow-the-rules-1"
+                    )}
+                </Text>
+                <Text paragraph>
+                    {t(
+                        `Bitte Unterstütze die Maßnahmen durch Tragen einer 
+                        Mund-Nase-Bedeckung, Abstandsregeln und eigenverantwortlicher 
+                        Protokollierung deiner Anwesenheit.`,
+                        {},
+                        "follow-the-rules-2"
                     )}
                 </Text>
             </FormGroup>
