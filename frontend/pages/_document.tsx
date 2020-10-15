@@ -19,6 +19,7 @@ class MyDocument extends Document {
         return (
             <Html>
                 <Head>
+                    <title>HfK-Checkin</title>
                     <link rel="manifest" href="/manifest.json" />
                     <link
                         rel="icon"
@@ -28,8 +29,8 @@ class MyDocument extends Document {
 
                     <meta name="mobile-web-app-capable" content="yes" />
                     <meta name="apple-mobile-web-app-capable" content="yes" />
-                    <meta name="application-name" content="Checkin" />
-                    <meta name="apple-mobile-web-app-title" content="Checkin" />
+                    <meta name="application-name" content="HfK-Checkin" />
+                    <meta name="apple-mobile-web-app-title" content="HfK-Checkin" />
                     <meta name="theme-color" content="#D81830" />
 
                     <meta
@@ -52,7 +53,7 @@ class MyDocument extends Document {
                         rel="apple-touch-icon"
                         type="image/png"
                         sizes="512x512"
-                        href="icons/icon-512x512"
+                        href="icons/apple-touch-icon"
                     />
                     <link
                         rel="icon"
