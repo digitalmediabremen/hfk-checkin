@@ -16,9 +16,9 @@ export const httpStatuses = {
     "unprocessable": 500
 } as const;
 export const appUrls = {
-    "profile": "/profile",
-    "notVerified": "/check-identity",
-    "redirect": `${authRedirectUrl}/?next=${appBase}/profile`,
+    "setprofile": "/set-profile",
+    "verifyProfile": "/verify-profile",
+    "redirect": `${authRedirectUrl}/?next=${appBase}/set-profile`,
     "createProfile": "/new",
     "enterCode": "/",
     "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],

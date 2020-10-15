@@ -85,7 +85,7 @@ export const updateProfileRequest = async (
     profile: ProfileUpdate,
     headers?: HeadersInit
 ) =>
-    await apiRequest("profile/me/save/", {
+    await apiRequest<Profile>("profile/me/save/", {
         method: "POST",
         body: JSON.stringify(profile),
         headers,

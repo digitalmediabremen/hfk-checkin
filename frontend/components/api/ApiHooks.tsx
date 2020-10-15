@@ -79,7 +79,7 @@ export const useApi = <RT extends {}>(config?: {
 };
 
 export const useUpdateProfile = () => {
-    const { request, ...other } = useApi();
+    const { request, ...other } = useApi<Profile>();
 
     return {
         updateProfile: (profile: ProfileUpdate) =>

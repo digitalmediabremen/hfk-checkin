@@ -22,7 +22,7 @@ const translation: Translation = {
             ["Auschecken"]: "Check out",
             ["Erfolgreich ausgecheckt"]: "Checkout successful"
         },
-        profile: {
+        setprofile: {
             ["Vorname"]: "First name",
             ["Nachname"]: "Last name",
             ["Telefonnummer"]: "Phone number",

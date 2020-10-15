@@ -160,7 +160,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
             <div className="status-bar" data-pathname={router.pathname}>
                 {profile && (
                     <div className="bar">
-                        <Link href={appUrls.profile}>
+                        <Link href={appUrls.setprofile}>
                             <span className="profile">
                                 <b>
                                 {profile.first_name} {profile.last_name}{" "}

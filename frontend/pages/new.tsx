@@ -15,7 +15,7 @@ const NewProfilePage: NextPage = () => {
         router.replace(url);
     };
     const handleGuest = () => {
-        router.push(config.appUrls.profile);
+        router.push(config.appUrls.setprofile);
     };
 
     const { t, locale} = useTranslation("createProfile");

@@ -45,12 +45,17 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     };
     const isUserCreation = !props.profile;
 
-    const { loading, success, updateProfile } = useUpdateProfile();
+    const { loading, success, updateProfile, result: updatedProfile } = useUpdateProfile();
     const router = useRouter();
-    const { t } = useTranslation("profile");
+    const { t } = useTranslation("setprofile");
 
     useEffect(() => {
-        if (success) router.push(appUrls.enterCode);
+        if (!success) return;
+        if (!!updatedProfile && !updatedProfile.verified) {
+            router.push(appUrls.verifyProfile);
+            return;
+        }
+        router.push(appUrls.enterCode);
     }, [success]);
 
     const formik = useFormik<ProfileUpdate>({
@@ -118,10 +123,10 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             </FormGroup>
             <ButtonWithLoading
                 loading={loading}
-                disabled={!formik.isValid}
+                disabled={!formik.dirty || !formik.isValid}
                 onClick={() => {}}
             >
-                {t("Registrieren")}
+                {isUserCreation ? t("Registrieren") : t("Speichern") }
             </ButtonWithLoading>
             <p>
                 {t(
