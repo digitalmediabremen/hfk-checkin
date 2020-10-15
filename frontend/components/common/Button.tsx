@@ -6,6 +6,7 @@ interface ButtonProps {
     onClick: () => void;
     disabled?: boolean;
     outline?: true;
+    noMargin?: true;
 }
 
 export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
@@ -26,7 +27,7 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
 };
 
 export const Button: SFC<ButtonProps> = (props) => {
-    const { children, outline, ...otherProps } = props;
+    const { children, outline, noMargin, ...otherProps } = props;
 
     return (
         <>

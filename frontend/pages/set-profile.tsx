@@ -11,6 +11,7 @@ import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
 import { useTranslation, withLocaleProp } from "../localization";
 import Profile, { ProfileUpdate } from "../model/Profile";
+import { useAppState } from "../components/common/AppStateProvider";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -48,9 +49,16 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const { loading, success, updateProfile, result: updatedProfile } = useUpdateProfile();
     const router = useRouter();
     const { t } = useTranslation("setprofile");
+    const { dispatch } = useAppState();
 
     useEffect(() => {
         if (!success) return;
+        if (!!updatedProfile) {
+            dispatch({
+                type: "profile",
+                profile: updatedProfile
+            })
+        }
         if (!!updatedProfile && !updatedProfile.verified) {
             router.push(appUrls.verifyProfile);
             return;

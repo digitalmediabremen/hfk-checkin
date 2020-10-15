@@ -52,7 +52,8 @@ export const CheckinComponent: React.FunctionComponent<{
                 {org_name}
             </Title>
             <Title subtext={t("mit dir eingecheckt")}>
-                {load !== 0 && "ca."} {load}{!!capacity && ` / ${capacity}`}
+                {/* TODO: remove circa */}
+                {load}{!!capacity && ` / ${capacity}`}
             </Title>
             <br />
             <ButtonWithLoading
@@ -84,7 +85,8 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
     error,
     alreadyCheckedIn,
 }) => {
-    if (!checkin) return <>Checkin Failed</>;
+    const {t} = useTranslation();
+if (!checkin) return <><Title subtext={error}>{t("Checkin fehlgeschlagen")}</Title></>;
 
     return (
         <CheckinComponent

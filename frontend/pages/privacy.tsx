@@ -1,15 +1,12 @@
+import * as React from "react";
+import Title from "../components/common/Title";
+import { useTranslation } from "../localization";
 
-
-import * as React from 'react';
-import Title from '../components/common/Title';
-
-interface  PrivacyPageProps {
-}
+interface PrivacyPageProps {}
 
 const PrivacyPage: React.FunctionComponent<PrivacyPageProps> = (props) => {
-  return (
-      <Title>Hallo</Title>
-  );
+    const { t } = useTranslation();
+    return <Title>{t("Datenschutz")}</Title>;
 };
 
 export default PrivacyPage;

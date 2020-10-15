@@ -1,13 +1,12 @@
+import Link from "next/link";
+import { useRouter } from "next/router";
 import * as React from "react";
+import { CSSTransition } from "react-transition-group";
+import { appUrls } from "../../config";
+import { useTranslation } from "../../localization";
+import Profile from "../../model/Profile";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
-import Profile from "../../model/Profile";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { CSSTransition } from "react-transition-group";
-import { setNestedObjectValues } from "formik";
-import { useTranslation } from "../../localization";
-import { appUrls } from "../../config";
 
 interface ErrorBarProps {
     profile?: Profile;
@@ -93,7 +92,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     text-align: center;
                     border-radius: ${theme.borderRadius}px;
                     border: 2px solid ${theme.primaryColor};
-                    transition: transform .2s, opacity .2s;
+                    transition: transform 0.2s, opacity 0.2s;
                     transform: scale(1);
                     opacity: 1;
                 }
@@ -103,13 +102,16 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                 }
 
                 .status-bar[data-pathname="/"] .icon {
-                    transform: scale(.8);
+                    transform: scale(0.8);
                     opacity: 0;
                 }
 
                 .status-bar-spacer {
                     width: 100%;
-                    height: calc(${theme.spacing(6)}px + 1.15em + 1px);
+
+                    //safari fix
+                    font-size: 1em;
+                    height: calc(${theme.spacing(6)}px + 1.5em + 1px);
                     display: block;
                 }
 
@@ -158,24 +160,34 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
             `}</style>
             <div className="status-bar-spacer"></div>
             <div className="status-bar" data-pathname={router.pathname}>
-                {profile && (
-                    <div className="bar">
-                        <Link href={appUrls.setprofile}>
-                            <span className="profile">
-                                <b>
-                                {profile.first_name} {profile.last_name}{" "}
-                                {!profile.verified &&
-                                    ` (${t("nicht verifiziert")})`}
-                                </b><br />
-                                {!!profile.phone && profile.phone}
-                            </span>
-                        </Link>
-                        <Link href={appUrls.enterCode}>
-                            <span className="icon">#</span>
-                        </Link>
-                    </div>
-                )}
-                {!profile && <div className="bar">HFK</div>}
+                <div className="bar">
+                    <>
+                        {profile && (
+                            <Link href={appUrls.setprofile}>
+                                <span className="profile">
+                                    <b>
+                                        {profile.first_name} {profile.last_name}{" "}
+                                        {!profile.verified &&
+                                            ` (${t("nicht verifiziert")})`}
+                                    </b>
+                                    <br />
+                                    {!!profile.phone && profile.phone}
+                                </span>
+                            </Link>
+                        )}
+                        {!profile && (
+                            <>
+                                HFK
+                                <br />
+                                Checkin
+                            </>
+                        )}
+                    </>
+                    <Link href={appUrls.enterCode}>
+                        <span className="icon">#</span>
+                    </Link>
+                </div>
+
                 <CSSTransition
                     timeout={300}
                     classNames="status"
