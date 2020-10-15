@@ -19,6 +19,7 @@ const AppWrapper: SFC = (props) => {
                     }
                     .wrapper {
                         min-height: 100vh;
+                        padding-bottom: 30px;
                         // min-height: calc(100vh - 60px);
                     }
                     .footer {
@@ -29,14 +30,7 @@ const AppWrapper: SFC = (props) => {
                         padding: 0 ${theme.spacing(3)}px;
                         color: ${theme.primaryColor};
                     }
-
-                    @media not all and (min-resolution: 0.001dpcm) {
-                        @media {
-                            .footer {
-                                margin-top: -84px;
-                            }
-                        }
-                    }
+                    
                     .footer span {
                         padding-right: ${theme.spacing(4)}px;
                     }
