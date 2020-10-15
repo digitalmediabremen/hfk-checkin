@@ -7,6 +7,7 @@ import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import Text from "../components/common/Text";
 import { useTranslation } from "../localization";
+import Notice from "../components/common/Notice";
 
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
@@ -48,6 +49,7 @@ const NewProfilePage: NextPage = () => {
                 </Button>
             </FormGroup>
             <Subtitle>{t("Gäste")}</Subtitle>
+            <Notice>Verifikation mit Identitätsnachweis nach der Registrierung notwendig.</Notice>
             <Button outline onClick={handleGuest}>
                 {t("Gastzugang")}
             </Button>
