@@ -1,15 +1,14 @@
-import React, { SFC, useEffect } from "react";
+import Link from "next/link";
+import React, { SFC } from "react";
+import { appUrls } from "../../config";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
 import StatusBar from "./StatusBar";
-import { useProfile } from "../api/ApiHooks";
-import { appUrls } from "../../config";
-import Link from "next/link";
 
 const AppWrapper: SFC = (props) => {
     const { children } = props;
-    const { profile, getProfile } = useProfile();
-    useEffect(() => getProfile(), []);
+    const { appState } = useAppState();
+    const { profile } = appState;
 
     return (
         <>
@@ -19,14 +18,24 @@ const AppWrapper: SFC = (props) => {
                         margin: ${theme.spacing(3)}px;
                     }
                     .wrapper {
-                        min-height: calc(100vh - 60px);
+                        min-height: 100vh;
+                        // min-height: calc(100vh - 60px);
                     }
                     .footer {
+                        margin-top: -60px;
                         height: 60px;
                         display: flexbox;
                         align-items: center;
                         padding: 0 ${theme.spacing(3)}px;
                         color: ${theme.primaryColor};
+                    }
+
+                    @media not all and (min-resolution: 0.001dpcm) {
+                        @media {
+                            .footer {
+                                margin-top: -84px;
+                            }
+                        }
                     }
                     .footer span {
                         padding-right: ${theme.spacing(4)}px;
