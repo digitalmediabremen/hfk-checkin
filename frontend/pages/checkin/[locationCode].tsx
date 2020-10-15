@@ -4,7 +4,7 @@ import * as React from "react";
 import { useCheckout } from "../../components/api/ApiHooks";
 import {
     doCheckinRequest,
-    redirectServerSide
+    redirectServerSide,
 } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../../components/common/Button";
@@ -27,8 +27,11 @@ export const CheckinComponent: React.FunctionComponent<{
     const { dispatch } = useAppState();
     const router = useRouter();
     const { t } = useTranslation("checkin");
+    const isRootLocation = capacity === -1;
 
-    React.useEffect(() => { window?.navigator?.vibrate?.(200) }, []);
+    React.useEffect(() => {
+        window?.navigator?.vibrate?.(200);
+    }, []);
 
     React.useEffect(() => {
         if (!success) return;
@@ -51,10 +54,13 @@ export const CheckinComponent: React.FunctionComponent<{
             <Title bold subtext={org_number}>
                 {org_name}
             </Title>
-            <Title subtext={t("mit dir eingecheckt")}>
-                {/* TODO: remove circa */}
-                {load}{!!capacity && ` / ${capacity}`}
-            </Title>
+            {!isRootLocation && (
+                <Title subtext={t("mit dir eingecheckt")}>
+                    {/* TODO: remove circa */}
+                    {load}
+                    {!!capacity && ` / ${capacity}`}
+                </Title>
+            )}
             <br />
             <ButtonWithLoading
                 loading={checkoutInProgress}
@@ -85,8 +91,13 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
     error,
     alreadyCheckedIn,
 }) => {
-    const {t} = useTranslation();
-if (!checkin) return <><Title subtext={error}>{t("Checkin fehlgeschlagen")}</Title></>;
+    const { t } = useTranslation();
+    if (!checkin)
+        return (
+            <>
+                <Title subtext={error}>{t("Checkin fehlgeschlagen")}</Title>
+            </>
+        );
 
     return (
         <CheckinComponent
@@ -127,7 +138,7 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
             return {
                 props: {
                     error,
-                    status
+                    status,
                 },
             };
 
