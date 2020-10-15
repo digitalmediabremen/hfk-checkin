@@ -7,6 +7,7 @@ import { useTranslation } from "../../localization";
 import Profile from "../../model/Profile";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
+import EllipseText from "./EllipseText";
 
 interface ErrorBarProps {
     profile?: Profile;
@@ -63,12 +64,6 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     right: 0;
                     z-index: 200;
                     background: #fff;
-                }
-
-                .profile {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
                 }
 
                 .profile:hover {
@@ -172,13 +167,16 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                         {profile && (
                             <Link href={appUrls.setprofile}>
                                 <span className="profile">
-                                    <b>
-                                        {profile.first_name} {profile.last_name}{" "}
-                                        {!profile.verified &&
-                                            ` (${t("nicht verifiziert")})`}
-                                    </b>
-                                    <br />
-                                    {!!profile.phone && profile.phone}
+                                    <EllipseText>
+                                        <b>
+                                            {profile.first_name}{" "}
+                                            {profile.last_name}{" "}
+                                            {!profile.verified &&
+                                                ` (${t("nicht verifiziert")})`}
+                                        </b>
+                                        <br />
+                                        {!!profile.phone && profile.phone}
+                                    </EllipseText>
                                 </span>
                             </Link>
                         )}

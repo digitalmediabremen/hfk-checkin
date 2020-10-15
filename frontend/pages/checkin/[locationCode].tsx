@@ -56,7 +56,6 @@ export const CheckinComponent: React.FunctionComponent<{
             </Title>
             {!isRootLocation && (
                 <Title subtext={t("mit dir eingecheckt")}>
-                    {/* TODO: remove circa */}
                     {load}
                     {!!capacity && ` / ${capacity}`}
                 </Title>
@@ -73,9 +72,6 @@ export const CheckinComponent: React.FunctionComponent<{
             <br />
             <Subtitle>{t("Letzte Checkins")}</Subtitle>
             <LastCheckins checkins={profile.last_checkins.slice(1)} />
-            {/* <Button outline onClick={() => doCheckout(code)}>
-                CHECK OUT 1.20.100
-            </Button> */}
         </>
     );
 };
