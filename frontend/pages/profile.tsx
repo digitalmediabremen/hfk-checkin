@@ -146,7 +146,6 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
 
         if (!!error) return {
             props: {
-                error,
                 status
             }
         };

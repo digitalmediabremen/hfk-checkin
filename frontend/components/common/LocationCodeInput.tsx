@@ -61,7 +61,7 @@ const DigitInputElement = React.forwardRef<
                     top: 0.2em;
                     right: 0;
                     bottom: 0.15em;
-                    left: 0.20em;
+                    left: 0.2em;
                 }
 
                 div.digit {
@@ -80,13 +80,22 @@ const DigitInputElement = React.forwardRef<
 
                 .outline {
                     outline: 2px solid ${theme.primaryColor};
-                    outline-offset: -1px
+                    outline-offset: -1px;
                 }
             `}</style>
             <label>
-                <div className={`digit ${outline ? "outline" : "" }`}>{props.value}</div>
+                <div className={`digit ${outline ? "outline" : ""}`}>
+                    {props.value}
+                </div>
                 <div className="cursor"></div>
-                {outline && <input disabled={disabled} {...props} ref={ref} inputMode="decimal" />}
+                {outline && (
+                    <input
+                        disabled={disabled}
+                        {...props}
+                        ref={ref}
+                        inputMode="decimal"
+                    />
+                )}
             </label>
         </>
     );
@@ -96,9 +105,9 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
     const { code, onChange, disabled } = props;
 
     const handleChange = (code: string) => {
-        if(disabled) return;
-        onChange(code.replace(/ /g, ''))
-    }
+        if (disabled) return;
+        onChange(code.replace(/ /g, ""));
+    };
 
     const digits = useDigitInput({
         acceptedCharacters: /^[0-9]$/,
@@ -117,6 +126,12 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
                     align-items: center;
                     width: 100%;
                     justify-content: center;
+                }
+                @media screen and (min-width: 500px) {
+                    div {
+                        font-size: 6em;
+                        margin-left: -.15em;
+                    }
                 }
             `}</style>
             <div>

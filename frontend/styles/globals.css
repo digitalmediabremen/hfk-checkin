@@ -5,6 +5,12 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+#__next {
+    max-width: 500px;
+    margin: 0 auto;
 }
 
 textarea, select, input, button { outline: none; }

@@ -20,8 +20,8 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
         Array<{ message: string; isError: boolean; id?: number }>
     >(!!status ? [status] : []);
     const { t } = useTranslation();
-
     const [timeoutId, setTimeoutId] = React.useState<any>(undefined);
+    const router = useRouter();
 
     React.useEffect(() => {
         if (status) {
@@ -66,8 +66,8 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     background: #fff;
                 }
 
-                .profile {
-                    font-weight: bold;
+                .profile:hover {
+                    cursor: pointer;
                 }
 
                 .status.error {
@@ -78,7 +78,33 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                 }
 
                 .bar {
-                    padding: ${theme.spacing(3)}px ${theme.spacing(3)}px;
+                    padding: ${theme.spacing(2)}px ${theme.spacing(3)}px;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .bar .icon {
+                    font-size: 1.5em;
+                    margin-left: auto;
+                    font-weight: bold;
+                    width: 1.7em;
+                    height: 1.7em;
+                    line-height: 1.5em;
+                    text-align: center;
+                    border-radius: ${theme.borderRadius}px;
+                    border: 2px solid ${theme.primaryColor};
+                    transition: transform .2s, opacity .2s;
+                    transform: scale(1);
+                    opacity: 1;
+                }
+
+                .bar .icon:hover {
+                    cursor: pointer;
+                }
+
+                .status-bar[data-pathname="/"] .icon {
+                    transform: scale(.8);
+                    opacity: 0;
                 }
 
                 .status-bar-spacer {
@@ -88,13 +114,8 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                 }
 
                 .status.bar {
+                    // overwrite
                     padding: ${theme.spacing(0)}px ${theme.spacing(3)}px;
-                    height: 100%;
-                }
-
-                .status span {
-                    display: flex;
-                    align-items: center;
                     height: 100%;
                 }
 
@@ -136,19 +157,23 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                 }
             `}</style>
             <div className="status-bar-spacer"></div>
-            <div className="status-bar">
+            <div className="status-bar" data-pathname={router.pathname}>
                 {profile && (
-                    <Link href={appUrls.profile}>
-                        <div className="bar">
-                            {/* <span onClick={() => router.back()}>Back</span>{" "}-{" "} */}
+                    <div className="bar">
+                        <Link href={appUrls.profile}>
                             <span className="profile">
+                                <b>
                                 {profile.first_name} {profile.last_name}{" "}
                                 {!profile.verified &&
                                     ` (${t("nicht verifiziert")})`}
+                                </b><br />
+                                {!!profile.phone && profile.phone}
                             </span>
-                            {profile.phone && ` tel: (${profile.phone})`}
-                        </div>
-                    </Link>
+                        </Link>
+                        <Link href={appUrls.enterCode}>
+                            <span className="icon">#</span>
+                        </Link>
+                    </div>
                 )}
                 {!profile && <div className="bar">HFK</div>}
                 <CSSTransition
