@@ -27,7 +27,7 @@ const translation: Translation = {
             ["Nachname"]: "Last name",
             ["Telefonnummer"]: "Phone number",
             ["Registrieren"]: "Register",
-            ["data-protection-notice"]: "Your information is exclusively used to trace infections in case of an infection"
+            // ["data-protection-notice"]: "Your information is exclusively used to trace infections in case of an infection"
         }
     },
 };
