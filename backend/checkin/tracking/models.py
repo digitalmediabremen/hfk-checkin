@@ -18,8 +18,8 @@ LOAD_LOOKBACK_TIME = timedelta(hours=24)
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
-    first_name = models.CharField(_("Vorname"), max_length=255)
-    last_name = models.CharField(_("Nachname"), max_length=255)
+    first_name = models.CharField(_("Vorname"), max_length=1000)
+    last_name = models.CharField(_("Nachname"), max_length=1000)
     phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
                                  message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
@@ -129,11 +129,13 @@ class Location(MPTTModel):
     def load(self):
         if self.hide_load:
             return -1
-        return Checkin.objects.filter(location=self).not_older_then(LOAD_LOOKBACK_TIME).active().count()
+        return self.load_descendants()
+        #return Checkin.objects.filter(location=self).not_older_then(LOAD_LOOKBACK_TIME).active().count()
 
     def load_descendants(self):
         locations = self.get_descendants(include_self=True)
         # only works in postgres: .distinct('profile')
+        # not_older_then(LOAD_LOOKBACK_TIME).active()
         return Checkin.objects.filter(location__in=locations).not_older_then(LOAD_LOOKBACK_TIME).active().count()
 
     @property
@@ -187,7 +189,7 @@ class CheckinQuerySet(models.QuerySet):
         return self.filter(time_left=None)
 
     def not_older_then(self, oldest=LOAD_LOOKBACK_TIME):
-        return self.filter(time_entered__lte=timezone.now()-oldest)
+        return self.filter(time_entered__gte=timezone.now()-oldest)
 
     def last_checkin_for_profile_at_location(self, profile, location):
         return self.order_by('-time_entered').filter(profile=profile, location=location)[:1]

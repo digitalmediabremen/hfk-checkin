@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 import json
-
+from django.utils.translation import ugettext_lazy as _
 
 class JSON404Middleware(object):
     """
@@ -17,7 +17,7 @@ class JSON404Middleware(object):
             response = HttpResponse(json.dumps(data), content_type='application/json', status=404)
 
         if response.status_code == 500 and 'application/json' not in response['content-type']:
-            data = {'detail': 'server error'.format(request.path)}
+            data = {'detail': _('Es ist ein Fehler aufgetreten.').format(request.path)}
             response = HttpResponse(json.dumps(data), content_type='application/json', status=500)
 
         return response

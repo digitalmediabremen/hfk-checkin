@@ -158,7 +158,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
                 'detail': ERROR_NOT_VALID_WITH_SUMMARY % ", ".join([", ".join(err) for key, err in profile_serializer.errors.items()]) if profile_serializer.errors else ERROR_NOT_VALID,
                 'errors': profile_serializer.errors,
                 'non_field_errors': getattr(profile_serializer, 'non_field_errors', None),
-            }, status=status.HTTP_403_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         # TODO join User + Profile model OR session against Profile OR custom User without username etc. OR subclass User
         # FIXME unique user will now fail
