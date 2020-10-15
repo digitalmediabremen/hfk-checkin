@@ -12,6 +12,7 @@ import { appUrls } from "../config";
 import { useTranslation, withLocaleProp } from "../localization";
 import Profile, { ProfileUpdate } from "../model/Profile";
 import { useAppState } from "../components/common/AppStateProvider";
+import Text from "../components/common/Text";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -128,7 +129,16 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                             : undefined
                     }
                 />
+                            <Text>
+                {t(
+                    `Deine Angaben werden ausschließlich 
+                    zur Nachverfolgung im Infektionsfall verwendet.`,
+                    {},
+                    "data-protection-notice"
+                )}
+            </Text>
             </FormGroup>
+
             <ButtonWithLoading
                 loading={loading}
                 disabled={!formik.dirty || !formik.isValid}
@@ -136,14 +146,6 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             >
                 {isUserCreation ? t("Registrieren") : t("Speichern") }
             </ButtonWithLoading>
-            <p>
-                {t(
-                    `Deine Angaben werden ausschließlich 
-                    zur Nachverfolgung im Infektionsfall verwendet.`,
-                    {},
-                    "data-protection-notice"
-                )}
-            </p>
         </form>
     );
 };
