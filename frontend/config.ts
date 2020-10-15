@@ -31,3 +31,4 @@ export const production = process.env.NODE_ENV === "production"
 
 // language
 export const defaultLocale = "de" as const;
+export const baseLocale = "de" as const;

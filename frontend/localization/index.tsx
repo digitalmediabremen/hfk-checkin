@@ -1,12 +1,9 @@
 import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
-import {
-    GetServerSidePropsContext,
-    GetServerSidePropsResult
-} from "next";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { createContext, SFC, useContext } from "react";
-import { appUrls, defaultLocale, production } from "../config";
+import { appUrls, defaultLocale, production, baseLocale } from "../config";
 import translation from "./translation";
 
 export type Translation = Record<
@@ -21,14 +18,16 @@ export const localeContext = createContext<{ locale: string }>({
 });
 
 export const getInitialLocale = (headers?: IncomingHttpHeaders) => {
+    // force german until english is properly translated
+    return "de";
     if (headers) {
         // server
         return (
+            // @ts-ignore
             headers["accept-language"]?.split(",")?.[0]?.split("-")?.[0] ||
             defaultLocale
         );
     }
-    // maybe client
     return getUserLocale()?.split("-")[0] || defaultLocale;
 };
 
@@ -38,7 +37,7 @@ export const LocaleProvider: SFC<{ locale: string }> = ({
     locale,
     children,
 }) => {
-    return <Provider value={{ locale: locale }}>{children}</Provider>;
+    return <Provider value={{ locale }}>{children}</Provider>;
 };
 
 type PatternInput = string | number;
@@ -61,7 +60,7 @@ export const useTranslation = (inModule: TranslationModules = "common") => {
                             : string
                     }`
             );
-        if (locale === defaultLocale) return replace(s)!;
+        if (locale === baseLocale) return replace(s)!;
         const translatedString =
             replace(translation[locale]?.[inModule]?.[id]) ||
             replace(translation[locale]?.["common"]?.[id]);
