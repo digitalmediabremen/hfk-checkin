@@ -24,12 +24,19 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                     width: 4.5em;
                     display: inline-block;
                     flex-shrink: 0;
+                    flex-grow: .5;
+                    flex-basis: 3.5em;
                 }
 
                 .room-name {
                     font-weight: bold;
-                    display: inline;
-                    flex-shrink: 1;
+                    display: inline-block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    flex-grow: 3;
+                    flex-shrink: 0;
+                    flex-basis: 0;
                 }
 
                 .checkin-time {
@@ -62,9 +69,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                 return (
                     <div className="list-item" key={`${id}${index}`}>
                         <span className="room-number">{org_number}</span>{" "}
-                        <EllipseText>
-                            <span className="room-name">{org_name}</span>
-                        </EllipseText>
+                        <span className="room-name">{org_name}</span>
                         <span className="checkin-time">
                             {dir} {formatted_date}
                         </span>
