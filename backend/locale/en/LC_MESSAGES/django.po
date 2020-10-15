@@ -1,0 +1,298 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-10-15 15:36+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: checkin/settings/base.py:40
+msgid "German"
+msgstr ""
+
+#: checkin/settings/base.py:41
+msgid "English"
+msgstr ""
+
+#: checkin/templates/rest_framework/api.html:6
+msgid "Checkin API"
+msgstr ""
+
+#: checkin/tracking/admin.py:36
+msgid "PDF-Raumkarten für ausgewählte Standorte generieren"
+msgstr ""
+
+#: checkin/tracking/api.py:23
+msgid ""
+"Bitte bestätigen Sie Ihre Identität vor dem ersten Checkin beim Personal am "
+"Empfang."
+msgstr ""
+
+#: checkin/tracking/api.py:24
+msgid "Bitte legen Sie ein Profil an."
+msgstr ""
+
+#: checkin/tracking/api.py:25
+msgid "Sie sind nicht berechtigt diese Aktion auszuführen."
+msgstr ""
+
+#: checkin/tracking/api.py:26
+msgid "Ihr Profil ist unvollständig."
+msgstr ""
+
+#: checkin/tracking/api.py:27
+msgid "Ihre Eingaben sind nicht korrekt."
+msgstr ""
+
+#: checkin/tracking/api.py:28
+#, python-format
+msgid "Bitte korregieren Sie: %s"
+msgstr ""
+
+#: checkin/tracking/api.py:29
+msgid "Sie sind hier nicht eingecheckt."
+msgstr ""
+
+#: checkin/tracking/api.py:30
+msgid "Beim Speichern deiner Kontaktdaten ist ein fehler aufgetreten."
+msgstr ""
+
+#: checkin/tracking/api.py:31
+msgid "Ihr Profil ist unvollstädnig."
+msgstr ""
+
+#: checkin/tracking/models.py:21
+msgid "Vorname"
+msgstr ""
+
+#: checkin/tracking/models.py:22
+msgid "Nachname"
+msgstr ""
+
+#: checkin/tracking/models.py:24
+msgid "Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."
+msgstr ""
+
+#: checkin/tracking/models.py:25
+msgid "Telefonnummer"
+msgstr ""
+
+#: checkin/tracking/models.py:26
+msgid "E-Mail Adresse"
+msgstr ""
+
+#: checkin/tracking/models.py:27
+msgid "Identität geprüft"
+msgstr ""
+
+#: checkin/tracking/models.py:40 checkin/tracking/models.py:222
+msgid "Person"
+msgstr ""
+
+#: checkin/tracking/models.py:41
+msgid "Personen"
+msgstr ""
+
+#: checkin/tracking/models.py:63
+msgid "Bezeichnung DE"
+msgstr ""
+
+#: checkin/tracking/models.py:64
+msgid "Bezeichnung EN"
+msgstr ""
+
+#: checkin/tracking/models.py:65
+msgid "Beschreibung DE"
+msgstr ""
+
+#: checkin/tracking/models.py:66
+msgid "Beschreibung EN"
+msgstr ""
+
+#: checkin/tracking/models.py:67
+msgid "Mindestabstand DE"
+msgstr ""
+
+#: checkin/tracking/models.py:68
+msgid "Mindestabstand EN"
+msgstr ""
+
+#: checkin/tracking/models.py:69
+msgid "Regeln, Sonstige Maßnahmen DE"
+msgstr ""
+
+#: checkin/tracking/models.py:70
+msgid "Regeln, Sonstige Maßnahmen EN"
+msgstr ""
+
+#: checkin/tracking/models.py:73
+msgid "Aktivitätsprofil"
+msgstr ""
+
+#: checkin/tracking/models.py:74
+msgid "Aktivitätsprofile"
+msgstr ""
+
+#: checkin/tracking/models.py:85 checkin/tracking/models.py:96
+msgid "Bezeichnung"
+msgstr ""
+
+#: checkin/tracking/models.py:91
+msgid "Raumnutzungsart"
+msgstr ""
+
+#: checkin/tracking/models.py:92
+msgid "Raumnutzungsarten"
+msgstr ""
+
+#: checkin/tracking/models.py:102
+msgid "Buchungsmethode"
+msgstr ""
+
+#: checkin/tracking/models.py:103
+msgid "Buchungsmethoden"
+msgstr ""
+
+#: checkin/tracking/models.py:107
+msgid "Raumcode"
+msgstr ""
+
+#: checkin/tracking/models.py:108
+msgid "Teil von"
+msgstr ""
+
+#: checkin/tracking/models.py:109
+msgid "Raumnummer"
+msgstr ""
+
+#: checkin/tracking/models.py:109
+msgid "Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"
+msgstr ""
+
+#: checkin/tracking/models.py:110
+msgid "Raumname / Standort"
+msgstr ""
+
+#: checkin/tracking/models.py:111
+msgid "Raumverantwortliche(r)"
+msgstr ""
+
+#: checkin/tracking/models.py:112
+msgid "Größe in Quadratmetern"
+msgstr ""
+
+#: checkin/tracking/models.py:113
+msgid "Anmerkungen"
+msgstr ""
+
+#: checkin/tracking/models.py:114
+msgid "Nutzungsarten"
+msgstr ""
+
+#: checkin/tracking/models.py:115
+msgid "Bemerkung zur Nutzung / Kapazität"
+msgstr ""
+
+#: checkin/tracking/models.py:116
+msgid "Buchbar / Reservierbar"
+msgstr ""
+
+#: checkin/tracking/models.py:117
+msgid "Buchung via"
+msgstr ""
+
+#: checkin/tracking/models.py:118
+msgid "Aktivitätsprofile und Kapazitäten"
+msgstr ""
+
+#: checkin/tracking/models.py:125
+msgid "Raum / Standort"
+msgstr ""
+
+#: checkin/tracking/models.py:126
+msgid "Räume / Standorte"
+msgstr ""
+
+#: checkin/tracking/models.py:168
+msgid "Profil"
+msgstr ""
+
+#: checkin/tracking/models.py:169 checkin/tracking/models.py:223
+msgid "Standort"
+msgstr ""
+
+#: checkin/tracking/models.py:170
+msgid "Maximalkapazität"
+msgstr ""
+
+#: checkin/tracking/models.py:171
+msgid "Zusatz DE"
+msgstr ""
+
+#: checkin/tracking/models.py:172
+msgid "Zusatz EN"
+msgstr ""
+
+#: checkin/tracking/models.py:175
+msgid "Aktivitätsprofil und Kapzitäten"
+msgstr ""
+
+#: checkin/tracking/models.py:176
+msgid "Aktivitätsprofile und Kapzitäten"
+msgstr ""
+
+#: checkin/tracking/models.py:214
+msgid "Scan eines QR-Codes"
+msgstr ""
+
+#: checkin/tracking/models.py:215
+msgid "Manuelle Eingabe durch Nutzer"
+msgstr ""
+
+#: checkin/tracking/models.py:216
+msgid "Manuelle Eingabe durch Betreiber"
+msgstr ""
+
+#: checkin/tracking/models.py:217
+msgid "Scan eines QR-Codes durch andere Person"
+msgstr ""
+
+#: checkin/tracking/models.py:218
+msgid "Checkout durch übergeordnetes Objekt"
+msgstr ""
+
+#: checkin/tracking/models.py:219
+msgid "Datenimport"
+msgstr ""
+
+#: checkin/tracking/models.py:224 checkin/tracking/models.py:233
+msgid "Checkin"
+msgstr ""
+
+#: checkin/tracking/models.py:225
+msgid "Checkout"
+msgstr ""
+
+#: checkin/tracking/models.py:227
+msgid "Datenquelle Checkin"
+msgstr ""
+
+#: checkin/tracking/models.py:228
+msgid "Datenquelle Checkout"
+msgstr ""
+
+#: checkin/tracking/models.py:262
+msgid "Mehrfache Checkins am gleichen Ort sind nicht möglich."
+msgstr ""
