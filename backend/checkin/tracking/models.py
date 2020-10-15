@@ -119,7 +119,7 @@ class Location(MPTTModel):
     updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     class MPTTMeta:
-        order_insertion_by = ['org_name']
+        order_insertion_by = ['org_number']
 
     class Meta:
         verbose_name = _("Raum / Standort")
@@ -168,6 +168,8 @@ class CapacityForActivityProfile(models.Model):
     profile = models.ForeignKey(ActivityProfile, on_delete=models.CASCADE, verbose_name=_("Profil"))
     location = models.ForeignKey(Location, on_delete=models.CASCADE, verbose_name=_("Standort"))
     capacity = models.PositiveIntegerField(_("Maximalkapazität"))
+    comment_de = models.CharField(_("Zusatz DE"), max_length=40, blank=True, null=True)
+    comment_en = models.CharField(_("Zusatz EN"), max_length=40, blank=True, null=True)
 
     class Meta:
         verbose_name = _("Aktivitätsprofil und Kapzitäten")
@@ -233,6 +235,12 @@ class Checkin(models.Model):
 
     def __str__(self):
         return "Checkin in %s" % (self.location)
+
+    # @property
+    # def profile_id(self):
+    #     if self.profile:
+    #         return self.profile.pk
+    #     return None
 
     def checkout(self, origin=None, include_descendants=True):
         if self.is_active():

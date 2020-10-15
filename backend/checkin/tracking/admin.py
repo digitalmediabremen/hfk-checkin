@@ -11,6 +11,13 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'last_name','verified')
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
+    list_filter = ('updated_at','created_at')
+
+    def get_queryset(self, request):
+        qs = super(ProfileAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.exclude(verified=True)
 
 
 class ActivityProfileAdmin(admin.ModelAdmin):
@@ -33,11 +40,13 @@ class LocationAdmin(MPTTModelAdmin):
     list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'load', 'load_descendants', 'code')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
+    # list_filter = ('updated_at', 'created_at')
 
 
 class CheckinAdmin(admin.ModelAdmin):
     """Disables all editing capabilities."""
-    list_display = ('location','profile','time_entered','origin_entered','time_left','origin_left')
+    list_display = ('location','profile_id','time_entered','origin_entered','time_left','origin_left')
+    list_filter = ('location', 'time_entered','time_left')
 
     actions = None
 
