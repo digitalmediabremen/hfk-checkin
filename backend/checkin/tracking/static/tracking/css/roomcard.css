@@ -37,9 +37,12 @@ td {
   font-size: 4rem;
   text-align: center;
 }
-.capacity-label {
+.capacity-label, .capacity-label strong {
   font-size: 0.5rem;
+}
+.capacity-label {
   margin-left: 2em;
+
 }
 .capacity-label-cell {
   padding-bottom: 0.8em;
@@ -63,7 +66,10 @@ td {
   border: 8px solid black;
   border-radius: 8px;
   display: inline-block;
-  padding: 0 40px;
+  padding: 0 36px;
+}
+.hash {
+  font-weight: normal;
 }
 .qr {
   display: inline-block;

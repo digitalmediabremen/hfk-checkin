@@ -71,6 +71,7 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'mptt',
+    #'simple_history',
     'wkhtmltopdf',
     'rest_framework',
     'microsoft_auth',
@@ -131,6 +132,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     'corsheaders.middleware.CorsMiddleware',
+    "checkin.middleware.JSON404Middleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     'corsheaders.middleware.CorsPostCsrfMiddleware',
@@ -138,7 +140,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "checkin.middleware.JSON404Middleware",
+    #'simple_history.middleware.HistoryRequestMiddleware'
 ]
 
 # STATIC

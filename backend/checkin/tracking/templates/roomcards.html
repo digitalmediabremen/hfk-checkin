@@ -21,8 +21,8 @@
     {% for cap in object.capacities %}
         <tr>
             <td><p class="capacity">{{ cap.capacity }}</p></td>
-            <td class="capacity-label-cell"><p class="capacity-label">{{ cap.profile.name }}<br/> mit 1,5 m Abstand</p></td>
-            <td class="capacity-label-cell"><p class="capacity-label en">{{ cap.profile.name }}<br/> with 1,5 m distance</p></td>
+            <td class="capacity-label-cell"><p class="capacity-label"><strong>{{ cap.profile.name_de }}</strong><br/>{{ cap.profile.distance_rule_de }}</p></td>
+            <td class="capacity-label-cell"><p class="capacity-label en">{{ cap.profile.name_en }}<br/>{{ cap.profile.distance_rule_en }}</p></td>
         </tr>
     {% endfor %}
     </table>

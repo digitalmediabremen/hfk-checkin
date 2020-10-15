@@ -60,17 +60,21 @@ def create_profile(sender, instance, created, **kwargs):
 
 
 class ActivityProfile(models.Model):
-    name = models.CharField(_("Bezeichnung"), max_length=255)
-    description = models.TextField(_("Beschreibung"))
-    distance_rule = models.CharField(_("Mindestabstand"), max_length=50, default="1,5 m", blank=True, null=True)
-    other_rules = models.TextField(_("Regeln, Sonstige Maßnahmen"), blank=True, null=True)
+    name_de = models.CharField(_("Bezeichnung DE"), max_length=255)
+    name_en = models.CharField(_("Bezeichnung EN"), max_length=255)
+    description_de = models.TextField(_("Beschreibung DE"))
+    description_en = models.TextField(_("Beschreibung EN"))
+    distance_rule_de = models.CharField(_("Mindestabstand DE"), max_length=50, default="1,5 m", blank=True, null=True)
+    distance_rule_en = models.CharField(_("Mindestabstand EN"), max_length=50, default="1,5 m", blank=True, null=True)
+    other_rules_de = models.TextField(_("Regeln, Sonstige Maßnahmen DE"), blank=True, null=True)
+    other_rules_en = models.TextField(_("Regeln, Sonstige Maßnahmen EN"), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Aktivitätsprofil")
         verbose_name_plural = _("Aktivitätsprofile")
 
     def __str__(self):
-        return self.name
+        return "%s / %s" % (self.name_de, self.name_en)
 
 
 def pkgen():
@@ -112,6 +116,7 @@ class Location(MPTTModel):
     org_bookable = models.BooleanField(_("Buchbar / Reservierbar"))
     org_book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True, blank=True)
     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     class MPTTMeta:
         order_insertion_by = ['org_name']
@@ -169,7 +174,7 @@ class CapacityForActivityProfile(models.Model):
         verbose_name_plural = _("Aktivitätsprofile und Kapzitäten")
 
     def __str__(self):
-        return self.profile.name
+        return "%s / %s" % (self.profile.name_de, self.profile.name_en)
 
 
 class CheckinQuerySet(models.QuerySet):

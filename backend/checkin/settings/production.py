@@ -158,4 +158,4 @@ LOGGING = {
 # ------------------------------------------------------------------------------
 
 SESSION_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_DOMAIN="checkin.uiuiui.digital"
+SESSION_COOKIE_DOMAIN = getenv("DJANGO_ALLOWED_HOSTS", default="checkin.hfk-bremen.de")

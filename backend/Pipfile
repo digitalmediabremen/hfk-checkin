@@ -45,6 +45,7 @@ argon2 = "*"
 netaddr = "*"
 django-weasyprint = "*"
 segno = "*"
+django-model-history = "*"
 
 [requires]
 python_version = "3.8.5"

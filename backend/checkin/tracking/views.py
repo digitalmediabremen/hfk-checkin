@@ -14,9 +14,9 @@ from django_weasyprint import WeasyTemplateResponseMixin, WeasyTemplateView
 from django_weasyprint.views import CONTENT_TYPE_PNG
 
 import segno
+from os import environ
 
-QR_URL_WITH_CODE = "https://checkin.hfk-bremen.de/checkin/%s"
-QR_URL_WITH_CODE = "https://checkin.uiuiui.digital/checkin/%s"
+QR_URL_WITH_CODE = environ.get("QR_URL_WITH_CODE", default="https://checkin.hfk-bremen.de/checkin/%s")
 
 def make_qr_code(code):
     url = QR_URL_WITH_CODE % code

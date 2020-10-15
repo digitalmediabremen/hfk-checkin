@@ -14,7 +14,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 class ActivityProfileAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name_de', 'distance_rule_de', 'name_en', 'distance_rule_en')
 
 
 class CapacityForActivityProfileInline(admin.TabularInline):

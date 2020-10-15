@@ -20,7 +20,7 @@ from django.utils import timezone
 from .models import Profile
 
 
-ERROR_NOT_VERIFIED = _("Bitte bestätigen Sie Ihre Identität vor dem ersten Checkin.")
+ERROR_NOT_VERIFIED = _("Bitte bestätigen Sie Ihre Identität vor dem ersten Checkin beim Personal am Empfang.")
 ERROR_NO_PROFILE = _("Bitte legen Sie ein Profil an.")
 ERROR_DENIED = _("Sie sind nicht berechtigt diese Aktion auszuführen.")
 ERROR_NOT_COMPLETE = _("Ihr Profil ist unvollständig.")
