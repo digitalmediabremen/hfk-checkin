@@ -37,7 +37,7 @@ td {
   font-size: 4rem;
   text-align: center;
 }
-.capacity-label, .capacity-label strong {
+.capacity-label, .capacity-label strong, .capacity-label span {
   font-size: 0.5rem;
 }
 .capacity-label {
