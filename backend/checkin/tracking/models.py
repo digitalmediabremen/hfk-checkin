@@ -117,6 +117,7 @@ class Location(MPTTModel):
     org_book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True, blank=True)
     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
     updated_at = models.DateTimeField(auto_now=True, editable=False)
+    hide_load = models.BooleanField(verbose_name=_("Checkins verstecken"), default=False)
 
     class MPTTMeta:
         order_insertion_by = ['org_number']
@@ -126,6 +127,8 @@ class Location(MPTTModel):
         verbose_name_plural = _("Räume / Standorte")
 
     def load(self):
+        if self.hide_load:
+            return -1
         return Checkin.objects.filter(location=self).not_older_then(LOAD_LOOKBACK_TIME).active().count()
 
     def load_descendants(self):
