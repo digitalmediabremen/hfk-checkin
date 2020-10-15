@@ -7,6 +7,7 @@ import FormGroup from "../components/common/FormGroup";
 import PushToBottom from "../components/common/PushToBottom";
 import { useRouter } from "next/router";
 import { appUrls } from "../config";
+import Subtitle from "../components/common/Subtitle";
 
 interface VerifyProfilePageProps {}
 
@@ -17,15 +18,20 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
     const router = useRouter();
     return (
         <>
-            <Title>{t("Dein Profil ist noch nicht verifiziert.")}</Title>
+            <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <FormGroup>
             <Text paragraph>
-                {t("Gehe jetzt zur Pforte und lass dein Profil verifieren.")}
+                {t("Die Hochschule für Künste ist verpflichtet die Identität aller Personen festzustellen, um im Falle einer Infektion eine Nachverfolgung gewährleisten zu können.")}
+            </Text>
+            <Text paragraph>
+            <b>Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor</b>, um die Registrierung abzuschließen und mit der Protokollierung beginnen zu können.
+            </Text>
+            <Text paragraph>
+            Bevor ihre Identität nicht verifiziert ist, ist die Protokollierung und ein Eintritt nicht möglich.
             </Text>
             </FormGroup>
-            <PushToBottom>
-                <Button outline onClick={() => router.push(appUrls.enterCode)}>OK</Button>
-            </PushToBottom>
+            <br />
+            <Button outline onClick={() => router.push(appUrls.enterCode)}>Erledigt</Button>
         </>
     );
 };
