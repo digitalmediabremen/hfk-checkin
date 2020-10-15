@@ -1,5 +1,6 @@
-import React, { SFC, useContext, useReducer, Reducer } from "react";
+import React, { SFC, useContext, useReducer, Reducer, useEffect } from "react";
 import { AppAction, AppState } from "../../model/AppState";
+import { useProfile } from "../api/ApiHooks";
 
 const appStateContext = React.createContext<{
     appState: AppState;
@@ -19,12 +20,29 @@ export const AppStateProvider: SFC<{}> = ({ children }) => {
                         ...previousState,
                         status: action.status,
                     };
+                case "profile":
+                    return {
+                        ...previousState,
+                        profile: action.profile,
+                    };
+
                 default:
                     throw new Error();
             }
         },
         {}
     );
+
+    const { profile, getProfile } = useProfile();
+
+    useEffect(() => {
+        dispatch({
+            type: "profile",
+            profile,
+        });
+    }, [profile]);
+
+    useEffect(() => getProfile(), []);
 
     return (
         <Provider value={{ appState: state, dispatch }}>{children}</Provider>

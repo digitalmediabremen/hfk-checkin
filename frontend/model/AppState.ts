@@ -5,6 +5,7 @@ export interface AppState {
         message: string;
         isError: boolean;
     };
+    profile?: Profile;
 }
 
 export type AppAction = {
@@ -13,4 +14,7 @@ export type AppAction = {
         message: string;
         isError: boolean;
     } | undefined
+} | {
+    type: "profile";
+    profile: Profile | undefined;
 };
