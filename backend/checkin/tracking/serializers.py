@@ -6,7 +6,7 @@ from rest_framework import serializers
 class ActivityProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ActivityProfile
-        fields = ['name', 'description', 'distance_rule', 'other_rules']
+        fields = ['name_de', 'name_en', 'description_de','description_en', 'distance_rule_de', 'other_rules_de', 'distance_rule_en', 'other_rules_en']
 
 
 class CapacityForActivityProfileSerializer(serializers.ModelSerializer):
