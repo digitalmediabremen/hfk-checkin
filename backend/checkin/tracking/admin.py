@@ -37,10 +37,10 @@ generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für au
 
 class LocationAdmin(MPTTModelAdmin):
     readonly_fields = ('code',)
-    list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'load', 'load_descendants', 'code')
+    list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'load', 'load_descendants', 'code', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
-    # list_filter = ('updated_at', 'created_at')
+    list_filter = ('updated_at',)
 
 
 class CheckinAdmin(admin.ModelAdmin):

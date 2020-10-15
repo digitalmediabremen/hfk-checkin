@@ -116,7 +116,7 @@ class Location(MPTTModel):
     org_bookable = models.BooleanField(_("Buchbar / Reservierbar"))
     org_book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True, blank=True)
     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
-    updated_at = models.DateTimeField(auto_now=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     hide_load = models.BooleanField(verbose_name=_("Checkins verstecken"), default=False)
 
     class MPTTMeta:
