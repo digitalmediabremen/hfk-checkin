@@ -65,7 +65,7 @@ export const CheckinComponent: React.FunctionComponent<{
             <br />
             <br />
             <Subtitle>{t("Letzte Checkins")}</Subtitle>
-            <LastCheckins checkins={profile.last_checkins.slice(1).reverse()} />
+            <LastCheckins checkins={profile.last_checkins.slice(1)} />
             {/* <Button outline onClick={() => doCheckout(code)}>
                 CHECK OUT 1.20.100
             </Button> */}
