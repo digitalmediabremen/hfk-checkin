@@ -21,13 +21,13 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             </Head>
             <ErrorBoundary>
                 <AppStateProvider>
-                    <AppWrapper>
-                        <LocaleProvider locale={locale || getInitialLocale()}>
-                            <ErrorDispatcher status={status} error={error}>
+                    <LocaleProvider locale={locale || getInitialLocale()}>
+                        <ErrorDispatcher status={status} error={error}>
+                            <AppWrapper>
                                 <Component error={error} {...props} />
-                            </ErrorDispatcher>
-                        </LocaleProvider>
-                    </AppWrapper>
+                            </AppWrapper>
+                        </ErrorDispatcher>
+                    </LocaleProvider>
                 </AppStateProvider>
             </ErrorBoundary>
         </>
