@@ -65,6 +65,12 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     background: #fff;
                 }
 
+                .profile {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
                 .profile:hover {
                     cursor: pointer;
                 }
@@ -88,6 +94,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                     font-weight: bold;
                     width: 1.7em;
                     height: 1.7em;
+                    flex-shrink: 0;
                     line-height: 1.5em;
                     text-align: center;
                     border-radius: ${theme.borderRadius}px;

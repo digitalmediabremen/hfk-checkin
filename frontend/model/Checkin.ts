@@ -9,7 +9,7 @@ export interface ProfileWithLastCheckins extends Profile {
 export type LastCheckin = Omit<Checkin, "profile">;
 
 export interface Checkin {
-    time_rntered: string;
+    time_entered: string;
     time_left: string;
     profile: ProfileWithLastCheckins;
     location: Location;
