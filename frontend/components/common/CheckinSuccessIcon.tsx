@@ -19,27 +19,27 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                     margin-bottom: ${theme.spacing(4)}px;
                     transform: scale(0.9);
                     opacity: 0;
-                    animation: appear .1s .4s linear forwards;
+                    animation: appear 0.1s 0.4s linear forwards;
                 }
 
                 #checkmark {
                     stroke-dasharray: 1000;
                     stroke-dashoffset: 1000;
-                    animation: dash 1.5s .5s linear forwards;
-                  }
-                  
-                  @keyframes dash {
-                    to {
-                      stroke-dashoffset: 0;
-                    }
-                  }
+                    animation: dash 1.5s 0.5s linear forwards;
+                }
 
-                  @keyframes appear {
+                @keyframes dash {
                     to {
-                      transform: scale(1);
-                      opacity: 1;
+                        stroke-dashoffset: 0;
                     }
-                  }
+                }
+
+                @keyframes appear {
+                    to {
+                        transform: scale(1);
+                        opacity: 1;
+                    }
+                }
             `}</style>
             <svg
                 className="icon"
@@ -50,18 +50,21 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink"
             >
-                <g
-                    transform="translate(-59.000000, -125.000000)"
-                    fill="#fff"
-                >
+                <g transform="translate(-59.000000, -125.000000)" fill="#fff">
                     <g
                         id="icon"
                         transform="translate(62.000000, 128.000000)"
                         strokeWidth="4"
                         stroke="#D81830"
-                        vectorEffect="non-scaling-stroke"
                     >
-                        <circle id="circle" cx="96" cy="96" r="96"></circle>
+                        <circle
+                            strokeWidth="2"
+                            vectorEffect="non-scaling-stroke"
+                            id="circle"
+                            cx="96"
+                            cy="96"
+                            r="96"
+                        ></circle>
                         <polyline
                             strokeWidth="4"
                             vectorEffect="non-scaling-stroke"
