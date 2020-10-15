@@ -8,7 +8,7 @@ const theme = {
     primaryColor: "#D81830",
     secondaryColor: "#FFF",
     textColor: "#D81830",
-    disabledColor: "gray"
+    disabledColor: "#666"
 }
 
 export default theme;

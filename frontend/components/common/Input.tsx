@@ -65,7 +65,7 @@ export const Input: SFC<InputProps> = (props) => {
                 }
             `}</style>
             <FormElementWrapper>
-                <label htmlFor={name}>{label}</label>
+                {!disabled && <label htmlFor={name}>{label}</label>}
                 <input
                     {...otherProps}
                     id={name}
