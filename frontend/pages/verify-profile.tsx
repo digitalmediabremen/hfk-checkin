@@ -4,7 +4,7 @@ import Title from "../components/common/Title";
 import Text from "../components/common/Text";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
-import PushToBottom from "../components/PushToBottom";
+import PushToBottom from "../components/common/PushToBottom";
 import { useRouter } from "next/router";
 import { appUrls } from "../config";
 
