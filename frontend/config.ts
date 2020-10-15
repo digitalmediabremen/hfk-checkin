@@ -23,6 +23,8 @@ export const appUrls = {
     "enterCode": "/",
     "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],
     "introduction": "/intro",
+    "privacy": "/privacy",
+    "help": "/help"
 } as const;
 
 export const production = process.env.NODE_ENV === "production"
