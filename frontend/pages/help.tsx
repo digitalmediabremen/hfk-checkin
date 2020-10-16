@@ -24,8 +24,8 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
                 Bitte melde Dich bei Fragen zur Anwendung und zur
                 Protokollierung und Raumbeschilderungen, sowie Problemhinweisen
                 bitte bei:
-                <br />
-                <a href="mailto:checkin@hfk-bremen.de">checkin@hfk-bremen.de</a>
+                <br /><br />
+                <strong><a href="mailto:checkin@hfk-bremen.de">checkin@hfk-bremen.de</a></strong><br />
                 <br />
                 Die Anwendung und das neue Zugangsverfahren befinden sich
                 momentan in einem Test.
