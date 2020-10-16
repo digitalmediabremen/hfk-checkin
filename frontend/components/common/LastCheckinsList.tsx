@@ -19,7 +19,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     const { locale, t } = useTranslation();
     const router = useRouter();
     const handleCheckinClick = (checkin: LastCheckin) => {
-        if (checkin.time_left) return;
+        if (checkin.time_left || !interactive) return;
         const { location } = checkin;
         const { code } = location;
         router.push(...appUrls.checkin(code));
