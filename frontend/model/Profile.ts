@@ -21,4 +21,4 @@ export const assertProfile = (p: any): asserts p is Profile => {
 };
 
 export default Profile;
-export type ProfileUpdate = Omit<Profile, "verified" | "id">;
+export type ProfileUpdate = Omit<Profile, "verified" | "id" | "last_checkins">;
