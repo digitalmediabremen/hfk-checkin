@@ -40,7 +40,7 @@ const NewProfilePage: NextPage = () => {
                 </Text>
             </FormGroup>
             <FormGroup>
-                <Subtitle>{t("Hfk-Angehörige")}</Subtitle>
+                <Subtitle>{t("HfK-Angehörige")}</Subtitle>
                 <Button outline onClick={handleIntern}>
                     HfK-Login
                 </Button>
