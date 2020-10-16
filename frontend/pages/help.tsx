@@ -17,9 +17,9 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
                 In der ersten Woche unterstützt der AStA freundlicherweise alle Nutzer*innen bei Fragen und Problemen vor dem Speicher am Chaos Office und unter <a href="tel:+4942195951060">0421 9595-1060</a>.
             </Text>
             <Notice>Weiterführende Informationen</Notice>
-            <Notice>
+            <Text paragraph>
                 Jeweils aktuelle Informationen zu den Corona-Maßnahmen und Hygieneregeln findest du in deinem HfK-Postfach und unter <a href="https://www.hfk-bremen.de/corona-info" target="_blank">hfk-bremen.de/corona-info</a>. Bitte bleibe Informiert!
-            </Notice>
+            </Text>
         </>
     );
 };
