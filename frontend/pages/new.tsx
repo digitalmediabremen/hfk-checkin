@@ -26,17 +26,14 @@ const NewProfilePage: NextPage = () => {
             <FormGroup>
                 <Text paragraph>
                     {t(
-                        `Nur mit Kontaktnachverfolgung sind Präsenzlehe, 
-                        Nutzung der Überäume, Ateliers und Werkstätten möglich.`,
+                        `Präsenzlehre und ein flexibleres Zugangsverfahren zu den Räumen der HfK sind nur möglich, wenn alle HfK-Mitglieder die Corona-Maßnahmen unterstützen.`,
                         {},
                         "follow-the-rules-1"
                     )}
                 </Text>
                 <Text paragraph>
                     {t(
-                        `Bitte Unterstütze die Maßnahmen durch Tragen einer 
-                        Mund-Nase-Bedeckung, Abstandsregeln und eigenverantwortlicher 
-                        Protokollierung deiner Anwesenheit.`,
+                        `Bitte dokumentiere deinen Aufenthalt in den Gebäuden und Räumen der HfK in eigenverantwortlich und halte dich an die HfK-Hygieneregeln.`,
                         {},
                         "follow-the-rules-2"
                     )}
