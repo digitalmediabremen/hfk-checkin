@@ -23,15 +23,11 @@ interface CheckInPageProps {
 }
 
 const isValidLocationCode = (locationCode: string) =>
-    parseInt(locationCode).toString().length === 4;
+    locationCode.replace(/" "/g, "").length === 4;
 
-const CheckInPage: SFC<CheckInPageProps> = ({error}) => {
+const CheckInPage: SFC<CheckInPageProps> = ({ error }) => {
     const [locationCode, setLocationCode] = useState<string>("");
-    const {
-        requestLocation,
-        loading,
-        location,
-    } = useLocation();
+    const { requestLocation, loading, location } = useLocation();
     const router = useRouter();
 
     const { t } = useTranslation("enterCode");
@@ -110,9 +106,9 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
             return {
                 props: {
                     error,
-                    status
-                }
-            }
+                    status,
+                },
+            };
         }
 
         return {
