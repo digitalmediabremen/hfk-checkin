@@ -102,6 +102,11 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
             return empty;
         }
 
+        if (profile && !profile.phone) {
+            redirectServerSide(context.res, appUrls.setprofile);
+            return empty;
+        }
+
         if (!!error) {
             return {
                 props: {

@@ -19,7 +19,7 @@ export const appUrls = {
     "setprofile": "/set-profile",
     "verifyProfile": "/verify-profile",
     "profile": "/profile",
-    "loginMicrosoft": `${authRedirectUrl}/?next=${appBase}/set-profile`,
+    "loginMicrosoft": `${authRedirectUrl}/?next=${appBase}/`,
     "createProfile": "/new",
     "enterCode": "/",
     "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],

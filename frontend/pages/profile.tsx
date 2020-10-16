@@ -9,6 +9,9 @@ import FormGroup from "../components/common/FormGroup";
 import theme from "../styles/theme";
 import { appUrls } from "../config";
 import { useRouter } from "next/router";
+import { GetServerSideProps } from "next";
+import { withLocaleProp } from "../localization";
+import Notice from "../components/common/Notice";
 
 interface ProfilePageProps {}
 
@@ -17,19 +20,24 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = (props) => {
     const router = useRouter();
     const { profile } = appState;
     if (!profile) return <>no profile set</>;
+    if (!profile.phone) return router.replace(appUrls.setprofile);
+    const { last_checkins} = profile;
+    const hasCheckins = last_checkins.length > 0;
 
     return (
         <>
             <style jsx>{`
                 .button-group {
                     margin-top: ${theme.spacing(2)}px;
+                    width: 100%;
                 }
             `}</style>
-            <Subtitle>Profil</Subtitle>
-            <LastCheckins checkins={profile.last_checkins} />
+            <Subtitle>Protokoll</Subtitle>
+            {hasCheckins && <LastCheckins checkins={last_checkins} />}
+            {!hasCheckins && <Notice>Noch keine Checkins vorhanden</Notice>}
             <PushToBottom>
                 <div className="button-group">
-                    <Button onClick={() => router.push(appUrls.setprofile)}>
+                    <Button outline onClick={() => router.push(appUrls.setprofile)}>
                         Telefon ändern
                     </Button>
                     {/* <Button onClick={} outline>
