@@ -72,7 +72,7 @@ export const CheckinComponent: React.FunctionComponent<{
             <br />
             <Subtitle>{t("Letzte Checkins")}</Subtitle>
             <LastCheckins
-                checkins={profile.last_checkins}
+                checkins={profile.last_checkins.slice(0, 4)}
             />
         </>
     );

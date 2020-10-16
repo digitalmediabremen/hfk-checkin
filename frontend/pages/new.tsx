@@ -12,7 +12,7 @@ import Notice from "../components/common/Notice";
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
     const handleIntern = () => {
-        const url = config.appUrls.redirect;
+        const url = config.appUrls.loginMicrosoft;
         router.replace(url);
     };
     const handleGuest = () => {

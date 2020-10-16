@@ -18,7 +18,8 @@ export const httpStatuses = {
 export const appUrls = {
     "setprofile": "/set-profile",
     "verifyProfile": "/verify-profile",
-    "redirect": `${authRedirectUrl}/?next=${appBase}/set-profile`,
+    "profile": "/profile",
+    "loginMicrosoft": `${authRedirectUrl}/?next=${appBase}/set-profile`,
     "createProfile": "/new",
     "enterCode": "/",
     "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],

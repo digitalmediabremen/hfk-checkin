@@ -165,7 +165,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
                 <div className="bar">
                     <>
                         {profile && (
-                            <Link href={appUrls.setprofile}>
+                            <Link href={appUrls.profile}>
                                 <span className="profile">
                                     <EllipseText>
                                         <b>

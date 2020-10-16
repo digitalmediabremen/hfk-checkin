@@ -1,9 +1,12 @@
+import { LastCheckin } from "./Checkin";
+
 interface Profile {
     id: number;
     first_name: string;
     last_name: string;
     phone: string;
     verified: boolean;
+    last_checkins: Array<LastCheckin>;
 }
 
 export const assertProfile = (p: any): asserts p is Profile => {
