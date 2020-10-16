@@ -22,41 +22,13 @@ const PrivacyPage: React.FunctionComponent<PrivacyPageProps> = (props) => {
                 Vertreten durch den Rektor Prof. Roland Lambrette.
             </Text>
             <Notice>
-                Informationen zur Datenverarbeitung und Datenschutz Im Sinne
-                dieser Verordnung bezeichnet der Ausdruck
+                Die Erhebung der Daten erfolgt zum Zwecke der Nachverfolgung von Infektionsketten im Zusammenhang mit dem Coronavirus SARS CoV-2. Rechtsgrundlage der Verarbeitung ist Art. 6 Abs. 1 lit. c DSGVO i.V.m. § 5 Abs. 2 Nr. 3, § 8 Achtzehnte Verordnung zum Schutz vor Neuinfektionen mit dem Coronavirus SARS-CoV-2.
+            </Notice>
+            <Notice>
+                Wir verarbeiten Ihre Daten grundsätzlich nur solange, wie sie für die Zwecke, für die sie erhoben worden sind, erforderlich sind. Daher werden Ihre Daten für die Dauer von drei Wochen aufbewahrt und nach Ablauf der Aufbewahrungsfrist vernichtet bzw. gelöscht.
             </Notice>
             <Text paragraph>
-                (1) "betroffene Person" eine bestimmte natürliche Person oder
-                eine natürliche Person, die direkt oder indirekt mit Mitteln
-                bestimmt werden kann, die der für die Verarbeitung
-                Verantwortliche oder jede sonstige natürliche oder juristische
-                Person nach allgemeinem Ermessen aller Voraussicht nach
-                einsetzen würde, etwa mittels Zuordnung zu einer Kennnummer, zu
-                Standortdaten, zu einer Online-Kennung oder zu einem oder
-                mehreren besonderen Merkmalen, die Ausdruck ihrer physischen,
-                physiologischen, genetischen, psychischen, wirtschaftlichen,
-                kulturellen oder sozialen Identität sind;
-            </Text>
-            <Text paragraph>
-                (2) "personenbezogene Daten" alle Informationen, die sich auf
-                eine bestimmte oder bestimmbare natürliche Person ("betroffene
-                Person") beziehen; bestimmbar ist eine Person, die identifiziert
-                werden kann, direkt oder indirekt, etwa mittels Zuordnung zu
-                einer Kennnummer, zu Standortdaten, zu einer eindeutigen Kennung
-                oder zu einem oder mehreren besonderen Merkmalen, die Ausdruck
-                ihrer physischen, physiologischen, genetischen, psychischen,
-                wirtschaftlichen, kulturellen oder sozialen oder
-                geschlechtlichen Identität sind;
-            </Text>{" "}
-            <Text paragraph>
-                (2a) "pseudonyme Daten" persönliche Daten, die ohne die
-                Verwendung von zusätzlichen Information nicht einer bestimmten
-                betroffenen Person zugeordnet werden können, solange solche
-                zusätzlichen Informationen separat aufbewahrt werden und falls
-                technische und organisatorische Maßnahmen die Nicht-Zuordnung
-                sicherstellen; (2b) "verschlüsselte Daten" persönliche Daten,
-                die durch technische Schutzmaßnahmen für jede Personen
-                unkenntlich gemacht sind, die nicht zugangsberechtigt ist;
+                Die <a href="https://www.hfk-bremen.de/sites/default/files/media/2020_info_datenschutz_nutzerinnen_hfk_bremen.pdf" target="_blank">vollständigen Datenschutzbestimmungen</a> dieser Anwendung finden Sie auf der Website der HfK Bremen.
             </Text>
         </>
     );
