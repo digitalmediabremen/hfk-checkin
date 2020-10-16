@@ -40,13 +40,13 @@ export const AppStateProvider: SFC<{}> = ({ children }) => {
             type: "profile",
             profile,
         });
-        dispatch({
-            type: 'status',
-            status: error ? {
-                message: error,
-                isError: true
-            }: undefined,
-        });
+        // dispatch({
+        //     type: 'status',
+        //     status: error ? {
+        //         message: error,
+        //         isError: true
+        //     }: undefined,
+        // });
     }, [profile, error]);
 
     useEffect(() => getProfile(), []);
