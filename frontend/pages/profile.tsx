@@ -36,7 +36,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = (props) => {
                 }
             `}</style>
             <Subtitle>Protokoll</Subtitle>
-            {hasCheckins && <LastCheckins checkins={last_checkins} />}
+            {hasCheckins && <LastCheckins interactive checkins={last_checkins} />}
             {!hasCheckins && <Notice>Noch keine Checkins vorhanden</Notice>}
             <PushToBottom>
                 <div className="button-group">

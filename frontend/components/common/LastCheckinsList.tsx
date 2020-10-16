@@ -1,18 +1,29 @@
 import * as React from "react";
-import { LastCheckin } from "../../model/Checkin";
+import { LastCheckin, Checkin } from "../../model/Checkin";
 import theme from "../../styles/theme";
 import { useLocation } from "../api/ApiHooks";
 import { useTranslation } from "../../localization";
 import EllipseText from "./EllipseText";
+import { useRouter } from "next/router";
+import { appUrls } from "../../config";
 
 interface LastCheckinsProps {
     checkins: Array<LastCheckin>;
+    interactive?: true;
 }
 
 const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     checkins,
+    interactive
 }) => {
     const { locale, t } = useTranslation();
+    const router = useRouter();
+    const handleCheckinClick = (checkin: LastCheckin) => {
+        if (checkin.time_left) return;
+        const { location } = checkin;
+        const { code } = location;
+        router.push(...appUrls.checkin(code));
+    };
     return (
         <div className="list">
             <style jsx>{`
@@ -24,7 +35,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                     width: 4.5em;
                     display: inline-block;
                     flex-shrink: 0;
-                    flex-grow: .5;
+                    flex-grow: 0.5;
                     flex-basis: 3.5em;
                 }
 
@@ -54,6 +65,15 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                     display: flex;
                     margin-bottom: ${theme.spacing(1)}px;
                 }
+
+                .list-item-interactable {
+                    padding: ${theme.spacing(1)}px;
+                    margin-left: ${theme.spacing(-1)}px;
+                    margin-right: ${theme.spacing(-1)}px;
+                    border: 2px solid ${theme.primaryColor};
+                    border-radius: ${theme.borderRadius}px;
+
+                }
             `}</style>
             {checkins.map((checkin, index) => {
                 const { org_name, org_number, id } = checkin.location;
@@ -70,7 +90,11 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                 const dir: string = time_left ? "←" : "→";
 
                 return (
-                    <div className="list-item" key={`${id}${index}`}>
+                    <div
+                        onClick={() => handleCheckinClick(checkin)}
+                        className={`list-item ${!time_left && interactive ? "list-item-interactable" : ""}`}
+                        key={`${id}${index}`}
+                    >
                         <span className="room-number">{org_number}</span>{" "}
                         <span className="room-name">{org_name}</span>
                         <span className="checkin-time">
