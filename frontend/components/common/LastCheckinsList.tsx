@@ -12,7 +12,7 @@ interface LastCheckinsProps {
 const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     checkins,
 }) => {
-    const { locale } = useTranslation();
+    const { locale, t } = useTranslation();
     return (
         <div className="list">
             <style jsx>{`
@@ -43,6 +43,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                     flex-shrink: 0;
                     margin-left: auto;
                     padding-left: ${theme.spacing(1)}px;
+                    white-space: pre-wrap;
                 }
 
                 .list {
@@ -51,18 +52,20 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
 
                 .list-item {
                     display: flex;
-                    margin-bottom: ${theme.spacing(0.5)}px;
+                    margin-bottom: ${theme.spacing(1)}px;
                 }
             `}</style>
             {checkins.map((checkin, index) => {
                 const { org_name, org_number, id } = checkin.location;
                 const { time_left, time_entered } = checkin;
-                const formatted_date = new Date(
+                const isNow = index === 0;
+                const formattedDate = new Date(
                     time_left || time_entered
                 ).toLocaleTimeString(locale, {
                     hour: "2-digit",
                     minute: "2-digit",
                 });
+                const displayDate = isNow ? `  ${t("jetzt")}` : formattedDate;
 
                 const dir: string = time_left ? "←" : "→";
 
@@ -71,7 +74,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                         <span className="room-number">{org_number}</span>{" "}
                         <span className="room-name">{org_name}</span>
                         <span className="checkin-time">
-                            {dir} {formatted_date}
+                            {dir} {displayDate}
                         </span>
                     </div>
                 );
