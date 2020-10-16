@@ -105,7 +105,7 @@ class BookingMethod(models.Model):
 
 class Location(MPTTModel):
     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
-    parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=3)
     org_number = models.CharField(_("Raumnummer"), max_length=30, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
     org_name = models.CharField(_("Raumname / Standort"), max_length=255)
     org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
