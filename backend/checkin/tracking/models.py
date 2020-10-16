@@ -42,7 +42,7 @@ class Profile(models.Model):
 
     @property
     def last_checkins(self):
-        return Checkin.objects.filter(profile=self)[:5]
+        return Checkin.objects.filter(profile=self)[:10]
 
 
 @receiver(post_save, sender=User)

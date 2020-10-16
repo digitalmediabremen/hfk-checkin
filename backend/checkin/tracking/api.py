@@ -125,7 +125,6 @@ class CheckinViewSet(viewsets.ReadOnlyModelViewSet):
         profile = self.request.user.profile
         return Checkin.objects.filter(profile=profile)
 
-
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
