@@ -20,7 +20,10 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = (props) => {
     const router = useRouter();
     const { profile } = appState;
     if (!profile) return <>no profile set</>;
-    if (!profile.phone) return router.replace(appUrls.setprofile);
+    if (!profile.phone) { 
+        router.replace(appUrls.setprofile);
+        return null;
+    }
     const { last_checkins} = profile;
     const hasCheckins = last_checkins.length > 0;
 
