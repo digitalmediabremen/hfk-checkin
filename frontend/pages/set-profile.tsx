@@ -1,7 +1,7 @@
-import { useFormik } from "formik";
+import { useFormik, FormikConfig } from "formik";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUpdateProfile } from "../components/api/ApiHooks";
 import { getProfileRequest } from "../components/api/ApiService";
 import { ButtonWithLoading } from "../components/common/Button";
@@ -40,17 +40,18 @@ const validate = (user: ProfileUpdate) => {
 };
 
 const EditProfilePage: NextPage<EditProfileProps> = (props) => {
-    const user = props.profile || {
+    const { appState, dispatch } = useAppState();
+    const { profile: initialProfile } = appState;
+
+    const user = initialProfile || {
         first_name: "",
         last_name: "",
         phone: "",
     };
-    const isUserCreation = !props.profile;
-
+    const isUserCreation = !initialProfile;
     const { loading, success, updateProfile, result: updatedProfile } = useUpdateProfile();
     const router = useRouter();
     const { t } = useTranslation("setprofile");
-    const { dispatch } = useAppState();
 
     useEffect(() => {
         if (!success) return;
@@ -72,6 +73,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             ...user,
         },
         validate,
+        enableReinitialize: true,
         onSubmit: (values) => {
             updateProfile(formik.values);
         },
@@ -152,26 +154,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = withLocaleProp(
     async (context) => {
-        const cookie = context.req.headers.cookie!;
-        const empty = { props: {} };
-
-        const { status, data: profile, error } = await getProfileRequest({
-            cookie,
-        });
-
-        if (!!error) return {
-            props: {
-                status
-            }
-        };
-
-        // redirect if phone already present
-        // if (!!profile?.phone) redirectServerSide(context.res, appUrls.enterCode);
-
         return {
-            props: {
-                profile,
-            },
+            props: {}
         };
     }
 );

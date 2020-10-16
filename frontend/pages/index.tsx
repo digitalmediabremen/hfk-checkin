@@ -100,7 +100,6 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
         const { data: profile, error, status } = await getProfileRequest({
             cookie,
         });
-        console.log(profile, error, status);
 
         if (status === httpStatuses.notAuthorized) {
             redirectServerSide(context.res, appUrls.createProfile);
