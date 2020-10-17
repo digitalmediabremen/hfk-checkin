@@ -32,9 +32,7 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
                 momentan in einem Testbetrieb.
                 <br />
                 <br />
-                In der ersten Woche unterstützt der AStA freundlicherweise alle
-                Nutzer*innen bei Fragen und Problemen vor dem Speicher am Chaos
-                Office und unter <strong><a href="tel:+4942195951060">0421 9595-1060</a></strong>
+                In der ersten Woche (19.–23.10.2020) können Sie das Team der Anwendung unter <strong><a href="tel:+4942195951306">0421 9595-1306</a></strong> bei Fragen oder Problemen erreichen.
                 .
             </Text>
             <Subtitle>Weiterführende Informationen</Subtitle>
