@@ -19,6 +19,7 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
                 `}
             </style>
             <Title>{t("Hilfe")}</Title>
+            <Notice>Auf der Suche nach einer QR-Scanner-App? Siehe unten.</Notice>
             <Subtitle>Unterstützung Checkin-Anwendung</Subtitle>
             <Text paragraph>
                 Bitte melde Dich bei Fragen zur Anwendung und zur
@@ -44,6 +45,13 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
                     hfk-bremen.de/corona-info
                 </a>
                 . Bitte bleibe Informiert!
+            </Text>
+            <Subtitle>QR-Scanner-App-Empfehlungen</Subtitle>
+            <Text paragraph>
+                iOS und Android können seit 2017 QR-Codes mit der Standard-Kamara-App scannen. Falls du eine zusätzliche App benötigst, nutze gerne eine der folgenden <strong>kostenlosen und werbefreien QR-Scanner-Apps</strong>:<br/><br/>
+                auf Apple iOS: <a href="https://apps.apple.com/de/app/qrs-clean-fast-qr-scanner/id1042620761">QRs App</a><br/>
+                auf Android: <a href="https://play.google.com/store/apps/details?id=de.markusfisch.android.binaryeye">Binary Eye App</a><br/><br/>
+                <i>Hinweis: Es gelten die Nutzungsbedingungen der jeweiligen Anbieter und App-Stores. Trotz sorgfältiger Prüfung kann die HfK Bremen keine Verantwortung für die Apps und verlinkten Websites übernehmen.</i>
             </Text>
         </>
     );
