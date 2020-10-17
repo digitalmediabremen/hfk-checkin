@@ -143,6 +143,11 @@ registerRoute(
     "GET"
 );
 registerRoute(
+    /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*\/checkout/i,
+    new NetworkOnly(),
+    "GET"
+);
+registerRoute(
     /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*/i,
     new NetworkFirst({
         cacheName: "apis",
