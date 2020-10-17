@@ -24,7 +24,7 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
             <Text paragraph>
                 Bitte melde Dich bei Fragen zur Anwendung und zur
                 Protokollierung und Raumbeschilderungen, sowie Problemhinweisen
-                bitte bei:
+                bei:
                 <br /><br />
                 <strong><a href="mailto:checkin@hfk-bremen.de">checkin@hfk-bremen.de</a></strong><br />
                 <br />
