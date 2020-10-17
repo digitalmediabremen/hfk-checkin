@@ -29,7 +29,7 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
                 <strong><a href="mailto:checkin@hfk-bremen.de">checkin@hfk-bremen.de</a></strong><br />
                 <br />
                 Die Anwendung und das neue Zugangsverfahren befinden sich
-                momentan in einem Test.
+                momentan in einem Testbetrieb.
                 <br />
                 <br />
                 In der ersten Woche unterstützt der AStA freundlicherweise alle
