@@ -124,7 +124,7 @@ registerRoute(
 registerRoute(
     /_next\/data\/(.*)\.json/i,
     ({ url, event, params }) =>
-        fetch(url).catch(() => matchPrecache("/offline-props.json")),
+        fetch(url, {credentials: "include"}).catch(() => matchPrecache("/offline-props.json")),
     "GET"
 );
 
