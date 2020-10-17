@@ -34,7 +34,7 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
                 <br />
                 In der ersten Woche unterstützt der AStA freundlicherweise alle
                 Nutzer*innen bei Fragen und Problemen vor dem Speicher am Chaos
-                Office und unter <a href="tel:+4942195951060">0421 9595-1060</a>
+                Office und unter <strong><a href="tel:+4942195951060">0421 9595-1060</a></strong>
                 .
             </Text>
             <Subtitle>Weiterführende Informationen</Subtitle>
