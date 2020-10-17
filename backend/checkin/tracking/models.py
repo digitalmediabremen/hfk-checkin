@@ -224,8 +224,8 @@ class Checkin(models.Model):
         ('IMPORT', _("Datenimport")),
     ]
 
-    profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.SET_NULL, null=True)
-    location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.SET_NULL, null=True)
+    profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT, null=True)
+    location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.PROTECT, null=True)
     time_entered = models.DateTimeField(_("Checkin"), auto_now=True)
     time_left = models.DateTimeField(_("Checkout"), blank=True, null=True)
     # created_at = models.DateTimeField(auto_now_add=True)
