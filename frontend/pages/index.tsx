@@ -4,7 +4,6 @@ import { SFC, useCallback, useEffect, useState } from "react";
 import { useLocation, useUpdateProfileAppState } from "../components/api/ApiHooks";
 import {
     getProfileRequest,
-    redirectServerSide
 } from "../components/api/ApiService";
 import { ButtonWithLoading } from "../components/common/Button";
 import LocationCodeInput from "../components/common/LocationCodeInput";
@@ -26,11 +25,8 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
     const [locationCode, setLocationCode] = useState<string>("");
     const { requestLocation, loading, location } = useLocation();
     const router = useRouter();
-
     const { t } = useTranslation("enterCode");
-
     useUpdateProfileAppState(profile)
-
     const handleLocationCodeChange = useCallback((code: string) => {
         if (location !== undefined) return;
         setLocationCode(code);
@@ -39,7 +35,6 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
             requestLocation(code);
         }
     }, []);
-
     useEffect(() => {
         if (location) {
             router.push(...appUrls.checkin(location.code));
@@ -48,6 +43,15 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
             setLocationCode("");
         }
     }, [location, loading]);
+
+    if (!profile) {
+        router.replace(appUrls.createProfile);
+        return null;
+    }
+    if(!profile.phone) {
+        router.replace(appUrls.setprofile);
+        return null;
+    }
 
     return (
         <>
@@ -95,16 +99,6 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
         const { data: profile, error, status } = await getProfileRequest({
             cookie,
         });
-
-        if (status === httpStatuses.notAuthorized) {
-            redirectServerSide(context.res, appUrls.createProfile);
-            return empty;
-        }
-
-        if (profile && !profile.phone) {
-            redirectServerSide(context.res, appUrls.setprofile);
-            return empty;
-        }
 
         if (!!error) {
             return {
