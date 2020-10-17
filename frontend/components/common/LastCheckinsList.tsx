@@ -12,12 +12,27 @@ interface LastCheckinsProps {
     interactive?: true;
 }
 
+const useForceUpdateAfter = (afterSeconds: number = 30) => {
+    const [, setState] = React.useState();
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setState({});
+        }, afterSeconds * 1000);
+        return () => clearTimeout(timer);
+    }, []);
+};
+
+const timeWithinDateIsConsideredNow = 30;
+
 const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     checkins,
-    interactive
+    interactive,
 }) => {
     const { locale, t } = useTranslation();
     const router = useRouter();
+    // after 30s thie component is rerendered
+    useForceUpdateAfter(timeWithinDateIsConsideredNow);
+
     const handleCheckinClick = (checkin: LastCheckin) => {
         if (checkin.time_left || !interactive) return;
         const { location } = checkin;
@@ -72,33 +87,42 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                     margin-right: ${theme.spacing(-1)}px;
                     border: 2px solid ${theme.primaryColor};
                     border-radius: ${theme.borderRadius}px;
-
                 }
             `}</style>
             {checkins.map((checkin, index) => {
                 const { org_name, org_number, id } = checkin.location;
                 const { time_left, time_entered } = checkin;
-                const isNow = index === 0;
-                const formattedDate = new Date(
-                    time_left || time_entered
-                ).toLocaleTimeString(locale, {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                });
-                const displayDate = isNow ? `  ${t("jetzt")}` : formattedDate;
 
+                let displayDate: Date = new Date(time_left || time_entered);
+                // checkin is not older than 30 seconds
+                const isNow: boolean =
+                    new Date().getTime() - displayDate.getTime() <
+                    timeWithinDateIsConsideredNow * 1000;
+                let formattedDate: string = displayDate.toLocaleTimeString(
+                    locale,
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }
+                );
+                formattedDate =
+                    isNow && index === 0 ? `  ${t("jetzt")}` : formattedDate;
                 const dir: string = time_left ? "←" : "→";
 
                 return (
                     <div
                         onClick={() => handleCheckinClick(checkin)}
-                        className={`list-item ${!time_left && interactive ? "list-item-interactable" : ""}`}
+                        className={`list-item ${
+                            !time_left && interactive
+                                ? "list-item-interactable"
+                                : ""
+                        }`}
                         key={`${id}${index}`}
                     >
                         <span className="room-number">{org_number}</span>{" "}
                         <span className="room-name">{org_name}</span>
                         <span className="checkin-time">
-                            {dir} {displayDate}
+                            {dir} {formattedDate}
                         </span>
                     </div>
                 );

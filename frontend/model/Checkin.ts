@@ -5,7 +5,7 @@ export type LastCheckin = Omit<Checkin, "profile">;
 
 export interface Checkin {
     time_entered: string;
-    time_left: string;
+    time_left: string | null;
     profile: Profile;
     location: Location;
 }
