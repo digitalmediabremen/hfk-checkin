@@ -56,7 +56,7 @@ export const CheckinComponent: React.FunctionComponent<{
                 {org_name}
             </Title>
             {!isRootLocation && (
-                <Title subtext={t("mit dir eingecheckt")}>
+                <Title subtext={t("insgesamt eingecheckt")}>
                     {load}
                     {!!capacity && ` / ${capacity}`}
                 </Title>
