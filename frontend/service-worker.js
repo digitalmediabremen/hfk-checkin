@@ -42,7 +42,7 @@ registerRoute(
             }),
             new ExpirationPlugin({
                 maxEntries: 1,
-                maxAgeSeconds: 86400,
+                maxAgeSeconds: 3600,
                 purgeOnQuotaError: !0,
             }),
         ],
@@ -85,7 +85,7 @@ registerRoute(
         plugins: [
             new ExpirationPlugin({
                 maxEntries: 64,
-                maxAgeSeconds: 86400,
+                maxAgeSeconds: 3600,
                 purgeOnQuotaError: !0,
             }),
         ],
@@ -99,8 +99,11 @@ registerRoute(
         plugins: [
             new ExpirationPlugin({
                 maxEntries: 32,
-                maxAgeSeconds: 86400,
+                maxAgeSeconds: 3600,
                 purgeOnQuotaError: !0,
+            }),
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
             }),
         ],
     }),
@@ -113,8 +116,11 @@ registerRoute(
         plugins: [
             new ExpirationPlugin({
                 maxEntries: 32,
-                maxAgeSeconds: 86400,
+                maxAgeSeconds: 3600,
                 purgeOnQuotaError: !0,
+            }),
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
             }),
         ],
     }),
@@ -135,8 +141,11 @@ registerRoute(
         plugins: [
             new ExpirationPlugin({
                 maxEntries: 32,
-                maxAgeSeconds: 86400,
+                maxAgeSeconds: 3600,
                 purgeOnQuotaError: !0,
+            }),
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
             }),
         ],
     }),
@@ -155,7 +164,7 @@ registerRoute(
         plugins: [
             new ExpirationPlugin({
                 maxEntries: 16,
-                maxAgeSeconds: 86400,
+                maxAgeSeconds: 3600,
                 purgeOnQuotaError: !0,
             }),
             new CacheableResponsePlugin({
@@ -204,7 +213,7 @@ setDefaultHandler(
             }),
             new ExpirationPlugin({
                 maxEntries: 32,
-                maxAgeSeconds: 86400,
+                maxAgeSeconds: 120,
                 purgeOnQuotaError: !0,
             }),
         ],
