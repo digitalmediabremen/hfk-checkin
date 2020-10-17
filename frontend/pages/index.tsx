@@ -1,21 +1,18 @@
-import Head from "next/head";
 import { GetServerSideProps } from "next";
-import { profile } from "console";
+import { useRouter } from "next/router";
+import { SFC, useCallback, useEffect, useState } from "react";
+import { useLocation, useUpdateProfileAppState } from "../components/api/ApiHooks";
 import {
     getProfileRequest,
-    redirectServerSide,
+    redirectServerSide
 } from "../components/api/ApiService";
-import { useState, SFC, useCallback, useEffect } from "react";
-import Profile from "../model/Profile";
+import { ButtonWithLoading } from "../components/common/Button";
 import LocationCodeInput from "../components/common/LocationCodeInput";
-import { useCheckin, useLocation } from "../components/api/ApiHooks";
-import theme from "../styles/theme";
-import { useRouter } from "next/router";
-import Subtitle from "../components/common/Subtitle";
-import { Button, ButtonWithLoading } from "../components/common/Button";
 import Notice from "../components/common/Notice";
 import { appUrls, httpStatuses } from "../config";
-import { withLocaleProp, useTranslation } from "../localization";
+import { useTranslation, withLocaleProp } from "../localization";
+import Profile from "../model/Profile";
+import theme from "../styles/theme";
 
 interface CheckInPageProps {
     profile?: Profile;
@@ -25,12 +22,14 @@ interface CheckInPageProps {
 const isValidLocationCode = (locationCode: string) =>
     locationCode.replace(/" "/g, "").length === 4;
 
-const CheckInPage: SFC<CheckInPageProps> = ({ error }) => {
+const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
     const [locationCode, setLocationCode] = useState<string>("");
     const { requestLocation, loading, location } = useLocation();
     const router = useRouter();
 
     const { t } = useTranslation("enterCode");
+
+    useUpdateProfileAppState(profile)
 
     const handleLocationCodeChange = useCallback((code: string) => {
         if (location !== undefined) return;

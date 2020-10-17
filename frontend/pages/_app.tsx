@@ -18,6 +18,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                     name="viewport"
                     content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
                 />
+                <title>HfK-Checkin</title>
             </Head>
             <ErrorBoundary>
                 <AppStateProvider>

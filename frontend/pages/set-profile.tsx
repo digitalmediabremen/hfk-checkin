@@ -13,6 +13,7 @@ import { useTranslation, withLocaleProp } from "../localization";
 import Profile, { ProfileUpdate } from "../model/Profile";
 import { useAppState } from "../components/common/AppStateProvider";
 import Text from "../components/common/Text";
+import Notice from "../components/common/Notice";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -49,7 +50,12 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         phone: "",
     };
     const isUserCreation = !initialProfile;
-    const { loading, success, updateProfile, result: updatedProfile } = useUpdateProfile();
+    const {
+        loading,
+        success,
+        updateProfile,
+        result: updatedProfile,
+    } = useUpdateProfile();
     const router = useRouter();
     const { t } = useTranslation("setprofile");
 
@@ -58,8 +64,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         if (!!updatedProfile) {
             dispatch({
                 type: "profile",
-                profile: updatedProfile
-            })
+                profile: updatedProfile,
+            });
         }
         if (!!updatedProfile && !updatedProfile.verified) {
             router.push(appUrls.verifyProfile);
@@ -131,13 +137,13 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                             : undefined
                     }
                 />
-                            <Text>
-                {t(
-                    `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
-                    {},
-                    "data-protection-notice"
-                )}
-            </Text>
+                <Notice>
+                    {t(
+                        `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
+                        {},
+                        "data-protection-notice"
+                    )}
+                </Notice>
             </FormGroup>
 
             <ButtonWithLoading
@@ -145,7 +151,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 disabled={!formik.dirty || !formik.isValid}
                 onClick={() => {}}
             >
-                {isUserCreation ? t("Registrieren") : t("Speichern") }
+                {isUserCreation ? t("Registrieren") : t("Speichern")}
             </ButtonWithLoading>
         </form>
     );
@@ -154,7 +160,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 export const getServerSideProps: GetServerSideProps = withLocaleProp(
     async (context) => {
         return {
-            props: {}
+            props: {
+                test: "test"
+            },
         };
     }
 );

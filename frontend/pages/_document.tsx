@@ -19,7 +19,6 @@ class MyDocument extends Document {
         return (
             <Html>
                 <Head>
-                    <title>HfK-Checkin</title>
                     <link rel="manifest" href="/manifest.json" />
                     <link
                         rel="icon"

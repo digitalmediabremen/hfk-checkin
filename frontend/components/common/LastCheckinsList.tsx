@@ -1,19 +1,17 @@
-import * as React from "react";
-import { LastCheckin, Checkin } from "../../model/Checkin";
-import theme from "../../styles/theme";
-import { useLocation } from "../api/ApiHooks";
-import { useTranslation } from "../../localization";
-import EllipseText from "./EllipseText";
 import { useRouter } from "next/router";
+import * as React from "react";
 import { appUrls } from "../../config";
+import { useTranslation } from "../../localization";
+import { LastCheckin } from "../../model/Checkin";
+import theme from "../../styles/theme";
 
 interface LastCheckinsProps {
     checkins: Array<LastCheckin>;
-    interactive?: true;
+    onCheckinClick?: (index: number) => void;
 }
 
 const useForceUpdateAfter = (afterSeconds: number = 30) => {
-    const [, setState] = React.useState();
+    const [, setState] = React.useState<{} | undefined>();
     React.useEffect(() => {
         const timer = setTimeout(() => {
             setState({});
@@ -26,19 +24,14 @@ const timeWithinDateIsConsideredNow = 30;
 
 const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     checkins,
-    interactive,
+    onCheckinClick,
 }) => {
     const { locale, t } = useTranslation();
     const router = useRouter();
+    const interactive = !!onCheckinClick;
     // after 30s thie component is rerendered
     useForceUpdateAfter(timeWithinDateIsConsideredNow);
 
-    const handleCheckinClick = (checkin: LastCheckin) => {
-        if (checkin.time_left || !interactive) return;
-        const { location } = checkin;
-        const { code } = location;
-        router.push(...appUrls.checkin(code));
-    };
     return (
         <div className="list">
             <style jsx>{`
@@ -83,11 +76,23 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
 
                 .list-item-interactable {
                     padding: ${theme.spacing(1)}px;
-                    margin-left: ${theme.spacing(-1)}px;
-                    margin-right: ${theme.spacing(-1)}px;
+                    // -2 to compensate border width
+                    margin-left: ${theme.spacing(-1) -2}px;
+                    margin-right: ${theme.spacing(-1) -2}px;
                     border: 2px solid ${theme.primaryColor};
                     border-radius: ${theme.borderRadius}px;
+                    transition: .1s background-color, .1s color;
                 }
+
+                .list-item-interactable  {
+                    // font-weight: bold;
+                }
+
+                .list-item-interactable:hover {
+                    cursor: pointer;
+                    background-color: ${theme.primaryColor};
+                    color: #fff;
+                }                
             `}</style>
             {checkins.map((checkin, index) => {
                 const { org_name, org_number, id } = checkin.location;
@@ -111,7 +116,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
 
                 return (
                     <div
-                        onClick={() => handleCheckinClick(checkin)}
+                        onClick={() => onCheckinClick?.(index)}
                         className={`list-item ${
                             !time_left && interactive
                                 ? "list-item-interactable"

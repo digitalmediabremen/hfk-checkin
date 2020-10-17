@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Location } from "../../model/Location";
 import Profile, { ProfileUpdate } from "../../model/Profile";
 import { useAppState } from "../common/AppStateProvider";
 import {
-    updateProfileRequest,
+    doCheckinRequest,
+    doCheckoutRequest,
+    getLocationRequest,
     getProfileRequest,
     Response,
-    doCheckinRequest,
-    getLocationRequest,
-    doCheckoutRequest,
+    updateProfileRequest,
 } from "./ApiService";
-import { Location } from "../../model/Location";
 
 export const useApi = <RT extends {}>(config?: {
-    onlyLocalErrorReport?: boolean
+    onlyLocalErrorReport?: boolean;
 }): {
     loading: boolean;
     result?: RT;
@@ -27,7 +27,7 @@ export const useApi = <RT extends {}>(config?: {
     const loading = requestInProgress;
     const success = !error && !!result && !loading;
     const c = config || {
-        onlyLocalErrorReport: false
+        onlyLocalErrorReport: false,
     };
 
     const handleError = (error: string, status: number) => {
@@ -54,12 +54,12 @@ export const useApi = <RT extends {}>(config?: {
             setRequestInProgress(false);
             if (error && status <= 500) {
                 handleError(error || `Unknown Error (${status})`, status);
-            } else if(!!error && status > 500) {
-                throw(error)
+            } else if (!!error && status > 500) {
+                throw error;
             } else if (!c.onlyLocalErrorReport) {
                 // reset error message
                 // but only if request is reporting globally
-                
+
                 dispatch({
                     type: "status",
                     status: undefined,
@@ -78,6 +78,41 @@ export const useApi = <RT extends {}>(config?: {
     };
 };
 
+export const useUpdateProfileAppState = (data?: Profile) => {
+    const {
+        getProfile,
+        success,
+        profile,
+        loading,
+        error
+    } = useProfile();
+    const { dispatch } = useAppState();
+
+    useEffect(() => { 
+        if (data) {
+            dispatch({
+                type: "profile",
+                profile: data,
+            });
+        } else {
+            getProfile() 
+        }
+    }, []);
+
+    useEffect(() => {
+        success &&
+            dispatch({
+                type: "profile",
+                profile,
+            });
+    }, [success]);
+    return {
+        loading,
+        success,
+        error
+    }
+};
+
 export const useUpdateProfile = () => {
     const { request, ...other } = useApi<Profile>();
 
@@ -90,7 +125,7 @@ export const useUpdateProfile = () => {
 
 export const useProfile = () => {
     const { request, result: profile, ...other } = useApi<Profile>({
-         onlyLocalErrorReport: true
+        onlyLocalErrorReport: true,
     });
 
     return {
