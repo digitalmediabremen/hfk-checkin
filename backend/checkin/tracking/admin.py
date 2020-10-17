@@ -41,7 +41,7 @@ class LocationAdmin(MPTTModelAdmin):
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
     list_filter = ('updated_at',)
-    ordering = ('-org_number',)
+    ordering = ('org_number',)
 
 
 class CheckinAdmin(admin.ModelAdmin):
