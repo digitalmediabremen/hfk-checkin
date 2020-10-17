@@ -16,6 +16,7 @@ import Title from "../../components/common/Title";
 import { appUrls, httpStatuses } from "../../config";
 import { useTranslation, withLocaleProp } from "../../localization";
 import { Checkin } from "../../model/Checkin";
+import needsProfile from "../../components/api/needsProfile";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: Checkin;
@@ -151,4 +152,4 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
 );
 
 // this page is server side saved
-export default CheckinPage;
+export default needsProfile(CheckinPage);

@@ -17,7 +17,6 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({profile}) => {
-    const { appState, dispatch } = useAppState();
     const router = useRouter();
     const { last_checkins} = profile!;
     const hasCheckins = last_checkins.length > 0;

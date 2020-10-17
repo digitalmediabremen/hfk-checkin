@@ -27,7 +27,6 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     onCheckinClick,
 }) => {
     const { locale, t } = useTranslation();
-    const router = useRouter();
     const interactive = !!onCheckinClick;
     // after 30s thie component is rerendered
     useForceUpdateAfter(timeWithinDateIsConsideredNow);
