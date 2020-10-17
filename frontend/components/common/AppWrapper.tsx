@@ -1,14 +1,39 @@
 import Link from "next/link";
-import React, { SFC } from "react";
+import React, { SFC, useEffect } from "react";
 import { appUrls } from "../../config";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
 import StatusBar from "./StatusBar";
+import { useProfile } from "../api/ApiHooks";
+import Profile from "../../model/Profile";
 
-const AppWrapper: SFC = (props) => {
-    const { children } = props;
-    const { appState } = useAppState();
-    const { profile } = appState;
+interface AppWrapperProps {
+    profileFromServer?: Profile;
+}
+
+const AppWrapper: SFC<AppWrapperProps> = ({profileFromServer, children}) => {
+    const { appState, dispatch } = useAppState();
+    // const { profile } = appState;
+    const { profile, getProfile, error } = useProfile();
+
+    useEffect(() => {
+        // either profile sent from server
+        // or profile loaded via api
+        // or error no profile exists
+        if (profileFromServer || profile || error) {
+            dispatch({
+                type: "profile",
+                profile: profileFromServer || profile || undefined,
+            });
+        }
+    }, [profile, error]);
+
+    useEffect(() => {
+        if (!profileFromServer) {
+            getProfile();
+            console.debug("update profile")
+        }
+    }, []);
 
     return (
         <>
@@ -38,7 +63,8 @@ const AppWrapper: SFC = (props) => {
             </style>
             <div className="wrapper">
                 <StatusBar profile={profile} />
-                <div className="content">{children}</div>
+                {appState.initialized && <div className="content">{children}</div>}
+                {!appState.initialized && "..."}
             </div>
             <div className="footer">
                 <Link href={appUrls.privacy}>

@@ -12,6 +12,7 @@ import { appUrls, httpStatuses } from "../config";
 import { useTranslation, withLocaleProp } from "../localization";
 import Profile from "../model/Profile";
 import theme from "../styles/theme";
+import needsProfile from "../components/api/needsProfile";
 
 interface CheckInPageProps {
     profile?: Profile;
@@ -26,7 +27,6 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
     const { requestLocation, loading, location } = useLocation();
     const router = useRouter();
     const { t } = useTranslation("enterCode");
-    useUpdateProfileAppState(profile)
     const handleLocationCodeChange = useCallback((code: string) => {
         if (location !== undefined) return;
         setLocationCode(code);
@@ -43,15 +43,6 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
             setLocationCode("");
         }
     }, [location, loading]);
-
-    if (!profile) {
-        router.replace(appUrls.createProfile);
-        return null;
-    }
-    if(!profile.phone) {
-        router.replace(appUrls.setprofile);
-        return null;
-    }
 
     return (
         <>
@@ -88,31 +79,31 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
     );
 };
 
-export default CheckInPage;
+export default needsProfile(CheckInPage);
 
-export const getServerSideProps: GetServerSideProps = withLocaleProp(
-    async (context) => {
-        // api call
-        const cookie = context.req.headers.cookie!;
-        const empty = { props: {} };
+// export const getServerSideProps: GetServerSideProps = withLocaleProp(
+//     async (context) => {
+//         // api call
+//         const cookie = context.req.headers.cookie!;
+//         const empty = { props: {} };
 
-        const { data: profile, error, status } = await getProfileRequest({
-            cookie,
-        });
+//         const { data: profile, error, status } = await getProfileRequest({
+//             cookie,
+//         });
 
-        if (!!error) {
-            return {
-                props: {
-                    error,
-                    status,
-                },
-            };
-        }
+//         if (!!error) {
+//             return {
+//                 props: {
+//                     error,
+//                     status,
+//                 },
+//             };
+//         }
 
-        return {
-            props: {
-                profile,
-            },
-        };
-    }
-);
+//         return {
+//             props: {
+//                 profile,
+//             },
+//         };
+//     }
+// );

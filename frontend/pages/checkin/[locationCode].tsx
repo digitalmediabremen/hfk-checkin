@@ -142,6 +142,7 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
 
         return {
             props: {
+                profile: checkin?.profile,
                 checkin,
                 alreadyCheckedIn: status === httpStatuses.alreadyCheckedIn,
             },
@@ -149,4 +150,5 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
     }
 );
 
+// this page is server side saved
 export default CheckinPage;

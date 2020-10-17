@@ -9,22 +9,19 @@ import Subtitle from "../components/common/Subtitle";
 import { appUrls } from "../config";
 import theme from "../styles/theme";
 import { useUpdateProfileAppState } from "../components/api/ApiHooks";
+import needsProfile from "../components/api/needsProfile";
+import Profile from "../model/Profile";
 
-interface ProfilePageProps {}
+interface ProfilePageProps {
+    profile: Profile;
+}
 
-const ProfilePage: React.FunctionComponent<ProfilePageProps> = (props) => {
+const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({profile}) => {
     const { appState, dispatch } = useAppState();
     const router = useRouter();
-    const { loading } = useUpdateProfileAppState();
-    const { profile } = appState;
-
-    if (!profile) return <>no profile set</>;
-    if (!profile.phone) { 
-        router.replace(appUrls.setprofile);
-        return null;
-    }
-    const { last_checkins} = profile;
+    const { last_checkins} = profile!;
     const hasCheckins = last_checkins.length > 0;
+    const { loading } = useUpdateProfileAppState();
 
     const handleCheckinClick = (index: number) => {
         const checkin = last_checkins[index];
@@ -43,7 +40,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = (props) => {
                     width: 100%;
                 }
             `}</style>
-            { loading &&
+            {loading && 
                 <Notice>
                     ...aktualisiert
                 </Notice>
@@ -65,5 +62,4 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = (props) => {
     );
 };
 
-
-export default ProfilePage;
+export default needsProfile(ProfilePage);

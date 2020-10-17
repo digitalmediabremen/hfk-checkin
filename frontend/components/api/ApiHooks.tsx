@@ -78,7 +78,7 @@ export const useApi = <RT extends {}>(config?: {
     };
 };
 
-export const useUpdateProfileAppState = (data?: Profile) => {
+export const useUpdateProfileAppState = () => {
     const {
         getProfile,
         success,
@@ -86,17 +86,10 @@ export const useUpdateProfileAppState = (data?: Profile) => {
         loading,
         error
     } = useProfile();
-    const { dispatch } = useAppState();
+    const { appState, dispatch } = useAppState();
 
     useEffect(() => { 
-        if (data) {
-            dispatch({
-                type: "profile",
-                profile: data,
-            });
-        } else {
-            getProfile() 
-        }
+        getProfile() 
     }, []);
 
     useEffect(() => {
@@ -106,10 +99,12 @@ export const useUpdateProfileAppState = (data?: Profile) => {
                 profile,
             });
     }, [success]);
+
     return {
         loading,
         success,
-        error
+        error,
+        profile
     }
 };
 

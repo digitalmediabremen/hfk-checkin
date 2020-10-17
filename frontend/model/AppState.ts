@@ -6,6 +6,7 @@ export interface AppState {
         isError: boolean;
     };
     profile?: Profile;
+    initialized: boolean;
 }
 
 export type AppAction = {
@@ -17,4 +18,7 @@ export type AppAction = {
 } | {
     type: "profile";
     profile: Profile | undefined;
-};
+} | {
+    type: "initialized";
+    initialized: boolean;
+}

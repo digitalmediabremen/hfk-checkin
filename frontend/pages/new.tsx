@@ -1,13 +1,14 @@
 import { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import * as config from "../config";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import Text from "../components/common/Text";
 import { useTranslation } from "../localization";
 import Notice from "../components/common/Notice";
+import { useAppState } from "../components/common/AppStateProvider";
 
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
@@ -19,7 +20,13 @@ const NewProfilePage: NextPage = () => {
         router.push(config.appUrls.setprofile);
     };
 
+    const { appState } = useAppState();
+
+    useEffect(() => { if (appState.profile) router.replace(config.appUrls.enterCode) }, []);
+
     const { t, locale } = useTranslation("createProfile");
+
+    if (appState.profile) return null
 
     return (
         <>

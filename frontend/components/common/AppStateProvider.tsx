@@ -1,12 +1,13 @@
 import React, { SFC, useContext, useReducer, Reducer, useEffect } from "react";
 import { AppAction, AppState } from "../../model/AppState";
-import { useProfile } from "../api/ApiHooks";
 
 const appStateContext = React.createContext<{
     appState: AppState;
     dispatch: React.Dispatch<AppAction>;
 }>({
-    appState: {},
+    appState: {
+        initialized: false,
+    },
     dispatch: () => null,
 });
 const { Provider, Consumer } = appStateContext;
@@ -21,35 +22,27 @@ export const AppStateProvider: SFC<{}> = ({ children }) => {
                         status: action.status,
                     };
                 case "profile":
+                    if (action.profile) {
+                        return {
+                            ...previousState,
+                            initialized: true,
+                            profile: action.profile,
+                        };
+                    }
                     return {
                         ...previousState,
-                        profile: action.profile,
+                        initialized: true,
+                        profile: undefined,
                     };
 
                 default:
                     throw new Error();
             }
         },
-        {}
+        {
+            initialized: false,
+        }
     );
-
-    const { profile, getProfile, error } = useProfile();
-
-    useEffect(() => {
-        dispatch({
-            type: "profile",
-            profile,
-        });
-        // dispatch({
-        //     type: 'status',
-        //     status: error ? {
-        //         message: error,
-        //         isError: true
-        //     }: undefined,
-        // });
-    }, [profile, error]);
-
-    useEffect(() => getProfile(), []);
 
     return (
         <Provider value={{ appState: state, dispatch }}>{children}</Provider>
