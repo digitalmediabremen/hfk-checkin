@@ -10,11 +10,11 @@ import { useAppState } from "./AppStateProvider";
 import EllipseText from "./EllipseText";
 
 interface ErrorBarProps {
-    profile?: Profile;
 }
 
-const StatusBar: React.FunctionComponent<ErrorBarProps> = ({ profile }) => {
+const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
     const { appState, dispatch } = useAppState();
+    const { profile } = appState;
     const { status } = appState;
     const [states, setStates] = React.useState<
         Array<{ message: string; isError: boolean; id?: number }>

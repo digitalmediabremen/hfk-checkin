@@ -62,7 +62,7 @@ const AppWrapper: SFC<AppWrapperProps> = ({profileFromServer, children}) => {
                 `}
             </style>
             <div className="wrapper">
-                <StatusBar profile={profile} />
+                <StatusBar />
                 {appState.initialized && <div className="content">{children}</div>}
                 {!appState.initialized && "..."}
             </div>
