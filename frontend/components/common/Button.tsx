@@ -66,7 +66,7 @@ export const Button: SFC<ButtonProps> = (props) => {
 
                 .button:hover, .button:active {
                     cursor: pointer;
-                    transform: scale(1.025);
+                    transform: scale(0.95);
                 }
             `}</style>
             <FormElementWrapper>
