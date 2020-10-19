@@ -15,7 +15,6 @@ const { Provider, Consumer } = appStateContext;
 export const AppStateProvider: SFC<{}> = ({ children }) => {
     const [state, dispatch] = useReducer<Reducer<AppState, AppAction>>(
         (previousState, action) => {
-            console.log(action);
             switch (action.type) {
                 case "status":
                     return {

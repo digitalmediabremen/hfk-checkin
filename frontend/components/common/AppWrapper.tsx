@@ -34,7 +34,6 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
     useEffect(() => {
         if (!profileFromServer) {
             getProfile();
-            console.debug("update profile");
         }
     }, []);
 
