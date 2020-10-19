@@ -44,7 +44,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({profile}) => {
                     ...aktualisiert
                 </Notice>
             }
-            <Subtitle>Protokoll</Subtitle>
+            {!loading && <Subtitle>Protokoll</Subtitle>}
             {hasCheckins && <LastCheckins onCheckinClick={handleCheckinClick} checkins={last_checkins} />}
             {!hasCheckins && <Notice>Noch keine Checkins vorhanden</Notice>}
             <PushToBottom>
