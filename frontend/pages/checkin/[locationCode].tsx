@@ -146,7 +146,6 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
 
         return {
             props: {
-                profile: checkin?.profile,
                 checkin,
                 alreadyCheckedIn: status === httpStatuses.alreadyCheckedIn,
             },
