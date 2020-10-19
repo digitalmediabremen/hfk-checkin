@@ -53,6 +53,15 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
     return (
         <>
             <style jsx>{`
+
+                .not-selectable {
+                    -webkit-touch-callout: none; /* iOS Safari */
+                    -webkit-user-select: none; /* Safari */
+                    -khtml-user-select: none; /* Konqueror HTML */
+                    -moz-user-select: none; /* Old versions of Firefox */
+                    -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none;
+                }
                 .status-bar {
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
@@ -189,7 +198,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                         )}
                     </>
                     <Link href={appUrls.enterCode}>
-                        <span className="icon">#</span>
+                        <span className="icon not-selectable">#</span>
                     </Link>
                 </div>
 
