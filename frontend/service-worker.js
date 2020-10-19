@@ -130,18 +130,7 @@ registerRoute(
 registerRoute(
     /_next\/data\/(.*)\.json/i,
     ({ url, event, params }) => {
-        const strategy = new NetworkFirst({
-            plugins: [
-                new ExpirationPlugin({
-                    maxEntries: 32,
-                    maxAgeSeconds: 3600,
-                    purgeOnQuotaError: !0,
-                }),
-                new CacheableResponsePlugin({
-                    statuses: [0, 200],
-                }),
-            ],
-        });
+        const strategy = new NetworkOnly();
         return strategy.handle(event).catch(() => matchPrecache("/offline-props.json"));
     },
     "GET"
