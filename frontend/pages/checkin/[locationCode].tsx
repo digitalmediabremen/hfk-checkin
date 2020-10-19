@@ -28,7 +28,7 @@ export const CheckinComponent: React.FunctionComponent<{
     const { dispatch } = useAppState();
     const router = useRouter();
     const { t } = useTranslation("checkin");
-    const isRootLocation = capacity === -1;
+    const isRootLocation = load === -1;
 
     React.useEffect(() => {
         window?.navigator?.vibrate?.(200);
