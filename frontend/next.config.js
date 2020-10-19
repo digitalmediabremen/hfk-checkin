@@ -6,6 +6,7 @@ module.exports = withPWA({
         swSrc: "service-worker.js",
         disable: process.env.NODE_ENV === "development",
     },
+    generateEtags: false,
     async headers() {
         return [
             {
