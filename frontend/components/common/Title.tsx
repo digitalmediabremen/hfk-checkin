@@ -12,6 +12,12 @@ const Title: React.FunctionComponent<TitleProps> = ({ children, bold, subtext })
             <style jsx>{`
                 color: ${theme.primaryColor};
 
+                .hyphenize {
+                    word-break: break-all;
+                    word-break: break-word;
+                    hyphens: auto;
+                }
+
                 h1 {
                     font-weight: ${bold ? "bold" : "normal"};
                     font-size: 2em;
@@ -26,8 +32,8 @@ const Title: React.FunctionComponent<TitleProps> = ({ children, bold, subtext })
                     margin: 0 0 ${theme.spacing(3)}px 0;
                 }
             `}</style>
-            <h1>{children}</h1>
-            {subtext && <h2>{subtext}</h2>}
+            <h1 className="hyphenize">{children}</h1>
+            {subtext && <h2 className="hyphenize">{subtext}</h2>}
         </>
     );
 };

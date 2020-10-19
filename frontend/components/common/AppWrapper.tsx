@@ -1,20 +1,23 @@
+import Head from "next/head";
 import Link from "next/link";
 import React, { SFC, useEffect } from "react";
 import { appUrls } from "../../config";
+import { useTranslation } from "../../localization";
+import Profile from "../../model/Profile";
 import theme from "../../styles/theme";
+import { useProfile } from "../api/ApiHooks";
 import { useAppState } from "./AppStateProvider";
 import StatusBar from "./StatusBar";
-import { useProfile } from "../api/ApiHooks";
-import Profile from "../../model/Profile";
 
 interface AppWrapperProps {
     profileFromServer?: Profile;
 }
 
-const AppWrapper: SFC<AppWrapperProps> = ({profileFromServer, children}) => {
+const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
     const { appState, dispatch } = useAppState();
     // const { profile } = appState;
     const { profile, getProfile, error } = useProfile();
+    const { locale } = useTranslation();
 
     useEffect(() => {
         // either profile sent from server
@@ -31,7 +34,7 @@ const AppWrapper: SFC<AppWrapperProps> = ({profileFromServer, children}) => {
     useEffect(() => {
         if (!profileFromServer) {
             getProfile();
-            console.debug("update profile")
+            console.debug("update profile");
         }
     }, []);
 
@@ -55,15 +58,20 @@ const AppWrapper: SFC<AppWrapperProps> = ({profileFromServer, children}) => {
                         padding: 0 ${theme.spacing(3)}px;
                         color: ${theme.primaryColor};
                     }
-                    
+
                     .footer span {
                         padding-right: ${theme.spacing(4)}px;
                     }
                 `}
             </style>
+            <Head>
+                <html lang={locale} />
+            </Head>
             <div className="wrapper">
                 <StatusBar />
-                {appState.initialized && <div className="content">{children}</div>}
+                {appState.initialized && (
+                    <div className="content">{children}</div>
+                )}
                 {!appState.initialized && "..."}
             </div>
             <div className="footer">
