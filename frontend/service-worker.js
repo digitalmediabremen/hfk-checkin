@@ -69,7 +69,7 @@ registerRoute(
         cacheName: "static-font-assets",
         plugins: [
             new ExpirationPlugin({
-                maxEntries: 4,
+                maxEntries: 8,
                 maxAgeSeconds: 604800,
                 purgeOnQuotaError: !0,
             }),
@@ -129,8 +129,21 @@ registerRoute(
 ///_next\/data\/(.*)\.json/i
 registerRoute(
     /_next\/data\/(.*)\.json/i,
-    ({ url, event, params }) =>
-        fetch(url, {credentials: "include"}).catch(() => matchPrecache("/offline-props.json")),
+    ({ url, event, params }) => {
+        const strategy = new NetworkFirst({
+            plugins: [
+                new ExpirationPlugin({
+                    maxEntries: 32,
+                    maxAgeSeconds: 3600,
+                    purgeOnQuotaError: !0,
+                }),
+                new CacheableResponsePlugin({
+                    statuses: [0, 200],
+                }),
+            ],
+        });
+        return strategy.handle(event).catch(() => matchPrecache("/offline-props.json"));
+    },
     "GET"
 );
 
