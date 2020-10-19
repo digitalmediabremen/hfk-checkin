@@ -111,11 +111,12 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
         const cookie = context.req.headers.cookie!;
         console.log("cookie", cookie);
         const { locationCode: locationCodePossiblyArray } = context.query;
-        console.log("locationCode", locationCode);
         const empty = { props: {} };
         const locationCode = Array.isArray(locationCodePossiblyArray)
             ? locationCodePossiblyArray[0]
             : locationCodePossiblyArray;
+
+        console.log("locationCode", locationCode);
 
         if (!locationCode) {
             redirectServerSide(context.res, appUrls.enterCode);
