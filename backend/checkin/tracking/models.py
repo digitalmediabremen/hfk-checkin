@@ -137,12 +137,14 @@ class Location(MPTTModel):
             return -1
         return self.load_descendants()
         #return Checkin.objects.filter(location=self).not_older_then(LOAD_LOOKBACK_TIME).active().count()
+    load.short_description = _('# eingecheckt')
 
     def load_descendants(self):
         locations = self.get_descendants(include_self=True)
         # only works in postgres: .distinct('profile')
         # not_older_then(LOAD_LOOKBACK_TIME).active()
         return Checkin.objects.filter(location__in=locations).not_older_then(LOAD_LOOKBACK_TIME).active().count()
+    load_descendants.short_description = _('# eingecheckt (kumuliert)')
 
     @property
     def current_checkins(self):
@@ -155,6 +157,7 @@ class Location(MPTTModel):
             max_capacity = max([act.capacity for act in activities])
             return max_capacity
         return None
+    capacity.fget.short_description = _('Kapazität')
 
     @property
     def capacities(self):

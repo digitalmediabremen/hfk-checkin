@@ -9,10 +9,10 @@ from simple_history.admin import SimpleHistoryAdmin
 
 
 class ProfileAdmin(SimpleHistoryAdmin):
-    list_display = ('first_name', 'last_name','verified')
+    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified')
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
-    list_filter = ('updated_at','created_at')
+    list_filter = ('updated_at','created_at','verified')
     search_fields = ['first_name', 'last_name','phone','email']
 
     def get_queryset(self, request):
@@ -20,6 +20,18 @@ class ProfileAdmin(SimpleHistoryAdmin):
         if request.user.is_superuser:
             return qs
         return qs.exclude(verified=True)
+
+    def phone_obfuscated(self, object):
+        if object.phone:
+            m = object.phone
+            return f'{m[0]}{m[1]}{m[2]}{m[3]}{m[4]}{"*" * (len(m) - 6)}{m[-1]}'
+    phone_obfuscated.short_description = _("Telefon")
+
+    def email_obfuscated(self, object):
+        if object.email:
+            m = object.email.split('@')
+            return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}{m[0][-2]}{m[0][-1]}@{m[1]}'
+    email_obfuscated.short_description = _("E-Mail")
 
 
 class ActivityProfileAdmin(admin.ModelAdmin):
