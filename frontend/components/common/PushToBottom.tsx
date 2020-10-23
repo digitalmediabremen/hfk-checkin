@@ -1,10 +1,13 @@
 import * as React from "react";
 import theme from "../../styles/theme";
 
-interface IPushToBottomProps {}
+interface IPushToBottomProps {
+    offsetBottomPadding?: true;
+}
 
 const PushToBottom: React.FunctionComponent<IPushToBottomProps> = ({
     children,
+    offsetBottomPadding
 }) => {
     const [offsetTop, setOffsetTop] = React.useState<number>(0);
     const measuredRef = React.useRef<HTMLDivElement>(null);
@@ -14,7 +17,7 @@ const PushToBottom: React.FunctionComponent<IPushToBottomProps> = ({
         }
     }, [children]);
     const containerHeight = (() => {
-        return `calc(100vh - ${offsetTop}px - 70px)`;
+        return `calc(100vh - ${offsetTop + theme.footerHeight + theme.spacing(2)}px)`;
     })();
     return (
         <>
@@ -26,12 +29,12 @@ const PushToBottom: React.FunctionComponent<IPushToBottomProps> = ({
                     min-height: ${containerHeight};
                 }
 
-                .no-margin {
-                    margin: ${-theme.spacing(3)}px 0;
+                .offset-bottom-padding {
+                    transform: translateY(${theme.spacing(2) }px);
                 }
             `}</style>
-            <div className="no-margin" ref={measuredRef}>
-                <div className="flex">{children}</div>
+            <div ref={measuredRef}>
+                <div className={`flex ${offsetBottomPadding ? "offset-bottom-padding" : ""}`}>{children}</div>
             </div>
         </>
     );

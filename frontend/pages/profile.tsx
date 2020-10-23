@@ -49,15 +49,15 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({profile}) => {
             {!loading && <Subtitle>{t("Protokoll")}</Subtitle>}
             {hasCheckins && <LastCheckins onCheckinClick={handleCheckinClick} checkins={last_checkins} />}
             {!hasCheckins && <Notice>{t("Noch keine Checkins vorhanden")}</Notice>}
-            <PushToBottom>
-                <div className="button-group">
-                    <Button outline onClick={() => router.push(appUrls.setprofile)}>
+            <PushToBottom offsetBottomPadding>
+                {/* <div className="button-group"> */}
+                    <Button noBottomMargin outline onClick={() => router.push(appUrls.setprofile)}>
                         {t("Telefon ändern")}
                     </Button>
                     {/* <Button onClick={} outline>
                         Ausloggen
                     </Button> */}
-                </div>
+                {/* </div> */}
             </PushToBottom>
         </>
     );

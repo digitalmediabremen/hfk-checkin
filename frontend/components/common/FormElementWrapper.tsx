@@ -1,9 +1,11 @@
 import React, { SFC } from "react";
 import theme from "../../styles/theme";
 
-const FormElementWrapper: SFC = (props) => {
-    const { children } = props;
+interface FormElementWrapperProps {
+    noBottomMargin?: true
+}
 
+const FormElementWrapper: SFC<FormElementWrapperProps> = ({children, noBottomMargin}) => {
     return (
         <>
             <style jsx>{`
@@ -12,8 +14,12 @@ const FormElementWrapper: SFC = (props) => {
                     width: 100%;
                     margin-bottom: ${theme.spacing(2)}px;
                 }
+
+                div.no-bottom-margin {
+                    margin-bottom: 0px;
+                }
             `}</style>
-            <div>{children}</div>
+            <div className={`${noBottomMargin ? "no-bottom-margin" : ""}`}>{children}</div>
         </>
     );
 };

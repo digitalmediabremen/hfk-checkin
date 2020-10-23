@@ -42,16 +42,16 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
             <style jsx>
                 {`
                     .content {
-                        margin: ${theme.spacing(3)}px;
+                        margin: ${theme.spacing(2)}px ${theme.spacing(3)}px;
                     }
                     .wrapper {
                         min-height: 100vh;
-                        padding-bottom: 30px;
-                        // min-height: calc(100vh - 60px);
+                        padding-bottom: ${theme.footerHeight}px;
+                        // min-height: calc(100vh - ${theme.footerHeight}px);
                     }
                     .footer {
-                        margin-top: -60px;
-                        height: 60px;
+                        margin-top: ${-theme.footerHeight}px;
+                        height: ${theme.footerHeight}px;
                         display: flexbox;
                         align-items: center;
                         padding: 0 ${theme.spacing(3)}px;

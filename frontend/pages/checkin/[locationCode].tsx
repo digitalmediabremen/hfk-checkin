@@ -65,6 +65,7 @@ export const CheckinComponent: React.FunctionComponent<{
             <ButtonWithLoading
                 loading={checkoutInProgress}
                 onClick={() => doCheckout(code)}
+                {...(!alreadyCheckedIn ? ({ outline: true }) : undefined)}
             >
                 {t("Auschecken")}
             </ButtonWithLoading>

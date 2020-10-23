@@ -1,12 +1,14 @@
-import { SFC, Children } from "react";
+import { SFC, Children, useEffect, useState, useCallback, useRef } from "react";
 import theme from "../../styles/theme";
 import FormElementWrapper from "./FormElementWrapper";
 
-interface ButtonProps {
+export interface ButtonProps {
     onClick: () => void;
+    onTouchStart?: () => void;
+    onTouchEnd?: () => void;
     disabled?: boolean;
     outline?: true;
-    noMargin?: true;
+    noBottomMargin?: true;
 }
 
 export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
@@ -27,7 +29,7 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
 };
 
 export const Button: SFC<ButtonProps> = (props) => {
-    const { children, outline, noMargin, ...otherProps } = props;
+    const { children, outline, noBottomMargin, ...otherProps } = props;
 
     return (
         <>
@@ -69,11 +71,12 @@ export const Button: SFC<ButtonProps> = (props) => {
                     transform: scale(0.95);
                 }
             `}</style>
-            <FormElementWrapper>
+            <FormElementWrapper noBottomMargin={noBottomMargin}>
                 <button
                     className={`button not-selectable ${
                         outline ? "outline" : ""
                     }`}
+                    onContextMenu={(e) => e.preventDefault()}
                     {...otherProps}
                 >
                     {children}
