@@ -10,6 +10,7 @@ import {
     Response,
     updateProfileRequest,
 } from "./ApiService";
+import { Checkin } from "../../model/Checkin";
 
 export const useApi = <RT extends {}>(config?: {
     onlyLocalErrorReport?: boolean;
@@ -141,7 +142,7 @@ export const useLocation = () => {
 };
 
 export const useCheckin = () => {
-    const { request, result, ...other } = useApi<{}>();
+    const { request, result, ...other } = useApi<Checkin>();
     return {
         doCheckin: (locationCode: string) =>
             request(() => doCheckinRequest(locationCode)),
