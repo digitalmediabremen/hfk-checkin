@@ -9,11 +9,15 @@ from simple_history.admin import SimpleHistoryAdmin
 
 
 class ProfileAdmin(SimpleHistoryAdmin):
-    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified')
+    # TODO: default query set nur nicht Verifiziert
+    # TODO: default query set nur neue Nutzer
+
+    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','created_at')
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
     list_filter = ('updated_at','created_at','verified')
     search_fields = ['first_name', 'last_name','phone','email']
+    readonly_fields = ('created_at', 'updated_at')
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
