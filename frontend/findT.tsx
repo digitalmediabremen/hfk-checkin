@@ -100,11 +100,11 @@ function jsonToMap(json: Record<string, any>) {
     function traverse(o: Object, m: "") {
         if (typeof o === "object") {
             // @ts-ignore
-            Object.keys(o).forEach((k) => traverse(o[k], `${m}.${k}`));
+            Object.keys(o).forEach((k) => traverse(o[k], `${m}.${saveDots(k)}`));
         }
 
         if (typeof o === "string") {
-            s.set(m.slice(1), saveDots(o));
+            s.set(m.slice(1), o);
         }
     }
     traverse(json, "");
@@ -131,10 +131,10 @@ function createNewTranslation(
 ) {
     const tObj: Record<string, any> = {};
     const tValueCopy = new Map(tValue);
-    const tDefinitionCopy = new Set(tDefinition);
     const tResultMap = new Map<string, string>();
 
     forLocales.map((locale) => {
+        const tDefinitionCopy = new Set(tDefinition);
         tDefinition.forEach((entry) => {
             // find in value set
             const tString = `${locale}.${entry}`;
@@ -176,14 +176,12 @@ function createNewTranslation(
                 tResultMap.set(tString, "NEW");
             }
         });
-
-        tValueCopy.forEach((v, key) => console.log(key, "not found"));
-        console.log(tDefinitionCopy.size, "new translations found.");
-        if (tValueCopy.size === 0)
-            console.log("hoorray. all translations could be matched");
+        console.log(tDefinitionCopy.size, `new translations found for locale "${locale}"`);
     });
 
-    // first pass
+    tValueCopy.forEach((v, key) => console.log(key, "not found"));
+    if (tValueCopy.size === 0)
+        console.log("hoorray. all translations could be matched");
 
     return tMapToJson(tResultMap);
 }

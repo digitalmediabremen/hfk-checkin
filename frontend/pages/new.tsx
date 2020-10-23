@@ -53,7 +53,7 @@ const NewProfilePage: NextPage = () => {
                 </Button>
             </FormGroup>
             <Subtitle>{t("Gäste")}</Subtitle>
-            <Notice>{t("Verifikation mit Identitätsnachweis nach der Registrierung notwendig")}.</Notice>
+            <Notice>{t("Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig")}.</Notice>
             <Button outline onClick={handleGuest}>
                 {t("Gastzugang")}
             </Button>

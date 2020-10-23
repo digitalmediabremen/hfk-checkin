@@ -141,7 +141,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     {t(
                         `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
                         {},
-                        "data-protection-notice"
+                        "Deine Angaben werden ausschließlich zur Rückverfolgung..."
                     )}
                 </Notice>
             </FormGroup>
