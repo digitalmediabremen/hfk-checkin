@@ -3,33 +3,53 @@ import { Translation } from ".";
 const translation: Translation = {
     en: {
         common: {
-            ["Seite nicht gefunden"]: "Page not found",
+            Datenschutz: "Privacy",
+            Hilfe: "Help",
+            jetzt: "now",
+            "Seite nicht gefunden": "Page not found",
+            "...aktualisiert": "updating...",
+            Protokoll: "Log",
+            "Noch keine Checkins vorhanden": "No checkins",
+            "Telefon ändern": "Change phone",
         },
         enterCode: {
-            ["Mit Raumcode einchecken"]: "Check in with roomcode",
-            ["Einchecken"]: "Check in",
+            "Mit Raumcode einchecken": "Check in with roomcode",
+            Einchecken: "Check in",
         },
         createProfile: {
-            ["follow-the-rules"]: "Folge den Regeln",
-            ["Hfk-Angehörige"]: "HfK Members",
-            ["Gäste"]: "Guests",
-            ["Gastzugang"]: "Guest Access",
-        },
-        checkin: {
-            ["Du bist bereits eingecheckt"]: "You are already checked in",
-            ["mit dir eingecheckt"]: "with you checked in",
-            ["Letzte Checkins"]: "Past checkins",
-            ["Auschecken"]: "Check out",
-            ["Erfolgreich ausgecheckt"]: "Checkout successful"
+            "HfK-Angehörige": "HfK Members",
+            Gäste: "Guests",
+            Gastzugang: "Guest Access",
+            "Halte dich an die Regeln...": "",
+            "Dokumentiere deinen Aufenthalt...": "",
+            "Verifikation mit Identitätsnachweis nach der Registrierung notwendig":
+                "",
         },
         setprofile: {
-            ["Vorname"]: "First name",
-            ["Nachname"]: "Last name",
-            ["Telefonnummer"]: "Phone number",
-            ["Registrieren"]: "Register",
-            // ["data-protection-notice"]: "Your information is exclusively used to trace infections in case of an infection"
-        }
+            Vorname: "First name",
+            Nachname: "Last name",
+            Telefonnummer: "Phone number",
+            "data-protection-notice": "",
+            Registrieren: "Register",
+            Speichern: "",
+        },
+        checkin: {
+            "Erfolgreich ausgecheckt": "Checkout successful",
+            "Du bist bereits eingecheckt": "You are already checked in",
+            "insgesamt eingecheckt": "with you checked in",
+            Auschecken: "Check out",
+            "Letzte Checkins": "Past checkins",
+            "Checkin fehlgeschlagen": "Checkin failed",
+        },
+        verifyProfile: {
+            Identitätsprüfung: "Identity check",
+            "Die Hochschule ist verpflichtet...": "",
+            "Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor":
+                "",
+            "Bevor ihre Identität nicht verifiziert ist, ist die Protokollierung und ein Eintritt nicht möglich.":
+                "",
+            Erledigt: "",
+        },
     },
 };
-
 export default translation;

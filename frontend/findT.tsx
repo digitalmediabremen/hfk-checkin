@@ -35,6 +35,15 @@ const tDefinitionSet = new Set<string>();
 function strip(t: string) {
     return t.replace(/"/g, "");
 }
+
+function saveDots(text: string) {
+    return text.replace(/\./g, "{{dot}}");
+}
+
+function reapplyDots(text: string) {
+    return text.replace(/{{dot}}/g, ".");
+}
+
 tFuncRefs?.map((p) => {
     let currentModule: string | undefined = undefined;
     const r = p.getSourceFile().forEachDescendant((node, traversal) => {
@@ -58,7 +67,7 @@ tFuncRefs?.map((p) => {
                 const args = node.getArguments();
                 const tString = strip((args[2] || args[0]).getText());
                 // console.log(node.getArguments().map((a) => a.getText()));
-                tDefinitionSet.add(`${currentModule}.${tString}`);
+                tDefinitionSet.add(`${currentModule}.${saveDots(tString)}`);
                 traversal.skip();
             }
         }
@@ -80,7 +89,7 @@ function tMapToJson(map: Map<string, string>): string {
         returnObj[locale] = returnObj[locale] || {};
         returnObj[locale][module] = returnObj[locale][module] || {};
 
-        returnObj[locale][module][tString] = value;
+        returnObj[locale][module][reapplyDots(tString)] = value;
     });
 
     return JSON.stringify(returnObj, null, 2);
@@ -95,7 +104,7 @@ function jsonToMap(json: Record<string, any>) {
         }
 
         if (typeof o === "string") {
-            s.set(m.slice(1), o);
+            s.set(m.slice(1), saveDots(o));
         }
     }
     traverse(json, "");
@@ -151,10 +160,17 @@ function createNewTranslation(
                 const { target, rating } = bestMatch;
 
                 if (rating > 0.6) {
-                    console.log("found match", `"${tString}"`, `"${target}"`, rating);
+                    console.log(
+                        "found match",
+                        `"${tString}"`,
+                        `"${target}"`,
+                        rating
+                    );
                     tResultMap.set(tString, tValueCopy.get(target)!);
                     tValueCopy.delete(target);
                     tDefinitionCopy.delete(entry);
+                } else {
+                    tResultMap.set(tString, "NEW");
                 }
             } else {
                 tResultMap.set(tString, "NEW");

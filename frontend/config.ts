@@ -1,3 +1,4 @@
+import { CommentStatement } from "ts-morph";
 
 const presentOrThrow = (envvar: string | undefined) => {
     if (!envvar) throw "env variable not set";
@@ -33,3 +34,4 @@ export const production = process.env.NODE_ENV === "production"
 // language
 export const defaultLocale = "de" as const;
 export const baseLocale = "de" as const;
+export const forceLocale: string | undefined = "en" as const;

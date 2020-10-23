@@ -161,7 +161,7 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
     async (context) => {
         return {
             props: {
-                test: "test"
+                
             },
         };
     }

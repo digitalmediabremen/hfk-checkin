@@ -27,6 +27,8 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
     const { requestLocation, loading, location } = useLocation();
     const router = useRouter();
     const { t } = useTranslation("enterCode");
+
+    // location request
     const handleLocationCodeChange = useCallback((code: string) => {
         if (location !== undefined) return;
         setLocationCode(code);
@@ -35,6 +37,8 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
             requestLocation(code);
         }
     }, []);
+
+    // checkin
     useEffect(() => {
         if (location) {
             router.push(...appUrls.checkin(location.code));

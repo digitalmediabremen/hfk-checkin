@@ -90,7 +90,7 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({
     error,
     alreadyCheckedIn,
 }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("checkin");
     if (!checkin)
         return (
             <>
@@ -126,7 +126,7 @@ export const getServerSideProps: GetServerSideProps = withLocaleProp(
         const { error, data: checkin, status } = await doCheckinRequest(
             locationCode,
             {
-                cookie,
+                headers: { cookie },
             }
         );
 

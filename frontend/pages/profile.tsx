@@ -11,6 +11,7 @@ import theme from "../styles/theme";
 import { useUpdateProfileAppState } from "../components/api/ApiHooks";
 import needsProfile from "../components/api/needsProfile";
 import Profile from "../model/Profile";
+import { useTranslation } from "../localization";
 
 interface ProfilePageProps {
     profile: Profile;
@@ -21,6 +22,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({profile}) => {
     const { last_checkins} = profile!;
     const hasCheckins = last_checkins.length > 0;
     const { loading } = useUpdateProfileAppState();
+    const { t } = useTranslation();
 
     const handleCheckinClick = (index: number) => {
         const checkin = last_checkins[index];
@@ -41,16 +43,16 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({profile}) => {
             `}</style>
             {loading && 
                 <Notice>
-                    ...aktualisiert
+                    {t("...aktualisiert")}
                 </Notice>
             }
-            {!loading && <Subtitle>Protokoll</Subtitle>}
+            {!loading && <Subtitle>{t("Protokoll")}</Subtitle>}
             {hasCheckins && <LastCheckins onCheckinClick={handleCheckinClick} checkins={last_checkins} />}
-            {!hasCheckins && <Notice>Noch keine Checkins vorhanden</Notice>}
+            {!hasCheckins && <Notice>{t("Noch keine Checkins vorhanden")}</Notice>}
             <PushToBottom>
                 <div className="button-group">
                     <Button outline onClick={() => router.push(appUrls.setprofile)}>
-                        Telefon ändern
+                        {t("Telefon ändern")}
                     </Button>
                     {/* <Button onClick={} outline>
                         Ausloggen

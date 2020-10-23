@@ -17,7 +17,7 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
     const { appState, dispatch } = useAppState();
     // const { profile } = appState;
     const { profile, getProfile, error } = useProfile();
-    const { locale } = useTranslation();
+    const { t, locale } = useTranslation();
 
     useEffect(() => {
         // either profile sent from server
@@ -75,10 +75,10 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
             </div>
             <div className="footer">
                 <Link href={appUrls.privacy}>
-                    <span>Datenschutz</span>
+                    <span>{t("Datenschutz")}</span>
                 </Link>
                 <Link href={appUrls.help}>
-                    <span>Hilfe</span>
+                    <span>{t("Hilfe")}</span>
                 </Link>
             </div>
         </>

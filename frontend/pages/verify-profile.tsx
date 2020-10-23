@@ -14,24 +14,24 @@ interface VerifyProfilePageProps {}
 const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
     props
 ) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("verifyProfile");
     const router = useRouter();
     return (
         <>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <FormGroup>
             <Text paragraph>
-                {t("Die Hochschule für Künste ist verpflichtet die Identität aller Personen festzustellen, um im Falle einer Infektion eine Nachverfolgung gewährleisten zu können.")}
+                {t("Die Hochschule für Künste ist verpflichtet die Identität aller Personen festzustellen, um im Falle einer Infektion eine Nachverfolgung gewährleisten zu können", null, "Die Hochschule ist verpflichtet...")}
             </Text>
             <Text paragraph>
-            <b>Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor</b>, um die Registrierung abzuschließen und mit der Protokollierung beginnen zu können.
+            <b>{t("Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor")}.</b>
             </Text>
             <Text paragraph>
-            Bevor ihre Identität nicht verifiziert ist, ist die Protokollierung und ein Eintritt nicht möglich.
+            {t("Bevor ihre Identität nicht verifiziert ist, ist die Protokollierung und ein Eintritt nicht möglich.")}
             </Text>
             </FormGroup>
             <br />
-            <Button outline onClick={() => router.push(appUrls.enterCode)}>Erledigt</Button>
+            <Button outline onClick={() => router.push(appUrls.enterCode)}>{t("Erledigt")}</Button>
         </>
     );
 };

@@ -3,7 +3,7 @@ import * as config from "../../config";
 import { NextPageContext } from "next";
 import { Location } from "../../model/Location";
 import { ServerResponse } from "http";
-import { Checkin } from "../../model/Checkin";
+import { Checkin, CheckinOrigin } from "../../model/Checkin";
 
 export type ApiResponse<T> =
     | {
@@ -17,19 +17,47 @@ export type Response<ResultType extends Record<string, any> = {}> = {
     error?: string;
 };
 
+export type RequestParameters = Record<string, string | undefined>;
+
+export type RequestOptions<T extends RequestParameters> = {
+    headers?: HeadersInit;
+    requestParameters?: T;
+};
+
+export interface RequestBody extends Omit<RequestInit, "credentials"> {
+    requestParameters?: RequestParameters;
+}
+
+const _clean = <T extends Record<string, string>>(obj?: Partial<T>): T | undefined => {
+    if (obj === undefined) { 
+        return undefined
+    }
+
+    Object.entries(obj).forEach(([key, val]) => {
+        if (val == null) delete obj[key];
+    });
+    if (Object.entries.length === 0) return undefined;
+    
+    return obj as unknown as T;
+};
+
 export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     endpoint: string,
-    requestData: RequestInit,
-    isTypeOrThrow?: (p: any) => asserts p is ResultType
+    requestData: RequestBody,
+    responseTypeGuard?: (p: any) => asserts p is ResultType
 ): Promise<Response<ResultType>> => {
-    const url = `${config.apiUrl}/${endpoint}`;
-    const { headers, ...otherRequestData } = requestData;
+    const { headers, requestParameters, ...otherRequestData } = requestData;
+    const cleanedRequestParameters = _clean(requestParameters);
+    const stringifiedRequestParameters = cleanedRequestParameters
+        ? `?${new URLSearchParams(cleanedRequestParameters).toString()}`
+        : "";
+    const url = `${config.apiUrl}/${endpoint}${stringifiedRequestParameters}`;
+    const forceLocaleHeader = config.forceLocale ? { "Accept-Language": config.forceLocale} : undefined;
     return await fetch(url, {
         headers: {
             "Content-Type": "application/json",
-            "Accept-Language": "de",
             ...headers,
-            // 'Content-Type': 'application/x-www-form-urlencoded',
+            ...forceLocaleHeader
         },
         credentials: "include",
         ...otherRequestData,
@@ -41,10 +69,11 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             status: response.status,
         }))
         .then(({ data, status }) => {
-            if (data === undefined) throw {
-                status: config.httpStatuses.unprocessable,
-                error: "Response could not be serialized"
-            } 
+            if (data === undefined)
+                throw {
+                    status: config.httpStatuses.unprocessable,
+                    error: "Response could not be serialized",
+                };
             if (status >= 400) {
                 if (!data.detail)
                     throw {
@@ -62,7 +91,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         })
         .then(({ data: typedData, status }) => {
             // @ts-ignore
-            if (!!isTypeOrThrow) isTypeOrThrow(typedData);
+            if (!!responseTypeGuard) responseTypeGuard(typedData);
             return {
                 typedData,
                 status,
@@ -94,11 +123,14 @@ export const updateProfileRequest = async (
 
 export const doCheckinRequest = async (
     locationCode: string,
-    headers?: HeadersInit
-) =>
-    await apiRequest<Checkin>(`location/${locationCode}/checkin/`, {
-        headers,
+    options?: RequestOptions<{
+        origin?: CheckinOrigin;
+    }>
+) => {
+    return await apiRequest<Checkin>(`location/${locationCode}/checkin/`, {
+        ...options,
     });
+};
 
 export const doCheckoutRequest = async (
     locationCode: string,

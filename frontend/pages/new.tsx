@@ -33,17 +33,17 @@ const NewProfilePage: NextPage = () => {
             <FormGroup>
                 <Text paragraph>
                     {t(
-                        `Präsenzlehre und ein flexibleres Zugangsverfahren zu den Räumen der HfK sind nur möglich, wenn alle HfK-Mitglieder die Corona-Maßnahmen unterstützen.`,
+                        `Präsenzlehre und ein flexibleres Zugangsverfahren zu den Räumen der HfK sind nur möglich, wenn alle HfK-Mitglieder die Corona-Maßnahmen unterstützen`,
                         {},
-                        "follow-the-rules-1"
-                    )}
+                        "Halte dich an die Regeln..."
+                    )}.
                 </Text>
                 <Text paragraph>
                     {t(
-                        `Bitte dokumentiere deinen Aufenthalt in den Gebäuden und Räumen der HfK in eigenverantwortlich und halte dich an die HfK-Hygieneregeln.`,
+                        `Bitte dokumentiere deinen Aufenthalt in den Gebäuden und Räumen der HfK in eigenverantwortlich und halte dich an die HfK-Hygieneregeln`,
                         {},
-                        "follow-the-rules-2"
-                    )}
+                        "Dokumentiere deinen Aufenthalt..."
+                    )}.
                 </Text>
             </FormGroup>
             <FormGroup>
@@ -53,7 +53,7 @@ const NewProfilePage: NextPage = () => {
                 </Button>
             </FormGroup>
             <Subtitle>{t("Gäste")}</Subtitle>
-            <Notice>Verifikation mit Identitätsnachweis nach der Registrierung notwendig.</Notice>
+            <Notice>{t("Verifikation mit Identitätsnachweis nach der Registrierung notwendig")}.</Notice>
             <Button outline onClick={handleGuest}>
                 {t("Gastzugang")}
             </Button>
