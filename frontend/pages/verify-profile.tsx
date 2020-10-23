@@ -21,7 +21,7 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <FormGroup>
             <Text paragraph>
-                {t("Die Hochschule für Künste ist verpflichtet die Identität aller Personen festzustellen, um im Falle einer Infektion eine Nachverfolgung gewährleisten zu können", null, "Die Hochschule ist verpflichtet...")}
+                {t("Die Hochschule für Künste ist verpflichtet die Identität aller Personen festzustellen, um im Falle einer Infektion eine Nachverfolgung gewährleisten zu können", {}, "Die Hochschule ist verpflichtet...")}
             </Text>
             <Text paragraph>
             <b>{t("Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor")}.</b>
