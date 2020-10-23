@@ -46,6 +46,7 @@ netaddr = "*"
 django-weasyprint = "*"
 segno = "*"
 django-model-history = "*"
+django-simple-history = "*"
 
 [requires]
 python_version = "3.8.5"

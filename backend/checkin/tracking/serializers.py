@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from .models import *
 from rest_framework import serializers
+from rest_framework.fields import ReadOnlyField
 
 
 class ActivityProfileSerializer(serializers.ModelSerializer):
@@ -20,6 +21,7 @@ class CapacityForActivityProfileSerializer(serializers.ModelSerializer):
 
 class LocationSerializer(serializers.ModelSerializer):
     capacities = serializers.SerializerMethodField(read_only=True)
+    id = ReadOnlyField()
 
     class Meta:
         model = Location
@@ -32,6 +34,8 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class SimpleCheckinSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
+    id = ReadOnlyField()
+
     class Meta:
         model = Checkin
         fields = ['id','time_entered', 'time_left', 'location']
@@ -39,6 +43,10 @@ class SimpleCheckinSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     last_checkins = SimpleCheckinSerializer(many=True, read_only=True)
+    verified = ReadOnlyField()
+    complete = ReadOnlyField()
+    id = ReadOnlyField()
+
     class Meta:
         model = Profile
         fields = ['id','first_name', 'last_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']
@@ -50,6 +58,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class CheckinSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
     location = LocationSerializer(read_only=True)
+    id = ReadOnlyField()
 
     class Meta:
         model = Checkin

@@ -12,6 +12,7 @@ from django.core.validators import RegexValidator
 from django.utils import timezone
 from datetime import timedelta
 from django.core.exceptions import ValidationError
+from simple_history.models import HistoricalRecords
 
 LOAD_LOOKBACK_TIME = timedelta(hours=24)
 
@@ -28,9 +29,10 @@ class Profile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
     # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
+    history = HistoricalRecords()
 
     def __str__(self):
-        return "%s %s" % (self.first_name, self.last_name)
+        return _("Person mit Profil-ID %i") % (self.id, )
 
     @property
     def complete(self):
@@ -109,7 +111,7 @@ class Location(MPTTModel):
     org_number = models.CharField(_("Raumnummer"), max_length=30, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
     org_name = models.CharField(_("Raumname / Standort"), max_length=255)
     org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
-    org_size = models.DecimalField(verbose_name=_("Größe in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
+    org_size = models.DecimalField(verbose_name=_("Größe"), help_text=_("in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
     org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
     org_usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
     org_capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Kapazität"), blank=True, null=True)
@@ -125,6 +127,10 @@ class Location(MPTTModel):
     class Meta:
         verbose_name = _("Raum / Standort")
         verbose_name_plural = _("Räume / Standorte")
+        permissions = [
+            ("can_print_location", _("Kann PDF-Raumausweise erstellen.")),
+            ("can_display_location_loads", _("Kann aktuelle aktuelle Checkins anzeigen.")),
+        ]
 
     def load(self):
         if self.hide_load:
@@ -212,6 +218,7 @@ class Checkin(models.Model):
     USER_MANUAL = 'USER_MANUAL'
     ADMIN_MANUAL = 'ADMIN_MANUAL'
     FOREIGN_SCAN = 'FOREIGN_SCAN'
+    PARENT_CHECKIN = 'PARENT_CHECKIN'
     PARENT_CHECKOUT = 'PARENT_CHECKOUT'
     IMPORT = 'IMPORT'
 
@@ -220,13 +227,14 @@ class Checkin(models.Model):
         ('USER_MANUAL', _("Manuelle Eingabe durch Nutzer")),
         ('ADMIN_MANUAL', _("Manuelle Eingabe durch Betreiber")),
         ('FOREIGN_SCAN', _("Scan eines QR-Codes durch andere Person")),
+        ('PARENT_CHECKIN', _("Checkin durch untergeordnetes Objekt")),
         ('PARENT_CHECKOUT', _("Checkout durch übergeordnetes Objekt")),
         ('IMPORT', _("Datenimport")),
     ]
 
     profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT, null=True)
     location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.PROTECT, null=True)
-    time_entered = models.DateTimeField(_("Checkin"), auto_now=True)
+    time_entered = models.DateTimeField(_("Checkin"), auto_now_add=True)
     time_left = models.DateTimeField(_("Checkout"), blank=True, null=True)
     # created_at = models.DateTimeField(auto_now_add=True)
     origin_entered = models.CharField(_("Datenquelle Checkin"), choices=CHECKIN_ORIGINS, blank=True, null=True, max_length=100)
@@ -254,13 +262,27 @@ class Checkin(models.Model):
             if include_descendants:
                 locations = self.location.get_descendants(include_self=False)
                 descendant_checkins = self.__class__.objects.active().filter(location__in=locations).filter(profile=self.profile)
-                descendant_checkins.update(time_left=self.time_left, origin_left=Checkin.PARENT_CHECKOUT)
-            self.save(ignore_double=True)
+                for checkin in descendant_checkins:
+                    checkin.time_left = self.time_left
+                    checkin.origin_left = Checkin.PARENT_CHECKOUT
+                    checkin.save(ignore_double=True, include_ancestors=False)
+            self.save(ignore_double=True, include_ancestors=False)
 
     def is_active(self):
         return not self.time_left
 
-    def save(self, ignore_double=False, *args, **kwargs):
+    def save(self, ignore_double=False, include_ancestors=True, *args, **kwargs):
+        if include_ancestors:
+            locations = self.location.get_ancestors(include_self=False)
+            ancestor_checkins = []
+            for location in locations:
+                checkin = self.__class__()
+                checkin.location = location
+                checkin.time_entered = self.time_entered
+                checkin.origin_entered = Checkin.PARENT_CHECKIN
+                checkin.profile = self.profile
+                checkin.save(ignore_double=True, include_ancestors=False)
+                ancestor_checkins.append(checkin)
         if not ignore_double:
             already_made_checkin = self.__class__.objects.active().last_checkin_for_profile_at_location(location=self.location, profile=self.profile)
             if already_made_checkin.count() > 0:

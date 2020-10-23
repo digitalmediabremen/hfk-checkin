@@ -71,7 +71,7 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     'mptt',
-    #'simple_history',
+    'simple_history',
     'wkhtmltopdf',
     'rest_framework',
     'microsoft_auth',
@@ -140,7 +140,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    #'simple_history.middleware.HistoryRequestMiddleware'
+    'simple_history.middleware.HistoryRequestMiddleware'
 ]
 
 # STATIC

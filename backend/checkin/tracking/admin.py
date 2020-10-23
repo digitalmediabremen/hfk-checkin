@@ -5,13 +5,15 @@ from .models import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from simple_history.admin import SimpleHistoryAdmin
 
 
-class ProfileAdmin(admin.ModelAdmin):
+class ProfileAdmin(SimpleHistoryAdmin):
     list_display = ('first_name', 'last_name','verified')
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
     list_filter = ('updated_at','created_at')
+    search_fields = ['first_name', 'last_name','phone','email']
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
@@ -37,17 +39,24 @@ generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für au
 
 class LocationAdmin(MPTTModelAdmin):
     readonly_fields = ('code',)
-    list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'load', 'load_descendants', 'code', 'updated_at')
+    list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'updated_at')
+    list_display_with_loads = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'load', 'load_descendants', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
     list_filter = ('updated_at',)
-    ordering = ('org_number',)
+    #ordering = ('org_number',)
+    search_fields = ['org_name', 'org_number','code']
+
+    def get_list_display(self, request):
+        if request.user.has_perm('tracking.can_display_location_loads'):
+            return self.list_display_with_loads
+        return self.list_display
 
 
 class CheckinAdmin(admin.ModelAdmin):
     """Disables all editing capabilities."""
     list_display = ('location','profile_id','time_entered','origin_entered','time_left','origin_left')
-    list_filter = ('location', 'time_entered','time_left')
+    list_filter = ('location', 'time_entered', 'time_left')
 
     actions = None
 
