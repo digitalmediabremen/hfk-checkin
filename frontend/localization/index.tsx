@@ -5,6 +5,7 @@ import { ParsedUrlQuery } from "querystring";
 import { createContext, SFC, useContext } from "react";
 import { appUrls, defaultLocale, production, baseLocale, forceLocale } from "../config";
 import translation from "./translation";
+import { config } from "process";
 
 export type Translation = Record<
     string,
@@ -32,6 +33,8 @@ export const getInitialLocale = (headers?: IncomingHttpHeaders) => {
 
 const { Provider } = localeContext;
 
+export const LocaleConsumer = localeContext.Consumer;
+
 export const LocaleProvider: SFC<{ locale: string }> = ({
     locale,
     children,
@@ -42,7 +45,8 @@ export const LocaleProvider: SFC<{ locale: string }> = ({
 type PatternInput = string | number;
 
 export const useTranslation = (inModule: TranslationModules = "common") => {
-    const { locale } = useContext(localeContext);
+    let { locale } = useContext(localeContext);
+    if (!Object.keys(translation).includes(locale)) locale = defaultLocale;
     const t = (
         s: string,
         data?: Record<string, PatternInput>,
