@@ -46,7 +46,7 @@ type PatternInput = string | number;
 
 export const useTranslation = (inModule: TranslationModules = "common") => {
     let { locale } = useContext(localeContext);
-    if (!Object.keys(translation).includes(locale)) locale = defaultLocale;
+    if (![baseLocale, ...Object.keys(translation)].includes(locale)) locale = defaultLocale;
     const t = (
         s: string,
         data?: Record<string, PatternInput>,
