@@ -63,9 +63,6 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
                     }
                 `}
             </style>
-            <Head>
-                <html lang={locale} />
-            </Head>
             <div className="wrapper">
                 <StatusBar />
                 {appState.initialized && (
