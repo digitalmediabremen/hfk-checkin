@@ -31,7 +31,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', include('microsoft_auth.urls', namespace='microsoft')),
     path('login/redirect/', to_ms_redirect),
-    path('logout/', LogoutView.as_view()),
+    path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout
     path('location/html/', LocationsView.as_view(), name='html-export'),
     path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),
     path('api/', include(router.urls)),
