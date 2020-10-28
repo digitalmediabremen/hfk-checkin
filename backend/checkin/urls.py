@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from checkin.tracking.views import LocationsPDFView, LocationsView
 from rest_framework import routers
-from checkin.tracking.api import LocationViewSet, CheckinViewSet, ProfileViewSet
+from checkin.tracking.api import LocationViewSet, CheckinViewSet, ProfileViewSet, LogoutViewSet
 from microsoft_auth.models import MicrosoftAccount
 
 from django.contrib import admin
@@ -23,6 +23,7 @@ router = routers.SimpleRouter()
 router.register(r'location', LocationViewSet)
 router.register(r'checkin', CheckinViewSet)
 router.register(r'profile', ProfileViewSet)
+router.register(r'auth', LogoutViewSet, basename='auth')
 
 admin.site.unregister(MicrosoftAccount)
 

@@ -16,6 +16,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils.translation import gettext as _
 from netaddr import IPNetwork, IPAddress
 from django.utils import timezone
+from django.contrib.auth import logout as auth_logout
 
 from .models import Profile
 
@@ -29,6 +30,7 @@ ERROR_NOT_VALID_WITH_SUMMARY = _("Bitte korregieren Sie: %s")
 ERROR_NOT_CHECKED_IN_HERE = _("Sie sind hier nicht eingecheckt.")
 ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein fehler aufgetreten.")
 ERROR_PROFILE_INCOMPLETE = _("Ihr Profil ist unvollstädnig.")
+SUCCESS_LOGOUT = _("Abmeldung erfolgreich. Danke!")
 
 ON_CAMPUS_IP_NETWORKS_WHITELIST = [
     IPNetwork("172.16.0.0/24"),
@@ -184,3 +186,14 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         except (ValidationError, IntegrityError) as e:
             return Response({'detail': ERROR_PROFILE_NOT_SAVED}, status=status.HTTP_400_BAD_REQUEST)
+
+class LogoutViewSet(viewsets.ViewSet):
+    """
+    Logout current user and return result.
+    see django/contrib/auth/views.py LogoutView for template.
+    """
+
+    @action(methods=['post','get'], detail=False)
+    def logout(self, request, *args, **kwargs):
+        auth_logout(request)
+        return Response({'detail': SUCCESS_LOGOUT}, status=status.HTTP_200_OK)
