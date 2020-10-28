@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from mptt.admin import MPTTModelAdmin
+from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin
 from .models import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -53,7 +53,7 @@ def generate_pdfs_for_selected_objects(modeladmin, request, queryset):
 
 generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für ausgewählte Standorte generieren")
 
-class LocationAdmin(MPTTModelAdmin):
+class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin):
     readonly_fields = ('code',)
     list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'updated_at')
     list_display_with_loads = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'real_load', 'updated_at')

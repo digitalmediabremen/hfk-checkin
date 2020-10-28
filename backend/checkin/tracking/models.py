@@ -13,6 +13,7 @@ from django.utils import timezone
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from simple_history.models import HistoricalRecords
+from simple_history import register as register_history
 
 LOAD_LOOKBACK_TIME = timedelta(hours=24)
 CHECKIN_LIFETIME = timedelta(hours=24)
@@ -121,6 +122,7 @@ class Location(MPTTModel):
     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     hide_load = models.BooleanField(verbose_name=_("Checkins verstecken"), default=False)
+    # history = is registered via register_history (see below)
 
     class MPTTMeta:
         order_insertion_by = ['org_number']
@@ -169,7 +171,6 @@ class Location(MPTTModel):
         activities = self.org_activities.through.objects.filter(location=self).all()
         return activities
 
-
     def __str__(self):
         if self.org_number:
             return "%s (%s)" % (self.org_name, self.org_number)
@@ -181,6 +182,12 @@ class Location(MPTTModel):
 
     def get_checkin_url(self):
         return reverse('location-checkin', kwargs={'code': self.code})
+
+
+# registering history instead of using HistoricalRecords() on Location model
+# reason: HistoricalRecords() is not compatible with MPTT
+# see: https://github.com/jazzband/django-simple-history/issues/87
+register_history(Location)
 
 
 class CapacityForActivityProfile(models.Model):
