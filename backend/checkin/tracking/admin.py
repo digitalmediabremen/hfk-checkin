@@ -56,12 +56,13 @@ generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für au
 class LocationAdmin(MPTTModelAdmin):
     readonly_fields = ('code',)
     list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'updated_at')
-    list_display_with_loads = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'load', 'load_descendants', 'updated_at')
+    list_display_with_loads = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'real_load', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
     list_filter = ('updated_at',)
     #ordering = ('org_number',)
     search_fields = ['org_name', 'org_number','code']
+    list_max_show_all = 1000
 
     def get_list_display(self, request):
         if request.user.has_perm('tracking.can_display_location_loads'):

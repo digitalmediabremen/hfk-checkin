@@ -86,7 +86,7 @@ class LocationViewSet(viewsets.ModelViewSet):
         profile = request.user.profile
 
         origin = request.query_params.get('origin', None)
-        checkin, new = Checkin.objects.checkin_or_return(profile=profile, location=self.get_object(), origin=origin)
+        checkin, new = Checkin.objects.checkin(profile=profile, location=self.get_object(), origin=origin)
         checkin_serializer = CheckinSerializer(checkin)
         if not new:
             return Response(checkin_serializer.data, status=status.HTTP_202_ACCEPTED)
@@ -104,11 +104,9 @@ class LocationViewSet(viewsets.ModelViewSet):
 
         origin = request.query_params.get('origin', None)
         try:
-            checkin = Checkin.objects.last_checkin_for_profile_at_location(profile=profile, location=self.get_object()).get()
-            checkin_serializer = CheckinSerializer(checkin)
-            if checkin.is_active():
-                checkin.checkout(origin=origin)
-            else:
+            checkout, new = Checkin.objects.checkout(profile=profile, location=self.get_object(), origin=origin)
+            checkin_serializer = CheckinSerializer(checkout)
+            if not new:
                 return Response(checkin_serializer.data, status=status.HTTP_202_ACCEPTED)
             return Response(checkin_serializer.data, status=status.HTTP_201_CREATED)
         except Checkin.DoesNotExist:
