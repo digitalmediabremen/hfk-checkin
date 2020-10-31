@@ -25,14 +25,6 @@ const HelpContentEn =  () => {
                 <br />
                 Die Anwendung und das neue Zugangsverfahren befinden sich
                 momentan in einem Testbetrieb.
-                <br />
-                <br />
-                In der ersten Woche (19.–23.10.2020) können Sie das Team der
-                Anwendung unter{" "}
-                <strong>
-                    <a href="tel:+4942195951306">0421 9595-1306</a>
-                </strong>{" "}
-                bei Fragen oder Problemen erreichen.
             </Text>
             <Subtitle>Weiterführende Informationen</Subtitle>
             <Text paragraph>
