@@ -37,8 +37,8 @@ LOCALE_PATHS = [Path.joinpath(BASE_DIR, "locale")]
 from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
-    ('de-de', _('German')),
-    ('en-en', _('English')),
+    ('de', _('Deutsch')),
+    ('en', _('Englisch')),
 ]
 
 # DATABASES
