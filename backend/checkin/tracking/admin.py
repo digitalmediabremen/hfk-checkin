@@ -37,6 +37,9 @@ class ProfileAdmin(SimpleHistoryAdmin):
             return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}{m[0][-2]}{m[0][-1]}@{m[1]}'
     email_obfuscated.short_description = _("E-Mail")
 
+    def has_add_permission(self, request):
+        return False
+
 
 class ActivityProfileAdmin(admin.ModelAdmin):
     list_display = ('name_de', 'distance_rule_de', 'name_en', 'distance_rule_en')
