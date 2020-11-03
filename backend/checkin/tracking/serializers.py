@@ -38,7 +38,7 @@ class SimpleCheckinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Checkin
-        fields = ['id','time_entered', 'time_left', 'location']
+        fields = ['id','time_entered', 'time_left', 'location','is_active']
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -62,4 +62,4 @@ class CheckinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Checkin
-        fields = ['id','time_entered', 'time_left', 'origin_entered', 'origin_left', 'profile', 'location']
+        fields = ['id','time_entered', 'time_left', 'origin_entered', 'origin_left', 'profile', 'location','is_active']

@@ -28,7 +28,7 @@ ERROR_NOT_COMPLETE = _("Ihr Profil ist unvollständig.")
 ERROR_NOT_VALID = _("Ihre Eingaben sind nicht korrekt.")
 ERROR_NOT_VALID_WITH_SUMMARY = _("Bitte korregieren Sie: %s")
 ERROR_NOT_CHECKED_IN_HERE = _("Sie sind hier nicht eingecheckt.")
-ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein fehler aufgetreten.")
+ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein Fehler aufgetreten.")
 ERROR_PROFILE_INCOMPLETE = _("Ihr Profil ist unvollstädnig.")
 SUCCESS_LOGOUT = _("Abmeldung erfolgreich. Danke!")
 
