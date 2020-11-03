@@ -6,15 +6,17 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from simple_history.admin import SimpleHistoryAdmin
+from django.utils.html import format_html
+from django.urls import reverse, path
 
 
 class ProfileAdmin(SimpleHistoryAdmin):
     # TODO: default query set nur nicht Verifiziert
     # TODO: default query set nur neue Nutzer
 
-    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','created_at')
+    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','created_at','admin_actions')
     # readonly_fields = ('last_checkin',)
-    list_editable = ('verified',)
+    # list_editable = ('verified',)
     list_filter = ('updated_at','created_at','verified')
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('created_at', 'updated_at')
@@ -36,6 +38,33 @@ class ProfileAdmin(SimpleHistoryAdmin):
             m = object.email.split('@')
             return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}{m[0][-2]}{m[0][-1]}@{m[1]}'
     email_obfuscated.short_description = _("E-Mail")
+
+    def get_urls(self):
+        urls = super(ProfileAdmin, self).get_urls()
+        custom_urls = [
+            path(
+                r'<int:profile_id>/verifiy/',
+                self.admin_site.admin_view(self.process_verification),
+                name='profile-verification',
+            ),
+        ]
+        return custom_urls + urls
+
+    def admin_actions(self, obj):
+        return format_html(
+            '<button href="{}">Identität als geprüft markieren</button>',
+            reverse('admin:profile-verification', args=[obj.pk]),
+        )
+    admin_actions.short_description = 'Aktionen'
+    admin_actions.allow_tags = True
+
+    def process_verification(self, request, account_id, *args, **kwargs):
+        return self.process_action(
+            request=request,
+            account_id=account_id,
+            action_form=WithdrawForm,
+            action_title='Withdraw',
+        )
 
 
 class ActivityProfileAdmin(admin.ModelAdmin):
