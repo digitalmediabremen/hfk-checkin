@@ -89,6 +89,7 @@ export const withLocaleProp = (
         return {
             props: {
                 locale: getInitialLocale(context.req.headers),
+                // @ts-ignore
                 ...(await func(context)).props,
             },
         };
