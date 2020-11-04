@@ -122,6 +122,7 @@ class Location(MPTTModel):
     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     hide_load = models.BooleanField(verbose_name=_("Checkins verstecken"), default=False)
+    removed = models.BooleanField(verbose_name=_("Entfernt"), default=False, help_text=_("Diese Raum ist deaktiviert oder entfernt. Eine Löschung ist jedoch noch nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"))
     # history = is registered via register_history (see below)
 
     class MPTTMeta:
@@ -140,18 +141,22 @@ class Location(MPTTModel):
             return -1
         return self.load_descendants()
         #return Checkin.objects.filter(location=self).not_older_then(LOAD_LOOKBACK_TIME).active().count()
-    load.short_description = _('# eingecheckt')
+    load.short_description = _('# jetzt')
 
     def load_descendants(self):
         locations = self.get_descendants(include_self=True)
         # only works in postgres: .distinct('profile')
         # not_older_then(LOAD_LOOKBACK_TIME).active()
         return Checkin.objects.filter(location__in=locations).not_older_then(LOAD_LOOKBACK_TIME).active().count()
-    load_descendants.short_description = _('# eingecheckt (kumuliert)')
+    load_descendants.short_description = _('# jetzt (kumuliert)')
 
     def real_load(self):
         return Checkin.objects.filter(location=self).active().count()
-    real_load.short_description = _('# eingecheckt')
+    real_load.short_description = _('# jetzt')
+
+    def checkins_sum(self):
+        return Checkin.objects.filter(location=self).count()
+    checkins_sum.short_description = _('# Summe')
 
     @property
     def current_checkins(self):

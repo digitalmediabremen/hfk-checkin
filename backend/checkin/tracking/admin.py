@@ -59,7 +59,7 @@ generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für au
 class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin):
     readonly_fields = ('code',)
     list_display = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'updated_at')
-    list_display_with_loads = ('org_name', 'org_number', 'org_size', 'capacity', 'code', 'real_load', 'updated_at')
+    list_display_with_loads = ('org_name', 'org_number', 'org_size', 'capacity', 'code',  'checkins_sum', 'real_load', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
     list_filter = ('updated_at',)
