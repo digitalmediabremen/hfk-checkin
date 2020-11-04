@@ -167,12 +167,14 @@ export const useLocation = () => {
     };
 };
 
-export const useCheckin = () => {
+export const useCheckin = (checkinId?: string) => {
     const { request, ...data } = useApi<Checkin>();
-
+    useEffect(() => {
+        if (checkinId) request(() => getCheckinRequest(checkinId))
+    }, [checkinId])
     return {
-        getCheckin: (checkinId: string) =>
-            request(() => getCheckinRequest(checkinId)),
+        requestCheckin: (otherCheckinId: string) =>
+            request(() => getCheckinRequest(otherCheckinId)),
         data,
     };
 };
