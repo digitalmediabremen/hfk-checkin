@@ -4,6 +4,7 @@ import { Location } from "./Location";
 export type LastCheckin = Omit<Checkin, "profile">;
 
 export interface Checkin {
+    id: number;
     time_entered: string;
     time_left: string | null;
     profile: Profile;

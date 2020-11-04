@@ -15,7 +15,7 @@ import theme from "../styles/theme";
 import needsProfile from "../components/api/needsProfile";
 
 interface CheckInPageProps {
-    profile?: Profile;
+    profile: Profile;
     error?: string;
 }
 

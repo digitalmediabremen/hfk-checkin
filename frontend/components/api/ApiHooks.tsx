@@ -12,9 +12,12 @@ import {
     getCheckinRequest,
 } from "./ApiService";
 import { Checkin } from "../../model/Checkin";
+import { config } from "process";
+import { httpStatuses } from "../../config";
 
 type UseApiReturnType<RT extends {}> = {
     request: (request: () => Promise<Response<RT>>) => void;
+    additionalData: AdditionalResponseData | undefined;
 } & (
     | {
           state: "initial";
@@ -38,6 +41,10 @@ type UseApiReturnType<RT extends {}> = {
       }
 );
 
+interface AdditionalResponseData {
+    statusCode?: number;
+}
+
 export const useApi = <RT extends {}>(_config?: {
     onlyLocalErrorReport?: boolean;
 }): UseApiReturnType<RT> => {
@@ -45,20 +52,21 @@ export const useApi = <RT extends {}>(_config?: {
     const [result, setResult] = useState<RT | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(undefined);
     const [requestInProgress, setRequestInProgress] = useState(false);
-    const loading = requestInProgress;
-    const success = !error && !!result && !loading;
+    const [additionalData, setAdditionalData] = useState<
+        AdditionalResponseData | undefined
+    >(undefined);
     const config = _config || {
         onlyLocalErrorReport: false,
     };
 
-    const deriveRequestState = () => {
-        if (loading) return "loading";
+    const _deriveRequestState = () => {
+        if (requestInProgress) return "loading";
         if (error) return "error";
         if (result) return "success";
         return "initial";
     };
 
-    const handleError = (error: string, status: number) => {
+    const _handleError = (error: string, status: number) => {
         setError(error);
         if (!config.onlyLocalErrorReport) {
             dispatch({
@@ -71,17 +79,20 @@ export const useApi = <RT extends {}>(_config?: {
         }
     };
 
-    const handleRequest = <R extends () => Promise<Response<RT>>>(
+    const _handleRequest = <R extends () => Promise<Response<RT>>>(
         request: R
     ) => {
         setError(undefined);
-        setResult(undefined);
+        setAdditionalData(undefined);
         (async () => {
             setRequestInProgress(true);
             const { error, data, status } = await request();
             setRequestInProgress(false);
+            setAdditionalData({
+                statusCode: status,
+            });
             if (error && status <= 500) {
-                handleError(error || `Unknown Error (${status})`, status);
+                _handleError(error || `Unknown Error (${status})`, status);
             } else if (!!error && status > 500) {
                 throw error;
             } else if (!config.onlyLocalErrorReport) {
@@ -98,10 +109,11 @@ export const useApi = <RT extends {}>(_config?: {
     };
 
     return {
-        state: deriveRequestState(),
+        state: _deriveRequestState(),
         result,
         error,
-        request: handleRequest,
+        request: _handleRequest,
+        additionalData,
     } as UseApiReturnType<RT>;
 };
 
@@ -170,8 +182,8 @@ export const useLocation = () => {
 export const useCheckin = (checkinId?: string) => {
     const { request, ...data } = useApi<Checkin>();
     useEffect(() => {
-        if (checkinId) request(() => getCheckinRequest(checkinId))
-    }, [checkinId])
+        if (checkinId) request(() => getCheckinRequest(checkinId));
+    }, [checkinId]);
     return {
         requestCheckin: (otherCheckinId: string) =>
             request(() => getCheckinRequest(otherCheckinId)),
@@ -179,14 +191,18 @@ export const useCheckin = (checkinId?: string) => {
     };
 };
 
-export const useDoCheckin = () => {
-    const { state, request, result, ...other } = useApi<Checkin>();
+export const useDoCheckin = (locationCode?: string) => {
+    const { request, additionalData, ...data } = useApi<Checkin>();
+
+    useEffect(() => {
+        if (locationCode) request(() => doCheckinRequest(locationCode));
+    }, [locationCode]);
     return {
-        doCheckin: (locationCode: string) =>
-            request(() => doCheckinRequest(locationCode)),
-        success: state === "success",
-        loading: state === "loading",
-        ...other,
+        doCheckin: (otherLocationCode: string) =>
+            request(() => doCheckinRequest(otherLocationCode)),
+        alreadyCheckedIn:
+            additionalData?.statusCode === httpStatuses.alreadyCheckedIn,
+        data,
     };
 };
 
