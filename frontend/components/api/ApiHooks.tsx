@@ -11,7 +11,7 @@ import {
     updateProfileRequest,
     getCheckinRequest,
 } from "./ApiService";
-import { Checkin } from "../../model/Checkin";
+import { Checkin, LastCheckin } from "../../model/Checkin";
 import { config } from "process";
 import { httpStatuses } from "../../config";
 
@@ -117,27 +117,27 @@ export const useApi = <RT extends {}>(_config?: {
     } as UseApiReturnType<RT>;
 };
 
-export const useUpdateProfileAppState = () => {
+export const useUpdateProfileFromAppStateAndUpdate = () => {
     const { getProfile, profile, error, loading, success } = useProfile();
     const { appState, dispatch } = useAppState();
+    const { profile: profileFromAppState } = appState;
 
     useEffect(() => {
         getProfile();
     }, []);
 
     useEffect(() => {
-        profile &&
-            dispatch({
-                type: "profile",
-                profile,
-            });
-    }, [profile]);
+        (success || error) && dispatch({
+            type: "profile",
+            profile,
+        });
+    }, [profile, error]);
 
     return {
         loading,
         success,
         error,
-        profile,
+        profile: profileFromAppState,
     };
 };
 
@@ -180,7 +180,7 @@ export const useLocation = () => {
 };
 
 export const useCheckin = (checkinId?: string) => {
-    const { request, ...data } = useApi<Checkin>();
+    const { request, ...data } = useApi<LastCheckin>();
     useEffect(() => {
         if (checkinId) request(() => getCheckinRequest(checkinId));
     }, [checkinId]);

@@ -1,19 +1,17 @@
-import { useFormik, FormikConfig } from "formik";
-import { GetServerSideProps, NextPage } from "next";
+import { useFormik } from "formik";
+import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUpdateProfile } from "../components/api/ApiHooks";
-import { getProfileRequest } from "../components/api/ApiService";
+import { useAppState } from "../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import { Input } from "../components/common/Input";
+import Notice from "../components/common/Notice";
 import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
-import { useTranslation, withLocaleProp } from "../localization";
+import { useTranslation } from "../localization";
 import Profile, { ProfileUpdate } from "../model/Profile";
-import { useAppState } from "../components/common/AppStateProvider";
-import Text from "../components/common/Text";
-import Notice from "../components/common/Notice";
 
 interface EditProfileProps {
     profile?: Profile;
@@ -26,7 +24,7 @@ type Error<T> = {
 const validate = (user: ProfileUpdate) => {
     const errors: Error<ProfileUpdate> = {};
     if (!user.first_name) {
-        errors.first_name = "erforderlich";
+    errors.first_name = "erforderlich";
     }
 
     if (!user.last_name) {
@@ -156,15 +154,5 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         </form>
     );
 };
-
-export const getServerSideProps: GetServerSideProps = withLocaleProp(
-    async (context) => {
-        return {
-            props: {
-                
-            },
-        };
-    }
-);
 
 export default EditProfilePage;

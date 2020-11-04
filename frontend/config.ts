@@ -25,6 +25,7 @@ export const appUrls = {
     "createProfile": "/new",
     "enterCode": "/",
     "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],
+    "checkout": (checkinId: number): [string, string] => ["/checkout/[checkinId]", `/checkout/${checkinId}`],
     "introduction": "/intro",
     "privacy": "/privacy",
     "help": "/help"

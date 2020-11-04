@@ -3,7 +3,7 @@ import * as config from "../../config";
 import { NextPageContext } from "next";
 import { Location } from "../../model/Location";
 import { ServerResponse } from "http";
-import { Checkin, CheckinOrigin } from "../../model/Checkin";
+import { Checkin, CheckinOrigin, LastCheckin } from "../../model/Checkin";
 
 export type ApiResponse<T> =
     | {
@@ -152,7 +152,7 @@ export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<Profile>("profile/me/", { headers }, assertProfile);
 
 export const getCheckinRequest = async (checkinId: string, options?: RequestOptions) =>
-    await apiRequest<Checkin>(`checkin/${checkinId}`, { ...options });
+    await apiRequest<LastCheckin>(`checkin/${checkinId}`, { ...options });
 
 export const redirectServerSide = (
     serverResponse: ServerResponse,

@@ -2,21 +2,32 @@ import Profile from "../../model/Profile";
 import { useEffect, Component } from "react";
 import { useRouter } from "next/router";
 import { appUrls } from "../../config";
-import { useUpdateProfileAppState } from "./ApiHooks";
 import { useAppState } from "../common/AppStateProvider";
+import { useUpdateProfileFromAppStateAndUpdate } from "./ApiHooks";
+import { useTranslation } from "../../localization";
 
 interface NeedsProfileProps {
     profile: Profile;
+    profileUpdating: boolean;
 }
 
 const needsProfile = <P extends object>(
     Component: React.ComponentType<P & NeedsProfileProps>
 ): React.FC<P> => (props) => {
     const router = useRouter();
-    // if prop is present set appstate
-    // else retrieve appstate
+    const { t } = useTranslation(); 
     const { appState, dispatch } = useAppState();
-    const { profile, initialized } = appState;
+    const { initialized } = appState;
+    const { profile, error, loading } = useUpdateProfileFromAppStateAndUpdate();
+    useEffect(() => {
+        if (error) dispatch({
+            type: "status",
+            status: {
+                isError: true,
+                message: error
+            }
+        })
+    }, [error])
 
     useEffect(() => {
         if (!initialized) return; 
@@ -30,7 +41,7 @@ const needsProfile = <P extends object>(
     }, [initialized]);
 
     if (!profile || !profile.phone) return null;
-    return <Component profile={profile} {...(props as P)} />;
+    return <Component profile={profile} profileUpdating={loading} {...(props as P)} />;
 };
 
 export default needsProfile;

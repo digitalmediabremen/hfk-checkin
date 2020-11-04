@@ -94,6 +94,7 @@ const DigitInputElement = React.forwardRef<
                         {...props}
                         ref={ref}
                         inputMode="decimal"
+                        type="tel"
                     />
                 )}
             </label>

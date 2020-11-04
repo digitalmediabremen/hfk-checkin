@@ -1,12 +1,9 @@
-import Head from "next/head";
 import Link from "next/link";
-import React, { SFC, useEffect } from "react";
+import React, { SFC } from "react";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
 import Profile from "../../model/Profile";
 import theme from "../../styles/theme";
-import { useProfile } from "../api/ApiHooks";
-import { useAppState } from "./AppStateProvider";
 import StatusBar from "./StatusBar";
 
 interface AppWrapperProps {
@@ -14,29 +11,7 @@ interface AppWrapperProps {
 }
 
 const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
-    const { appState, dispatch } = useAppState();
-    // const { profile } = appState;
-    const { profile, getProfile, error } = useProfile();
-    const { t, locale } = useTranslation();
-
-    useEffect(() => {
-        // either profile sent from server
-        // or profile loaded via api
-        // or error no profile exists
-        if (profileFromServer || profile || error) {
-            dispatch({
-                type: "profile",
-                profile: profileFromServer || profile || undefined,
-            });
-        }
-    }, [profile, error]);
-
-    useEffect(() => {
-        if (!profileFromServer) {
-            getProfile();
-        }
-    }, []);
-
+    const { t } = useTranslation();
     return (
         <>
             <style jsx>
@@ -65,10 +40,7 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
             </style>
             <div className="wrapper">
                 <StatusBar />
-                {appState.initialized && (
-                    <div className="content">{children}</div>
-                )}
-                {!appState.initialized && "..."}
+                <div className="content">{children}</div>
             </div>
             <div className="footer">
                 <Link href={appUrls.privacy}>

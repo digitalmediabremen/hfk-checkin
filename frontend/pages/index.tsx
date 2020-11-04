@@ -1,18 +1,14 @@
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { SFC, useCallback, useEffect, useState } from "react";
-import { useLocation, useUpdateProfileAppState } from "../components/api/ApiHooks";
-import {
-    getProfileRequest,
-} from "../components/api/ApiService";
+import { useLocation } from "../components/api/ApiHooks";
+import needsProfile from "../components/api/needsProfile";
 import { ButtonWithLoading } from "../components/common/Button";
 import LocationCodeInput from "../components/common/LocationCodeInput";
 import Notice from "../components/common/Notice";
-import { appUrls, httpStatuses } from "../config";
-import { useTranslation, withLocaleProp } from "../localization";
+import { appUrls } from "../config";
+import { useTranslation } from "../localization";
 import Profile from "../model/Profile";
 import theme from "../styles/theme";
-import needsProfile from "../components/api/needsProfile";
 
 interface CheckInPageProps {
     profile: Profile;
