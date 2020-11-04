@@ -6,15 +6,12 @@ import { useUpdateProfileAppState } from "./ApiHooks";
 import { useAppState } from "../common/AppStateProvider";
 
 interface NeedsProfileProps {
-    profile?: Profile;
+    profile: Profile;
 }
 
 const needsProfile = <P extends object>(
-    Component: React.ComponentType<P>
-): React.FC<P & NeedsProfileProps> => ({
-    profile: profileFromServer,
-    ...props
-}: NeedsProfileProps) => {
+    Component: React.ComponentType<P & NeedsProfileProps>
+): React.FC<P> => (props) => {
     const router = useRouter();
     // if prop is present set appstate
     // else retrieve appstate
