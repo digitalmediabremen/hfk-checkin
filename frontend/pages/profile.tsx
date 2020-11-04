@@ -29,7 +29,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
     const handleCheckinClick = (index: number) => {
         const checkin = last_checkins[index];
         if (!checkin) return;
-        if (!!checkin.time_left) return;
+        if (!checkin.is_active) return;
         const { id: checkinId } = checkin;
         router.push(...appUrls.checkout(checkinId));
     };
@@ -49,6 +49,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
                     onCheckinClick={handleCheckinClick}
                     checkins={last_checkins}
                     groupByDate
+                    showCheckoutSeperatly
                 />
             )}
             {!hasCheckins && (

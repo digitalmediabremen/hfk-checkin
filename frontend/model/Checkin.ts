@@ -9,6 +9,7 @@ export interface Checkin {
     time_left: string | null;
     profile: Profile;
     location: Location;
+    is_active: boolean;
 }
 
 export enum CheckinOrigin {

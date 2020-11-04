@@ -1,16 +1,14 @@
-import { useRouter } from "next/router";
 import * as React from "react";
-import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
 import { LastCheckin } from "../../model/Checkin";
 import theme from "../../styles/theme";
-import { stringify } from "querystring";
 import Subtitle from "./Subtitle";
 
 interface LastCheckinsProps {
     checkins: Array<LastCheckin>;
     onCheckinClick?: (index: number) => void;
     groupByDate?: boolean;
+    showCheckoutSeperatly?: true;
 }
 
 const useForceUpdateAfter = (afterSeconds: number = 30) => {
@@ -31,6 +29,33 @@ const isNow = (date: Date) =>
 
 const isToday = (date: Date) =>
     new Date().toDateString() === date.toDateString();
+
+type IndexedLastCheckin = LastCheckin & { originalIndex?: number };
+
+const indexCheckin = (checkins: LastCheckin[]): IndexedLastCheckin[] =>
+    checkins.map((checkin, index) => {
+        (checkin as IndexedLastCheckin).originalIndex = index;
+        return checkin;
+    });
+
+const spreadToCheckinCheckout = (checkins: LastCheckin[]): LastCheckin[] =>
+    checkins
+        .reduce<LastCheckin[]>((checkinsSpreaded, _checkin, index) => {
+            const checkin = Object.assign({}, _checkin);
+
+            if (checkin.time_left) {
+                const checkout = Object.assign({}, _checkin);
+                checkin.time_left = null;
+                checkinsSpreaded.push(checkout);
+            }
+            checkinsSpreaded.push(checkin);
+            return checkinsSpreaded;
+        }, [])
+        .sort((a, b) => {
+            const ad = new Date(a.time_left || a.time_entered).getTime();
+            const bd = new Date(b.time_left || b.time_entered).getTime();
+            return bd - ad;
+        });
 
 const groupByDay = (
     checkins: LastCheckin[]
@@ -56,11 +81,29 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     checkins,
     onCheckinClick,
     groupByDate,
+    showCheckoutSeperatly,
 }) => {
+    checkins = indexCheckin(checkins);
+    checkins = React.useMemo(
+        () =>
+            showCheckoutSeperatly
+                ? spreadToCheckinCheckout(checkins)
+                : checkins,
+        [checkins, showCheckoutSeperatly]
+    );
     const checkinsByDate = React.useMemo(
         () => (groupByDate ? groupByDay(checkins) : []),
         [checkins, groupByDate]
     );
+
+    const handleCheckinClick = onCheckinClick
+        ? (checkin: LastCheckin) => {
+              const originalIndex = (checkin as IndexedLastCheckin)
+                  .originalIndex;
+              if (originalIndex !== undefined) onCheckinClick(originalIndex);
+              else throw "originalIndex missing";
+          }
+        : undefined;
 
     // after 30s thie component is rerendered
     useForceUpdateAfter(timeWithinDateIsConsideredNow);
@@ -76,9 +119,10 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                 checkinsByDate.map(([date, checkins], groupIndex) => {
                     const checkinItems = checkins.map((checkin, index) => (
                         <LastCheckinListItem
+                            interactive={!!handleCheckinClick}
                             checkin={checkin}
                             index={groupIndex * checkins.length + index}
-                            onCheckinClick={onCheckinClick}
+                            onCheckinClick={() => handleCheckinClick?.(checkin)}
                             key={index}
                         />
                     ));
@@ -93,9 +137,10 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
             {!groupByDate &&
                 checkins.map((checkin, index) => (
                     <LastCheckinListItem
+                        interactive={!!handleCheckinClick}
                         checkin={checkin}
                         index={index}
-                        onCheckinClick={onCheckinClick}
+                        onCheckinClick={() => handleCheckinClick?.(checkin)}
                         key={index}
                     />
                 ))}
@@ -107,15 +152,16 @@ const LastCheckinListItem = ({
     checkin,
     onCheckinClick,
     index,
+    interactive,
 }: {
     index: number;
     checkin: LastCheckin;
-    onCheckinClick?: (index: number) => void;
+    onCheckinClick?: () => void;
+    interactive?: boolean;
 }) => {
     const { org_name, org_number, id } = checkin.location;
-    const { time_left, time_entered } = checkin;
+    const { time_left, time_entered, is_active } = checkin;
     const { t, locale } = useTranslation();
-    const interactive = !!onCheckinClick;
 
     let displayDate: Date = new Date(time_left || time_entered);
     // checkin is not older than 30 seconds
@@ -190,9 +236,9 @@ const LastCheckinListItem = ({
                 }
             `}</style>
             <div
-                onClick={() => onCheckinClick?.(index)}
+                onClick={onCheckinClick}
                 className={`list-item ${
-                    !time_left && interactive ? "list-item-interactable" : ""
+                    is_active && interactive ? "list-item-interactable" : ""
                 }`}
             >
                 <span className="room-number">{org_number}</span>{" "}
