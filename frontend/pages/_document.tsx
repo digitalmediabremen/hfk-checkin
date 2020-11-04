@@ -12,8 +12,6 @@ import { getInitialLocale, LocaleConsumer } from "../localization";
 class MyDocument extends Document {
     static async getInitialProps(ctx: DocumentContext) {
         const initialProps = await Document.getInitialProps(ctx);
-        console.log(initialProps);
-        console.log("initial props", ctx?.req, getInitialLocale(ctx?.req?.headers))
         return {
             ...initialProps,
             locale: getInitialLocale(ctx?.req?.headers),
