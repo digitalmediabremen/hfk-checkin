@@ -24,7 +24,7 @@ const tFunc = useTFunc?.getDescendantsOfKind(
     SyntaxKind.ShorthandPropertyAssignment
 )?.[1];
 
-const tFuncRefs = tFunc?.findReferencesAsNodes();
+const tFuncRefs = useTFunc?.findReferencesAsNodes();
 
 // console.log (tFuncRefs?.map());
 
@@ -46,6 +46,7 @@ function reapplyDots(text: string) {
 
 tFuncRefs?.map((p) => {
     let currentModule: string | undefined = undefined;
+    console.log(p.getSourceFile().getBaseName());
     const r = p.getSourceFile().forEachDescendant((node, traversal) => {
         const k = node.getKind();
         // console.log("search file: ", )
