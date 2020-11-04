@@ -19,7 +19,7 @@ export type Response<ResultType extends Record<string, any> = {}> = {
 
 export type RequestParameters = Record<string, string | undefined>;
 
-export type RequestOptions<T extends RequestParameters> = {
+export type RequestOptions<T extends RequestParameters = {}> = {
     headers?: HeadersInit;
     requestParameters?: T;
 };
@@ -150,6 +150,9 @@ export const getLocationRequest = async (
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<Profile>("profile/me/", { headers }, assertProfile);
+
+export const getCheckinRequest = async (checkinId: string, options?: RequestOptions) =>
+    await apiRequest<Checkin>(`checkin/${checkinId}`, { ...options });
 
 export const redirectServerSide = (
     serverResponse: ServerResponse,
