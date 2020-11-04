@@ -141,16 +141,17 @@ export const useLocation = () => {
     };
 };
 
-export const useCheckin = () => {
+export const useDoCheckin = () => {
     const { request, result, ...other } = useApi<Checkin>();
     return {
         doCheckin: (locationCode: string) =>
             request(() => doCheckinRequest(locationCode)),
+        
         ...other,
     };
 };
 
-export const useCheckout = () => {
+export const useDoCheckout = () => {
     const { request, result, ...other } = useApi<{}>();
     return {
         doCheckout: (locationCode: string) =>

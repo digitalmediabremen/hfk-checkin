@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import * as React from "react";
-import { useCheckout } from "../../components/api/ApiHooks";
+import { useDoCheckout } from "../../components/api/ApiHooks";
 import {
     doCheckinRequest,
     redirectServerSide,
@@ -24,7 +24,7 @@ export const CheckinComponent: React.FunctionComponent<{
 }> = ({ checkin, alreadyCheckedIn }) => {
     const { location, profile } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
-    const { doCheckout, success, loading: checkoutInProgress } = useCheckout();
+    const { doCheckout, success, loading: checkoutInProgress } = useDoCheckout();
     const { dispatch } = useAppState();
     const router = useRouter();
     const { t } = useTranslation("checkin");
