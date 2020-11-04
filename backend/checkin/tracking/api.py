@@ -116,9 +116,8 @@ class LocationViewSet(viewsets.ModelViewSet):
 
 
 class CheckinViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Checkin.objects.all()
-    serializer_class = CheckinSerializer
-    permission_classes = [IsAdminUser]
+    serializer_class = SimpleCheckinSerializer
+    permission_classes = [IsAuthenticated]
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
     def get_queryset(self):
