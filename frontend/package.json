@@ -13,7 +13,7 @@
     "formik": "^2.2.0",
     "get-user-locale": "^1.4.0",
     "libphonenumber-js": "^1.8.4",
-    "next": "^9.5.5",
+    "next": "^10.0.1",
     "next-pwa": "^3.1.5",
     "normalize.css": "^8.0.1",
     "react": "16.13.1",
