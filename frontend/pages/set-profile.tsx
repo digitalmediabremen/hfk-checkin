@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useUpdateProfile } from "../components/api/ApiHooks";
+import { useUpdateProfile, useUpdateProfileFromAppStateAndUpdate } from "../components/api/ApiHooks";
 import { useAppState } from "../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
@@ -12,6 +12,10 @@ import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
 import Profile, { ProfileUpdate } from "../model/Profile";
+import needsProfile from "../components/api/needsProfile";
+import { profile } from "console";
+import { usePageVisibility } from 'react-page-visibility';
+
 
 interface EditProfileProps {
     profile?: Profile;
@@ -82,6 +86,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             updateProfile(formik.values);
         },
     });
+
+    if (!profile) return null;
+
     return (
         <form
             autoComplete="off"

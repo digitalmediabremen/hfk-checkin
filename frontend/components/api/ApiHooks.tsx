@@ -14,6 +14,7 @@ import {
 import { Checkin, LastCheckin } from "../../model/Checkin";
 import { config } from "process";
 import { httpStatuses } from "../../config";
+import { usePageVisibility } from "react-page-visibility";
 
 type UseApiReturnType<RT extends {}> = {
     request: (request: () => Promise<Response<RT>>) => void;
@@ -117,8 +118,8 @@ export const useApi = <RT extends {}>(_config?: {
     } as UseApiReturnType<RT>;
 };
 
-export const useUpdateProfileFromAppStateAndUpdate = () => {
-    const { getProfile, profile, error, loading, success } = useProfile();
+export const useUpdateProfileFromAppStateAndUpdate = (update = false) => {
+    const { getProfile, profile, error, loading, success } = useProfile(update);
     const { appState, dispatch } = useAppState();
     const { profile: profileFromAppState } = appState;
 
@@ -153,10 +154,20 @@ export const useUpdateProfile = () => {
     };
 };
 
-export const useProfile = () => {
+export const useProfile = (update = false) => {
     const { request, result: profile, state, ...other } = useApi<Profile>({
         onlyLocalErrorReport: true,
     });
+
+    const visible = usePageVisibility();
+    useEffect(() => {
+        // console.log("should update profile", state, visible, update)
+
+        if (update && visible && state !== "initial" && state !== "loading") {
+            // console.log("update profile")
+            request(() => getProfileRequest())
+        }  
+    }, [visible])
 
     return {
         profile,

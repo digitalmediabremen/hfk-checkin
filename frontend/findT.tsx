@@ -1,10 +1,7 @@
+import * as stringsim from "string-similarity";
 import {
-    Project,
-    SyntaxKind,
-    SymbolFlags,
-    VariableDeclaration,
-    Node,
-    SyntaxList,
+    Node, Project,
+    SyntaxKind
 } from "ts-morph";
 import * as ts from "typescript";
 
@@ -12,17 +9,11 @@ const project = new Project({
     tsConfigFilePath: "./tsconfig.json",
 });
 
-import * as stringsim from "string-similarity";
 
 const f = project.getSourceFile("./localization/index.tsx");
 const languageService = project.getLanguageService();
-const tsLanguageService = languageService.compilerObject;
 
 const useTFunc = f?.getVariableDeclaration("useTranslation");
-
-const tFunc = useTFunc?.getDescendantsOfKind(
-    SyntaxKind.ShorthandPropertyAssignment
-)?.[1];
 
 const tFuncRefs = useTFunc?.findReferencesAsNodes();
 

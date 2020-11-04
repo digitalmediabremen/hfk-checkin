@@ -5,6 +5,7 @@ import { useTranslation } from "../../localization";
 import Profile from "../../model/Profile";
 import theme from "../../styles/theme";
 import StatusBar from "./StatusBar";
+import { useUpdateProfileFromAppStateAndUpdate } from "../api/ApiHooks";
 
 interface AppWrapperProps {
     profileFromServer?: Profile;
@@ -12,6 +13,7 @@ interface AppWrapperProps {
 
 const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
     const { t } = useTranslation();
+    useUpdateProfileFromAppStateAndUpdate();
     return (
         <>
             <style jsx>

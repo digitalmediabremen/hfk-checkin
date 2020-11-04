@@ -22,7 +22,7 @@ const NewProfilePage: NextPage = () => {
 
     const { appState } = useAppState();
 
-    useEffect(() => { if (appState.profile) router.replace(config.appUrls.enterCode) }, []);
+    useEffect(() => { if (appState.profile) router.replace(config.appUrls.enterCode) }, [appState.profile]);
 
     const { t, locale } = useTranslation("createProfile");
 

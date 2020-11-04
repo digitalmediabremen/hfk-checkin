@@ -19,6 +19,7 @@
     "react": "16.13.1",
     "react-digit-input": "^2.1.0",
     "react-dom": "16.13.1",
+    "react-page-visibility": "^6.2.0",
     "react-transition-group": "^4.4.1"
   },
   "devDependencies": {

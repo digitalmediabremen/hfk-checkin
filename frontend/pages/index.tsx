@@ -10,6 +10,8 @@ import { useTranslation } from "../localization";
 import Profile from "../model/Profile";
 import theme from "../styles/theme";
 
+
+
 interface CheckInPageProps {
     profile: Profile;
     error?: string;
