@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from simple_history.admin import SimpleHistoryAdmin
 
+from django.utils.html import format_html
 
 class ProfileAdmin(SimpleHistoryAdmin):
     # TODO: default query set nur nicht Verifiziert
@@ -75,8 +76,13 @@ class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin):
 
     def org_name_method(self, obj):
         if obj.removed:
-            return _("ENTFERNT %s") % obj.org_name
+            return format_html(
+                '<strike>{}</strike>',
+                obj.org_name,
+            )
         return obj.org_name
+    org_name_method.short_description = _("Raumname / Standort")
+    org_name_method.admin_order_field = 'org_name'
 
 
 class CheckinAdmin(admin.ModelAdmin):
