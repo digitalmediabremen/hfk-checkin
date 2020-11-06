@@ -21,10 +21,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('--profile', nargs=1, type=int, required=True, help='ID of infected profile.')
-        parser.add_argument('--exclude_locations', nargs='+', type=int, help='ID(s) of locations to exclude.')
-        parser.add_argument('--show_infected_checkins', action="store_true", help='Output list of checkins by infected persons')
-        parser.add_argument('--show_encountered_checkins', action="store_true", help='Output list of checkins with encountered persons')
-        parser.add_argument('--show_personal_data', action="store_true", help='Output personal data: full name and contact info')
+        parser.add_argument('--exclude-locations', nargs='+', type=int, help='ID(s) of locations to exclude.')
+        parser.add_argument('--show-checkins', action="store_true", help='Output list of checkins by infected persons')
+        parser.add_argument('--show-encounters', action="store_true", help='Output list of checkins with encountered persons')
+        parser.add_argument('--show-personal-data', action="store_true", help='Output personal data: full name and contact info')
 
     def handle(self, *args, **options):
 
@@ -33,8 +33,6 @@ class Command(BaseCommand):
         # if positive: adds extra time to checkins, so they might overlap (even if they do not by raw data). encouters-set is larger.
         # if negative: removes time from checkins, so "brief" encounters are excluded. encounter-set is smaller.
         infection_lookback_buffer = timedelta(minutes=10)
-
-        infection_exclusion_locations = Location.objects.filter(id=1)
 
         profile_id = options['profile'][0]
         try:
@@ -62,7 +60,7 @@ class Command(BaseCommand):
         if options['exclude_locations']:
             exclude_locations_ids = options['exclude_locations']
             try:
-                infected_checkins = infected_checkins.exclude(location__in=infection_exclusion_locations)
+                infected_checkins = infected_checkins.exclude(location__in=exclude_locations_ids)
             except Location.DoesNotExist:
                 raise CommandError('(Some) Locations "%s" do not exist' % exclude_locations_ids)
 
@@ -73,14 +71,14 @@ class Command(BaseCommand):
         if options['show_personal_data']:
             self.stdout.write(infected_profile.get_full_profile())
 
-        if options['show_infected_checkins']:
+        if options['show_checkins']:
             self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
             self.stdout.write("CHECKINS BY INFECTED PERSON:")
             self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
             for c in infected_checkins:
                 self.stdout.write("ID: %i # In: %s # Out: %s # Duration: %s # %s" % (c.id, c.time_entered, c.time_left_or_default, c.duration, c.location))
 
-        if options['show_infected_checkins']:
+        if options['show_checkins']:
             self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
             self.stdout.write("ENCOUNTERS WITH INFECTED PERSON AND OTHERS:")
             self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
@@ -120,7 +118,7 @@ class Command(BaseCommand):
                     encountered_profiles[c.profile.pk] += c.overlap_duration
                 except KeyError:
                     encountered_profiles[c.profile.pk] = c.overlap_duration
-                if options['show_encountered_checkins']:
+                if options['show_encounters']:
                     self.stdout.write("ID: %i # In: %s # Out: %s # Duration: %s # %s # %s # Overlap: %s (Start: %s – End: %s) with ID %i" % \
                                       (c.id,
                                        c.time_entered,
