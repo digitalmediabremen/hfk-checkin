@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useUpdateProfile, useUpdateProfileFromAppStateAndUpdate } from "../components/api/ApiHooks";
+import { useUpdateProfile } from "../components/api/ApiHooks";
 import { useAppState } from "../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
@@ -12,9 +12,6 @@ import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
 import Profile, { ProfileUpdate } from "../model/Profile";
-import needsProfile from "../components/api/needsProfile";
-import { profile } from "console";
-import { usePageVisibility } from 'react-page-visibility';
 
 
 interface EditProfileProps {
@@ -87,7 +84,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         },
     });
 
-    if (!profile) return null;
+    if (!initialProfile) return null;
 
     return (
         <form
