@@ -109,6 +109,13 @@ class CheckinAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('evaluate/', self.admin_site.admin_view(case_evaluation_view), name='checkin-evaluation'),
+        ]
+        return custom_urls + urls
+
 admin.site.register(Location,LocationAdmin)
 admin.site.register(Checkin,CheckinAdmin)
 admin.site.register(Profile,ProfileAdmin)

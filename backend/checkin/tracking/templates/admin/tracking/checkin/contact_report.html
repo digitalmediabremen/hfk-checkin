@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_modify %}
+{% load admin_urls %}
+{% load static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />{% endblock %}
+{% block extrahead %}{{ block.super }}
+    <script src="/admin/jsi18n/"></script>
+    <script src="{% static "admin/js/collapse.js" %}"></script>
+{% endblock %}
+{% block bodyclass %}{{ block.super }} {{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+{% if not is_popup %}
+{#    {% block breadcrumbs %}#}
+{#    <div class="breadcrumbs">#}
+{#    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>#}
+{#    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>#}
+{#    &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>#}
+{#    &rsaquo; {% block breadcrumbs_last %}{% endblock %}#}
+{#    </div>#}
+{#    {% endblock %}#}
+{% endif %}
+
+{% block breadcrumbs_last %}
+{% trans "Export" %}
+{% endblock %}
+
+{% block content_title %}
+    <h1>Infektionsnachverfolgung</h1>
+    <p>Als authorisierte Stelle können Sie mit diesem Werkzeug Kontakte von Personen, die ihre Aufenhalte mit dieser Anwendung selbst dokumentiert haben, auswerten.<br/>
+        Die Auswertung berücksichtigt aktuell keine analog angefertigten Protokolle oder Daten aus anderen Systemen.</p>
+    <p>Informationen des RKI zur <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Kontaktperson/Management.html">Kontaktpersonen-Nachverfolgung bei Infektionen durch SARS-CoV-2</a></p>
+{% endblock %}
+
+{% block content %}
+    <style type="text/css">
+        .report-out {
+            width: 100%;
+            min-height: 500px;
+            font-family: monospace;
+        }
+        .btn-submit-alt {
+            color: #417690 !important;
+            border: 1px solid #417690 !important;
+            background: white !important;
+        }
+        .btn-submit-alt:hover {
+            background: #eee !important;
+        }
+    </style>
+    {% if form %}
+        <form action="" method="POST">
+          {% csrf_token %}
+
+            <fieldset class="module aligned{% if result %} collapse{% endif %}">
+                <h2>{% trans "Eingabe" %}</h2>
+              {% for field in form %}
+                <div class="form-row">
+                  {{ field.errors }}
+
+                  {{ field.label_tag }}
+
+                  {{ field }}
+
+                  {% if field.field.help_text %}
+                  <p class="help">{{ field.field.help_text|safe }}</p>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </fieldset>
+
+            <div class="submit-row">
+              <input type="submit" class="default" value="{% trans "Auswerten" %}"><input type="submit" class="default btn-submit-alt" value="{% trans "Herunterladen" %}" formaction='?format=xlsx'>
+            </div>
+        </form>
+    {% endif %}
+    {% if result %}
+        <h2>{% trans "Ausgabe" %}</h2>
+        <fieldset class="module monospace">
+            <textarea class="report-out" readonly>{{ result }}</textarea>
+        </fieldset>
+    {% endif %}
+{% endblock %}
+
+
+
+{% block pagination %}{% endblock %}

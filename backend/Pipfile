@@ -47,6 +47,8 @@ django-weasyprint = "*"
 segno = "*"
 django-model-history = "*"
 django-simple-history = "*"
+django-import-export = "*"
+tablib = {extras = ["csv"], version = "*"}
 
 [requires]
 python_version = "3.8.5"

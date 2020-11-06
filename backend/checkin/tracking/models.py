@@ -14,10 +14,10 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from simple_history.models import HistoricalRecords
 from simple_history import register as register_history
+from django.db.models import Count
 
-LOAD_LOOKBACK_TIME = timedelta(hours=24)
 CHECKIN_LIFETIME = timedelta(hours=24)
-
+LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
@@ -163,6 +163,7 @@ class Location(MPTTModel):
     def checkins_sum(self):
         return Checkin.objects.filter(location=self).count()
     checkins_sum.short_description = _('# Summe')
+    #checkins_sum.admin_order_field = Count()
 
     @property
     def current_checkins(self):

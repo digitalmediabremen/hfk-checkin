@@ -1,7 +1,7 @@
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from django.views.generic.base import ContextMixin, TemplateResponseMixin
 from django.views import View
-from .models import Location
+from ..models import Location
 from django.core.exceptions import SuspiciousOperation
 from django.utils import timezone
 
@@ -17,6 +17,7 @@ import segno
 from os import environ
 
 QR_URL_WITH_CODE = environ.get("QR_URL_WITH_CODE", default="https://checkin.hfk-bremen.de/checkin/%s")
+OUTPUT_FILENAME = 'hfk-checkin-label_%s.pdf'
 
 def make_qr_code(code):
     url = QR_URL_WITH_CODE % code
@@ -47,4 +48,4 @@ class LocationsPDFView(WeasyTemplateResponseMixin, LocationsView):
     pdf_filename = 'hfk-checkin-label.pdf'
 
     def get_pdf_filename(self):
-        return 'hfk-checkin-label_%s.pdf' % timezone.now().strftime("%Y-%m-%d_%H-%M-%S")
+        return OUTPUT_FILENAME % timezone.now().strftime("%Y-%m-%d_%H-%M-%S")

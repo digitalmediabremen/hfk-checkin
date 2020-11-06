@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 # admin.site.site_title = _("HFK CHECKIN")
 # admin.site.index_title = _("Übersicht")
 
-from checkin.tracking.views import LocationsPDFView, LocationsView
+from checkin.tracking.views.location import LocationsPDFView, LocationsView
 from rest_framework import routers
 from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
 from microsoft_auth.models import MicrosoftAccount

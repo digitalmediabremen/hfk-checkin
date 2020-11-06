@@ -1,0 +1,16 @@
+{% extends "admin/change_list_object_tools.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+
+    {#  {% if has_add_permission %}#}
+      <li>
+        {% url 'admin:checkin-evaluation' as evaluate_url %}
+        <a href="{% add_preserved_filters evaluate_url is_popup to_field %}" class="evaluatelink">
+          {% blocktrans with cl.opts.verbose_name as name %}Infektionsnachverfolgung{% endblocktrans %}
+        </a>
+      </li>
+    {#  {% endif %}#}
+
+    {{ block.super }}
+{% endblock %}
