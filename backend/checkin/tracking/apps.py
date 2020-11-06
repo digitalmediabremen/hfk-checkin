@@ -18,7 +18,6 @@ class TrackingConfig(AppConfig):
             return
         if 'django.contrib.sites' in settings.INSTALLED_APPS:
             from django.contrib.sites.models import Site
-            first_site = Site.objects.get(id=site_id)
-            first_site.update(domain=domain)
+            Site.objects.filter(id=site_id).update(domain=domain)
         else:
             print("... Skipping because sites framework is not installed.")
