@@ -280,7 +280,7 @@ REST_FRAMEWORK = {
 
 # values you got from step 2 from your Mirosoft app
 MICROSOFT_AUTH_CLIENT_ID = '94b11d1a-f375-46aa-9b1f-e9da0de19114'
-MICROSOFT_AUTH_CLIENT_SECRET = '~X4Wkfb2w3eiK8-0.Mbz_CJHA07VlWR4el'
+MICROSOFT_AUTH_CLIENT_SECRET = getenv("MICROSOFT_AUTH_CLIENT_SECRET", default=None)
 # Tenant ID is also needed for single tenant applications
 MICROSOFT_AUTH_TENANT_ID = '09e769ef-38f0-4cf4-a9e2-194cccd24761'
 
