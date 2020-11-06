@@ -336,6 +336,9 @@ class Checkin(models.Model):
                 check=models.Q(origin_entered__in=Origin.values) & models.Q(origin_left__in=Origin.values),
             )
         ]
+        permissions = [
+            ("can_evaluate_case", _("Kann Nachverfolgung durchführen.")),
+        ]
 
     def __str__(self):
         return "Checkin in %s" % (self.location)

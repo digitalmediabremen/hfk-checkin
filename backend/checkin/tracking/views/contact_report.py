@@ -30,7 +30,16 @@ class CaseEvaluationSettingsForm(forms.Form):
 class CaseEvaluationView(PermissionRequiredMixin, FormView):
     template_name = 'admin/tracking/checkin/contact_report.html'
     form_class = CaseEvaluationSettingsForm
-    permission_required = 'tracking.evaluate_case'
+    permission_required = 'tracking.can_evaluate_case'
+
+    def has_permission(self):
+        # check users real permission, ignoring is_superuser
+        perms = self.get_permission_required()
+        is_superuser_org = self.request.user.is_superuser
+        self.request.user.is_superuser = False
+        r = self.request.user.has_perms(perms)
+        self.request.user.is_superuser = is_superuser_org
+        return r
 
     def form_valid(self, form):
         context = self.get_context_data()
