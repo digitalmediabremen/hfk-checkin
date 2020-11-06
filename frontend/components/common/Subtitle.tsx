@@ -9,7 +9,7 @@ const Subtitle: React.FunctionComponent<SubtitleProps> = ({ children, center}) =
     return (
         <>
             <style jsx>{`
-                font-weight: bold;
+                font-weight: ${center ? "normal" : "bold"};
                 font-size: 1em;
                 color: ${theme.primaryColor};
                 margin: 0;

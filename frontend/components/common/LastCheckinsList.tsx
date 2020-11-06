@@ -83,6 +83,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     groupByDate,
     showCheckoutSeperatly,
 }) => {
+    const { t } = useTranslation();
     checkins = indexCheckin(checkins);
     checkins = React.useMemo(
         () =>
@@ -114,6 +115,10 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                 div {
                     color: ${theme.primaryColor};
                 }
+
+                .list-group {
+                    margin-top: ${theme.spacing(3)}px;
+                }
             `}</style>
             {groupByDate &&
                 checkinsByDate.map(([date, checkins], groupIndex) => {
@@ -128,7 +133,10 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                     ));
 
                     return (
-                        <div key={groupIndex}>
+                        <div
+                            className={date ? "list-group" : ""}
+                            key={groupIndex}
+                        >
                             {date && <Subtitle center>{date}</Subtitle>}
                             {checkinItems}
                         </div>
