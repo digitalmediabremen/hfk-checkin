@@ -19,6 +19,8 @@ def format_datetime(dt):
     return dt.strftime("%Y-%m-%d %H:%M:%S")
 
 def format_timedelta(tdelta):
+    if tdelta < timedelta(seconds=1):
+        return "weniger als 1 Sek."
     fmt = "{days} Tage {hours}:{minutes}:{seconds}"
     d = {"days": tdelta.days}
     d["hours"], rem = divmod(tdelta.seconds, 3600)
@@ -100,7 +102,6 @@ class ContactReport(object):
             if not self.out_callable:
                 raise RuntimeError("Output not set. Please set_output first.")
 
-            self.write_headline("Auswetung vom %s" % self.now)
             self.write_headline("Konfiguration dieses Reports:")
             self.write_dataset(self.get_report_info_ds())
 
@@ -194,6 +195,9 @@ class ContactReport(object):
         # store encountered profiles here
         encountered_profiles = {}
 
+        ds = tablib.Dataset(title="Kontakte")
+        ds.headers = ['ID', 'Profil ID', 'Standort', 'Checkin', 'Checkout', 'Dauer', 'Dauer Überschneidung', 'Begin Überschneidung', 'Ende Überschneidung']
+
         for c in infected_checkins:
 
             # modify times to include "buffer" / wiggle time
@@ -217,25 +221,22 @@ class ContactReport(object):
             # add encountered checkin (for debugging)
             qs = qs.annotate(encountered_checkin=Value(c.pk, output_field=fields.IntegerField()))
 
-            ds = tablib.Dataset(title="Kontakte")
-            ds.headers = ['ID', 'Profil ID', 'Standort', 'Checkin', 'Checkout', 'Dauer', 'Dauer Überschneidung', 'Begin Überschneidung', 'Ende Überschneidung']
-
-            for c in qs.order_by('overlap_duration'):
+            for co in qs.order_by('overlap_duration'):
                 try:
-                    encountered_profiles[c.profile.pk] += c.overlap_duration
+                    encountered_profiles[co.profile.pk] += co.overlap_duration
                 except KeyError:
-                    encountered_profiles[c.profile.pk] = c.overlap_duration
-                ds.append((c.id,
-                           c.profile.pk,
-                           c.location,
-                           format_datetime(c.time_entered),
-                           format_datetime(c.time_left_or_default),
-                           format_timedelta(c.duration),
-                           format_timedelta(c.overlap_duration),
-                           format_datetime(c.overlap_start),
-                           format_datetime(c.overlap_end)))
+                    encountered_profiles[co.profile.pk] = co.overlap_duration
+                ds.append((co.id,
+                           co.profile.pk,
+                           co.location,
+                           format_datetime(co.time_entered),
+                           format_datetime(co.time_left_or_default),
+                           format_timedelta(co.duration),
+                           format_timedelta(co.overlap_duration),
+                           format_datetime(co.overlap_start),
+                           format_datetime(co.overlap_end)))
 
-            return encountered_checkins, encountered_profiles, ds
+        return encountered_checkins, encountered_profiles, ds
 
     def get_encounterd_profiles_ds(self, encountered_profiles):
 
