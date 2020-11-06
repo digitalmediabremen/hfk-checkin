@@ -6,6 +6,8 @@ from django.utils import timezone
 
 from checkin.tracking.models import Checkin, Profile, Location
 
+SEPARATOR_CHAR_COUNT = 40
+
 def OVERLAP_Q(start, end):
     return Q(time_entered__lt=start) & Q(time_left_or_default__gt=start) | \
            Q(time_entered__lt=end) & Q(time_left_or_default__gt=end) | \
@@ -20,6 +22,9 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--profile', nargs=1, type=int, required=True, help='ID of infected profile.')
         parser.add_argument('--exclude_locations', nargs='+', type=int, help='ID(s) of locations to exclude.')
+        parser.add_argument('--show_infected_checkins', action="store_true", help='Output list of checkins by infected persons')
+        parser.add_argument('--show_encountered_checkins', action="store_true", help='Output list of checkins with encountered persons')
+        parser.add_argument('--show_personal_data', action="store_true", help='Output personal data: full name and contact info')
 
     def handle(self, *args, **options):
 
@@ -61,23 +66,31 @@ class Command(BaseCommand):
             except Location.DoesNotExist:
                 raise CommandError('(Some) Locations "%s" do not exist' % exclude_locations_ids)
 
-        self.stdout.write(10 * "#")
+        self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
         self.stdout.write("INFECTED PERSON:")
+        self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
         self.stdout.write(str(infected_profile))
+        if options['show_personal_data']:
+            self.stdout.write(infected_profile.get_full_profile())
 
-        self.stdout.write(10 * "#")
-        self.stdout.write("CHECKINS BY INFECTED PERSON:")
-        for c in infected_checkins:
-            self.stdout.write("ID: %i # In: %s # Out: %s # Duration: %s # %s" % (c.id, c.time_entered, c.time_left_or_default, c.duration, c.location))
+        if options['show_infected_checkins']:
+            self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
+            self.stdout.write("CHECKINS BY INFECTED PERSON:")
+            self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
+            for c in infected_checkins:
+                self.stdout.write("ID: %i # In: %s # Out: %s # Duration: %s # %s" % (c.id, c.time_entered, c.time_left_or_default, c.duration, c.location))
 
-        self.stdout.write(10 * "#")
-        self.stdout.write("ENCOUNTERS WITH INFECTED PERSON AND OTHERS:")
+        if options['show_infected_checkins']:
+            self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
+            self.stdout.write("ENCOUNTERS WITH INFECTED PERSON AND OTHERS:")
+            self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
 
-        encountered_checkins_qs = []
         encountered_checkins = checkin_qs
-
         # exclude checkins by infected person themselves
         encountered_checkins = encountered_checkins.exclude(profile=infected_profile)
+
+        # store encountered profiles here
+        encountered_profiles = {}
 
         for c in infected_checkins:
 
@@ -102,36 +115,30 @@ class Command(BaseCommand):
             # add encountered checkin (for debugging)
             qs = qs.annotate(encountered_checkin=Value(c.pk, output_field=fields.IntegerField()))
 
-            # add to queryset list
-            encountered_checkins_qs.append(qs)
+            for c in qs.order_by('overlap_duration'):
+                try:
+                    encountered_profiles[c.profile.pk] += c.overlap_duration
+                except KeyError:
+                    encountered_profiles[c.profile.pk] = c.overlap_duration
+                if options['show_encountered_checkins']:
+                    self.stdout.write("ID: %i # In: %s # Out: %s # Duration: %s # %s # %s # Overlap: %s (Start: %s – End: %s) with ID %i" % \
+                                      (c.id,
+                                       c.time_entered,
+                                       c.time_left_or_default,
+                                       c.duration,
+                                       c.location,
+                                       c.profile,
+                                       c.overlap_duration,
+                                       c.overlap_start,
+                                       c.overlap_end,
+                                       c.encountered_checkin))
 
-        # union first qs with all other
-        encountered_checkins = encountered_checkins_qs[0].union(*encountered_checkins_qs[1:])
-
-        # encountered_checkins = encountered_checkins.distinct()
-        # print(encountered_checkins.query)
-
-        encountered_profiles = {}
-
-        for c in encountered_checkins:
-            self.stdout.write("ID: %i # In: %s # Out: %s # Duration: %s # %s # %s # Overlap: %s (Start: %s – End: %s) with ID %i" % \
-                              (c.id,
-                               c.time_entered,
-                               c.time_left_or_default,
-                               c.duration,
-                               c.location,
-                               c.profile,
-                               c.overlap_duration,
-                               c.overlap_start,
-                               c.overlap_end,
-                               c.encountered_checkin))
-            try:
-                encountered_profiles[c.profile.pk] += c.overlap_duration
-            except KeyError:
-                encountered_profiles[c.profile.pk] = c.overlap_duration
-
-        self.stdout.write(10 * "#")
+        self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
         self.stdout.write("PERSONS WITH CONTACTS TO INFECTED PERSON:")
+        self.stdout.write(SEPARATOR_CHAR_COUNT * "#")
 
-        for p in encountered_profiles:
+        for p in sorted(encountered_profiles, key=encountered_profiles.get, reverse=False):
             self.stdout.write("Profile ID: %i # contact overlap duration sum %s" % (p, encountered_profiles[p]))
+            if options['show_personal_data']:
+                profile = Profile.objects.get(pk=p)
+                self.stdout.write(profile.get_full_profile())
