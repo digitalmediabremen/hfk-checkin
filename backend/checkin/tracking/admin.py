@@ -63,8 +63,8 @@ class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin):
     list_display_with_loads = ('org_name_method', 'org_number', 'org_size', 'capacity', 'code',  'checkins_sum', 'real_load', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
-    list_filter = ('updated_at',)
     #ordering = ('org_number',)
+    list_filter = ('updated_at','removed')
     search_fields = ['org_name', 'org_number','code']
     list_max_show_all = 1000
     mptt_indent_field = "org_name_method"
