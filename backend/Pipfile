@@ -48,7 +48,7 @@ segno = "*"
 django-model-history = "*"
 django-simple-history = "*"
 django-import-export = "*"
-tablib = {extras = ["csv"], version = "*"}
+tablib = {extras = ["cli", "csv", "xlsx"], version = "*"}
 
 [requires]
 python_version = "3.8.5"
