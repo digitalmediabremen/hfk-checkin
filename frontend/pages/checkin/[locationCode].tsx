@@ -90,7 +90,7 @@ export const CheckinComponent: React.FunctionComponent<{
                 {org_name}
             </Title>
             {!isRootLocation && (
-                <Title subtext={t("insgesamt eingecheckt")}>
+                <Title subtext={t("Personen aktuell eingecheckt")}>
                     {load}
                     {!!capacity && ` / ${capacity}`}
                 </Title>
