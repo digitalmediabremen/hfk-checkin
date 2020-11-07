@@ -18,7 +18,7 @@ const PrivacyPage: React.FunctionComponent<PrivacyPageProps> = (props) => {
                     }
                 `}
             </style>
-            <Title>{t("Datenschutz")}</Title>
+            <Title>{t("Datenschutzinformationen")}</Title>
             <Notice>Betreiberin</Notice>
             <Subtitle>
                 Hochschule für Künste Bremen
