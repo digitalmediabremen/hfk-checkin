@@ -5,6 +5,8 @@ import theme from "../../styles/theme";
 interface LocationCodeInputProps {
     code: string;
     onChange: (code: string) => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
     disabled?: boolean;
 }
 
@@ -112,7 +114,7 @@ const DigitInputElement = React.forwardRef<
 });
 
 const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
-    const { code, onChange, disabled } = props;
+    const { code, onChange, disabled, onBlur, onFocus } = props;
 
     const handleChange = (code: string) => {
         if (disabled) return;
@@ -124,6 +126,7 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
         length: 4,
         value: code,
         onChange: handleChange,
+        
     });
 
     return (
@@ -146,7 +149,7 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
                     }
                 }
             `}</style>
-            <div>
+            <div onFocus={onFocus} onBlur={onBlur}>
                 {/* <DigitInputElement value="#" /> */}
                 <DigitInputElement outline autoFocus {...digits[0]} />
                 <DigitInputElement outline {...digits[1]} />
