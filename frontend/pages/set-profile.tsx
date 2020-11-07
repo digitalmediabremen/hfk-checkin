@@ -13,7 +13,6 @@ import { appUrls } from "../config";
 import { useTranslation } from "../localization";
 import Profile, { ProfileUpdate } from "../model/Profile";
 
-
 interface EditProfileProps {
     profile?: Profile;
 }
@@ -25,7 +24,7 @@ type Error<T> = {
 const validate = (user: ProfileUpdate) => {
     const errors: Error<ProfileUpdate> = {};
     if (!user.first_name) {
-    errors.first_name = "erforderlich";
+        errors.first_name = "erforderlich";
     }
 
     if (!user.last_name) {
@@ -84,7 +83,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         },
     });
 
-    if (!initialProfile) return null;
+    if (!appState.initialized) return null;
 
     return (
         <form
@@ -139,13 +138,15 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                             : undefined
                     }
                 />
-                <Notice>
-                    {t(
-                        `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
-                        {},
-                        "Deine Angaben werden ausschließlich zur Rückverfolgung..."
-                    )}
-                </Notice>
+                {!initialProfile?.phone && (
+                    <Notice>
+                        {t(
+                            `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
+                            {},
+                            "Deine Angaben werden ausschließlich zur Rückverfolgung..."
+                        )}
+                    </Notice>
+                )}
             </FormGroup>
 
             <ButtonWithLoading
