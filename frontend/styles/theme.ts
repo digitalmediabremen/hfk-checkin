@@ -4,7 +4,7 @@ const unit = 8;
 
 const theme = {
     spacing: (u: number) => u * unit,
-    borderRadius: unit * .5,
+    borderRadius: 5,
     primaryColor: "#D81830",
     secondaryColor: "#FFF",
     textColor: "#D81830",
