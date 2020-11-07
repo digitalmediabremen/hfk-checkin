@@ -66,7 +66,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             });
         }
         if (!!updatedProfile && !updatedProfile.verified) {
-            router.push(appUrls.verifyProfile);
+            router.push(appUrls.verifyNow);
             return;
         }
         router.push(appUrls.enterCode);

@@ -46,7 +46,7 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
             </div>
             <div className="footer">
                 <Link href={appUrls.privacy}>
-                    <span>{t("Datenschutz")}</span>
+                    <span>{t("Datenschutzinformationen")}</span>
                 </Link>
                 <Link href={appUrls.help}>
                     <span>{t("Hilfe")}</span>

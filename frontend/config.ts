@@ -20,6 +20,7 @@ export const httpStatuses = {
 export const appUrls = {
     "setprofile": "/set-profile",
     "verifyProfile": "/verify-profile",
+    "verifyNow": "/verify-now",
     "profile": "/profile",
     "loginMicrosoft": `${authRedirectUrl}/?next=${appBase}/`,
     "createProfile": "/new",
