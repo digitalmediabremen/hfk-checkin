@@ -33,7 +33,7 @@ precacheAndRoute(WB_MANIFEST);
 
 cleanupOutdatedCaches();
 registerRoute(
-    "/",
+    "/profile",
     new StaleWhileRevalidate({
         cacheName: "start-url",
         plugins: [
@@ -160,7 +160,7 @@ registerRoute(
 );
 registerRoute(
     /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*/i,
-    new NetworkFirst({
+    new NetworkOnly({
         cacheName: "apis",
         networkTimeoutSeconds: 10,
         plugins: [
