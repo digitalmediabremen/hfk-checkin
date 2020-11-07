@@ -7,7 +7,7 @@ export interface AppState {
     };
     profile?: Profile;
     disableNextUpdate: boolean;
-    highlightCheckinById: number, // id
+    highlightCheckinById?: number, // id
     initialized: boolean;
 }
 

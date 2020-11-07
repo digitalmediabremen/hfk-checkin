@@ -50,6 +50,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
                     checkins={last_checkins}
                     groupByDate
                     showCheckoutSeperatly
+                    extendInteractableWidth
                 />
             )}
             {!hasCheckins && (

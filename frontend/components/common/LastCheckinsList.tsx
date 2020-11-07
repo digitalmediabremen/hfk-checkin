@@ -10,6 +10,7 @@ interface LastCheckinsProps {
     onCheckinClick?: (index: number) => void;
     groupByDate?: boolean;
     showCheckoutSeperatly?: true;
+    extendInteractableWidth?: true;
 }
 
 const useForceUpdateAfter = (afterSeconds: number = 30) => {
@@ -94,6 +95,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     onCheckinClick,
     groupByDate,
     showCheckoutSeperatly,
+    extendInteractableWidth,
 }) => {
     const { t } = useTranslation();
     checkins = indexCheckin(checkins);
@@ -147,6 +149,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                                 highlightedCheckinId === checkin.id &&
                                 checkin.time_left !== null
                             }
+                            interactiveExtendWidth={extendInteractableWidth}
                         />
                     ));
 
@@ -172,6 +175,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                             highlightedCheckinId === checkin.id &&
                             checkin.time_left !== null
                         }
+                        interactiveExtendWidth={extendInteractableWidth}
                     />
                 ))}
         </div>
@@ -184,11 +188,13 @@ const LastCheckinListItem = ({
     index,
     interactive,
     highlight,
+    interactiveExtendWidth,
 }: {
     index: number;
     checkin: LastCheckin;
     onCheckinClick?: () => void;
     interactive?: boolean;
+    interactiveExtendWidth?: boolean;
     highlight: boolean;
 }) => {
     const { org_name, org_number, id } = checkin.location;
@@ -248,13 +254,16 @@ const LastCheckinListItem = ({
                 }
 
                 .list-item-interactable {
-                    padding: ${theme.spacing(1)}px;
                     // -2 to compensate border width
-                    margin-left: ${theme.spacing(-1) - 2}px;
-                    margin-right: ${theme.spacing(-1) - 2}px;
+                    padding: ${theme.spacing(1)}px;
                     border: 2px solid ${theme.primaryColor};
                     border-radius: ${theme.borderRadius}px;
                     transition: 0.1s background-color, 0.1s color;
+                }
+
+                .list-item.extend-width {
+                    margin-left: ${theme.spacing(-1)}px;
+                    margin-right: ${theme.spacing(-1)}px;
                 }
 
                 .list-item-interactable {
@@ -269,42 +278,41 @@ const LastCheckinListItem = ({
 
                 .list-item-highlighted {
                     animation: highlight 1.5s linear;
-
+                    animation-fill-mode: forwards;
                     border-radius: ${theme.borderRadius}px;
+                    padding-left: ${theme.spacing(1)}px;
+                    padding-right: ${theme.spacing(1)}px;
                 }
 
                 @keyframes highlight {
                     0% {
                         background-color: ${theme.primaryColor};
                         color: ${theme.secondaryColor};
-                        padding: ${theme.spacing(1)}px;
-                        // -2 to compensate border width
-                        margin-left: ${theme.spacing(-1)}px;
-                        margin-right: ${theme.spacing(-1)}px;
+                        padding-top: ${theme.spacing(1)}px;
+                        padding-bottom: ${theme.spacing(1)}px;
                     }
                     50% {
                         background-color: ${theme.primaryColor};
                         color: ${theme.secondaryColor};
-                        padding: ${theme.spacing(1)}px;
-                        // -2 to compensate border width
-                        margin-left: ${theme.spacing(-1)}px;
-                        margin-right: ${theme.spacing(-1)}px;
+                        padding-top: ${theme.spacing(1)}px;
+                        padding-bottom: ${theme.spacing(
+                            1
+                        )}px; // -2 to compensate border width
                     }
                     90% {
                         background-color: ${theme.secondaryColor};
                         color: ${theme.primaryColor};
-                        padding: ${theme.spacing(1)}px;
-                        // -2 to compensate border width
-                        margin-left: ${theme.spacing(-1)}px;
-                        margin-right: ${theme.spacing(-1)}px;
+                        padding-top: ${theme.spacing(1)}px;
+                        padding-bottom: ${theme.spacing(
+                            1
+                        )}px; // -2 to compensate border width
                     }
                     100% {
                         background-color: ${theme.secondaryColor};
                         color: ${theme.primaryColor};
-                        padding: 0px;
+                        padding-top: ${theme.spacing(0)}px;
+                        padding-bottom: ${theme.spacing(0)}px;
                         // -2 to compensate border width
-                        margin-left: 0px;
-                        margin-right: 0px;
                     }
                 }
             `}</style>
@@ -312,7 +320,11 @@ const LastCheckinListItem = ({
                 onClick={onCheckinClick}
                 className={`list-item${
                     is_active && interactive ? " list-item-interactable" : ""
-                }${highlight ? " list-item-highlighted" : ""}`}
+                }${highlight ? " list-item-highlighted" : ""}${
+                    ((interactiveExtendWidth && is_active && interactive) || highlight)
+                        ? " extend-width"
+                        : ""
+                }`}
             >
                 <span className="room-number">{org_number}</span>{" "}
                 <span className="room-name">{org_name}</span>
