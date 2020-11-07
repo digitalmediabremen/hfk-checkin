@@ -11,6 +11,7 @@ const translation: Translation = {
             Protokoll: "Log",
             "Noch keine Checkins vorhanden": "No checkins",
             "Telefon ändern": "Change phone",
+            "nicht verifiziert": "Not verified"
         },
         enterCode: {
             "Mit Raumcode einchecken": "Check in with roomcode",
