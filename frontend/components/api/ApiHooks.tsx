@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { usePageVisibility } from "react-page-visibility";
+import { httpStatuses } from "../../config";
+import { Checkin, LastCheckin } from "../../model/Checkin";
 import { Location } from "../../model/Location";
 import Profile, { ProfileUpdate } from "../../model/Profile";
 import { useAppState } from "../common/AppStateProvider";
 import {
     doCheckinRequest,
     doCheckoutRequest,
+    getCheckinRequest,
+    getCheckinsRequest,
     getLocationRequest,
     getProfileRequest,
     Response,
     updateProfileRequest,
-    getCheckinRequest,
 } from "./ApiService";
-import { Checkin, LastCheckin } from "../../model/Checkin";
-import { config } from "process";
-import { httpStatuses } from "../../config";
-import { usePageVisibility } from "react-page-visibility";
 
-type UseApiReturnType<RT extends {}> = {
+export type UseApiReturnType<RT extends {}> = {
     request: (request: () => Promise<Response<RT>>) => void;
     additionalData: AdditionalResponseData | undefined;
 } & (
@@ -42,9 +42,13 @@ type UseApiReturnType<RT extends {}> = {
       }
 );
 
-interface AdditionalResponseData {
+export interface AdditionalResponseData {
     statusCode?: number;
 }
+
+export type ResultModifierFunction<RT extends {}> = (
+    res?: RT
+) => RT | undefined;
 
 export const useApi = <RT extends {}>(_config?: {
     onlyLocalErrorReport?: boolean;
@@ -99,7 +103,6 @@ export const useApi = <RT extends {}>(_config?: {
             } else if (!config.onlyLocalErrorReport) {
                 // reset error message
                 // but only if request is reporting globally
-
                 dispatch({
                     type: "status",
                     status: undefined,
@@ -118,20 +121,31 @@ export const useApi = <RT extends {}>(_config?: {
     } as UseApiReturnType<RT>;
 };
 
-export const useUpdateProfileFromAppStateAndUpdate = (update = false) => {
-    const { getProfile, profile, error, loading, success } = useProfile(update);
+export const useUpdateProfileFromAppStateAndUpdate = (
+    updateOnPageActivation = false
+) => {
+    const { getProfile, profile, error, loading, success } = useProfile(
+        updateOnPageActivation
+    );
     const { appState, dispatch } = useAppState();
     const { profile: profileFromAppState } = appState;
 
     useEffect(() => {
-        getProfile();
+        if (!appState.disableNextUpdate) {
+            getProfile();
+        } else {
+            dispatch({
+                type: "enableNextUpdate",
+            });
+        }
     }, []);
 
     useEffect(() => {
-        (success || error) && dispatch({
-            type: "profile",
-            profile,
-        });
+        (success || error) &&
+            dispatch({
+                type: "profile",
+                profile,
+            });
     }, [profile, error]);
 
     return {
@@ -154,7 +168,7 @@ export const useUpdateProfile = () => {
     };
 };
 
-export const useProfile = (update = false) => {
+export const useProfile = (updateOnPageActivation = false) => {
     const { request, result: profile, state, ...other } = useApi<Profile>({
         onlyLocalErrorReport: true,
     });
@@ -163,11 +177,16 @@ export const useProfile = (update = false) => {
     useEffect(() => {
         // console.log("should update profile", state, visible, update)
 
-        if (update && visible && state !== "initial" && state !== "loading") {
+        if (
+            updateOnPageActivation &&
+            visible &&
+            state !== "initial" &&
+            state !== "loading"
+        ) {
             // console.log("update profile")
-            request(() => getProfileRequest())
-        }  
-    }, [visible])
+            request(() => getProfileRequest());
+        }
+    }, [visible]);
 
     return {
         profile,
@@ -202,12 +221,64 @@ export const useCheckin = (checkinId?: string) => {
     };
 };
 
+export const useActiveCheckins = (
+    resultModifier?: ResultModifierFunction<LastCheckin[]>
+) => {
+    const { request, ...data } = useApi<LastCheckin[]>();
+    const updateOnPageActivation = true;
+    const r = useCallback(
+        () =>
+            request(() =>
+                getCheckinsRequest({
+                    requestParameters: {
+                        active: undefined,
+                    },
+                })
+            ),
+        [request]
+    );
+
+    useEffect(() => {
+        r();
+    }, []);
+
+    const visible = usePageVisibility();
+    useEffect(() => {
+        if (
+            updateOnPageActivation &&
+            visible &&
+            data.state !== "initial" &&
+            data.state !== "loading"
+        ) {
+            r();
+        }
+    }, [visible]);
+
+    return {
+        data: {
+            ...data,
+            result: resultModifier?.(data.result),
+        } as UseApiReturnType<LastCheckin[]>,
+    };
+};
+
 export const useDoCheckin = (locationCode?: string) => {
     const { request, additionalData, ...data } = useApi<Checkin>();
+    const { dispatch } = useAppState();
 
     useEffect(() => {
         if (locationCode) request(() => doCheckinRequest(locationCode));
     }, [locationCode]);
+
+    useEffect(() => {
+        if (data.state === "success") {
+            dispatch({
+                type: "profile",
+                profile: data.result.profile,
+            });
+        }
+    }, [data.state]);
+
     return {
         doCheckin: (otherLocationCode: string) =>
             request(() => doCheckinRequest(otherLocationCode)),
@@ -218,7 +289,18 @@ export const useDoCheckin = (locationCode?: string) => {
 };
 
 export const useDoCheckout = () => {
-    const { request, state, result, ...other } = useApi<{}>();
+    const { request, state, result, ...other } = useApi<Checkin>();
+    const { dispatch } = useAppState();
+
+    useEffect(() => {
+        if (state === "success") {
+            dispatch({
+                type: "profile",
+                profile: result?.profile,
+            });
+        }
+    }, [state]);
+
     return {
         doCheckout: (locationCode: string) =>
             request(() => doCheckoutRequest(locationCode)),

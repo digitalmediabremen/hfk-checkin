@@ -6,6 +6,8 @@ export interface AppState {
         isError: boolean;
     };
     profile?: Profile;
+    disableNextUpdate: boolean;
+    highlightCheckinById: number, // id
     initialized: boolean;
 }
 
@@ -18,7 +20,15 @@ export type AppAction = {
 } | {
     type: "profile";
     profile: Profile | undefined;
+    disableNextUpdate?: boolean;
 } | {
-    type: "initialized";
-    initialized: boolean;
+    type: "enableNextUpdate"
+} | {
+    type: "disableNextUpdate"
+} | {
+    type: "checkout",
+    highlightCheckinById?: number,
+    message: string,
+} | {
+    type: "highlightedCheckinWasDisplayed",
 }

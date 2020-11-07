@@ -1,10 +1,16 @@
 import { useRouter } from "next/router";
 import * as React from "react";
-import { useDoCheckin, useDoCheckout } from "../../components/api/ApiHooks";
+import {
+    ResultModifierFunction,
+    useActiveCheckins,
+    useDoCheckin,
+    useDoCheckout,
+} from "../../components/api/ApiHooks";
 import needsProfile from "../../components/api/needsProfile";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../../components/common/Button";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
+import FormElementWrapper from "../../components/common/FormElementWrapper";
 import LastCheckins from "../../components/common/LastCheckinsList";
 import PushToBottom from "../../components/common/PushToBottom";
 import Subtitle from "../../components/common/Subtitle";
@@ -14,13 +20,13 @@ import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
 import { LastCheckin } from "../../model/Checkin";
 import Profile from "../../model/Profile";
-import FormElementWrapper from "../../components/common/FormElementWrapper";
+import Notice from "../../components/common/Notice";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: LastCheckin;
     profile: Profile;
     alreadyCheckedIn: boolean;
-}> = ({ profile, checkin, alreadyCheckedIn }) => {
+}> = ({ checkin, alreadyCheckedIn }) => {
     const { location } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
     const {
@@ -28,6 +34,19 @@ export const CheckinComponent: React.FunctionComponent<{
         success,
         loading: checkoutInProgress,
     } = useDoCheckout();
+
+    const excludeCheckinModifier = React.useCallback<
+        ResultModifierFunction<LastCheckin[]>
+    >(
+        (checkins?: LastCheckin[]) => {
+            return checkins?.filter((c) => c.id !== checkin.id);
+        },
+        [checkin.id]
+    );
+
+    const { data: activeCheckinData } = useActiveCheckins(
+        excludeCheckinModifier
+    );
     const { dispatch } = useAppState();
     const router = useRouter();
 
@@ -41,14 +60,25 @@ export const CheckinComponent: React.FunctionComponent<{
     React.useEffect(() => {
         if (!success) return;
         dispatch({
-            type: "status",
-            status: {
-                message: t("Erfolgreich ausgecheckt"),
-                isError: false,
-            },
+            type: "checkout",
+            message: t("Erfolgreich ausgecheckt"),
+            highlightCheckinById: checkin.id
         });
-        router.push(appUrls.enterCode);
+        dispatch({
+            type: "disableNextUpdate",
+        });
+        router.push(appUrls.profile);
     }, [success]);
+
+    const handleActiveCheckinClick = (index: number) => {
+        if (activeCheckinData.state !== "success") return;
+
+        const checkin = activeCheckinData.result[index];
+        if (!checkin) return;
+        if (!checkin.is_active) return;
+        const { id: checkinId } = checkin;
+        router.push(...appUrls.checkout(checkinId));
+    };
 
     return (
         <>
@@ -75,11 +105,24 @@ export const CheckinComponent: React.FunctionComponent<{
             </ButtonWithLoading>
             <PushToBottom offsetBottomPadding>
                 <FormElementWrapper noBottomMargin>
-                    <Subtitle>{t("Andere Checkins")}</Subtitle>
+                    {activeCheckinData.state === "success" &&
+                        activeCheckinData.result.length > 0 && (
+                            <>
+                                <Subtitle>
+                                    {t(
+                                        "Du bist noch an folgenden Orten eingecheckt:"
+                                    )}
+                                </Subtitle>
 
-                    <LastCheckins
-                        checkins={profile.last_checkins.slice(0, 4)}
-                    />
+                                <LastCheckins
+                                    onCheckinClick={handleActiveCheckinClick}
+                                    checkins={activeCheckinData.result}
+                                />
+                            </>
+                        )}
+                    {activeCheckinData.state === "loading" && (
+                        <Notice>"loading..."</Notice>
+                    )}
                 </FormElementWrapper>
             </PushToBottom>
         </>
@@ -101,7 +144,7 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
         const url = appUrls.checkout(data.result.id);
         router.prefetch(...url);
         if (alreadyCheckedIn) router.replace(...url);
-    });
+    }, [data.state]);
 
     if (data.state !== "success") return null;
     if (alreadyCheckedIn) return null;

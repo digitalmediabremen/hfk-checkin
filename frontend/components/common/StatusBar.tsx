@@ -79,13 +79,6 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                     cursor: pointer;
                 }
 
-                .status.error {
-                    background-color: ${theme.primaryColor};
-                    color: ${theme.secondaryColor};
-                    font-weight: bold;
-                    z-index: 1000;
-                }
-
                 .bar {
                     padding: ${theme.spacing(2)}px ${theme.spacing(3)}px;
                     display: flex;
@@ -142,6 +135,14 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                     left: 0;
                     width: 100%;
                 }
+
+                .status, .status.error {
+                    background-color: ${theme.primaryColor};
+                    color: ${theme.secondaryColor};
+                    font-weight: bold;
+                    z-index: 1000;
+                }
+
                 .status-enter,
                 .status-second-enter {
                     transform: translateY(-100%);

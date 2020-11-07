@@ -28,18 +28,13 @@ export interface RequestBody extends Omit<RequestInit, "credentials"> {
     requestParameters?: RequestParameters;
 }
 
-const _clean = <T extends Record<string, string>>(obj?: Partial<T>): T | undefined => {
-    if (obj === undefined) { 
-        return undefined
-    }
-
-    Object.entries(obj).forEach(([key, val]) => {
-        if (val == null) delete obj[key];
-    });
-    if (Object.entries.length === 0) return undefined;
-    
-    return obj as unknown as T;
-};
+const toQueryString = (params?: RequestParameters) => {
+    if (!params) return "";
+    return Object.entries(params).reduce((prev, [key, value], index) => {
+        const pre = index === 0 ? "?" : "&";
+        return `${prev}${pre}${value ? `${key}=${value}` : key}`
+    }, "");
+}
 
 export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     endpoint: string,
@@ -47,17 +42,16 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     responseTypeGuard?: (p: any) => asserts p is ResultType
 ): Promise<Response<ResultType>> => {
     const { headers, requestParameters, ...otherRequestData } = requestData;
-    const cleanedRequestParameters = _clean(requestParameters);
-    const stringifiedRequestParameters = cleanedRequestParameters
-        ? `?${new URLSearchParams(cleanedRequestParameters).toString()}`
-        : "";
+    const stringifiedRequestParameters = toQueryString(requestParameters)
     const url = `${config.apiUrl}/${endpoint}${stringifiedRequestParameters}`;
-    const forceLocaleHeader = config.forceLocale ? { "Accept-Language": config.forceLocale} : undefined;
+    const forceLocaleHeader = config.forceLocale
+        ? { "Accept-Language": config.forceLocale }
+        : undefined;
     return await fetch(url, {
         headers: {
             "Content-Type": "application/json",
             ...headers,
-            ...forceLocaleHeader
+            ...forceLocaleHeader,
         },
         credentials: "include",
         ...otherRequestData,
@@ -121,6 +115,17 @@ export const updateProfileRequest = async (
         headers,
     });
 
+export const getCheckinsRequest = async (
+    options?: RequestOptions<{
+        active?: undefined
+    }>
+) => {
+    return await apiRequest<LastCheckin[]>("checkin/", {
+        method: "GET",
+        ...options
+    });
+};
+
 export const doCheckinRequest = async (
     locationCode: string,
     options?: RequestOptions<{
@@ -151,8 +156,10 @@ export const getLocationRequest = async (
 export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<Profile>("profile/me/", { headers }, assertProfile);
 
-export const getCheckinRequest = async (checkinId: string, options?: RequestOptions) =>
-    await apiRequest<LastCheckin>(`checkin/${checkinId}`, { ...options });
+export const getCheckinRequest = async (
+    checkinId: string,
+    options?: RequestOptions
+) => await apiRequest<LastCheckin>(`checkin/${checkinId}`, { ...options });
 
 export const redirectServerSide = (
     serverResponse: ServerResponse,

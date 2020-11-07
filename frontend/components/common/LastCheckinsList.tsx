@@ -3,6 +3,7 @@ import { useTranslation } from "../../localization";
 import { LastCheckin } from "../../model/Checkin";
 import theme from "../../styles/theme";
 import Subtitle from "./Subtitle";
+import { useAppState } from "./AppStateProvider";
 
 interface LastCheckinsProps {
     checkins: Array<LastCheckin>;
@@ -77,6 +78,17 @@ const groupByDay = (
     );
 };
 
+const useHighlightedCheckin = () => {
+    const { appState, dispatch } = useAppState();
+    const [id] = React.useState(appState.highlightCheckinById);
+    React.useEffect(() => {
+        dispatch({
+            type: "highlightedCheckinWasDisplayed",
+        });
+    }, []);
+    return id;
+};
+
 const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     checkins,
     onCheckinClick,
@@ -96,6 +108,8 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
         () => (groupByDate ? groupByDay(checkins) : []),
         [checkins, groupByDate]
     );
+
+    const highlightedCheckinId = useHighlightedCheckin();
 
     const handleCheckinClick = onCheckinClick
         ? (checkin: LastCheckin) => {
@@ -129,6 +143,10 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                             index={groupIndex * checkins.length + index}
                             onCheckinClick={() => handleCheckinClick?.(checkin)}
                             key={index}
+                            highlight={
+                                highlightedCheckinId === checkin.id &&
+                                checkin.time_left !== null
+                            }
                         />
                     ));
 
@@ -150,6 +168,10 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                         index={index}
                         onCheckinClick={() => handleCheckinClick?.(checkin)}
                         key={index}
+                        highlight={
+                            highlightedCheckinId === checkin.id &&
+                            checkin.time_left !== null
+                        }
                     />
                 ))}
         </div>
@@ -161,11 +183,13 @@ const LastCheckinListItem = ({
     onCheckinClick,
     index,
     interactive,
+    highlight,
 }: {
     index: number;
     checkin: LastCheckin;
     onCheckinClick?: () => void;
     interactive?: boolean;
+    highlight: boolean;
 }) => {
     const { org_name, org_number, id } = checkin.location;
     const { time_left, time_entered, is_active } = checkin;
@@ -242,12 +266,53 @@ const LastCheckinListItem = ({
                     background-color: ${theme.primaryColor};
                     color: #fff;
                 }
+
+                .list-item-highlighted {
+                    animation: highlight 1.5s linear;
+
+                    border-radius: ${theme.borderRadius}px;
+                }
+
+                @keyframes highlight {
+                    0% {
+                        background-color: ${theme.primaryColor};
+                        color: ${theme.secondaryColor};
+                        padding: ${theme.spacing(1)}px;
+                        // -2 to compensate border width
+                        margin-left: ${theme.spacing(-1)}px;
+                        margin-right: ${theme.spacing(-1)}px;
+                    }
+                    50% {
+                        background-color: ${theme.primaryColor};
+                        color: ${theme.secondaryColor};
+                        padding: ${theme.spacing(1)}px;
+                        // -2 to compensate border width
+                        margin-left: ${theme.spacing(-1)}px;
+                        margin-right: ${theme.spacing(-1)}px;
+                    }
+                    90% {
+                        background-color: ${theme.secondaryColor};
+                        color: ${theme.primaryColor};
+                        padding: ${theme.spacing(1)}px;
+                        // -2 to compensate border width
+                        margin-left: ${theme.spacing(-1)}px;
+                        margin-right: ${theme.spacing(-1)}px;
+                    }
+                    100% {
+                        background-color: ${theme.secondaryColor};
+                        color: ${theme.primaryColor};
+                        padding: 0px;
+                        // -2 to compensate border width
+                        margin-left: 0px;
+                        margin-right: 0px;
+                    }
+                }
             `}</style>
             <div
                 onClick={onCheckinClick}
-                className={`list-item ${
-                    is_active && interactive ? "list-item-interactable" : ""
-                }`}
+                className={`list-item${
+                    is_active && interactive ? " list-item-interactable" : ""
+                }${highlight ? " list-item-highlighted" : ""}`}
             >
                 <span className="room-number">{org_number}</span>{" "}
                 <span className="room-name">{org_name}</span>

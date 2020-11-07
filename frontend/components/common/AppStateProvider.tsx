@@ -1,15 +1,19 @@
 import React, { SFC, useContext, useReducer, Reducer, useEffect } from "react";
 import { AppAction, AppState } from "../../model/AppState";
 
+const initialAppState: AppState = {
+    initialized: false,
+    disableNextUpdate: false,
+};
+
 const appStateContext = React.createContext<{
     appState: AppState;
     dispatch: React.Dispatch<AppAction>;
 }>({
-    appState: {
-        initialized: false,
-    },
+    appState: initialAppState,
     dispatch: () => null,
 });
+
 const { Provider, Consumer } = appStateContext;
 
 export const AppStateProvider: SFC<{}> = ({ children }) => {
@@ -34,14 +38,35 @@ export const AppStateProvider: SFC<{}> = ({ children }) => {
                         initialized: true,
                         profile: undefined,
                     };
-
+                case "enableNextUpdate":
+                    return {
+                        ...previousState,
+                        disableNextUpdate: false,
+                    };
+                case "disableNextUpdate":
+                    return {
+                        ...previousState,
+                        disableNextUpdate: true,
+                    };
+                case "checkout":
+                    return {
+                        ...previousState,
+                        highlightCheckinById: action.highlightCheckinById,
+                        status: {
+                            message: action.message,
+                            isError: false
+                        }
+                    }
+                case "highlightedCheckinWasDisplayed":
+                    return {
+                        ...previousState,
+                        highlightCheckinById: undefined
+                    }
                 default:
                     throw new Error();
             }
         },
-        {
-            initialized: false,
-        }
+        initialAppState
     );
 
     return (
