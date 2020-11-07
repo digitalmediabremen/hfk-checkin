@@ -13,7 +13,7 @@ OUTPUT_FILENAME_CSV = 'hfk-checkin-auswertung_%s.csv'
 
 
 class CaseEvaluationSettingsForm(forms.Form):
-    profile = forms.ModelChoiceField(label=_('Infizierte Person'),queryset=Profile.objects.all(), help_text=_("Profil der Person, die in der nachverfolgt werden soll."))
+    profile = forms.ModelChoiceField(label=_('Infizierte Person'),queryset=Profile.objects.order_by('pk').all(), help_text=_("Profil der Person, die in der nachverfolgt werden soll."))
     exclude_locations = forms.ModelMultipleChoiceField(label=_('Auszuschließende Standorte'), required=False, queryset=Location.objects.all(), help_text=_("Optional: Ein oder mehrere Standorte, die in der Auswertung ignoriert werden sollen. z.B. ganze Gebäude / Eingänge etc."))
     report_checkins = forms.BooleanField(label=_('Checkins ausgeben'), initial=True, required=False, help_text=_("Checkins der infizierten Person werden in der Ausgabe einschlossen."))
     report_encounters = forms.BooleanField(label=_('Begegnungen ausgeben'), initial=True, required=False, help_text=_("Checkins der infizierten Person mit einer anderen Person werden in der Ausgabe einschlossen."))
