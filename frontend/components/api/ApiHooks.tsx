@@ -4,7 +4,7 @@ import { httpStatuses } from "../../config";
 import { Checkin, LastCheckin } from "../../model/Checkin";
 import { Location } from "../../model/Location";
 import Profile, { ProfileUpdate } from "../../model/Profile";
-import { useAppState } from "../common/AppStateProvider";
+import { useAppState, AppStateProvider } from "../common/AppStateProvider";
 import {
     doCheckinRequest,
     doCheckoutRequest,
@@ -53,7 +53,7 @@ export type ResultModifierFunction<RT extends {}> = (
 export const useApi = <RT extends {}>(_config?: {
     onlyLocalErrorReport?: boolean;
 }): UseApiReturnType<RT> => {
-    const { dispatch } = useAppState();
+    const { appState, dispatch } = useAppState();
     const [result, setResult] = useState<RT | undefined>(undefined);
     const [error, setError] = useState<string | undefined>(undefined);
     const [requestInProgress, setRequestInProgress] = useState(false);
@@ -100,13 +100,17 @@ export const useApi = <RT extends {}>(_config?: {
                 _handleError(error || `Unknown Error (${status})`, status);
             } else if (!!error && status > 500) {
                 throw error;
-            } else if (!config.onlyLocalErrorReport) {
+            } else if (
+                !config.onlyLocalErrorReport
+            ) {
                 // reset error message
                 // but only if request is reporting globally
-                dispatch({
-                    type: "status",
-                    status: undefined,
-                });
+                if (appState.status?.isError) {
+                    dispatch({
+                        type: "status",
+                        status: undefined,
+                    });
+                }
             }
             setResult(data);
         })();

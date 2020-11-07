@@ -59,15 +59,18 @@ export const CheckinComponent: React.FunctionComponent<{
 
     React.useEffect(() => {
         if (!success) return;
+
         dispatch({
             type: "checkout",
             message: t("Erfolgreich ausgecheckt"),
-            highlightCheckinById: checkin.id
+            highlightCheckinById: checkin.id,
         });
+
         dispatch({
             type: "disableNextUpdate",
         });
         router.push(appUrls.profile);
+        // return () => clearTimeout(timerId);
     }, [success]);
 
     const handleActiveCheckinClick = (index: number) => {
@@ -138,13 +141,29 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
     const { t } = useTranslation("checkin");
     const [locationCode, router] = useParam("locationCode");
     const { data, alreadyCheckedIn } = useDoCheckin(locationCode);
+    const { dispatch } = useAppState();
 
     // prefetch url which is later redirected to
     React.useEffect(() => {
         if (data.state !== "success") return;
+        let timerId: number | undefined = undefined;
         const url = appUrls.checkout(data.result.id);
         router.prefetch(...url);
         if (alreadyCheckedIn) router.replace(...url);
+        else {
+            timerId = window.setTimeout(
+                () =>
+                    dispatch({
+                        type: "status",
+                        status: {
+                            message: t("Checkin erfolgreich"),
+                            isError: false,
+                        },
+                    }),
+                500
+            );
+        }
+        return () => clearTimeout(timerId);
     }, [data.state]);
 
     if (data.state !== "success") return null;

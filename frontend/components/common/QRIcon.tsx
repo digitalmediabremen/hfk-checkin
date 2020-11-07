@@ -11,9 +11,9 @@ const QRIcon = () => {
             <g
                 id="Mobile-App"
                 stroke="none"
-                stroke-width="1"
+                strokeWidth="1"
                 fill="none"
-                fill-rule="evenodd"
+                fillRule="evenodd"
             >
                 <g
                     id="Checkin-Manual"
@@ -37,7 +37,7 @@ const QRIcon = () => {
                         >
                             <rect
                                 id="Rectangle-Copy-62"
-                                stroke-width="2"
+                                strokeWidth="2"
                                 x="0"
                                 y="0"
                                 width="18"
@@ -47,13 +47,13 @@ const QRIcon = () => {
                             <path
                                 d="M6,27 L11.25,27"
                                 id="Line-6"
-                                stroke-linecap="round"
+                                strokeLinecap="round"
                             ></path>
                             <polyline
                                 id="Path-2-Copy"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                                 points="6 11.5007013 7.66614713 13 11 10"
                             ></polyline>
                         </g>
@@ -68,12 +68,12 @@ const QRIcon = () => {
                         <path
                             d="M11.5,2.5 L18.5,20.5"
                             id="Line-7"
-                            stroke-linecap="round"
+                            strokeLinecap="round"
                         ></path>
                         <path
                             d="M3.5,13.5 L13.5,25.5"
                             id="Line-8"
-                            stroke-linecap="round"
+                            strokeLinecap="round"
                         ></path>
                     </g>
                 </g>

@@ -25,6 +25,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
 
     React.useEffect(() => {
         if (status) {
+            clearTimeout(timeoutId);
             if (!status.isError) {
                 const tid = setTimeout(() => {
                     dispatch({ type: "status", status: undefined });
