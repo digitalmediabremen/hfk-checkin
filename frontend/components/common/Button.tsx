@@ -1,4 +1,4 @@
-import { SFC } from "react";
+import { SFC, ReactNode } from "react";
 import theme from "../../styles/theme";
 import FormElementWrapper from "./FormElementWrapper";
 
@@ -10,6 +10,7 @@ export interface ButtonProps {
     outline?: true;
     noBottomMargin?: true;
     withBackIcon?: true;
+    iconComponent?: ReactNode;
 }
 
 export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
@@ -22,9 +23,12 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
         if (!loading) onClick();
     };
     return (
-        <Button {...props} onClick={handleClick}>
+        <Button
+            {...props}
+            onClick={handleClick}
+            iconComponent={loading ? <>...</> : undefined}
+        >
             {children}
-            {loading && " ..."}
         </Button>
     );
 };
@@ -35,8 +39,11 @@ export const Button: SFC<ButtonProps> = (props) => {
         outline,
         noBottomMargin,
         withBackIcon,
+        iconComponent,
         ...otherProps
     } = props;
+
+    const hasIcon = iconComponent || withBackIcon;
 
     return (
         <>
@@ -68,7 +75,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                     font-weight: bold;
                     position: relative;
                     width: auto;
-                    margin: 0 1.9em;
+                    ${hasIcon ? "margin: 0 1.9em;" : ""}
                 }
 
                 .back-icon {
@@ -102,8 +109,10 @@ export const Button: SFC<ButtonProps> = (props) => {
                     {...otherProps}
                 >
                     <span>
-                    {withBackIcon && <span className="back-icon">←</span>}
-                    {children}
+                        {(iconComponent || withBackIcon) && (
+                            <span className="back-icon">{iconComponent || "←"}</span>
+                        )}
+                        {children}
                     </span>
                 </button>
             </FormElementWrapper>
