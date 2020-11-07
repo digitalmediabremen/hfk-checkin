@@ -22,7 +22,8 @@ const DigitInputElement = React.forwardRef<
                 label {
                     position: relative;
                     width: 1em;
-                    height: 1.3em;
+                    height: 1.4em;
+                    line-height: 1.35em;
                     font-size: 1em;
                 }
                 input {
@@ -66,7 +67,7 @@ const DigitInputElement = React.forwardRef<
 
                 div.digit {
                     // font-weight: bold;
-                    color: ${outline ? "black" : theme.primaryColor};
+                    color: black;
                     position: absolute;
                     width: 100%;
                     height: 100%;
@@ -76,11 +77,19 @@ const DigitInputElement = React.forwardRef<
                     left: 0;
                     text-align: center;
                     align-items: center;
+                    // outline: 2px solid ${theme.primaryColor};
+                    // outline-offset: -1px;
+                    // color: ${theme.primaryColor};
+                    box-shadow: -1px 0px 0px 0px ${theme.primaryColor},
+                        1px 0px 0px 0px ${theme.primaryColor};
                 }
 
-                .outline {
-                    outline: 2px solid ${theme.primaryColor};
-                    outline-offset: -1px;
+                label:first-child div.digit {
+                    box-shadow: 1px 0px 0px 0px ${theme.primaryColor};
+                }
+
+                label:last-child div.digit {
+                    box-shadow: -1px 0px 0px 0px ${theme.primaryColor}
                 }
             `}</style>
             <label>
@@ -121,22 +130,24 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
         <>
             <style jsx>{`
                 div {
-                    font-size: 18vw;
-                    margin-left: -3vw;
+                    font-size: 21vw;
+                    // margin-left: -3vw;
                     display: flex;
                     align-items: center;
                     width: 100%;
                     justify-content: center;
+                    border: 4px solid ${theme.primaryColor};
+                    border-radius: ${theme.borderRadius}px;
                 }
                 @media screen and (min-width: 500px) {
                     div {
-                        font-size: 6em;
-                        margin-left: -.15em;
+                        font-size: 7em;
+                        // margin-left: -.15em;
                     }
                 }
             `}</style>
             <div>
-                <DigitInputElement value="#" />
+                {/* <DigitInputElement value="#" /> */}
                 <DigitInputElement outline autoFocus {...digits[0]} />
                 <DigitInputElement outline {...digits[1]} />
                 <DigitInputElement outline {...digits[2]} />

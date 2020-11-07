@@ -9,8 +9,7 @@ import { appUrls } from "../config";
 import { useTranslation } from "../localization";
 import Profile from "../model/Profile";
 import theme from "../styles/theme";
-
-
+import Subtitle from "../components/common/Subtitle";
 
 interface CheckInPageProps {
     profile: Profile;
@@ -64,8 +63,12 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
                     font-style: italic;
                 }
             `}</style>
-
-            <Notice>{t("Mit Raumcode einchecken")}</Notice>
+            <Subtitle>{t("Checkin / Checkout")}</Subtitle>
+            <Notice>
+                {t(
+                    "Bitte gib die 4-stellige Nummer des Standortes ein, den du jetzt betrittst oder verlässt."
+                )}
+            </Notice>
 
             <div className="location-code-container">
                 <LocationCodeInput
