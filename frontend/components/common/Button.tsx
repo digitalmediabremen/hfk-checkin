@@ -1,4 +1,4 @@
-import { SFC, Children, useEffect, useState, useCallback, useRef } from "react";
+import { SFC } from "react";
 import theme from "../../styles/theme";
 import FormElementWrapper from "./FormElementWrapper";
 
@@ -9,6 +9,7 @@ export interface ButtonProps {
     disabled?: boolean;
     outline?: true;
     noBottomMargin?: true;
+    withBackIcon?: true;
 }
 
 export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
@@ -29,7 +30,13 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
 };
 
 export const Button: SFC<ButtonProps> = (props) => {
-    const { children, outline, noBottomMargin, ...otherProps } = props;
+    const {
+        children,
+        outline,
+        noBottomMargin,
+        withBackIcon,
+        ...otherProps
+    } = props;
 
     return (
         <>
@@ -49,11 +56,26 @@ export const Button: SFC<ButtonProps> = (props) => {
                     color: ${theme.secondaryColor};
                     border: none;
                     padding: ${theme.spacing(2)}px ${theme.spacing(1)}px};
-                    font-size: 1.3em;
+                    font-size: 1.0em;
                     font-weight: bold;
                     width: 100%;
                     transition: transform .05s;
                     text-transform: uppercase;
+                }
+
+                .button > span {
+                    font-size: 1.3em;
+                    font-weight: bold;
+                    position: relative;
+                    width: auto;
+                    margin: 0 1.9em;
+                }
+
+                .back-icon {
+                    position: absolute;
+                    left: -1.7em;
+                    line-height: 1.0em;
+                    width: 0;
                 }
 
                 .button.outline {
@@ -79,7 +101,10 @@ export const Button: SFC<ButtonProps> = (props) => {
                     onContextMenu={(e) => e.preventDefault()}
                     {...otherProps}
                 >
+                    <span>
+                    {withBackIcon && <span className="back-icon">←</span>}
                     {children}
+                    </span>
                 </button>
             </FormElementWrapper>
         </>

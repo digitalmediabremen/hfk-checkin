@@ -99,6 +99,7 @@ export const CheckinComponent: React.FunctionComponent<{
             <ButtonWithLoading
                 loading={checkoutInProgress}
                 onClick={() => doCheckout(code)}
+                withBackIcon
                 {...(!alreadyCheckedIn ? { outline: true } : undefined)}
             >
                 {t("Auschecken")}
