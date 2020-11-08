@@ -122,7 +122,7 @@ const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
     );
 };
 
-export default CheckInPage;
+export default needsProfile(CheckInPage);
 
 // export const getServerSideProps: GetServerSideProps = withLocaleProp(
 //     async (context) => {

@@ -5,6 +5,7 @@ import { appUrls } from "../../config";
 import { useAppState } from "../common/AppStateProvider";
 import { useUpdateProfileFromAppStateAndUpdate } from "./ApiHooks";
 import { useTranslation } from "../../localization";
+import Title from "../common/Title";
 
 interface NeedsProfileProps {
     profile: Profile;
@@ -43,6 +44,11 @@ const needsProfile = <P extends object>(
     }, [initialized]);
 
     if (!profile || !profile.phone) return null;
+    if (error) {
+        return (
+            <Title>Da ist etwas schief gelaufen.</Title>
+        )
+    }
     return (
         <Component
             profile={profile}

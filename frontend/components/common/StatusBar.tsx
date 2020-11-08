@@ -193,7 +193,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                         )}
                         {!profile && (
                             <>
-                                HFK
+                                HfK
                                 <br />
                                 Checkin
                             </>
