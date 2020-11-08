@@ -293,6 +293,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://checkin.uiuiui.digital",
     "http://checkin.uiuiui.digital",
     "http://hfk-bremen.de",
+    "https://hfk-checkin-frontend-staging.herokuapp.com",
+    "http://hfk-checkin-frontend-staging.herokuapp.com",
 ]
 CORS_ALLOW_HEADERS = [
     'accept',
