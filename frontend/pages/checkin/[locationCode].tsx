@@ -140,11 +140,13 @@ interface CheckinProps {
 const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
     const { t } = useTranslation("checkin");
     const [locationCode, router] = useParam("locationCode");
-    const { data, alreadyCheckedIn } = useDoCheckin(locationCode);
+    const { data, alreadyCheckedIn, notVerified } = useDoCheckin(locationCode);
     const { dispatch } = useAppState();
 
     // prefetch url which is later redirected to
     React.useEffect(() => {
+        if (data.state === "error" && notVerified)
+            router.replace(appUrls.verifyProfile);
         if (data.state !== "success") return;
         let timerId: number | undefined = undefined;
         const url = appUrls.checkout(data.result.id);

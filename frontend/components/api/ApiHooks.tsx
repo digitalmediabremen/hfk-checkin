@@ -288,6 +288,8 @@ export const useDoCheckin = (locationCode?: string) => {
             request(() => doCheckinRequest(otherLocationCode)),
         alreadyCheckedIn:
             additionalData?.statusCode === httpStatuses.alreadyCheckedIn,
+        notVerified:
+            additionalData?.statusCode === httpStatuses.notVerified,
         data,
     };
 };
