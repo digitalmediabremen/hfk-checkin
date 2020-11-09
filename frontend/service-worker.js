@@ -155,10 +155,28 @@ registerRoute(
     }),
     "GET"
 );
+
+// cache location requests
+registerRoute(
+    ({ request }) => request.url.match(/api\/location\/[0-9]+\/$/i) !== null,
+    new StaleWhileRevalidate({
+        cacheName: "api-cached",
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxEntries: 50,
+                purgeOnQuotaError: !0,
+            }),
+        ],
+    })
+)
+
+// dont cache other requests
 registerRoute(
     ({ request }) => {
-        console.log(request)
-        return request.url.startsWith(apiUrl)
+        return request.url.match(/api\/.*$/i) !== null
     },
     new NetworkOnly()
 );
