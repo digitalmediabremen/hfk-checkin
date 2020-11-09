@@ -168,6 +168,7 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
         return () => clearTimeout(timerId);
     }, [data.state]);
 
+    if (data.state === "loading") return (<Title>...</Title>)
     if (data.state !== "success") return null;
     if (alreadyCheckedIn) return null;
 

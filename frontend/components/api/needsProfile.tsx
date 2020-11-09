@@ -43,6 +43,7 @@ const needsProfile = <P extends object>(
         }
     }, [initialized]);
 
+    if (!profile && loading) return <Title>...</Title>;
     if (!profile || !profile.phone) return null;
     if (error) {
         return (
