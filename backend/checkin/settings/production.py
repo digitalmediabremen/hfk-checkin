@@ -159,3 +159,4 @@ LOGGING = {
 
 SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_DOMAIN = getenv("SESSION_COOKIE_DOMAIN", default="checkin.hfk-bremen.de")
+CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS + getenv("CORS_ALLOWED_ORIGINS", default="checkin.hfk-bremen.de")
