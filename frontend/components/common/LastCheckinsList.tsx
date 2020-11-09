@@ -261,6 +261,11 @@ const LastCheckinListItem = ({
                     transition: 0.1s background-color, 0.1s color;
                 }
 
+                .list-item.list-item-interactable.extend-width {
+                    margin-left: ${theme.spacing(-1) - 2}px;
+                    margin-right: ${theme.spacing(-1) - 2}px;
+                }
+
                 .list-item.extend-width {
                     margin-left: ${theme.spacing(-1)}px;
                     margin-right: ${theme.spacing(-1)}px;
