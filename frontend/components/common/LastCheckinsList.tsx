@@ -8,6 +8,7 @@ import { useAppState } from "./AppStateProvider";
 interface LastCheckinsProps {
     checkins: Array<LastCheckin>;
     onCheckinClick?: (index: number) => void;
+    interactive?: boolean;
     groupByDate?: boolean;
     showCheckoutSeperatly?: true;
     extendInteractableWidth?: true;
@@ -93,6 +94,7 @@ const useHighlightedCheckin = () => {
 const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     checkins,
     onCheckinClick,
+    interactive,
     groupByDate,
     showCheckoutSeperatly,
     extendInteractableWidth,
@@ -140,7 +142,7 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
                 checkinsByDate.map(([date, checkins], groupIndex) => {
                     const checkinItems = checkins.map((checkin, index) => (
                         <LastCheckinListItem
-                            interactive={!!handleCheckinClick}
+                            interactive={interactive && !!handleCheckinClick}
                             checkin={checkin}
                             index={groupIndex * checkins.length + index}
                             onCheckinClick={() => handleCheckinClick?.(checkin)}

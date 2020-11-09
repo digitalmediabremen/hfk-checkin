@@ -1,6 +1,7 @@
 import { SFC, ReactNode } from "react";
 import theme from "../../styles/theme";
 import FormElementWrapper from "./FormElementWrapper";
+import { LoadingInline } from "./Loading";
 
 export interface ButtonProps {
     onClick: () => void;
@@ -17,6 +18,7 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
     loading,
     children,
     onClick,
+    outline,
     ...props
 }) => {
     const handleClick = () => {
@@ -26,7 +28,8 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
         <Button
             {...props}
             onClick={handleClick}
-            iconComponent={loading ? <>...</> : undefined}
+            outline={outline}
+            iconComponent={loading ? "..." : undefined}
         >
             {children}
         </Button>

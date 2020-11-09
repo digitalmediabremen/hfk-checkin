@@ -11,6 +11,7 @@ import theme from "../styles/theme";
 import needsProfile from "../components/api/needsProfile";
 import Profile from "../model/Profile";
 import { useTranslation } from "../localization";
+import { DotPulse, LoadingInline } from "../components/common/Loading";
 
 interface ProfilePageProps {
     profile: Profile;
@@ -28,6 +29,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
 
     const handleCheckinClick = (index: number) => {
         const checkin = last_checkins[index];
+        if (profileUpdating) return;
         if (!checkin) return;
         if (!checkin.is_active) return;
         const { id: checkinId } = checkin;
@@ -42,10 +44,13 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
                     width: 100%;
                 }
             `}</style>
-            {profileUpdating && <Notice>{t("...aktualisiert")}</Notice>}
-            {!profileUpdating && <Subtitle>{t("Protokoll")}</Subtitle>}
+            <Subtitle>
+                {t("Protokoll")} <LoadingInline loading={profileUpdating} />
+            </Subtitle>
+
             {hasCheckins && (
                 <LastCheckins
+                    interactive={true}
                     onCheckinClick={handleCheckinClick}
                     checkins={last_checkins}
                     groupByDate

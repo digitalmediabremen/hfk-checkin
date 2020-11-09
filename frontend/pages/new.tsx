@@ -26,7 +26,7 @@ const NewProfilePage: NextPage = () => {
 
     const { t, locale } = useTranslation("createProfile");
 
-    if (appState.profile) return null
+    if (appState.profile || !appState.initialized) return null
 
     return (
         <>

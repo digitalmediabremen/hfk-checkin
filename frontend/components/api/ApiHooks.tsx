@@ -28,7 +28,7 @@ export type UseApiReturnType<RT extends {}> = {
     | {
           state: "loading" | "loading";
           error: undefined;
-          result: undefined;
+          result?: RT;
       }
     | {
           state: "error";

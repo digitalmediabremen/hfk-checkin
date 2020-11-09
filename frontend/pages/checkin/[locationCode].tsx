@@ -7,12 +7,13 @@ import {
     useDoCheckout,
 } from "../../components/api/ApiHooks";
 import needsProfile from "../../components/api/needsProfile";
+import AlignContent from "../../components/common/AlignContent";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../../components/common/Button";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import FormElementWrapper from "../../components/common/FormElementWrapper";
 import LastCheckins from "../../components/common/LastCheckinsList";
-import AlignContent from "../../components/common/AlignContent";
+import Loading, { LoadingInline } from "../../components/common/Loading";
 import Subtitle from "../../components/common/Subtitle";
 import Title from "../../components/common/Title";
 import useParam from "../../components/hooks/useParam";
@@ -20,13 +21,18 @@ import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
 import { LastCheckin } from "../../model/Checkin";
 import Profile from "../../model/Profile";
-import Notice from "../../components/common/Notice";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: LastCheckin;
-    profile: Profile;
     alreadyCheckedIn: boolean;
-}> = ({ checkin, alreadyCheckedIn }) => {
+    activeCheckins: LastCheckin[];
+    activeCheckinsUpdating?: boolean;
+}> = ({
+    checkin,
+    activeCheckins,
+    alreadyCheckedIn,
+    activeCheckinsUpdating,
+}) => {
     const { location } = checkin;
     const { org_name, org_number, capacity, load, code } = location;
     const {
@@ -35,18 +41,6 @@ export const CheckinComponent: React.FunctionComponent<{
         loading: checkoutInProgress,
     } = useDoCheckout();
 
-    const excludeCheckinModifier = React.useCallback<
-        ResultModifierFunction<LastCheckin[]>
-    >(
-        (checkins?: LastCheckin[]) => {
-            return checkins?.filter((c) => c.id !== checkin.id);
-        },
-        [checkin.id]
-    );
-
-    const { data: activeCheckinData } = useActiveCheckins(
-        excludeCheckinModifier
-    );
     const { dispatch } = useAppState();
     const router = useRouter();
 
@@ -74,9 +68,8 @@ export const CheckinComponent: React.FunctionComponent<{
     }, [success]);
 
     const handleActiveCheckinClick = (index: number) => {
-        if (activeCheckinData.state !== "success") return;
-
-        const checkin = activeCheckinData.result[index];
+        if (activeCheckinsUpdating) return;
+        const checkin = activeCheckins[index];
         if (!checkin) return;
         if (!checkin.is_active) return;
         const { id: checkinId } = checkin;
@@ -107,28 +100,26 @@ export const CheckinComponent: React.FunctionComponent<{
             >
                 {t("Auschecken")}
             </ButtonWithLoading>
-            <AlignContent offsetBottomPadding>
-                <FormElementWrapper noBottomMargin>
-                    {activeCheckinData.state === "success" &&
-                        activeCheckinData.result.length > 0 && (
-                            <>
-                                <Subtitle>
-                                    {t(
-                                        "Du bist noch an folgenden Orten eingecheckt:"
-                                    )}
-                                </Subtitle>
-
-                                <LastCheckins
-                                    onCheckinClick={handleActiveCheckinClick}
-                                    checkins={activeCheckinData.result}
-                                />
-                            </>
-                        )}
-                    {activeCheckinData.state === "loading" && (
-                        <Notice>"loading..."</Notice>
-                    )}
-                </FormElementWrapper>
-            </AlignContent>
+            {activeCheckins.length > 0 && (
+                <AlignContent offsetBottomPadding>
+                    <FormElementWrapper noBottomMargin>
+                        <Subtitle>
+                            {t("Du bist noch an folgenden Orten eingecheckt:")}
+                            <LoadingInline
+                                loading={
+                                    activeCheckinsUpdating !== undefined &&
+                                    activeCheckinsUpdating
+                                }
+                            />
+                        </Subtitle>
+                        <LastCheckins
+                            onCheckinClick={handleActiveCheckinClick}
+                            checkins={activeCheckins}
+                            interactive
+                        />
+                    </FormElementWrapper>
+                </AlignContent>
+            )}
         </>
     );
 };
@@ -142,6 +133,21 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
     const [locationCode, router] = useParam("locationCode");
     const { data, alreadyCheckedIn, notVerified } = useDoCheckin(locationCode);
     const { dispatch } = useAppState();
+
+    const excludeCheckinModifier = React.useCallback<
+        ResultModifierFunction<LastCheckin[]>
+    >(
+        (checkins?: LastCheckin[]) => {
+            return data.state === "success"
+                ? checkins?.filter((c) => c.id !== data.result.id)
+                : undefined;
+        },
+        [data.result]
+    );
+
+    const { data: activeCheckinData } = useActiveCheckins(
+        excludeCheckinModifier
+    );
 
     // prefetch url which is later redirected to
     React.useEffect(() => {
@@ -159,9 +165,8 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
                     isError: false,
                 },
             }),
-            router.replace(...url);
-        }
-        else {
+                router.replace(...url);
+        } else {
             timerId = window.setTimeout(
                 () =>
                     dispatch({
@@ -177,16 +182,19 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
         return () => clearTimeout(timerId);
     }, [data.state]);
 
-    if (data.state === "loading") return (<Title>...</Title>)
-    if (data.state !== "success") return null;
-    if (alreadyCheckedIn) return null;
+    if (alreadyCheckedIn || notVerified) return null;
 
     return (
-        <CheckinComponent
-            checkin={data.result}
-            profile={data.result.profile}
-            alreadyCheckedIn={alreadyCheckedIn}
-        />
+        <Loading
+            loading={data.state !== "success" || !activeCheckinData.result}
+        >
+            <CheckinComponent
+                checkin={data.result!}
+                alreadyCheckedIn={alreadyCheckedIn}
+                activeCheckins={activeCheckinData.result!}
+                activeCheckinsUpdating={activeCheckinData.state === "loading"}
+            />
+        </Loading>
     );
 };
 

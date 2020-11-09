@@ -1,17 +1,26 @@
 import * as React from "react";
 import theme from "../../styles/theme";
 
+type AlignOptions = "center" | "bottom";
+
 interface IPushToBottomProps {
     offsetBottomPadding?: true;
-
+    align?: AlignOptions;
 }
 
 const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     children,
-    offsetBottomPadding
+    offsetBottomPadding,
+    align: _align
 }) => {
     const [offsetTop, setOffsetTop] = React.useState<number>(0);
     const measuredRef = React.useRef<HTMLDivElement>(null);
+    const align = _align || "bottom";
+    const alignCss = {
+        "center": "center",
+        "bottom": "flex-end",
+    }
+
     React.useEffect(() => {
         if (measuredRef.current !== null) {
             setOffsetTop(measuredRef.current.getBoundingClientRect().top);
@@ -25,7 +34,7 @@ const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
             <style jsx>{`
                 .flex {
                     display: flex;
-                    align-items: flex-end;
+                    align-items: ${alignCss[align]};
                     justify-content: center;
                     min-height: ${containerHeight};
                 }

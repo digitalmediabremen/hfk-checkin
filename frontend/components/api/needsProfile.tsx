@@ -6,6 +6,7 @@ import { useAppState } from "../common/AppStateProvider";
 import { useUpdateProfileFromAppStateAndUpdate } from "./ApiHooks";
 import { useTranslation } from "../../localization";
 import Title from "../common/Title";
+import Loading from "../common/Loading";
 
 interface NeedsProfileProps {
     profile: Profile;
@@ -42,20 +43,21 @@ const needsProfile = <P extends object>(
             router.replace(appUrls.setprofile);
         }
     }, [initialized]);
-
-    if (!profile && loading) return <Title>...</Title>;
-    if (!profile || !profile.phone) return null;
+    if (!loading && (!profile || !profile.phone)) return null;
     if (error) {
-        return (
+    return (
             <Title>Da ist etwas schief gelaufen.</Title>
         )
     }
+
     return (
-        <Component
-            profile={profile}
-            profileUpdating={loading}
-            {...(props as P)}
-        />
+        <Loading loading={loading && !profile}>
+            <Component
+                profile={profile!}
+                profileUpdating={loading}
+                {...(props as P)}
+            />
+        </Loading>
     );
 };
 
