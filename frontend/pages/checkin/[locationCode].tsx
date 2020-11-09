@@ -151,7 +151,16 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
         let timerId: number | undefined = undefined;
         const url = appUrls.checkout(data.result.id);
         router.prefetch(...url);
-        if (alreadyCheckedIn) router.replace(...url);
+        if (alreadyCheckedIn) {
+            dispatch({
+                type: "status",
+                status: {
+                    message: t("Du bist bereits eingecheckt"),
+                    isError: false,
+                },
+            }),
+            router.replace(...url);
+        }
         else {
             timerId = window.setTimeout(
                 () =>
