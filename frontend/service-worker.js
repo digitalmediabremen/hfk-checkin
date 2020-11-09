@@ -1,5 +1,7 @@
 import { skipWaiting, clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
+import { apiUrl } from "./config";
+
 import {
     NetworkOnly,
     NetworkFirst,
@@ -154,33 +156,35 @@ registerRoute(
     "GET"
 );
 registerRoute(
-    /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*\/checkout/i,
-    new NetworkOnly(),
-    "GET"
+    ({ request }) => {
+        console.log(request)
+        return request.url.startsWith(apiUrl)
+    },
+    new NetworkOnly()
 );
-registerRoute(
-    /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*/i,
-    new NetworkOnly({
-        cacheName: "apis",
-        networkTimeoutSeconds: 10,
-        plugins: [
-            new ExpirationPlugin({
-                maxEntries: 16,
-                maxAgeSeconds: 3600,
-                purgeOnQuotaError: !0,
-            }),
-            new CacheableResponsePlugin({
-                statuses: [0, 200, 201, 202],
-            }),
-        ],
-    }),
-    "GET"
-);
-registerRoute(
-    /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*/i,
-    new NetworkOnly(),
-    "POST"
-);
+// registerRoute(
+//     /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*/i,
+//     new NetworkOnly({
+//         cacheName: "apis",
+//         networkTimeoutSeconds: 10,
+//         plugins: [
+//             new ExpirationPlugin({
+//                 maxEntries: 16,
+//                 maxAgeSeconds: 3600,
+//                 purgeOnQuotaError: !0,
+//             }),
+//             new CacheableResponsePlugin({
+//                 statuses: [0, 200, 201, 202],
+//             }),
+//         ],
+//     }),
+//     "GET"
+// );
+// registerRoute(
+//     /^https:\/\/app\.checkin\.hfk-bremen\.de\/api\/.*/i,
+//     new NetworkOnly(),
+//     "POST"
+// );
 
 // registerRoute(
 //     /.*/i,
@@ -208,7 +212,6 @@ registerRoute(
 setDefaultHandler(
     new StaleWhileRevalidate({
         cacheName: "others",
-        networkTimeoutSeconds: 10,
         plugins: [
             new CacheableResponsePlugin({
                 statuses: [0, 200],
@@ -224,7 +227,7 @@ setDefaultHandler(
 
 // This "catch" handler is triggered when any of the other routes fail to
 // generate a response.
-setCatchHandler(({ event }) => {
+setCatchHandler(({ event, url }) => {
     // The FALLBACK_URL entries must be added to the cache ahead of time, either
     // via runtime or precaching. If they are precached, then call
     // `matchPrecache(FALLBACK_URL)` (from the `workbox-precaching` package)
