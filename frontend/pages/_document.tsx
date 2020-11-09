@@ -22,7 +22,7 @@ class MyDocument extends Document {
         return (
             <LocaleConsumer>
                 {({locale}) => (
-                    <Html lang={locale}>
+                    <Html lang={locale} translate="no">
                         <Head>
                             <link rel="manifest" href="/manifest.json" />
                             <link
