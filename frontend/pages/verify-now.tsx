@@ -4,7 +4,7 @@ import Title from "../components/common/Title";
 import Text from "../components/common/Text";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
-import PushToBottom from "../components/common/PushToBottom";
+import AlignContent from "../components/common/AlignContent";
 import { useRouter } from "next/router";
 import { appUrls } from "../config";
 import Subtitle from "../components/common/Subtitle";
@@ -60,7 +60,7 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
                     "Sobald die Angaben durch das Personal geprüft und ihrerseits gespeichert wurden, kann der Prozess abgeschlossen werden."
                 )}
             </Text>
-            <PushToBottom offsetBottomPadding>
+            <AlignContent offsetBottomPadding>
                 <Button
                     noBottomMargin
                     outline
@@ -68,7 +68,7 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
                 >
                     {t("Abschliessen")}
                 </Button>
-            </PushToBottom>
+            </AlignContent>
         </>
     );
 };

@@ -3,9 +3,10 @@ import theme from "../../styles/theme";
 
 interface IPushToBottomProps {
     offsetBottomPadding?: true;
+
 }
 
-const PushToBottom: React.FunctionComponent<IPushToBottomProps> = ({
+const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     children,
     offsetBottomPadding
 }) => {
@@ -40,4 +41,4 @@ const PushToBottom: React.FunctionComponent<IPushToBottomProps> = ({
     );
 };
 
-export default PushToBottom;
+export default AlignContent;

@@ -12,7 +12,7 @@ import { ButtonWithLoading } from "../../components/common/Button";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import FormElementWrapper from "../../components/common/FormElementWrapper";
 import LastCheckins from "../../components/common/LastCheckinsList";
-import PushToBottom from "../../components/common/PushToBottom";
+import AlignContent from "../../components/common/AlignContent";
 import Subtitle from "../../components/common/Subtitle";
 import Title from "../../components/common/Title";
 import useParam from "../../components/hooks/useParam";
@@ -107,7 +107,7 @@ export const CheckinComponent: React.FunctionComponent<{
             >
                 {t("Auschecken")}
             </ButtonWithLoading>
-            <PushToBottom offsetBottomPadding>
+            <AlignContent offsetBottomPadding>
                 <FormElementWrapper noBottomMargin>
                     {activeCheckinData.state === "success" &&
                         activeCheckinData.result.length > 0 && (
@@ -128,7 +128,7 @@ export const CheckinComponent: React.FunctionComponent<{
                         <Notice>"loading..."</Notice>
                     )}
                 </FormElementWrapper>
-            </PushToBottom>
+            </AlignContent>
         </>
     );
 };

@@ -4,7 +4,7 @@ import { useAppState } from "../components/common/AppStateProvider";
 import { Button } from "../components/common/Button";
 import LastCheckins from "../components/common/LastCheckinsList";
 import Notice from "../components/common/Notice";
-import PushToBottom from "../components/common/PushToBottom";
+import AlignContent from "../components/common/AlignContent";
 import Subtitle from "../components/common/Subtitle";
 import { appUrls } from "../config";
 import theme from "../styles/theme";
@@ -56,7 +56,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
             {!hasCheckins && (
                 <Notice>{t("Noch keine Checkins vorhanden")}</Notice>
             )}
-            <PushToBottom offsetBottomPadding>
+            <AlignContent offsetBottomPadding>
                 {/* <div className="button-group"> */}
                 <Button
                     noBottomMargin
@@ -69,7 +69,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
                         Ausloggen
                     </Button> */}
                 {/* </div> */}
-            </PushToBottom>
+            </AlignContent>
         </>
     );
 };
