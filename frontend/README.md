@@ -2,7 +2,7 @@
 
 ## You need to set environent variables in `.env.local` in order to run the application:
 
-.env.local_
+_.env.local_
 ```
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
