@@ -59,11 +59,13 @@ const needsProfile = <P extends object>(
 
     return (
         <Loading loading={loading && !profile}>
-            <Component
-                profile={profile!}
-                profileUpdating={loading}
-                {...(props as P)}
-            />
+            {profile && (
+                <Component
+                    profile={profile!}
+                    profileUpdating={loading}
+                    {...(props as P)}
+                />
+            )}
         </Loading>
     );
 };
