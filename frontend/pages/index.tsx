@@ -15,14 +15,12 @@ import QRIcon from "../components/common/QRIcon";
 import SmoothCollapse from "react-smooth-collapse";
 
 interface CheckInPageProps {
-    profile: Profile;
-    error?: string;
 }
 
 const isValidLocationCode = (locationCode: string) =>
     locationCode.replace(/" "/g, "").length === 4;
 
-const CheckInPage: SFC<CheckInPageProps> = ({ error, profile }) => {
+const CheckInPage: SFC<CheckInPageProps> = () => {
     const [locationCode, setLocationCode] = useState<string>("");
     const { requestLocation, loading, location } = useLocation();
     const router = useRouter();

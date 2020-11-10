@@ -159,7 +159,7 @@ export const getProfileRequest = async (headers?: HeadersInit) =>
 export const getCheckinRequest = async (
     checkinId: string,
     options?: RequestOptions
-) => await apiRequest<LastCheckin>(`checkin/${checkinId}`, { ...options });
+) => await apiRequest<LastCheckin>(`checkin/${checkinId}/`, { ...options });
 
 export const redirectServerSide = (
     serverResponse: ServerResponse,

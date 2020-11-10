@@ -43,12 +43,12 @@ const needsProfile = <P extends object>(
             router.replace(appUrls.setprofile);
         }
     }, [initialized]);
-    if (!loading && (!profile || !profile.phone)) return null;
+
     if (error) {
-    return (
-            <Title>Da ist etwas schief gelaufen.</Title>
-        )
+        return <Title>Da ist etwas schief gelaufen.</Title>;
     }
+
+    if (!loading && (!profile || !profile.phone)) return null;
 
     return (
         <Loading loading={loading && !profile}>

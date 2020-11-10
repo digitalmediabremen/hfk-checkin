@@ -236,7 +236,7 @@ setDefaultHandler(
             }),
             new ExpirationPlugin({
                 maxEntries: 32,
-                maxAgeSeconds: 120,
+                maxAgeSeconds: 60 * 60 * 24 * 2,
                 purgeOnQuotaError: !0,
             }),
         ],
