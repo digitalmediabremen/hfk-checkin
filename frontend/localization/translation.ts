@@ -47,7 +47,8 @@ const translation: Translation = {
         "Auschecken": "Check out",
         "Personen aktuell eingecheckt": "checked in overall",
         "Du bist noch an folgenden Orten eingecheckt:": "You're checked into following locations:",
-        "Checkin erfolgreich": "Checkin successful"
+        "Checkin erfolgreich": "Checkin successful",
+        "Du bist bereits eingecheckt": "You are already checked in"
       },
       "verifyNow": {
         "Identitätsprüfung": "Identity check",
