@@ -36,7 +36,7 @@ const ProfileCenterBig = ({ profile }: { profile: Profile }) => {
                     {profile?.first_name} {profile?.last_name}
                 </h3>
                 <h3>{profile?.phone}</h3>
-                <h3>Profilenummer: {profile?.id}</h3>
+                <h3>ID: {profile?.id}</h3>
             </div>
         </>
     );
