@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run translate -- --quiet && next build",
     "start": "next start -p $PORT",
-    "translate": "ts-node -O '{\"module\": \"commonjs\"}' findT.tsx -"
+    "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.tsx -"
   },
   "dependencies": {
     "@types/react-transition-group": "^4.4.0",
@@ -24,12 +24,16 @@
     "react-transition-group": "^4.4.1"
   },
   "devDependencies": {
+    "@types/colors": "^1.2.1",
     "@types/node": "^14.11.8",
     "@types/react": "^16.9.52",
     "@types/string-similarity": "^3.0.0",
+    "@types/yargs": "^15.0.9",
+    "colors": "^1.4.0",
     "string-similarity": "^4.0.2",
     "ts-morph": "^8.1.2",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "yargs": "^16.1.0"
   }
 }

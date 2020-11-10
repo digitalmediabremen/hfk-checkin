@@ -1,5 +1,7 @@
 import * as stringsim from "string-similarity";
 import { Node, Project } from "ts-morph";
+import yargs from "yargs";
+import colors from "colors";
 import * as ts from "typescript";
 
 const project = new Project({
@@ -81,8 +83,8 @@ function jsonToMap(json: Record<string, any>) {
     const s = new Map<string, string>();
     function traverse(o: Object, m: "") {
         if (typeof o === "object") {
-            // @ts-ignore
             Object.keys(o).forEach((k) =>
+                // @ts-ignore
                 traverse(o[k], `${m}.${saveDots(k)}`)
             );
         }
@@ -96,9 +98,10 @@ function jsonToMap(json: Record<string, any>) {
 }
 
 interface TranslationConsoleOutput {
-    newTranslations: string[];
-    matchedTranslations: string[];
+    unmatchedDefinitions: string[];
+    matchedDefinitions: string[];
     unresolvedTranslations: string[];
+    output: string;
 }
 
 function createExistingTranslationsMap() {
@@ -124,7 +127,7 @@ function createNewTranslation(
     tValue: Map<string, string>,
     forLocales: Array<string>,
     consoleOutputObject: TranslationConsoleOutput
-) {
+): void {
     const tValueCopy = new Map(tValue);
     const tResultMap = new Map<string, string>();
 
@@ -156,8 +159,8 @@ function createNewTranslation(
                 const { target, rating } = bestMatch;
 
                 if (rating > 0.6) {
-                    consoleOutputObject.matchedTranslations.push(
-                        `found match: "${tString}" "${target}" ${rating}`
+                    consoleOutputObject.matchedDefinitions.push(
+                        `"${tString}" "${target}" ${rating}`
                     );
                     tResultMap.set(tString, tValueCopy.get(target)!);
                     tValueCopy.delete(target);
@@ -170,39 +173,89 @@ function createNewTranslation(
             }
         });
         tDefinitionCopy.forEach((t) =>
-            consoleOutputObject.newTranslations.push(`found new: ${t}`)
+            consoleOutputObject.unmatchedDefinitions.push(`"${locale}.${t}"`)
         );
     });
 
     tValueCopy.forEach((v, key) =>
-        consoleOutputObject.unresolvedTranslations.push(`unresolved: ${key}`)
+        consoleOutputObject.unresolvedTranslations.push(`"${reapplyDots(key)}"`)
     );
 
-    return tMapToJson(tResultMap);
+    coo.output = tMapToJson(tResultMap);
+}
+
+function _consoleHeader() {
+    console.log(colors.inverse("Find Translations"));
+    console.log();
+}
+
+function consoleNewFile(o: TranslationConsoleOutput) {
+    _consoleHeader();
+
+    console.log(`${o.matchedDefinitions.length} matched definitions`);
+    o.matchedDefinitions.forEach((s) => console.log(s));
+    console.log();
+
+    console.log(`${o.unmatchedDefinitions.length} unmatched definitions`);
+    o.unmatchedDefinitions.forEach((s) => console.log(s));
+    console.log();
+
+    console.log(`${o.unresolvedTranslations.length} unresolved definitions`);
+    o.unresolvedTranslations.forEach((s) => console.log(s));
+    console.log();
+
+    console.log(o.output);
+    console.log();
+}
+
+
+function consoleStatus(o: TranslationConsoleOutput) {
+    _consoleHeader();
+    if (o.unmatchedDefinitions.length > 0) {
+        console.log(colors.red(`${o.unmatchedDefinitions.length} unmatched definitions: `));
+        o.unmatchedDefinitions.forEach((s) => console.log(s));
+        console.log();
+        return;
+    }
+
+    if (o.matchedDefinitions.length > 0) {
+        console.log(colors.red(`${o.matchedDefinitions.length} matched definitions: `));
+        o.matchedDefinitions.forEach((s) => console.log(s));
+        console.log();
+        return;
+    }
+
+    console.log(colors.green("All translations ok."))
 }
 
 function createConsoleOutputObject(): TranslationConsoleOutput {
     return {
-        newTranslations: [],
+        unmatchedDefinitions: [],
         unresolvedTranslations: [],
-        matchedTranslations: []
-    }
+        matchedDefinitions: [],
+        output: ""
+    };
 }
 
 let coo = createConsoleOutputObject();
 
-process.exit(1);
+const options = yargs.usage("Usage: --quiet").option("quiet", {
+    alias: "q",
+    describe: "Runs without output. Exits with error if new translations found",
+    type: "boolean",
+    demandOption: false,
+}).argv;
 
-createNewTranslation(
+const newTranslationFile = createNewTranslation(
     createDefinitionSet(),
     createExistingTranslationsMap(),
     ["en"],
     coo
-)
+);
 
-if (coo.newTranslations.length > 0) process.exit(1);
-
-
-
-
-
+if (options.quiet) {
+    consoleStatus(coo);
+    if (coo.unmatchedDefinitions.length > 0 || coo.matchedDefinitions.length > 0) process.exit(1);
+} else {
+    consoleNewFile(coo);
+}
