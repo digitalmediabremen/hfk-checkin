@@ -3,9 +3,16 @@ import Notice from "../common/Notice";
 import Subtitle from "../common/Subtitle";
 import Text from "../common/Text";
 
-const HelpContentEn =  () => {
+const HelpContentEn = () => {
     return (
         <>
+            <style jsx>
+                {`
+                    a {
+                        text-decoration: underline;
+                    }
+                `}
+            </style>
             <Notice>
                 Auf der Suche nach einer QR-Scanner-App? Siehe unten.
             </Notice>

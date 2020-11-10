@@ -13,13 +13,6 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
     const { t, locale } = useTranslation();
     return (
         <>
-            <style jsx>
-                {`
-                    a {
-                        text-decoration: underline;
-                    }
-                `}
-            </style>
             <Title>{t("Hilfe")}</Title>
             {locale === "de" && <HelpContentDe />}
             {locale === "en" && <HelpContentEn />}

@@ -6,6 +6,13 @@ import Text from "../common/Text";
 const HelpContentDe = () => {
     return (
         <>
+            <style jsx>
+                {`
+                    a {
+                        text-decoration: underline;
+                    }
+                `}
+            </style>
             <Notice>
                 Auf der Suche nach einer QR-Scanner-App? Siehe unten.
             </Notice>
