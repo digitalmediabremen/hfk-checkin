@@ -18,32 +18,39 @@ import {
 
 export type UseApiReturnType<RT extends {}> = {
     request: (request: () => Promise<Response<RT>>) => void;
-    additionalData: AdditionalResponseData | undefined;
 } & (
     | {
           state: "initial";
           error: undefined;
           result: undefined;
+          additionalData: undefined;
+
       }
     | {
           state: "loading" | "loading";
           error: undefined;
+          additionalData: undefined;
           result?: RT;
       }
     | {
           state: "error";
           error: string;
           result: undefined;
+          additionalData: AdditionalResponseData;
+
       }
     | {
           state: "success";
           error: undefined;
-          result: RT;
+          result: RT;    
+          additionalData: AdditionalResponseData;
       }
 );
 
 export interface AdditionalResponseData {
-    statusCode?: number;
+    statusCode: number;
+    notVerified: boolean;
+    notAuthorized: boolean;
 }
 
 export type ResultModifierFunction<RT extends {}> = (
@@ -95,14 +102,14 @@ export const useApi = <RT extends {}>(_config?: {
             setRequestInProgress(false);
             setAdditionalData({
                 statusCode: status,
+                notAuthorized: status === httpStatuses.notAuthorized,
+                notVerified: status === httpStatuses.notVerified,
             });
             if (error && status <= 500) {
                 _handleError(error || `Unknown Error (${status})`, status);
             } else if (!!error && status > 500) {
                 throw error;
-            } else if (
-                !config.onlyLocalErrorReport
-            ) {
+            } else if (!config.onlyLocalErrorReport) {
                 // reset error message
                 // but only if request is reporting globally
                 if (appState.status?.isError) {
@@ -128,9 +135,14 @@ export const useApi = <RT extends {}>(_config?: {
 export const useUpdateProfileFromAppStateAndUpdate = (
     updateOnPageActivation = false
 ) => {
-    const { getProfile, profile, error, loading, success } = useProfile(
-        updateOnPageActivation
-    );
+    const {
+        getProfile,
+        profile,
+        error,
+        loading,
+        success,
+        additionalData,
+    } = useProfile(updateOnPageActivation);
     const { appState, dispatch } = useAppState();
     const { profile: profileFromAppState } = appState;
 
@@ -157,6 +169,7 @@ export const useUpdateProfileFromAppStateAndUpdate = (
         success,
         error,
         profile: profileFromAppState,
+        additionalData
     };
 };
 
@@ -288,8 +301,7 @@ export const useDoCheckin = (locationCode?: string) => {
             request(() => doCheckinRequest(otherLocationCode)),
         alreadyCheckedIn:
             additionalData?.statusCode === httpStatuses.alreadyCheckedIn,
-        notVerified:
-            additionalData?.statusCode === httpStatuses.notVerified,
+        notVerified: additionalData?.statusCode === httpStatuses.notVerified,
         data,
     };
 };

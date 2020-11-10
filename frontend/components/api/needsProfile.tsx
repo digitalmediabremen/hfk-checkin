@@ -20,9 +20,12 @@ const needsProfile = <P extends object>(
     const { t } = useTranslation();
     const { appState, dispatch } = useAppState();
     const { initialized } = appState;
-    const { profile, error, loading } = useUpdateProfileFromAppStateAndUpdate(
-        true
-    );
+    const {
+        profile,
+        error,
+        loading,
+        additionalData,
+    } = useUpdateProfileFromAppStateAndUpdate(true);
     useEffect(() => {
         if (error)
             dispatch({
@@ -37,18 +40,22 @@ const needsProfile = <P extends object>(
     useEffect(() => {
         if (!initialized) return;
 
-        if (!profile) {
+        if (additionalData?.notAuthorized) {
             router.replace(appUrls.createProfile);
-        } else if (!profile.phone) {
+        } else if (profile && !profile.phone) {
             router.replace(appUrls.setprofile);
         }
-    }, [initialized]);
+    }, [initialized, additionalData]);
+
+    if (
+        !loading &&
+        (additionalData?.notAuthorized || (profile && !profile.phone))
+    )
+        return null;
 
     if (error) {
         return <Title>Da ist etwas schief gelaufen.</Title>;
     }
-
-    if (!loading && (!profile || !profile.phone)) return null;
 
     return (
         <Loading loading={loading && !profile}>
