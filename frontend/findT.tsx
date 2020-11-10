@@ -1,28 +1,11 @@
 import * as stringsim from "string-similarity";
-import {
-    Node, Project,
-    SyntaxKind
-} from "ts-morph";
+import { Node, Project } from "ts-morph";
 import * as ts from "typescript";
 
 const project = new Project({
     tsConfigFilePath: "./tsconfig.json",
 });
 
-
-const f = project.getSourceFile("./localization/index.tsx");
-const languageService = project.getLanguageService();
-
-const useTFunc = f?.getVariableDeclaration("useTranslation");
-
-const tFuncRefs = useTFunc?.findReferencesAsNodes();
-
-// console.log (tFuncRefs?.map());
-
-// find parameters
-// console.log (tFuncRefs?.map(r => languageService.findReferencesAsNodes(r).map(m => m.getParentIfKind(SyntaxKind.CallExpression)?.getArguments().map(t => t.getText()))))
-// find local vars
-const tDefinitionSet = new Set<string>();
 function strip(t: string) {
     return t.replace(/"/g, "");
 }
@@ -35,39 +18,46 @@ function reapplyDots(text: string) {
     return text.replace(/{{dot}}/g, ".");
 }
 
-tFuncRefs?.map((p) => {
-    let currentModule: string | undefined = undefined;
-    console.log(p.getSourceFile().getBaseName());
-    const r = p.getSourceFile().forEachDescendant((node, traversal) => {
-        const k = node.getKind();
-        // console.log("search file: ", )
-        // console.log(node.getText())
-        if (Node.isCallExpression(node)) {
-            const n = node.getText();
-            if (n.startsWith("useTranslation(")) {
-                const module = strip(
-                    node.getArguments()?.[0]?.getText() || "common"
-                );
-                // console.log(module);
-                currentModule = module;
-            }
-            if (n.startsWith("t(")) {
-                if (currentModule === undefined) {
-                    console.log(n);
-                    throw "t cannt be called without module context";
+function createDefinitionSet() {
+    const f = project.getSourceFile("./localization/index.tsx");
+    const useTFunc = f?.getVariableDeclaration("useTranslation");
+    const tFuncRefs = useTFunc?.findReferencesAsNodes();
+    const tDefinitionSet = new Set<string>();
+    tFuncRefs?.map((p) => {
+        let currentModule: string | undefined = undefined;
+        const r = p.getSourceFile().forEachDescendant((node, traversal) => {
+            const k = node.getKind();
+            // console.log("search file: ", )
+            // console.log(node.getText())
+            if (Node.isCallExpression(node)) {
+                const n = node.getText();
+                if (n.startsWith("useTranslation(")) {
+                    const module = strip(
+                        node.getArguments()?.[0]?.getText() || "common"
+                    );
+                    // console.log(module);
+                    currentModule = module;
                 }
-                const args = node.getArguments();
-                const tString = strip((args[2] || args[0]).getText());
-                // console.log(node.getArguments().map((a) => a.getText()));
-                tDefinitionSet.add(`${currentModule}.${saveDots(tString)}`);
-                traversal.skip();
+                if (n.startsWith("t(")) {
+                    if (currentModule === undefined) {
+                        throw `t() cannot be called without module context in ${p
+                            .getSourceFile()
+                            .getBaseName()}.
+                    \n make sure you never pass the t( function as an argument`;
+                    }
+                    const args = node.getArguments();
+                    const tString = strip((args[2] || args[0]).getText());
+                    // console.log(node.getArguments().map((a) => a.getText()));
+                    tDefinitionSet.add(`${currentModule}.${saveDots(tString)}`);
+                    traversal.skip();
+                }
             }
-        }
 
-        return undefined;
+            return undefined;
+        });
     });
-    return p;
-});
+    return tDefinitionSet;
+}
 
 function tMapToJson(map: Map<string, string>): string {
     let returnObj: Record<string, any> = {};
@@ -92,7 +82,9 @@ function jsonToMap(json: Record<string, any>) {
     function traverse(o: Object, m: "") {
         if (typeof o === "object") {
             // @ts-ignore
-            Object.keys(o).forEach((k) => traverse(o[k], `${m}.${saveDots(k)}`));
+            Object.keys(o).forEach((k) =>
+                traverse(o[k], `${m}.${saveDots(k)}`)
+            );
         }
 
         if (typeof o === "string") {
@@ -103,25 +95,36 @@ function jsonToMap(json: Record<string, any>) {
     return s;
 }
 
-const translationFile = project.getSourceFile("./localization/translation.ts");
-const tsCode = translationFile?.getSourceFile().getText() || "";
-// .getFirstDescendantByKindOrThrow(SyntaxKind.VariableStatement)
-// .getText() || "";
-let result = ts.transpileModule(tsCode, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS },
-});
+interface TranslationConsoleOutput {
+    newTranslations: string[];
+    matchedTranslations: string[];
+    unresolvedTranslations: string[];
+}
 
-const badJson = JSON.stringify(eval(result.outputText));
-// const json = badJson.replace(/([a-z][^:]*)(?=\s*:)/g, '"$1"');
-const json = JSON.parse(badJson);
-const tValueMap = jsonToMap(json);
+function createExistingTranslationsMap() {
+    const translationFile = project.getSourceFile(
+        "./localization/translation.ts"
+    );
+    const tsCode = translationFile?.getSourceFile().getText() || "";
+    // .getFirstDescendantByKindOrThrow(SyntaxKind.VariableStatement)
+    // .getText() || "";
+    let result = ts.transpileModule(tsCode, {
+        compilerOptions: { module: ts.ModuleKind.CommonJS },
+    });
+
+    const badJson = JSON.stringify(eval(result.outputText));
+    // const json = badJson.replace(/([a-z][^:]*)(?=\s*:)/g, '"$1"');
+    const json = JSON.parse(badJson);
+    const tValueMap = jsonToMap(json);
+    return tValueMap;
+}
 
 function createNewTranslation(
     tDefinition: Set<string>,
     tValue: Map<string, string>,
-    forLocales: Array<string>
+    forLocales: Array<string>,
+    consoleOutputObject: TranslationConsoleOutput
 ) {
-    const tObj: Record<string, any> = {};
     const tValueCopy = new Map(tValue);
     const tResultMap = new Map<string, string>();
 
@@ -141,6 +144,7 @@ function createNewTranslation(
         });
 
         //second pass
+        //find unmatched entries
         tDefinitionCopy.forEach((entry) => {
             const tString = `${locale}.${entry}`;
 
@@ -152,11 +156,8 @@ function createNewTranslation(
                 const { target, rating } = bestMatch;
 
                 if (rating > 0.6) {
-                    console.log(
-                        "found match",
-                        `"${tString}"`,
-                        `"${target}"`,
-                        rating
+                    consoleOutputObject.matchedTranslations.push(
+                        `found match: "${tString}" "${target}" ${rating}`
                     );
                     tResultMap.set(tString, tValueCopy.get(target)!);
                     tValueCopy.delete(target);
@@ -168,14 +169,40 @@ function createNewTranslation(
                 tResultMap.set(tString, "NEW");
             }
         });
-        console.log(tDefinitionCopy.size, `new translations found for locale "${locale}"`);
+        tDefinitionCopy.forEach((t) =>
+            consoleOutputObject.newTranslations.push(`found new: ${t}`)
+        );
     });
 
-    tValueCopy.forEach((v, key) => console.log(key, "not found"));
-    if (tValueCopy.size === 0)
-        console.log("hoorray. all translations could be matched");
+    tValueCopy.forEach((v, key) =>
+        consoleOutputObject.unresolvedTranslations.push(`unresolved: ${key}`)
+    );
 
     return tMapToJson(tResultMap);
 }
 
-console.log(createNewTranslation(tDefinitionSet, tValueMap, ["en"]));
+function createConsoleOutputObject(): TranslationConsoleOutput {
+    return {
+        newTranslations: [],
+        unresolvedTranslations: [],
+        matchedTranslations: []
+    }
+}
+
+let coo = createConsoleOutputObject();
+
+process.exit(1);
+
+createNewTranslation(
+    createDefinitionSet(),
+    createExistingTranslationsMap(),
+    ["en"],
+    coo
+)
+
+if (coo.newTranslations.length > 0) process.exit(1);
+
+
+
+
+
