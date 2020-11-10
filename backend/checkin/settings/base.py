@@ -288,6 +288,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://checkin.hfk-bremen.de",
     "http://checkin.hfk-bremen.de",
+    "https://staging.checkin.hfk-bremen.de",
+    "http://staging.checkin.hfk-bremen.de",
     "https://hfk-checkin-frontend.herokuapp.com",
     "http://hfk-checkin-frontend.herokuapp.com",
     "https://checkin.uiuiui.digital",
