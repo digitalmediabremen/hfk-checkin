@@ -7,7 +7,6 @@ const translation: Translation = {
         "Hilfe": "Help",
         "jetzt": "now",
         "Seite nicht gefunden": "Page not found",
-        "...aktualisiert": "updating...",
         "Protokoll": "Log",
         "Noch keine Checkins vorhanden": "No checkins",
         "Telefon ändern": "Change phone",
@@ -33,7 +32,8 @@ const translation: Translation = {
         "Telefonnummer": "Phone number",
         "Deine Angaben werden ausschließlich zur Rückverfolgung...": "Your data will only be used in case of illness. By registering, you confirm that you have read and understood HfK’s data protection policy; you also give permission to collect your data for the purpose of contact tracing, in case of illness; you have also read and understood the current hygiene rules and agree to observe them.",
         "Registrieren": "Register",
-        "Speichern": "Save"
+        "Speichern": "Save",
+        "erforderlich": "required"
       },
       "verifyProfile": {
         "Identitätsprüfung": "Identity check",

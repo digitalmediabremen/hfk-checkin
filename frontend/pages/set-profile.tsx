@@ -21,18 +21,18 @@ type Error<T> = {
     [Key in keyof T]?: string;
 };
 
-const validate = (user: ProfileUpdate) => {
+const validate = (user: ProfileUpdate, t: { required: string }) => {
     const errors: Error<ProfileUpdate> = {};
     if (!user.first_name) {
-        errors.first_name = "erforderlich";
+        errors.first_name = t.required;
     }
 
     if (!user.last_name) {
-        errors.last_name = "erforderlich";
+        errors.last_name = t.required;
     }
 
     if (!user.phone) {
-        errors.phone = "erforderlich";
+        errors.phone = t.required;
     }
 
     return errors;
@@ -72,11 +72,15 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         router.push(appUrls.enterCode);
     }, [success]);
 
+    const validationErrors = {
+        required: t("erforderlich")
+    }
+
     const formik = useFormik<ProfileUpdate>({
         initialValues: {
             ...user,
         },
-        validate,
+        validate: (user) => validate(user, validationErrors),
         enableReinitialize: true,
         onSubmit: (values) => {
             updateProfile(formik.values);

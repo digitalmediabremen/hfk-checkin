@@ -192,7 +192,7 @@ function _consoleHeader() {
 function consoleNewFile(o: TranslationConsoleOutput) {
     _consoleHeader();
 
-    console.log(`${o.matchedDefinitions.length} matched definitions`);
+    console.log(`${o.matchedDefinitions.length} changed definitions`);
     o.matchedDefinitions.forEach((s) => console.log(s));
     console.log();
 
@@ -219,7 +219,7 @@ function consoleStatus(o: TranslationConsoleOutput) {
     }
 
     if (o.matchedDefinitions.length > 0) {
-        console.log(colors.red(`${o.matchedDefinitions.length} matched definitions: `));
+        console.log(colors.red(`${o.matchedDefinitions.length} changed definitions: `));
         o.matchedDefinitions.forEach((s) => console.log(s));
         console.log();
         return;
