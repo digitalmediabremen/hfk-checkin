@@ -14,58 +14,53 @@ const HelpContentEn = () => {
                 `}
             </style>
             <Notice>
-                Auf der Suche nach einer QR-Scanner-App? Siehe unten.
+                Looking for a QR scanner app? See below.
             </Notice>
-            <Subtitle>Unterstützung Checkin-Anwendung</Subtitle>
+            <Subtitle>Support for the Checkin application</Subtitle>
             <Text paragraph>
-                Bitte melde Dich bei Fragen zur Anwendung und zur
-                Protokollierung und Raumbeschilderungen, sowie Problemhinweisen
-                bei:
+                Please send any questions about the Checkin application,
+                self-documentation, room labels or problem reports to:
                 <br />
                 <br />
                 <strong>
-                    <a href="mailto:checkin@hfk-bremen.de">
-                        checkin@hfk-bremen.de
-                    </a>
+                    <a href="mailto:checkin@hfk-bremen.de">checkin@hfk-bremen.de</a>
                 </strong>
                 <br />
                 <br />
-                Die Anwendung und das neue Zugangsverfahren befinden sich
-                momentan in einem Testbetrieb.
+                This application and the access procedure to Speicher XI are
+                currently running in trail.
             </Text>
-            <Subtitle>Weiterführende Informationen</Subtitle>
+            <Subtitle>Additional Information</Subtitle>
             <Text paragraph>
-                Jeweils aktuelle Informationen zu den Corona-Maßnahmen und
-                Hygieneregeln findest du in deinem HfK-Postfach und unter{" "}
-                <a href="https://www.hfk-bremen.de/corona-info" target="_blank">
-                    hfk-bremen.de/corona-info
+                You fill find current information on Corona measures and
+                hygiene rules in your HfK mailbox and at{" "}
+                <a href="https://www.hfk-bremen.de/en/corona-info" target="_blank">
+                    hfk-bremen.de/en/corona-info
                 </a>
-                . Bitte bleibe Informiert!
+                . Please stay informed!
             </Text>
-            <Subtitle>QR-Scanner-App-Empfehlungen</Subtitle>
+            <Subtitle>QR scanner app recommendations</Subtitle>
             <Text paragraph>
-                iOS und Android können seit 2017 QR-Codes mit der
-                Standard-Kamara-App scannen. Falls du eine zusätzliche App
-                benötigst, nutze gerne eine der folgenden{" "}
-                <strong>kostenlosen und werbefreien QR-Scanner-Apps</strong>:
+                On iOS and Android can scan QR codes since 2017 with
+                the systems camera application without additional software.
+                If you would like to use additional apps, please use one of the following {" "}
+                <strong>free and ad-free apps</strong>:
                 <br />
                 <br />
-                auf Apple iOS:{" "}
+                on Apple iOS:{" "}
                 <a href="https://apps.apple.com/de/app/qrs-clean-fast-qr-scanner/id1042620761">
                     QRs App
                 </a>
                 <br />
-                auf Android:{" "}
+                on Android:{" "}
                 <a href="https://play.google.com/store/apps/details?id=de.markusfisch.android.binaryeye">
                     Binary Eye App
                 </a>
                 <br />
                 <br />
                 <i>
-                    Hinweis: Es gelten die Nutzungsbedingungen der jeweiligen
-                    Anbieter und App-Stores. Trotz sorgfältiger Prüfung kann die
-                    HfK Bremen keine Verantwortung für die Apps und verlinkten
-                    Websites übernehmen.
+                    Note: Terms and condidtions of respective providers and app stores may apply.
+                    Despite careful examination, HfK Bremen can not take responsibility for linked apps and websites.
                 </i>
             </Text>
         </>
