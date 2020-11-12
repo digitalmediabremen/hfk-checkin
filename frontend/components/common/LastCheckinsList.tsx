@@ -206,7 +206,7 @@ const LastCheckinListItem = ({
     let displayDate: Date = new Date(time_left || time_entered);
     // checkin is not older than 30 seconds
     const now: boolean = isNow(displayDate);
-    let formattedDate: string = displayDate.toLocaleTimeString(locale, {
+    let formattedDate: string = displayDate.toLocaleTimeString("de", {
         hour: "2-digit",
         minute: "2-digit",
     });
