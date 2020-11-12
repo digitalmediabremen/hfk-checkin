@@ -36,7 +36,11 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
                     }
 
                     .footer span {
-                        padding-right: ${theme.spacing(4)}px;
+                        margin-right: ${theme.spacing(4)}px;
+                    }
+
+                    .footer span:hover {
+                        cursor: pointer;
                     }
                 `}
             </style>
