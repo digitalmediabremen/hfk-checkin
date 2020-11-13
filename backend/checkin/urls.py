@@ -21,7 +21,7 @@ from django.contrib.auth.views import LogoutView
 router = routers.SimpleRouter()
 router.register(r'location', LocationViewSet)
 router.register(r'checkin', CheckinViewSet, basename='checkin')
-router.register(r'profile', ProfileViewSet)
+router.register(r'profile', ProfileViewSet, basename='profile')
 router.register(r'auth', LogoutViewSet, basename='auth')
 
 admin.site.unregister(MicrosoftAccount)
