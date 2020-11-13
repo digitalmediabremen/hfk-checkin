@@ -140,7 +140,7 @@ class ProfileViewSet(viewsets.ViewSet):
     # queryset = Profile.objects.all()
     # serializer_class = ProfileSerializer
     # permission_classes = [IsAdminUser]
-    # authentication_classes = (CSRFExemptSessionAuthentication,)
+    authentication_classes = (CSRFExemptSessionAuthentication,)
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def me(self, request, pk=None):
