@@ -22,7 +22,7 @@ DEBUG = getenv("DJANGO_DEBUG", False)
 # In Windows, this must be set to your system time zone.
 TIME_ZONE = "Europe/Berlin"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = "de"
+LANGUAGE_CODE = "de" # default or fallback language
 # https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-i18n
@@ -40,6 +40,11 @@ LANGUAGES = [
     ('de', _('Deutsch')),
     ('en', _('Englisch')),
 ]
+
+# custom fallback language
+# needs CustomFallbackLocaleMiddleware
+LANGUAGE_FALLBACK = 'en'
+
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -130,7 +135,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",
+    "checkin.middleware.CustomFallbackLocaleMiddleware",
     'corsheaders.middleware.CorsMiddleware',
     "checkin.middleware.JSON404Middleware",
     "django.middleware.common.CommonMiddleware",
