@@ -32,7 +32,7 @@ USE_L10N = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#use-tz
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
-LOCALE_PATHS = [str(Path.joinpath(BASE_DIR, "locale"))]
+LOCALE_PATHS = [str(Path.joinpath(APPS_DIR, "locale"))]
 
 from django.utils.translation import gettext_lazy as _
 
