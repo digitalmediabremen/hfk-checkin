@@ -185,15 +185,20 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
     if (alreadyCheckedIn || notVerified) return null;
 
     return (
-        <Loading
-            loading={data.state !== "success" || !activeCheckinData.result}
-        >
-            <CheckinComponent
-                checkin={data.result!}
-                alreadyCheckedIn={alreadyCheckedIn}
-                activeCheckins={activeCheckinData.result!}
-                activeCheckinsUpdating={activeCheckinData.state === "loading"}
-            />
+        <Loading loading={data.state === "loading"}>
+            {data.result && activeCheckinData.result && (
+                <CheckinComponent
+                    checkin={data.result!}
+                    alreadyCheckedIn={alreadyCheckedIn}
+                    activeCheckins={activeCheckinData.result!}
+                    activeCheckinsUpdating={
+                        activeCheckinData.state === "loading"
+                    }
+                />
+            )}
+            {!!activeCheckinData.error || !!data.error && (
+                <Title>Da ist etwas schiefgelaufen.</Title>
+            )}
         </Loading>
     );
 };

@@ -36,7 +36,6 @@ export const AppStateProvider: SFC<{}> = ({ children }) => {
                     return {
                         ...previousState,
                         initialized: true,
-                        profile: undefined,
                     };
                 case "enableNextUpdate":
                     return {

@@ -50,10 +50,11 @@ const needsProfile = <P extends object>(
     if (
         !loading &&
         (additionalData?.notAuthorized || (profile && !profile.phone))
-    )
+    ) {
         return null;
+    }
 
-    if (error) {
+    if (!profile && error) {
         return <Title>Da ist etwas schief gelaufen.</Title>;
     }
 

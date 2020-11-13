@@ -42,15 +42,20 @@ const CheckoutPage: React.FunctionComponent<CheckoutPageProps> = ({
     if (data.state === "error") return <>{data.error}</>;
 
     return (
-        <Loading
-            loading={data.state !== "success" || !activeCheckinData.result}
-        >
-            <CheckinComponent
-                activeCheckins={activeCheckinData.result!}
-                checkin={data.result!}
-                alreadyCheckedIn={true}
-                activeCheckinsUpdating={activeCheckinData.state === "loading"}
-            />
+        <Loading loading={data.state === "loading"}>
+            {data.result && activeCheckinData.result && (
+                <CheckinComponent
+                    activeCheckins={activeCheckinData.result!}
+                    checkin={data.result!}
+                    alreadyCheckedIn={true}
+                    activeCheckinsUpdating={
+                        activeCheckinData.state === "loading"
+                    }
+                />
+            )}
+            {!!activeCheckinData.error && (
+                <Title>{activeCheckinData.error}</Title>
+            )}
         </Loading>
     );
 };
