@@ -13,7 +13,7 @@ from django.http import Http404
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.contrib.auth import login
 from django.contrib.auth.backends import ModelBackend
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from netaddr import IPNetwork, IPAddress
 from django.utils import timezone
 from django.contrib.auth import logout as auth_logout
@@ -28,6 +28,7 @@ ERROR_NOT_COMPLETE = _("Ihr Profil ist unvollständig.")
 ERROR_NOT_VALID = _("Ihre Eingaben sind nicht korrekt.")
 ERROR_NOT_VALID_WITH_SUMMARY = _("Bitte korregieren Sie: %s")
 ERROR_NOT_CHECKED_IN_HERE = _("Sie sind hier nicht eingecheckt.")
+ERROR_ROOM_NOT_FOUND = _("Raum oder Standort nicht gefunden.")
 ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein Fehler aufgetreten.")
 ERROR_PROFILE_INCOMPLETE = _("Ihr Profil ist unvollstädnig.")
 SUCCESS_LOGOUT = _("Abmeldung erfolgreich. Danke!")
@@ -76,6 +77,12 @@ class LocationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     lookup_field = 'code'
     authentication_classes = (CSRFExemptSessionAuthentication,)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            super().retrieve(request, *args, **kwargs)
+        except Http404:
+            return Response({'detail': ERROR_ROOM_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=['get','post'])
     # fails with method 'PUT' because of call to get_serializer() in renderers.py:552

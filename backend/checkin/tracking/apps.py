@@ -1,8 +1,9 @@
 from django.apps import AppConfig
+from django.utils.translation import gettext_lazy as _
 
 class TrackingConfig(AppConfig):
     name = 'checkin.tracking'
-    verbose_name = 'Dokumentation und Nachverfolgung'
+    verbose_name = _('Dokumentation und Nachverfolgung')
 
     # correct site_domain is required for microsoft-auth to work properly.
     # triggered after migration.

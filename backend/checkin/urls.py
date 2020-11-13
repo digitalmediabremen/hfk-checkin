@@ -5,8 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views import defaults as default_views
 
-from django.utils.translation import ugettext_lazy as _
-
+# from django.utils.translation import ugettext_lazy as _
 # admin.site.site_header = _("HFK CHECKIN")
 # admin.site.site_title = _("HFK CHECKIN")
 # admin.site.index_title = _("Übersicht")

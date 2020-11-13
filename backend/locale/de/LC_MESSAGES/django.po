@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-03 19:10+0100\n"
+"POT-Creation-Date: 2020-11-13 16:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,16 +69,20 @@ msgstr ""
 msgid "Checkin API"
 msgstr ""
 
-#: checkin/tracking/admin.py:32
+#: checkin/tracking/admin.py:35
 msgid "Telefon"
 msgstr ""
 
-#: checkin/tracking/admin.py:38
+#: checkin/tracking/admin.py:41
 msgid "E-Mail"
 msgstr ""
 
-#: checkin/tracking/admin.py:57
+#: checkin/tracking/admin.py:60
 msgid "PDF-Raumkarten für ausgewählte Standorte generieren"
+msgstr ""
+
+#: checkin/tracking/admin.py:86 checkin/tracking/models.py:120
+msgid "Raumname / Standort"
 msgstr ""
 
 #: checkin/tracking/api.py:24
@@ -148,7 +152,7 @@ msgstr ""
 msgid "Identität geprüft"
 msgstr ""
 
-#: checkin/tracking/models.py:31 checkin/tracking/models.py:123
+#: checkin/tracking/models.py:31 checkin/tracking/models.py:129
 msgid "Letzte Änderung"
 msgstr ""
 
@@ -161,226 +165,348 @@ msgstr ""
 msgid "Person mit Profil-ID %i"
 msgstr ""
 
-#: checkin/tracking/models.py:44 checkin/tracking/models.py:308
+#: checkin/tracking/models.py:40
+#, python-format
+msgid "%s %s"
+msgstr ""
+
+#: checkin/tracking/models.py:43
+#, python-format
+msgid "%s %s (P: %s / E: %s)"
+msgstr ""
+
+#: checkin/tracking/models.py:50 checkin/tracking/models.py:320
 msgid "Person"
 msgstr ""
 
-#: checkin/tracking/models.py:45
+#: checkin/tracking/models.py:51
 msgid "Personen"
 msgstr ""
 
-#: checkin/tracking/models.py:67
+#: checkin/tracking/models.py:73
 msgid "Bezeichnung DE"
 msgstr ""
 
-#: checkin/tracking/models.py:68
+#: checkin/tracking/models.py:74
 msgid "Bezeichnung EN"
 msgstr ""
 
-#: checkin/tracking/models.py:69
+#: checkin/tracking/models.py:75
 msgid "Beschreibung DE"
 msgstr ""
 
-#: checkin/tracking/models.py:70
+#: checkin/tracking/models.py:76
 msgid "Beschreibung EN"
 msgstr ""
 
-#: checkin/tracking/models.py:71
+#: checkin/tracking/models.py:77
 msgid "Mindestabstand DE"
 msgstr ""
 
-#: checkin/tracking/models.py:72
+#: checkin/tracking/models.py:78
 msgid "Mindestabstand EN"
 msgstr ""
 
-#: checkin/tracking/models.py:73
+#: checkin/tracking/models.py:79
 msgid "Regeln, Sonstige Maßnahmen DE"
 msgstr ""
 
-#: checkin/tracking/models.py:74
+#: checkin/tracking/models.py:80
 msgid "Regeln, Sonstige Maßnahmen EN"
 msgstr ""
 
-#: checkin/tracking/models.py:77
+#: checkin/tracking/models.py:83
 msgid "Aktivitätsprofil"
 msgstr ""
 
-#: checkin/tracking/models.py:78
+#: checkin/tracking/models.py:84
 msgid "Aktivitätsprofile"
 msgstr ""
 
-#: checkin/tracking/models.py:89 checkin/tracking/models.py:100
+#: checkin/tracking/models.py:95 checkin/tracking/models.py:106
 msgid "Bezeichnung"
 msgstr ""
 
-#: checkin/tracking/models.py:95
+#: checkin/tracking/models.py:101
 msgid "Raumnutzungsart"
 msgstr ""
 
-#: checkin/tracking/models.py:96
+#: checkin/tracking/models.py:102
 msgid "Raumnutzungsarten"
 msgstr ""
 
-#: checkin/tracking/models.py:106
+#: checkin/tracking/models.py:112
 msgid "Buchungsmethode"
 msgstr ""
 
-#: checkin/tracking/models.py:107
+#: checkin/tracking/models.py:113
 msgid "Buchungsmethoden"
 msgstr ""
 
-#: checkin/tracking/models.py:111
+#: checkin/tracking/models.py:117
 msgid "Raumcode"
 msgstr ""
 
-#: checkin/tracking/models.py:112
+#: checkin/tracking/models.py:118
 msgid "Teil von"
 msgstr ""
 
-#: checkin/tracking/models.py:113
+#: checkin/tracking/models.py:119
 msgid "Raumnummer"
 msgstr ""
 
-#: checkin/tracking/models.py:113
+#: checkin/tracking/models.py:119
 msgid "Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"
 msgstr ""
 
-#: checkin/tracking/models.py:114
-msgid "Raumname / Standort"
-msgstr ""
-
-#: checkin/tracking/models.py:115
+#: checkin/tracking/models.py:121
 msgid "Raumverantwortliche(r)"
 msgstr ""
 
-#: checkin/tracking/models.py:116
+#: checkin/tracking/models.py:122
 msgid "Größe"
 msgstr ""
 
-#: checkin/tracking/models.py:116
+#: checkin/tracking/models.py:122
 msgid "in Quadratmetern"
 msgstr ""
 
-#: checkin/tracking/models.py:117
+#: checkin/tracking/models.py:123
 msgid "Anmerkungen"
 msgstr ""
 
-#: checkin/tracking/models.py:118
+#: checkin/tracking/models.py:124
 msgid "Nutzungsarten"
 msgstr ""
 
-#: checkin/tracking/models.py:119
+#: checkin/tracking/models.py:125
 msgid "Bemerkung zur Nutzung / Kapazität"
 msgstr ""
 
-#: checkin/tracking/models.py:120
+#: checkin/tracking/models.py:126
 msgid "Buchbar / Reservierbar"
 msgstr ""
 
-#: checkin/tracking/models.py:121
+#: checkin/tracking/models.py:127
 msgid "Buchung via"
 msgstr ""
 
-#: checkin/tracking/models.py:122
+#: checkin/tracking/models.py:128
 msgid "Aktivitätsprofile und Kapazitäten"
 msgstr ""
 
-#: checkin/tracking/models.py:124
+#: checkin/tracking/models.py:130
 msgid "Checkins verstecken"
 msgstr ""
 
 #: checkin/tracking/models.py:131
+msgid "Entfernt"
+msgstr ""
+
+#: checkin/tracking/models.py:131
+msgid ""
+"Diese Raum ist deaktiviert oder entfernt. Eine Löschung ist jedoch noch "
+"nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"
+msgstr ""
+
+#: checkin/tracking/models.py:138
 msgid "Raum / Standort"
 msgstr ""
 
-#: checkin/tracking/models.py:132
+#: checkin/tracking/models.py:139
 msgid "Räume / Standorte"
 msgstr ""
 
-#: checkin/tracking/models.py:134
+#: checkin/tracking/models.py:141
 msgid "Kann PDF-Raumausweise erstellen."
 msgstr ""
 
-#: checkin/tracking/models.py:135
+#: checkin/tracking/models.py:142
 msgid "Kann aktuelle aktuelle Checkins anzeigen."
 msgstr ""
 
-#: checkin/tracking/models.py:143 checkin/tracking/models.py:154
-msgid "# eingecheckt"
+#: checkin/tracking/models.py:150 checkin/tracking/models.py:161
+msgid "# jetzt"
 msgstr ""
 
-#: checkin/tracking/models.py:150
-msgid "# eingecheckt (kumuliert)"
+#: checkin/tracking/models.py:157
+msgid "# jetzt (kumuliert)"
 msgstr ""
 
-#: checkin/tracking/models.py:167
+#: checkin/tracking/models.py:165
+msgid "# Summe"
+msgstr ""
+
+#: checkin/tracking/models.py:179
 msgid "Kapazität"
 msgstr ""
 
-#: checkin/tracking/models.py:194
+#: checkin/tracking/models.py:206
 msgid "Profil"
 msgstr ""
 
-#: checkin/tracking/models.py:195 checkin/tracking/models.py:309
+#: checkin/tracking/models.py:207 checkin/tracking/models.py:321
 msgid "Standort"
 msgstr ""
 
-#: checkin/tracking/models.py:196
+#: checkin/tracking/models.py:208
 msgid "Maximalkapazität"
 msgstr ""
 
-#: checkin/tracking/models.py:197
+#: checkin/tracking/models.py:209
 msgid "Zusatz DE"
 msgstr ""
 
-#: checkin/tracking/models.py:198
+#: checkin/tracking/models.py:210
 msgid "Zusatz EN"
 msgstr ""
 
-#: checkin/tracking/models.py:201
+#: checkin/tracking/models.py:213
 msgid "Aktivitätsprofil und Kapzitäten"
 msgstr ""
 
-#: checkin/tracking/models.py:202
+#: checkin/tracking/models.py:214
 msgid "Aktivitätsprofile und Kapzitäten"
 msgstr ""
 
-#: checkin/tracking/models.py:298
+#: checkin/tracking/models.py:310
 msgid "Scan eines QR-Codes"
 msgstr ""
 
-#: checkin/tracking/models.py:299
+#: checkin/tracking/models.py:311
 msgid "Manuelle Eingabe durch Nutzer"
 msgstr ""
 
-#: checkin/tracking/models.py:300
+#: checkin/tracking/models.py:312
 msgid "Manuelle Eingabe durch Betreiber"
 msgstr ""
 
-#: checkin/tracking/models.py:301
+#: checkin/tracking/models.py:313
 msgid "Scan eines QR-Codes durch andere Person"
 msgstr ""
 
-#: checkin/tracking/models.py:302
+#: checkin/tracking/models.py:314
 msgid "Checkin durch untergeordnetes Objekt"
 msgstr ""
 
-#: checkin/tracking/models.py:303
+#: checkin/tracking/models.py:315
 msgid "Checkout durch übergeordnetes Objekt"
 msgstr ""
 
-#: checkin/tracking/models.py:310 checkin/tracking/models.py:319
+#: checkin/tracking/models.py:322 checkin/tracking/models.py:331
 msgid "Checkin"
 msgstr ""
 
-#: checkin/tracking/models.py:311
+#: checkin/tracking/models.py:323
 msgid "Checkout"
 msgstr ""
 
-#: checkin/tracking/models.py:313
+#: checkin/tracking/models.py:325
 msgid "Datenquelle Checkin"
 msgstr ""
 
-#: checkin/tracking/models.py:314
+#: checkin/tracking/models.py:326
 msgid "Datenquelle Checkout"
+msgstr ""
+
+#: checkin/tracking/models.py:340
+msgid "Kann Nachverfolgung durchführen."
+msgstr ""
+
+#: checkin/tracking/templates/admin/tracking/checkin/change_list_object_tools.html:10
+msgid "Infektionsnachverfolgung"
+msgstr ""
+
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:24
+msgid "Export"
+msgstr ""
+
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:55
+msgid "Eingabe"
+msgstr ""
+
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:72
+msgid "Auswerten"
+msgstr ""
+
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:72
+msgid "Herunterladen"
+msgstr ""
+
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:77
+msgid "Ausgabe"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:16
+msgid "Infizierte Person"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:16
+msgid "Profil der Person, die in der nachverfolgt werden soll."
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:17
+msgid "Auszuschließende Standorte"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:17
+msgid ""
+"Optional: Ein oder mehrere Standorte, die in der Auswertung ignoriert werden "
+"sollen. z.B. ganze Gebäude / Eingänge etc."
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:18
+msgid "Checkins ausgeben"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:18
+msgid "Checkins der infizierten Person werden in der Ausgabe einschlossen."
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:19
+msgid "Begegnungen ausgeben"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:19
+msgid ""
+"Checkins der infizierten Person mit einer anderen Person werden in der "
+"Ausgabe einschlossen."
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:20
+msgid "Kontaktdaten ausgeben"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:20
+msgid "Klarnamen und Kontaktdaten werden in der Ausgabe einschlossen."
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:22
+msgid "Standarddauer"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:22
+msgid ""
+"Dauer in Stunden, nach der ein Aufenthalt als ausgecheckt gilt, wenn ein "
+"Checkout vergessen wurde."
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:24
+msgid "Kontaktkorrekturzeit"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:24
+msgid ""
+"Dauer, um die die tasächliche Aufenthaltsdauer der inf. Person verlängert "
+"oder verkürzt werden soll."
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:25
+msgid "Zeitraum"
+msgstr ""
+
+#: checkin/tracking/views/contact_report.py:27
+msgid ""
+"Dauer ab jetzt in die Vergangenheit, die für die Protokollauswertung "
+"durchsucht werden soll. (21 00:00:00 = 21 Tage = 3 Wochen)"
 msgstr ""
