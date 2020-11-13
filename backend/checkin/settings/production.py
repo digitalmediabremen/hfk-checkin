@@ -1,9 +1,5 @@
 from .base import *  # noqa
 from .base import getenv
-("Production Settings")
-# print(BASE_DIR)
-# print(
-# printSTATIC_ROOT)
 
 # GENERAL
 # ------------------------------------------------------------------------------
