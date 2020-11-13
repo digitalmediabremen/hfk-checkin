@@ -80,7 +80,7 @@ class LocationViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         try:
-            super().retrieve(request, *args, **kwargs)
+            return super().retrieve(request, *args, **kwargs)
         except Http404:
             return Response({'detail': ERROR_ROOM_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
 
