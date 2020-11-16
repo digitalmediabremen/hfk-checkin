@@ -16,6 +16,7 @@ from simple_history.models import HistoricalRecords
 from simple_history import register as register_history
 from django.db.models import Count
 
+CHECKIN_RETENTION_TIME = timedelta(weeks=3)
 CHECKIN_LIFETIME = timedelta(hours=24)
 LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
@@ -306,6 +307,16 @@ class CheckinQuerySet(models.QuerySet):
         return checkin, True
 
 
+class LimitedCheckinManager(models.Manager):
+
+    def get_queryset(self):
+        now = timezone.now()
+        lookback_start = now - CHECKIN_RETENTION_TIME - CHECKIN_LIFETIME
+        qs = CheckinQuerySet(self.model, using=self._db)
+        qs = qs.filter(time_entered__gte=lookback_start)
+        return qs
+
+
 class Origin(models.TextChoices):
     QR_SCAN = 'QR_SCAN', _("Scan eines QR-Codes")
     USER_MANUAL = 'USER_MANUAL', _("Manuelle Eingabe durch Nutzer")
@@ -325,7 +336,9 @@ class Checkin(models.Model):
     origin_entered = models.CharField(_("Datenquelle Checkin"), choices=Origin.choices, blank=True, null=True, max_length=100)
     origin_left = models.CharField(_("Datenquelle Checkout"), choices=Origin.choices, blank=True, null=True, max_length=100)
 
-    objects = CheckinQuerySet.as_manager()
+    objects = LimitedCheckinManager()
+    # objects = CheckinQuerySet.as_manager()
+    all = CheckinQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Checkin")
