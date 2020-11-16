@@ -336,7 +336,7 @@ class Checkin(models.Model):
     origin_entered = models.CharField(_("Datenquelle Checkin"), choices=Origin.choices, blank=True, null=True, max_length=100)
     origin_left = models.CharField(_("Datenquelle Checkout"), choices=Origin.choices, blank=True, null=True, max_length=100)
 
-    objects = LimitedCheckinManager()
+    objects = LimitedCheckinManager().from_queryset(CheckinQuerySet)()
     # objects = CheckinQuerySet.as_manager()
     all = CheckinQuerySet.as_manager()
 
