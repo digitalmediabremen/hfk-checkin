@@ -305,7 +305,9 @@ class UsageReport(object):
         checkin_qs = checkin_qs.annotate(time_left_or_default=Coalesce('time_left', checkout_calc_expression))
 
         # filter lookup window
-        checkin_qs = checkin_qs.filter(time_entered__gte=lookback_start).filter(time_left_or_default__lte=lookback_end)
+        checkin_qs = checkin_qs.filter(time_entered__gte=lookback_start).filter(time_left_or_default__lte=lookback_end) \
+        # remove default order
+        checkin_qs = checkin_qs.order_by()
 
         # add duration
         duration_expression = ExpressionWrapper(F('time_left') - F('time_entered'),
@@ -330,36 +332,38 @@ class UsageReport(object):
         ds.append(('X: Normale Standorte (Anzahl)', active_locations.exclude(id__in=self.exclude_location_ids).count()))
 
         ds.append(('Systemseitige Ablaufzeit von Checkins', format_timedelta(CHECKIN_LIFETIME)))
-        ds.append(('A: Aufenthalte insgesamt', Checkin.objects.count()))
-        ds.append(('Aufenthalte insgesamt ohne Y', Checkin.objects.exclude(location__in=self.exclude_location_ids).count()))
-        ds.append(('Aufenthalte insgesamt nur Y', Checkin.objects.filter(location__in=self.exclude_location_ids).count()))
-        ds.append(('Aufenthalte ohne Checkout', Checkin.objects.filter(time_left__isnull=True).count()))
-        ds.append(('Aufenthalte ohne Checkout ohne Y', Checkin.objects.exclude(location__in=self.exclude_location_ids).filter(time_left__isnull=True).count()))
-        ds.append(('Aufenthalte vollständig', Checkin.objects.exclude(time_left__isnull=True).count()))
+        ds.append(('A: Aufenthalte insgesamt', checkin_qs.count()))
+        ds.append(('Aufenthalte insgesamt ohne Y', checkin_qs.exclude(location__in=self.exclude_location_ids).count()))
+        ds.append(('Aufenthalte insgesamt nur Y', checkin_qs.filter(location__in=self.exclude_location_ids).count()))
+        ds.append(('Aufenthalte ohne Checkout', checkin_qs.filter(time_left__isnull=True).count()))
+        ds.append(('Aufenthalte ohne Checkout ohne Y', checkin_qs.exclude(location__in=self.exclude_location_ids).filter(time_left__isnull=True).count()))
+        ds.append(('Aufenthalte mit In und Out', checkin_qs.exclude(time_left__isnull=True).count()))
         ds.append(('Aufenthalte durchschnittliche Dauer', checkins_with_duration.aggregate(Avg('duration'))['duration__avg']))
+        ds.append(('Aufenthalte durchschnittliche Dauer nur Y', checkins_with_duration.filter(location__in=self.exclude_location_ids).aggregate(Avg('duration'))['duration__avg']))
+        ds.append(('Aufenthalte durchschnittliche Dauer ohne Y', checkins_with_duration.exclude(location__in=self.exclude_location_ids).aggregate(Avg('duration'))['duration__avg']))
         ds.append(('Aufenthalte maximale Dauer', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
-        ds.append(('Aufenthalte pro Tag (über alle Nutzer) durchsch.', Checkin.objects.annotate(checkin_date=TruncDay('time_entered'))
+        ds.append(('Aufenthalte pro Tag (über alle Nutzer) durchsch.', checkin_qs.annotate(checkin_date=TruncDay('time_entered'))
                                                                       .values('checkin_date')
                                                                       .annotate(Count('id'))
                                                                       .order_by()
                                                                       .aggregate(Avg('id__count'))\
                                                                       ['id__count__avg']
                                                                      ))
-        ds.append(('Aufenthalte pro Tag pro Nutzer durchsch.', Checkin.objects.annotate(checkin_date=TruncDay('time_entered'))
+        ds.append(('Aufenthalte pro Tag pro Nutzer durchsch.', checkin_qs.annotate(checkin_date=TruncDay('time_entered'))
                                                                       .values('checkin_date','profile')
                                                                       .annotate(Count('id'))
                                                                       .order_by()
                                                                       .aggregate(Avg('id__count'))\
                                                                       ['id__count__avg']
                                                                      ))
-        ds.append(('Aufenthalte pro Tag pro Standort ohne Y durchsch.', Checkin.objects.exclude(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+        ds.append(('Aufenthalte pro Tag pro Standort ohne Y durchsch.', checkin_qs.exclude(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
                                                                       .values('checkin_date','location')
                                                                       .annotate(Count('id'))
                                                                       .order_by()
                                                                       .aggregate(Avg('id__count'))\
                                                                       ['id__count__avg']
                                                                      ))
-        ds.append(('Aufenthalte pro Tag pro Standort nur Y durchsch.', Checkin.objects.filter(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+        ds.append(('Aufenthalte pro Tag pro Standort nur Y durchsch.', checkin_qs.filter(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
                                                                       .values('checkin_date','location')
                                                                       .annotate(Count('id'))
                                                                       .order_by()
@@ -376,10 +380,39 @@ class UsageReport(object):
         ds.append(('Anzahl von Nutzern mit mind. 25 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=25).count()))
         ds.append(('Anzahl von Nutzern mit mind. 50 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=50).count()))
         ds.append(('Anzahl von Nutzern mit mind. 100 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
+        checkins_at_Y = checkin_qs.filter(location__in=self.exclude_location_ids)
+        checkins_at_X = checkin_qs.exclude(location__in=self.exclude_location_ids)
+        ds.append(('Anzahl von Nutzern mit Checkin anhand Y', checkins_at_Y.distinct('profile').count()))
+        ds.append(('Anzahl von Nutzern mit Checkin anhand X', checkins_at_X.distinct('profile').count()))
+        ds.append(('Anzahl von Nutzern mit Checkin anhand X intersect Y', checkins_at_X.intersection(checkins_at_Y).distinct('profile').count()))
+        ds.append(('Anzahl von Nutzern mit Checkin anhand X difference Y', checkins_at_X.difference(checkins_at_Y).distinct('profile').count()))
+        ds.append(('Anzahl von Nutzern mit Checkin anhand Y', checkin_qs.filter(location__in=self.exclude_location_ids)
+                                                                      .values('profile')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        profiles_with_checkin_count_at_x_and_y = profile_qs.annotate(checkin_at_y_count=Count('checkin', filter=Q(checkin__location__in=self.exclude_location_ids))) \
+            .annotate(checkin_at_x_count=Count('checkin', exclude=Q(checkin__location__in=self.exclude_location_ids)))
+        ds.append(('Anzahl von Nutzern mit Annotation (Test)', profiles_with_checkin_count_at_x_and_y.count()))
+        ds.append(('Anzahl von Nutzern mit Annotation mit Checkins bei Y', profiles_with_checkin_count_at_x_and_y.filter(checkin_at_y_count__gt=0).count()))
+        ds.append(('Anzahl von Nutzern mit Annotation mit Checkins bei X', profiles_with_checkin_count_at_x_and_y.filter(checkin_at_x_count__gt=0).count()))
+        ds.append(('Anzahl von Nutzern mit Annotation mit Checkins bei X und Y', profiles_with_checkin_count_at_x_and_y.filter(checkin_at_y_count__gt=0).filter(checkin_at_x_count__gt=0).count()))
+        ds.append(('Anzahl von Nutzern mit Annotation mit Checkins ohne X und ohne Y', profiles_with_checkin_count_at_x_and_y.exclude(checkin_at_y_count__gt=0).exclude(checkin_at_x_count__gt=0).count()))
+        # ds.append(('Anzahl von Nutzern mit Checkin ohne Y', Checkin.objects.filter(location__in=self.exclude_location_ids)
+        #                                                               .values('profile')
+        #                                                              ~ .annotate(Count('id'))
+        #                                                               .order_by()
+        #                                                               .aggregate(Avg('id__count'))\
+        #                                                               ['id__count__avg']
+        #                                                              ))
+        ds.append(('Anzahl von Nutzern ohne Checkins', profiles_with_checkin_count.filter(checkin_count__lte=0).count()))
+        ds.append(('Anzahl von Nutzern ohne Checkin an X nach Checkin an Y binnen 24h', ''))
         # funktioniert nicht:
-        # ds.append(('Durchs. Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
-        # ds.append(('Maximale Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Max('num_checkins'))['num_checkins__max']))
-        # ds.append(('Durchs. Standorte pro Person', Checkin.objects.values('profile','location').annotate(num_checkins=Count('location', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
+        # ds.append(('Durchs. Checkins pro Person', checkin_qs.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
+        # ds.append(('Maximale Checkins pro Person', checkin_qs.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Max('num_checkins'))['num_checkins__max']))
+        # ds.append(('Durchs. Standorte pro Person', checkin_qs.values('profile','location').annotate(num_checkins=Count('location', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
         # ds.append(('Checkins pro Person pro Nutzungstag',
         # ds.append(('Checkins nur Am Speicher XI (diese sollten wir strategisch besonders behandeln)',
         # ds.append(('Checkins nur Am Speicher XI (diese sollten wir strategisch besonders behandeln)',
@@ -400,6 +433,8 @@ class UsageReport(object):
         # 16.11.2020
 
         # aktive Fälle ausschließen. 24 Stunden zurück.
+        # TODO: Statt Anzahl lieber alles in Prozent. z.B. Gruppe A vs. Gruppe B.
 
         self.write_dataset(ds)
 
+        # TODO: performance: Select related -> .select_related('blog') and prefetch_related reduces num of queries
