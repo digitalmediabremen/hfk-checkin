@@ -286,32 +286,88 @@ class UsageReport(object):
 
     def __init__(self, exclude_location_ids=None):
         self.exclude_location_ids = exclude_location_ids or []
+        self.CHECKIN_DEFAULT_LENGTH = CHECKIN_LIFETIME
 
     def report(self):
 
         now = timezone.now()
-        start = now - CHECKIN_RETENTION_TIME
-        end = now
+        lookback_start = now - CHECKIN_RETENTION_TIME - CHECKIN_LIFETIME
+        lookback_end = now - CHECKIN_LIFETIME
 
-        profiles_with_checkin_count = Profile.objects.annotate(checkin_count=Count('checkin'))
+        profile_qs = Profile.objects
+        checkin_qs = Checkin.objects
+
+        # add checkin count to profiles
+        profiles_with_checkin_count = profile_qs.annotate(checkin_count=Count('checkin'))
+
+        # annotate and replace checkins with default checkout time
+        checkout_calc_expression = ExpressionWrapper(F('time_entered') + self.CHECKIN_DEFAULT_LENGTH, output_field=fields.DateTimeField())
+        checkin_qs = checkin_qs.annotate(time_left_or_default=Coalesce('time_left', checkout_calc_expression))
+
+        # filter lookup window
+        checkin_qs = checkin_qs.filter(time_entered__gte=lookback_start).filter(time_left_or_default__lte=lookback_end)
 
         # add duration
         duration_expression = ExpressionWrapper(F('time_left') - F('time_entered'),
                                                 output_field=fields.DurationField())
-        checkins_with_duration = Checkin.objects.exclude(time_left__isnull=True)\
+        checkins_with_duration = checkin_qs.exclude(time_left__isnull=True)\
             .annotate(duration=duration_expression)
 
-        ds = tablib.Dataset(title="Checkins")
-        ds.append(('Auswertungsbeginn', format_datetime(start)))
-        ds.append(('Auswertungsende', format_datetime(end)))
+
+        from django.db.models.functions import TruncDay
+
+        ds = tablib.Dataset(title="Auswertung Checkin")
+        ds.headers = ['Abfrage', 'Wert']
+
+        # not in use yet:
+        ds.append(('Auswertungsbeginn', format_datetime(lookback_start)))
+        ds.append(('Auswertungsende', format_datetime(lookback_end)))
+
+        active_locations = Location.objects.filter(removed=False)
+        ds.append(('L: Alle (aktiven) Standorte', active_locations.count()))
+        ds.append(('Y: Besondere Standorte (IDs)', self.exclude_location_ids))
+        ds.append(('Y: Besondere Standorte (Anazhl)', active_locations.filter(id__in=self.exclude_location_ids).count()))
+        ds.append(('X: Normale Standorte (Anzahl)', active_locations.exclude(id__in=self.exclude_location_ids).count()))
+
         ds.append(('Systemseitige Ablaufzeit von Checkins', format_timedelta(CHECKIN_LIFETIME)))
-        ds.append(('Checkins insgesamt echt', Checkin.objects.count()))
-        ds.append(('Checkins insgesamt ohne Ausschluss', Checkin.objects.exclude(location__in=self.exclude_location_ids).count()))
-        ds.append(('Checkins insgesamt nur Ausschluss', Checkin.objects.filter(location__in=self.exclude_location_ids).count()))
-        ds.append(('Checkins ohne Checkout', Checkin.objects.filter(time_left__isnull=True).count()))
-        ds.append(('Checkins vollständig', Checkin.objects.exclude(time_left__isnull=True).count()))
-        ds.append(('Checkins durchschnittliche Dauer', checkins_with_duration.aggregate(Avg('duration'))['duration__avg']))
-        ds.append(('Checkins maximale Dauer', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
+        ds.append(('A: Aufenthalte insgesamt', Checkin.objects.count()))
+        ds.append(('Aufenthalte insgesamt ohne Y', Checkin.objects.exclude(location__in=self.exclude_location_ids).count()))
+        ds.append(('Aufenthalte insgesamt nur Y', Checkin.objects.filter(location__in=self.exclude_location_ids).count()))
+        ds.append(('Aufenthalte ohne Checkout', Checkin.objects.filter(time_left__isnull=True).count()))
+        ds.append(('Aufenthalte ohne Checkout ohne Y', Checkin.objects.exclude(location__in=self.exclude_location_ids).filter(time_left__isnull=True).count()))
+        ds.append(('Aufenthalte vollständig', Checkin.objects.exclude(time_left__isnull=True).count()))
+        ds.append(('Aufenthalte durchschnittliche Dauer', checkins_with_duration.aggregate(Avg('duration'))['duration__avg']))
+        ds.append(('Aufenthalte maximale Dauer', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
+        ds.append(('Aufenthalte pro Tag (über alle Nutzer) durchsch.', Checkin.objects.annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        ds.append(('Aufenthalte pro Tag pro Nutzer durchsch.', Checkin.objects.annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','profile')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        ds.append(('Aufenthalte pro Tag pro Standort ohne Y durchsch.', Checkin.objects.exclude(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','location')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        ds.append(('Aufenthalte pro Tag pro Standort nur Y durchsch.', Checkin.objects.filter(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','location')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        # ds.append(('Checkins pro Nutzungstag echt durchsch.', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
+        # ds.append(('Checkins pro Nutzungstag ohne Aussschlussorte durchsch.', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
         ds.append(('Anzahl von Nutzern', Profile.objects.count()))
         ds.append(('Anzahl von Nutzern mit mind. 1 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=1).count()))
         ds.append(('Anzahl von Nutzern mit mind. 5 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=5).count()))
@@ -320,12 +376,30 @@ class UsageReport(object):
         ds.append(('Anzahl von Nutzern mit mind. 25 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=25).count()))
         ds.append(('Anzahl von Nutzern mit mind. 50 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=50).count()))
         ds.append(('Anzahl von Nutzern mit mind. 100 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
-        ds.append(('Durchs. Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
-        ds.append(('Maximale Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Max('num_checkins'))['num_checkins__max']))
-        ds.append(('Durchs. Standorte pro Person', Checkin.objects.values('profile','location').annotate(num_checkins=Count('location', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
+        # funktioniert nicht:
+        # ds.append(('Durchs. Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
+        # ds.append(('Maximale Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Max('num_checkins'))['num_checkins__max']))
+        # ds.append(('Durchs. Standorte pro Person', Checkin.objects.values('profile','location').annotate(num_checkins=Count('location', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
         # ds.append(('Checkins pro Person pro Nutzungstag',
         # ds.append(('Checkins nur Am Speicher XI (diese sollten wir strategisch besonders behandeln)',
         # ds.append(('Checkins nur Am Speicher XI (diese sollten wir strategisch besonders behandeln)',
+
+        # ds.append(('Zurückverfolge Kontake', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
+        # ds.append(('Durchschnittliche Kontaktzeit', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
+        # ds.append(('Durchschnittliche Kontakte am Nutzungstag', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
+        # ds.append(('Maximale Kontakte am Nutzungstag', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
+        # ds.append(('Unklare Kontakte', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
+
+        # Checkins ohne Buchung
+        # Buchungen ohne Checkin
+
+        # Checkins über Tageszeiten
+        # Checkins in Testräumen
+        # 1.11.090
+        # 10 – 22
+        # 16.11.2020
+
+        # aktive Fälle ausschließen. 24 Stunden zurück.
 
         self.write_dataset(ds)
 
