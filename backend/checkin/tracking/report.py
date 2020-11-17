@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import F, Sum, Value, ExpressionWrapper, fields, Q
+from django.db.models import F, Sum, Value, ExpressionWrapper, fields, Q, Count, Avg, Max
 from django.db.models.functions import Coalesce, Greatest, Least
 from datetime import timedelta, datetime
 from django.utils import timezone
 import tablib
 
-from checkin.tracking.models import Checkin, Profile, Location, CHECKIN_LIFETIME
+from checkin.tracking.models import Checkin, Profile, Location, CHECKIN_LIFETIME, CHECKIN_RETENTION_TIME
 
 def OVERLAP_Q(start, end):
     return Q(time_entered__lt=start) & Q(time_left_or_default__gt=start) | \
@@ -19,7 +19,7 @@ def format_datetime(dt):
     return dt.strftime("%Y-%m-%d %H:%M:%S")
 
 def format_timedelta(tdelta):
-    if tdelta < timedelta(seconds=1):
+    if timedelta(seconds=1) > tdelta > timedelta(seconds=0):
         return "weniger als 1 Sek."
     fmt = "{days} Tage {hours}:{minutes}:{seconds}"
     d = {"days": tdelta.days}
@@ -252,3 +252,80 @@ class ContactReport(object):
             ds.append(['Kontakt',p.id, p.first_name, p.last_name, p.phone, p.email, format_datetime(p.created_at), format_datetime(p.updated_at), format_timedelta(encountered_profiles[profile_id])])
 
         return ds
+
+class UsageReport(object):
+
+    out_callable = None
+
+    OUTPUT_WRITE_FORMAT = 'strout'
+    XLSX_FORMAT = 'xlsx'
+    CSV_FORMAT = 'csv'
+
+    def set_output(self, output_callable):
+        if not callable(output_callable):
+            raise RuntimeError("Must be a callable to put output to.")
+        self.out_callable = output_callable
+
+    def write_out(self, text):
+        self.out_callable(str(text))
+
+    def write_dataset(self, ds):
+        # ['simple', 'plain', 'grid', 'fancy_grid', 'github', 'pipe', 'orgtbl',
+        #  'jira', 'presto', 'psql', 'rst', 'mediawiki', 'moinmoin', 'youtrack',
+        #  'html', 'latex', 'latex_raw', 'latex_booktabs', 'tsv', 'textile']
+        # self.write_out(ds.export("cli", tablefmt="grid"))
+        self.write_out(ds.export("cli", tablefmt="simple"))
+
+    def write_headline(self, headline):
+
+        self.write_out("")
+        self.write_out(len(headline) * "-")
+        self.write_out(headline)
+        self.write_out(len(headline) * "-")
+        self.write_out("")
+
+    def __init__(self, exclude_location_ids=None):
+        self.exclude_location_ids = exclude_location_ids or []
+
+    def report(self):
+
+        now = timezone.now()
+        start = now - CHECKIN_RETENTION_TIME
+        end = now
+
+        profiles_with_checkin_count = Profile.objects.annotate(checkin_count=Count('checkin'))
+
+        # add duration
+        duration_expression = ExpressionWrapper(F('time_left') - F('time_entered'),
+                                                output_field=fields.DurationField())
+        checkins_with_duration = Checkin.objects.exclude(time_left__isnull=True)\
+            .annotate(duration=duration_expression)
+
+        ds = tablib.Dataset(title="Checkins")
+        ds.append(('Auswertungsbeginn', format_datetime(start)))
+        ds.append(('Auswertungsende', format_datetime(end)))
+        ds.append(('Systemseitige Ablaufzeit von Checkins', format_timedelta(CHECKIN_LIFETIME)))
+        ds.append(('Checkins insgesamt echt', Checkin.objects.count()))
+        ds.append(('Checkins insgesamt ohne Ausschluss', Checkin.objects.exclude(location__in=self.exclude_location_ids).count()))
+        ds.append(('Checkins insgesamt nur Ausschluss', Checkin.objects.filter(location__in=self.exclude_location_ids).count()))
+        ds.append(('Checkins ohne Checkout', Checkin.objects.filter(time_left__isnull=True).count()))
+        ds.append(('Checkins vollständig', Checkin.objects.exclude(time_left__isnull=True).count()))
+        ds.append(('Checkins durchschnittliche Dauer', checkins_with_duration.aggregate(Avg('duration'))['duration__avg']))
+        ds.append(('Checkins maximale Dauer', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
+        ds.append(('Anzahl von Nutzern', Profile.objects.count()))
+        ds.append(('Anzahl von Nutzern mit mind. 1 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=1).count()))
+        ds.append(('Anzahl von Nutzern mit mind. 5 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=5).count()))
+        ds.append(('Anzahl von Nutzern mit mind. 10 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=10).count()))
+        ds.append(('Anzahl von Nutzern mit mind. 15 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=15).count()))
+        ds.append(('Anzahl von Nutzern mit mind. 25 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=25).count()))
+        ds.append(('Anzahl von Nutzern mit mind. 50 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=50).count()))
+        ds.append(('Anzahl von Nutzern mit mind. 100 Checkin', profiles_with_checkin_count.filter(checkin_count__gte=100).count()))
+        ds.append(('Durchs. Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
+        ds.append(('Maximale Checkins pro Person', Checkin.objects.values('profile').annotate(num_checkins=Count('profile', distinct=True)).aggregate(Max('num_checkins'))['num_checkins__max']))
+        ds.append(('Durchs. Standorte pro Person', Checkin.objects.values('profile','location').annotate(num_checkins=Count('location', distinct=True)).aggregate(Avg('num_checkins'))['num_checkins__avg']))
+        # ds.append(('Checkins pro Person pro Nutzungstag',
+        # ds.append(('Checkins nur Am Speicher XI (diese sollten wir strategisch besonders behandeln)',
+        # ds.append(('Checkins nur Am Speicher XI (diese sollten wir strategisch besonders behandeln)',
+
+        self.write_dataset(ds)
+
