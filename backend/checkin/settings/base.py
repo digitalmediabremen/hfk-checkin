@@ -81,6 +81,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'microsoft_auth',
     'corsheaders',
+    'impersonate',
 ]
 
 LOCAL_APPS = [
@@ -142,6 +143,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     'corsheaders.middleware.CorsPostCsrfMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    'impersonate.middleware.ImpersonateMiddleware',
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -319,3 +321,12 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     '*',
 ]
+
+# user impersination
+
+IMPERSONATE = {
+    'REDIRECT_URL': '/admin/',
+    'PAGINATE_COUNT': 10,
+    'REQUIRE_SUPERUSER': True,
+    'URI_EXCLUSIONS': ['api/'],
+}
