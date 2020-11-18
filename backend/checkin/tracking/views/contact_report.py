@@ -47,10 +47,11 @@ class CaseEvaluationView(PermissionRequiredMixin, FormView):
         exclude_location_ids = [l.pk for l in form.cleaned_data['exclude_locations']]
 
         output = io.StringIO()
+        ContactReport.INFECTION_LOOKBACK_TIME = form.cleaned_data['infection_lookback_time']
+        ContactReport.INFECTION_LOOKBACK_BUFFER = form.cleaned_data['infection_lookback_buffer']
+        ContactReport.CHECKIN_DEFAULT_LENGTH = form.cleaned_data['checkin_default_length']
         report = ContactReport(profile_id=profile_id, exclude_location_ids=exclude_location_ids)
-        report.INFECTION_LOOKBACK_TIME = form.cleaned_data['infection_lookback_time']
-        report.INFECTION_LOOKBACK_BUFFER = form.cleaned_data['infection_lookback_buffer']
-        report.CHECKIN_DEFAULT_LENGTH = form.cleaned_data['checkin_default_length']
+        print(form.cleaned_data['infection_lookback_time'])
 
         format = self.request.GET.get('format')
         if format == 'xlsx':
