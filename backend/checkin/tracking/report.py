@@ -349,6 +349,20 @@ class UsageReport(object):
                                                                       .aggregate(Avg('id__count'))\
                                                                       ['id__count__avg']
                                                                      ))
+        ds.append(('Aufenthalte pro Tag (über alle Nutzer) ohne Y durchsch.', checkin_qs.exclude(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        ds.append(('Aufenthalte pro Tag (über alle Nutzer) nur Y durchsch.', checkin_qs.filter(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
         ds.append(('Aufenthalte pro Tag pro Nutzer durchsch.', checkin_qs.annotate(checkin_date=TruncDay('time_entered'))
                                                                       .values('checkin_date','profile')
                                                                       .annotate(Count('id'))
