@@ -49,6 +49,7 @@ django-model-history = "*"
 django-simple-history = "*"
 django-import-export = "*"
 tablib = {extras = ["cli", "csv", "xlsx"], version = "*"}
+django-impersonate = "*"
 
 [requires]
 python_version = "3.8.5"

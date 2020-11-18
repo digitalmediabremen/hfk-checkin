@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load static %}
+{% load i18n static %}
 {% block extrastyle %}
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/admin-extra.css" %}">
 {% endblock %}
@@ -8,6 +8,15 @@
 
 {% block branding %}
 <h1 id="site-name"><a href="{% url 'admin:index' %}">HfK Checkin</a></h1>
+{% endblock %}
+
+{% block welcome-msg %}
+    {% translate 'Welcome,' %}
+    <strong>{% firstof user.get_short_name user.get_username %}</strong>{% if user.is_impersonate %} (Impersonated by <strong>{% firstof request.impersonator.get_short_name request.impersonator.get_username %}</strong>) {% endif %}.
+{% endblock %}
+{% block userlinks %}
+    {% if user.is_impersonate %}<a href="{% url 'impersonate-stop' %}">{% translate 'End impersonation' %}</a> / {% endif %}
+    {{ block.super }}
 {% endblock %}
 
 {% block nav-global %}{% endblock %}

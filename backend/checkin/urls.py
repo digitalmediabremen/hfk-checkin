@@ -28,6 +28,7 @@ admin.site.unregister(MicrosoftAccount)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('impersonate/', include('impersonate.urls')),
     path('login/', include('microsoft_auth.urls', namespace='microsoft')),
     path('login/redirect/', to_ms_redirect),
     path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout

@@ -11,6 +11,17 @@ from django.urls import reverse, path
 from .views.contact_report import case_evaluation_view
 from django.utils.html import format_html
 
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
+from impersonate.admin import UserAdminImpersonateMixin
+
+class NewUserAdmin(UserAdminImpersonateMixin, UserAdmin):
+    open_new_window = True
+    pass
+
+admin.site.unregister(User)
+admin.site.register(User, NewUserAdmin)
+
 class ProfileAdmin(SimpleHistoryAdmin):
     # TODO: default query set nur nicht Verifiziert
     # TODO: default query set nur neue Nutzer
