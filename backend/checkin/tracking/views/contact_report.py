@@ -51,7 +51,6 @@ class CaseEvaluationView(PermissionRequiredMixin, FormView):
         ContactReport.INFECTION_LOOKBACK_BUFFER = form.cleaned_data['infection_lookback_buffer']
         ContactReport.CHECKIN_DEFAULT_LENGTH = form.cleaned_data['checkin_default_length']
         report = ContactReport(profile_id=profile_id, exclude_location_ids=exclude_location_ids)
-        print(form.cleaned_data['infection_lookback_time'])
 
         format = self.request.GET.get('format')
         if format == 'xlsx':
