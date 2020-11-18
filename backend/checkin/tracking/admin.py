@@ -24,7 +24,7 @@ class ProfileAdmin(SimpleHistoryAdmin):
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
-        if request.user.is_superuser:
+        if request.user.has_perm('tracking.can_view_all_users'):
             return qs
         return qs.exclude(verified=True)
 

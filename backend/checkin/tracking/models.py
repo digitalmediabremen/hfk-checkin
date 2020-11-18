@@ -50,6 +50,9 @@ class Profile(models.Model):
     class Meta:
         verbose_name = _("Person")
         verbose_name_plural = _("Personen")
+        permissions = [
+            ("can_view_all_users", _("Kann alle Personen anzeigen")),
+        ]
 
     @property
     def last_checkins(self):
@@ -139,8 +142,8 @@ class Location(MPTTModel):
         verbose_name = _("Raum / Standort")
         verbose_name_plural = _("Räume / Standorte")
         permissions = [
-            ("can_print_location", _("Kann PDF-Raumausweise erstellen.")),
-            ("can_display_location_loads", _("Kann aktuelle aktuelle Checkins anzeigen.")),
+            ("can_print_location", _("Kann PDF-Raumausweise erstellen")),
+            ("can_display_location_loads", _("Kann aktuelle aktuelle Checkins anzeigen")),
         ]
 
     def load(self):
@@ -350,7 +353,7 @@ class Checkin(models.Model):
             )
         ]
         permissions = [
-            ("can_evaluate_case", _("Kann Nachverfolgung durchführen.")),
+            ("can_evaluate_case", _("Kann Nachverfolgung durchführen")),
         ]
 
     def __str__(self):
