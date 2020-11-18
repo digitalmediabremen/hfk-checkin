@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.db.models import F, Sum, Value, ExpressionWrapper, fields, Q, Count, Avg, Max
+from django.db.models import F, Sum, Value, ExpressionWrapper, fields, Q, Count, Avg, Max, Min
 from django.db.models.functions import Coalesce, Greatest, Least
 from datetime import timedelta, datetime
 from django.utils import timezone
@@ -342,6 +342,27 @@ class UsageReport(object):
         ds.append(('Aufenthalte durchschnittliche Dauer nur Y', checkins_with_duration.filter(location__in=self.exclude_location_ids).aggregate(Avg('duration'))['duration__avg']))
         ds.append(('Aufenthalte durchschnittliche Dauer ohne Y', checkins_with_duration.exclude(location__in=self.exclude_location_ids).aggregate(Avg('duration'))['duration__avg']))
         ds.append(('Aufenthalte maximale Dauer', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
+        ds.append(('Personen pro Tag (über alle Standorte) durchsch.', checkin_qs.annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','profile')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        ds.append(('Personen pro Tag (über alle Standorte) min.', checkin_qs.annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','profile')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Min('id__count'))\
+                                                                      ['id__count__min']
+                                                                     ))
+        ds.append(('Personen pro Tag (über alle Standorte) max.', checkin_qs.annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','profile')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Max('id__count'))\
+                                                                      ['id__count__max']
+                                                                     ))
         ds.append(('Aufenthalte pro Tag (über alle Nutzer) durchsch.', checkin_qs.annotate(checkin_date=TruncDay('time_entered'))
                                                                       .values('checkin_date')
                                                                       .annotate(Count('id'))
