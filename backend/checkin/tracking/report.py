@@ -405,6 +405,21 @@ class UsageReport(object):
                                                                       .aggregate(Avg('id__count'))\
                                                                       ['id__count__avg']
                                                                      ))
+        ds.append(('Aufenthalte pro Tag pro Standort nur Y durchsch. Mo - Fr', checkin_qs.filter(time_entered__iso_week_day__gte=1).filter(time_entered__iso_week_day__lte=5).filter(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','location')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+        ds.append(('Aufenthalte pro Tag pro Standort nur Y durchsch. Sa - So', checkin_qs.filter(time_entered__iso_week_day__gte=6).filter(time_entered__iso_week_day__lte=7).filter(location__in=self.exclude_location_ids).annotate(checkin_date=TruncDay('time_entered'))
+                                                                      .values('checkin_date','location')
+                                                                      .annotate(Count('id'))
+                                                                      .order_by()
+                                                                      .aggregate(Avg('id__count'))\
+                                                                      ['id__count__avg']
+                                                                     ))
+
         # ds.append(('Checkins pro Nutzungstag echt durchsch.', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
         # ds.append(('Checkins pro Nutzungstag ohne Aussschlussorte durchsch.', checkins_with_duration.aggregate(Max('duration'))['duration__max']))
         ds.append(('Anzahl von Nutzern', Profile.objects.count()))
