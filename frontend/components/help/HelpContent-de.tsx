@@ -15,7 +15,7 @@ const HelpContentDe = () => {
                 `}
             </style>
             <Notice>
-                Auf der Suche nach einer QR-Scanner-App? Siehe Abschnitt 3.
+                Auf der Suche nach einer QR-Scanner-App? Siehe Abschnitt 5.
             </Notice>
             <Subtitle>1. Wie funktioniert der Checkin and Checkout?</Subtitle>
             <Text paragraph>
