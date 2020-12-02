@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 from rest_framework import serializers
 from rest_framework import viewsets, views, status, permissions
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated, IsAdminUser,\
+    DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.response import  Response
 from rest_framework.renderers import JSONRenderer
 from .models import *
@@ -74,7 +75,7 @@ def profile_is_verified_and_complete(request):
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
     lookup_field = 'code'
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
@@ -84,7 +85,7 @@ class LocationViewSet(viewsets.ModelViewSet):
         except Http404:
             return Response({'detail': ERROR_ROOM_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=['get','post'])
+    @action(detail=True, methods=['get','post'], permission_classes=[IsAuthenticated])
     # fails with method 'PUT' because of call to get_serializer() in renderers.py:552
     def checkin(self, request, pk=None, **kwargs):
 
@@ -101,7 +102,7 @@ class LocationViewSet(viewsets.ModelViewSet):
             return Response(checkin_serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(checkin_serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(detail=True, methods=['get', 'post'], permission_classes=[IsAuthenticated])
     # fails with method 'PUT' because of call to get_serializer() in renderers.py:552
     def checkout(self, request, pk=None, **kwargs):
 
