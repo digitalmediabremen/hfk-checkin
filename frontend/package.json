@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@types/react-transition-group": "^4.4.0",
+    "@types/smoothscroll-polyfill": "^0.3.1",
     "formik": "^2.2.0",
     "get-user-locale": "^1.4.0",
     "libphonenumber-js": "^1.8.4",
@@ -21,7 +22,8 @@
     "react-dom": "16.13.1",
     "react-page-visibility": "^6.2.0",
     "react-smooth-collapse": "^2.1.0",
-    "react-transition-group": "^4.4.1"
+    "react-transition-group": "^4.4.1",
+    "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
     "@types/colors": "^1.2.1",
