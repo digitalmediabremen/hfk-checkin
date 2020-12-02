@@ -34,6 +34,8 @@ export const appUrls = {
 } as const;
 
 export const production = process.env.NODE_ENV === "production"
+export const isClient = typeof window === "object"
+export const isServer = typeof window === "undefined"
 
 // language
 export const defaultLocale = "en" as const;

@@ -3,9 +3,10 @@ import smoothscroll from 'smoothscroll-polyfill';
 import Title from "../components/common/Title";
 import HelpContentDe from "../components/help/HelpContent-de";
 import HelpContentEn from "../components/help/HelpContent-en";
+import { isClient } from "../config";
 import { useTranslation } from "../localization";
 
-smoothscroll.polyfill();
+if (isClient) smoothscroll.polyfill();
 
 interface HelpPageProps {}
 
