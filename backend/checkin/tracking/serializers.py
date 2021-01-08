@@ -49,7 +49,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['id','first_name', 'last_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']
+        fields = ['id','first_name', 'last_name', 'phone', 'email', 'student_number', 'verified', 'complete', 'last_checkins']
 
     def validate_phone(self, value):
         return value.strip()

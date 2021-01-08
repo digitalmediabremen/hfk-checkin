@@ -14,6 +14,7 @@ from checkin.tracking.views.location import LocationsPDFView, LocationsView
 from rest_framework import routers
 from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
 from microsoft_auth.models import MicrosoftAccount
+from checkin.tracking.views.paper_log_model import LocationAutocomplete, ProfileAutocomplete
 
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
@@ -28,6 +29,8 @@ admin.site.unregister(MicrosoftAccount)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('paperlog-location-autocomplete/', LocationAutocomplete.as_view(), name='paper-location-autocomplete'),
+    path('paperlog-profile-autocomplete/', ProfileAutocomplete.as_view(), name='paper-profile-autocomplete'),
     path('impersonate/', include('impersonate.urls')),
     path('login/', include('microsoft_auth.urls', namespace='microsoft')),
     path('login/redirect/', to_ms_redirect),

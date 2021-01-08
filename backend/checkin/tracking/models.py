@@ -28,6 +28,7 @@ class Profile(models.Model):
                                  message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
+    student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
@@ -333,7 +334,7 @@ class Origin(models.TextChoices):
 class Checkin(models.Model):
     profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT, null=True)
     location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.PROTECT, null=True)
-    time_entered = models.DateTimeField(_("Checkin"), auto_now_add=True)
+    time_entered = models.DateTimeField(_("Checkin"), default=timezone.datetime.now)
     time_left = models.DateTimeField(_("Checkout"), blank=True, null=True)
     # created_at = models.DateTimeField(auto_now_add=True)
     origin_entered = models.CharField(_("Datenquelle Checkin"), choices=Origin.choices, blank=True, null=True, max_length=100)

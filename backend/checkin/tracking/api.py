@@ -137,10 +137,10 @@ class CheckinViewSet(viewsets.ReadOnlyModelViewSet):
             return qs.active()
         return qs
 
-class ProfileViewSet(viewsets.ViewSet):
-    # queryset = Profile.objects.all()
-    # serializer_class = ProfileSerializer
-    # permission_classes = [IsAdminUser]
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [DjangoModelPermissions]
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])

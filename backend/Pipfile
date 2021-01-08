@@ -50,6 +50,7 @@ django-simple-history = "*"
 django-import-export = "*"
 tablib = {extras = ["cli", "csv", "xlsx"], version = "*"}
 django-impersonate = "*"
+django-autocomplete-light = "*"
 
 [requires]
 python_version = "3.8.5"

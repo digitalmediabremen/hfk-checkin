@@ -45,7 +45,6 @@ LANGUAGES = [
 # needs CustomFallbackLocaleMiddleware
 LANGUAGE_FALLBACK = 'en'
 
-
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -72,11 +71,15 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.forms",
+    # dal = django-autocomplete-light needs to come BEFORE django.contrib.admin
+    'dal',
+    'dal_select2',
     "django.contrib.admin",
 ]
 THIRD_PARTY_APPS = [
     'mptt',
     'simple_history',
+    'import_export',
     'wkhtmltopdf',
     'rest_framework',
     'microsoft_auth',
@@ -138,7 +141,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "checkin.middleware.CustomFallbackLocaleMiddleware",
     'corsheaders.middleware.CorsMiddleware',
-    "checkin.middleware.JSON404Middleware",
+    #"checkin.middleware.JSON404Middleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     'corsheaders.middleware.CorsPostCsrfMiddleware',
@@ -147,7 +150,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'simple_history.middleware.HistoryRequestMiddleware'
+    'simple_history.middleware.HistoryRequestMiddleware',
 ]
 
 # STATIC
@@ -295,15 +298,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://checkin.hfk-bremen.de",
     "http://checkin.hfk-bremen.de",
-    "https://staging.checkin.uiuiui.digital",
-    "http://staging.checkin.uiuiui.digital",
+    "https://staging.checkin.hfk-bremen.de",
+    "http://staging.checkin.hfk-bremen.de",
     "https://hfk-checkin-frontend.herokuapp.com",
     "http://hfk-checkin-frontend.herokuapp.com",
     "https://checkin.uiuiui.digital",
     "http://checkin.uiuiui.digital",
     "http://hfk-bremen.de",
-    "https://hfk-checkin-frontend-staging.herokuapp.com",
-    "http://hfk-checkin-frontend-staging.herokuapp.com",
 ]
 CORS_ALLOW_HEADERS = [
     'accept',
