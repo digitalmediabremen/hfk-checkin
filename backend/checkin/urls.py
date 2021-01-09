@@ -13,6 +13,7 @@ from django.views import defaults as default_views
 from checkin.tracking.views.location import LocationsPDFView, LocationsView
 from rest_framework import routers
 from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
+from checkin.booking.api import RoomViewSet, BookingRequestViewSet
 from microsoft_auth.models import MicrosoftAccount
 from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
 
@@ -24,6 +25,8 @@ router.register(r'location', LocationViewSet)
 router.register(r'checkin', CheckinViewSet, basename='checkin')
 router.register(r'profile', ProfileViewSet, basename='profile')
 router.register(r'auth', LogoutViewSet, basename='auth')
+router.register(r'room', RoomViewSet, basename='room')
+router.register(r'bookingrequest', BookingRequestViewSet, basename='bookingrequest')
 
 admin.site.unregister(MicrosoftAccount)
 admin.site.enable_nav_sidebar = False

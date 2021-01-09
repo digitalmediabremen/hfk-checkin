@@ -50,9 +50,6 @@ django-simple-history = "*"
 django-import-export = "*"
 tablib = {extras = ["cli", "csv", "xlsx"], version = "*"}
 django-impersonate = "*"
-django-autocomplete-light = "*"
-django-dirtyfields = "*"
-django-admin-rangefilter = "*"
 django-better-admin-arrayfield = "*"
 
 [requires]
