@@ -41,7 +41,14 @@ class SimpleCheckinSerializer(serializers.ModelSerializer):
         fields = ['id','time_entered', 'time_left', 'location','is_active']
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class BaseProfileSerializer(serializers.ModelSerializer):
+    id = ReadOnlyField()
+    class Meta:
+        model = Profile
+        fields = ['id','first_name', 'last_name', 'phone', 'email']
+
+
+class ProfileSerializer(BaseProfileSerializer):
     last_checkins = SimpleCheckinSerializer(many=True, read_only=True)
     verified = ReadOnlyField()
     complete = ReadOnlyField()

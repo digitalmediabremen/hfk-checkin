@@ -2,11 +2,17 @@ from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
 from django_better_admin_arrayfield.models.fields import ArrayField
 from django.utils.translation import gettext_lazy as _
+import uuid
 
 from checkin.tracking.models import LocationUsage, ActivityProfile, BookingMethod, Profile, CapacityForActivityProfile
 
 # TODO move into this app: BookingMethod
 # TODO move into this shared space: Profile
+
+class RoomQuerySet(models.QuerySet):
+    def bookable(self):
+        return self.filter(bookable=True)
+
 
 #class Room(MPTTModel):
 class Room(models.Model):
@@ -36,12 +42,21 @@ class Room(models.Model):
     #activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
 
+    objects = RoomQuerySet.as_manager()
+
     class Meta:
         verbose_name = _("Raum")
         verbose_name_plural = _("Räume")
 
     def __str__(self):
         return "Raum %s – %s" % (self.display_numbers, self.name)
+
+    @property
+    def display_name(self):
+        if self.numbers:
+            return "%s (%s)" % (self.name, self.display_numbers)
+        else:
+            return "%s" % (self.name,)
 
     @property
     def display_numbers(self):
@@ -96,6 +111,7 @@ class RoomAccessPolicy(models.Model):
 #     access_rules = TextField
 #     access_allowd_to = ArrayList or Relation
 #     relation allows lookups! array_field as well!
+#     tags = features
 #
 #     ## from exchange
 #     # should via relation
@@ -131,28 +147,41 @@ class RoomAccessPolicy(models.Model):
 #     # Guid                                      : 13caaab3-10d1-4bf1-b281-56e89ef6b45d
 
 class RoomBookingRequest(models.Model):
+    uuid = models.UUIDField("UUID", db_index=True, default=uuid.uuid4, editable=False)
     rooms = models.ManyToManyField(Room, verbose_name=_("Räume"))
     # TODO or durationfield!
     start = models.DateTimeField(_("Beginn"))
     end = models.DateTimeField(_("Ende"))
     organizer = models.ForeignKey(Profile, verbose_name=_("Anfragender"), on_delete=models.PROTECT)
     #attendants = combine ORGANIZER and GUESTS
-    guests = models.ManyToManyField(Profile, verbose_name=_("Zusätzliche Personen"), related_name='guest_in_booking')
+    guests = models.ManyToManyField(Profile, verbose_name=_("Zusätzliche Personen"), related_name='guest_in_booking', blank=True)
     comment = models.TextField(_("Kommentar"), blank=True, null=True)
     title = models.CharField(_("Titel der Nutzung"), blank=True, null=True, max_length=255)
-    is_important = models.BooleanField(blank=True)
-    agreed_to_phone_contact = models.BooleanField(blank=True)
+    is_important = models.BooleanField(_("Wichtig / Priorisiert"), blank=True, help_text=_("Nur mit Begründung. (Siehe Kommentar.) z.B. Prüfungen, Ausnahmeregelungen, Verasnstaltungen etc. "))
+    agreed_to_phone_contact = models.BooleanField(_("Telefonkontakt zugestimmt"), blank=True,null=True)
     #uuid
     #history
+
+    # TODO form validation of standard failures: end before start etc.
 
     class Meta:
         verbose_name = _("Buchungsanfrage")
         verbose_name_plural = _("Buchungsanfragen")
 
+    def __str__(self):
+        return "%s %s" % (self._meta.verbose_name, self.uuid)
+
+    @property
+    def short_uuid(self):
+        return str(self.uuid)[:7].upper()
+    short_uuid.fget.short_description = _("UUID")
+
     @property
     def attendants(self):
         return [self.organizer] + list(self.guests.all())
+    attendants.fget.short_description = _('Alle Teilnehmer')
 
     @property
     def number_of_attendants(self):
         return len(self.attendants)
+    number_of_attendants.fget.short_description = _('Anzahl Teilnehmer')
