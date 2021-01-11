@@ -10,7 +10,7 @@
           {% blocktrans with cl.opts.verbose_name as name %}Infektionsnachverfolgung{% endblocktrans %}
         </a>
       </li><li>
-        {% url 'admin:paper-log-entry' as paper_url %}
+        {% url 'admin:tracking_paperlog_add' as paper_url %}
         <a href="{% add_preserved_filters paper_url is_popup to_field %}" class="paperlink">
           {% blocktrans with cl.opts.verbose_name as name %}Eingabe Besuchsdokumentation{% endblocktrans %}
         </a>

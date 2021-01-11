@@ -14,7 +14,7 @@ from checkin.tracking.views.location import LocationsPDFView, LocationsView
 from rest_framework import routers
 from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
 from microsoft_auth.models import MicrosoftAccount
-from checkin.tracking.views.paper_log_model import LocationAutocomplete, ProfileAutocomplete
+from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
 
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView

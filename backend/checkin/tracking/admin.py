@@ -9,14 +9,13 @@ from simple_history.admin import SimpleHistoryAdmin
 from django.utils.html import format_html
 from django.urls import reverse, path
 from .views.contact_report import case_evaluation_view
-from .views.paper_log_entry import paper_log_entry_view
 from django.utils.html import format_html
 
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from impersonate.admin import UserAdminImpersonateMixin
 
-from .views.paper_log_model import PaperLogAdmin
+from .views.paper_log import PaperLogAdmin
 
 
 class NewUserAdmin(UserAdminImpersonateMixin, UserAdmin):
@@ -136,7 +135,6 @@ class CheckinAdmin(admin.ModelAdmin):
         urls = super().get_urls()
         custom_urls = [
             path('evaluate/', self.admin_site.admin_view(case_evaluation_view), name='checkin-evaluation'),
-            path('paper/', self.admin_site.admin_view(paper_log_entry_view), name='paper-log-entry'),
         ]
         return custom_urls + urls
 

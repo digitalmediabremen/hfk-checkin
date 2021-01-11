@@ -5,7 +5,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.core.validators import DecimalValidator
 from django import forms
 from dal import autocomplete
-from ..models import Checkin, Location, Profile, Origin, LimitedCheckinManager, CheckinQuerySet
+from ..models import Checkin, Location, Profile, Origin, LimitedCheckinManager, CheckinQuerySet, PaperCheckin, PaperLog
 from django.utils.html import format_html
 from django.http import HttpResponse, HttpResponseRedirect
 import datetime
@@ -16,52 +16,10 @@ from django.forms.fields import TimeInput, to_current_timezone, TimeField, from_
 from django.utils import timezone
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
-
 import logging
 log = logging.getLogger(__name__)
 # convert the errors to text
 from django.utils.encoding import force_text
-
-# TODO move PaperLog to models
-class PaperLog(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name=_("Person"))
-    first_name = models.CharField(verbose_name=_("Vorname"), max_length=255, blank=True)
-    last_name = models.CharField(verbose_name=_("Nachname"), max_length=255, blank=True)
-    # TODO add email (is currently not on paper form)
-    # email = models.CharField(verbose_name=_("Telefonnummer"), max_length=20, blank=True)
-    phone = models.CharField(verbose_name=_("Telefonnummer"), max_length=20, blank=True)
-    student_number = models.CharField(verbose_name=_("Matrikelnummer"), max_length=20, blank=True)
-    date = models.DateField(verbose_name=_("Datum"), help_text=_("Ohne Datum ist die Eingabe und Kontaktnachverfolgung nicht möglich. Bitte stellen Sie anderweitig Nachforschungen an, falls das Datum fehlt oder unlesbar ist, und wiederholen Sie dann die Eingabe.<br/>Alle Zeitangaben werden in Ihrer Zeitzone (%(timezone)s) interpretiert.") % {'timezone': timezone.get_current_timezone()})
-    signed = models.BooleanField(verbose_name=_("Unterschrift vorhanden"))
-    created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Eingegeben am"))
-    comment = models.TextField(_("Kommentar"), blank=True, null=True, help_text=_("Nutzen die dieses Feld für alle weiteren Bemerkugen zum vorliegenden Papierprotokoll oder zu Ihrer Eingabe."))
-
-    class Meta:
-        verbose_name = _("Manuelle Besuchsdokumentation")
-        verbose_name_plural = _("Manuelle Besuchsdokumentationen")
-
-    def __str__(self):
-        return ugettext("Besuchsdokumentation von %s am %s" % (self.profile.get_full_name(), self.date))
-
-    def __repr__(self):
-        type_ = type(self)
-        module = type_.__module__
-        qualname = type_.__qualname__
-        return f"<{module}.{qualname} object at {hex(id(self))}>"
-
-
-class PaperCheckin(Checkin):
-    log = models.ForeignKey(PaperLog, editable=False, on_delete=models.CASCADE)
-    location_comment = models.CharField(verbose_name=_("persönliche Referenz"), max_length=255, blank=True)
-    entered_after_midnight = models.BooleanField(verbose_name=_("Eingang nach 23:59 (Folgetag)"), blank=True)
-    left_after_midnight = models.BooleanField(verbose_name=_("Ausgang nach 23:59 (Folgetag)"), blank=True)
-
-    # prevent old checkins to be inaccessible (filtered out) on the form
-    objects = Checkin.all
-
-    class Meta:
-        verbose_name = _("Manuell eingegebener Aufenthalt")
-        verbose_name_plural = _("Manuell eingegebene Aufenthalte")
 
 
 class LocationAutocomplete(autocomplete.Select2QuerySetView):
@@ -107,12 +65,14 @@ class TimezoneAwareTimeField(TimeField):
             value = datetime_value.time
         return value
 
+
 def combine_date_and_time(date, cleaned_data, time_field_name):
     time = cleaned_data[time_field_name]
     if date is None or time is None:
         raise ValidationError("Die Zeit- und Datumaangaben sind unvollständig.")
     value = datetime.datetime.combine(date, time)
     return value
+
 
 class PaperLogSingleLineForm(forms.ModelForm):
     # NOTICE: this form will not validate, if the checkin_ptr is not accessible (out of managers access range)
@@ -244,7 +204,7 @@ class PaperLogAdmin(admin.ModelAdmin):
         }),
         ('Personendaten hinzufügen, falls Person nicht zu finden ist oder vorhandenes Profil ändern', {
             'fields': ('first_name', 'last_name', 'phone', 'student_number'),
-            'classes': ('collapse',),
+            #'classes': ('collapse',),
         }),
         (None, {
             'fields': ('date', 'signed','comment'),
