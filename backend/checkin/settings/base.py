@@ -85,6 +85,7 @@ THIRD_PARTY_APPS = [
     'microsoft_auth',
     'corsheaders',
     'impersonate',
+    'rangefilter',
 ]
 
 LOCAL_APPS = [
@@ -331,3 +332,13 @@ IMPERSONATE = {
     'REQUIRE_SUPERUSER': True,
     'URI_EXCLUSIONS': ['api/'],
 }
+
+# fast time entry
+
+TIME_INPUT_FORMATS = [
+    '%H:%M:%S',     # '14:30:59'
+    '%H:%M:%S.%f',  # '14:30:59.000200'
+    '%H:%M',        # '14:30'
+    '%H%M',         # '1430' - for faster entry
+    #'%H%M%S',       # '143059' - for faster entry
+]

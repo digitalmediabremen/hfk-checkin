@@ -51,6 +51,8 @@ django-import-export = "*"
 tablib = {extras = ["cli", "csv", "xlsx"], version = "*"}
 django-impersonate = "*"
 django-autocomplete-light = "*"
+django-dirtyfields = "*"
+django-admin-rangefilter = "*"
 
 [requires]
 python_version = "3.8.5"

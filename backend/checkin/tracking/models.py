@@ -15,12 +15,19 @@ from django.core.exceptions import ValidationError
 from simple_history.models import HistoricalRecords
 from simple_history import register as register_history
 from django.db.models import Count
+from django.contrib.postgres.search import SearchVector
+from dirtyfields import DirtyFieldsMixin
 
 CHECKIN_RETENTION_TIME = timedelta(weeks=3)
 CHECKIN_LIFETIME = timedelta(hours=24)
 LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
-class Profile(models.Model):
+class ProfileQuerySet(models.QuerySet):
+    def annotate_search(self):
+        qs = self.annotate(search=SearchVector('first_name', 'last_name','email'))
+        return qs
+
+class Profile(DirtyFieldsMixin, models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
     first_name = models.CharField(_("Vorname"), max_length=1000)
     last_name = models.CharField(_("Nachname"), max_length=1000)
@@ -34,6 +41,8 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
     # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
     history = HistoricalRecords()
+
+    objects = ProfileQuerySet.as_manager()
 
     def __str__(self):
         return _("Person mit Profil-ID %i") % (self.id, )
@@ -340,9 +349,10 @@ class Checkin(models.Model):
     origin_entered = models.CharField(_("Datenquelle Checkin"), choices=Origin.choices, blank=True, null=True, max_length=100)
     origin_left = models.CharField(_("Datenquelle Checkout"), choices=Origin.choices, blank=True, null=True, max_length=100)
 
+    # NOTICE: the order of managers is important
+    all = CheckinQuerySet.as_manager() # this needs to come first, so the manger uses is not LimitedCheckinManager.
     objects = LimitedCheckinManager().from_queryset(CheckinQuerySet)()
-    # objects = CheckinQuerySet.as_manager()
-    all = CheckinQuerySet.as_manager()
+    default_manager = objects
 
     class Meta:
         verbose_name = _("Checkin")
