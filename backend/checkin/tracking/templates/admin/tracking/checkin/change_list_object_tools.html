@@ -9,6 +9,11 @@
         <a href="{% add_preserved_filters evaluate_url is_popup to_field %}" class="evaluatelink">
           {% blocktrans with cl.opts.verbose_name as name %}Infektionsnachverfolgung{% endblocktrans %}
         </a>
+      </li><li>
+        {% url 'admin:tracking_paperlog_add' as paper_url %}
+        <a href="{% add_preserved_filters paper_url is_popup to_field %}" class="paperlink">
+          {% blocktrans with cl.opts.verbose_name as name %}Eingabe Besuchsdokumentation{% endblocktrans %}
+        </a>
       </li>
     {#  {% endif %}#}
 
