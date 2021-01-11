@@ -405,7 +405,7 @@ class PaperLog(models.Model):
     date = models.DateField(verbose_name=_("Datum"), help_text=_("Ohne Datum ist die Eingabe und Kontaktnachverfolgung nicht möglich. Bitte stellen Sie anderweitig Nachforschungen an, falls das Datum fehlt oder unlesbar ist, und wiederholen Sie dann die Eingabe.<br/>Alle Zeitangaben werden in Ihrer Zeitzone (%(timezone)s) interpretiert.") % {'timezone': timezone.get_current_timezone()})
     signed = models.BooleanField(verbose_name=_("Unterschrift vorhanden"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Eingegeben am"))
-    comment = models.TextField(_("Kommentar"), blank=True, null=True, help_text=_("Nutzen die dieses Feld für alle weiteren Bemerkugen zum vorliegenden Papierprotokoll oder zu Ihrer Eingabe."))
+    comment = models.TextField(_("Eingabekommentar"), blank=True, null=True, help_text=_("Nutzen die dieses Feld für alle weiteren Bemerkugen zum vorliegenden Papierprotokoll oder zu Ihrer Eingabe."))
 
     class Meta:
         verbose_name = _("Manuelle Besuchsdokumentation")
@@ -433,4 +433,5 @@ class PaperCheckin(Checkin):
     class Meta:
         verbose_name = _("Manuell eingegebener Aufenthalt")
         verbose_name_plural = _("Manuell eingegebene Aufenthalte")
+        ordering = ('pk',)
 
