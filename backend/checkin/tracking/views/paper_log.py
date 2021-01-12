@@ -15,6 +15,7 @@ from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.forms.fields import TimeInput, to_current_timezone, TimeField, from_current_timezone
 from django.utils import timezone
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
+from django.db.models import Q
 
 import logging
 log = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
             return Location.objects.none()
         qs = Location.objects.all()
         if self.q:
-            qs = qs.filter(code__istartswith=self.q)
+            qs = qs.filter(Q(code__istartswith=self.q) | Q(org_name__istartswith=self.q) | Q(org_number__istartswith=self.q))
         return qs
 
     def get_result_label(self, item):
