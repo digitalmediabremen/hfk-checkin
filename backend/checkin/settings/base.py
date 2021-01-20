@@ -82,6 +82,8 @@ THIRD_PARTY_APPS = [
     'microsoft_auth',
     'corsheaders',
     'impersonate',
+    'rangefilter',
+    'django_better_admin_arrayfield',
 ]
 
 LOCAL_APPS = [

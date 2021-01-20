@@ -14,6 +14,7 @@ from django.utils.html import format_html
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from impersonate.admin import UserAdminImpersonateMixin
+from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 
 class NewUserAdmin(UserAdminImpersonateMixin, UserAdmin):
     open_new_window = True
@@ -70,13 +71,13 @@ def generate_pdfs_for_selected_objects(modeladmin, request, queryset):
 
 generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für ausgewählte Standorte generieren")
 
-class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin):
+class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin, DynamicArrayMixin):
     readonly_fields = ('code',)
-    list_display = ('org_name_method', 'org_number', 'org_size', 'capacity', 'code', 'updated_at')
-    list_display_with_loads = ('org_name_method', 'org_number', 'org_size', 'capacity', 'code',  'checkins_sum', 'real_load', 'updated_at')
+    list_display = ('org_name_method', 'org_number', 'org_size', 'capacity_1', 'capacity_2', 'capacity_3', 'code', 'updated_at')
+    list_display_with_loads = ('org_name_method', 'org_number', 'org_size', 'capacity_1', 'capacity_2', 'capacity_3', 'code',  'checkins_sum', 'real_load', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
-    list_filter = ('updated_at','removed')
+    list_filter = ('updated_at','removed','org_usage','org_bookable','org_book_via','org_activities')
     #ordering = ('org_number','checkin_')
     search_fields = ['org_name', 'org_number','code']
     list_max_show_all = 1000
@@ -96,6 +97,23 @@ class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin):
         return obj.org_name
     org_name_method.short_description = _("Raumname / Standort")
     org_name_method.admin_order_field = 'org_name'
+
+    # TODO: do not repeat yourself.
+
+    def capacity_1(self, obj):
+        activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
+        return activities[0].capacity if len(activities) > 0 else None
+    capacity_1.short_description = _("K 1")
+
+    def capacity_2(self, obj):
+        activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
+        return activities[1].capacity if len(activities) > 1 else None
+    capacity_2.short_description = _("K 2")
+
+    def capacity_3(self, obj):
+        activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
+        return activities[2].capacity if len(activities) > 2 else None
+    capacity_3.short_description = _("K 3")
 
 
 class CheckinAdmin(admin.ModelAdmin):

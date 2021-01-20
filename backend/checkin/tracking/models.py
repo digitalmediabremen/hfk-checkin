@@ -15,6 +15,9 @@ from django.core.exceptions import ValidationError
 from simple_history.models import HistoricalRecords
 from simple_history import register as register_history
 from django.db.models import Count
+from django.contrib.postgres.search import SearchVector
+from dirtyfields import DirtyFieldsMixin
+from django_better_admin_arrayfield.models.fields import ArrayField
 
 CHECKIN_RETENTION_TIME = timedelta(weeks=3)
 CHECKIN_LIFETIME = timedelta(hours=24)
@@ -119,9 +122,10 @@ class BookingMethod(models.Model):
 
 class Location(MPTTModel):
     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
-    parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=3)
+    parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=260)
     org_number = models.CharField(_("Raumnummer"), max_length=24, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
     org_name = models.CharField(_("Raumname / Standort"), max_length=255)
+    org_alternative_name = ArrayField(models.CharField(max_length=255), verbose_name=_("Alternative Bezeichnungen"), blank=True, null=True)
     org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
     org_size = models.DecimalField(verbose_name=_("Größe"), help_text=_("in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
     org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
@@ -180,7 +184,7 @@ class Location(MPTTModel):
             max_capacity = max([act.capacity for act in activities])
             return max_capacity
         return None
-    capacity.fget.short_description = _('Kapazität')
+    capacity.fget.short_description = _('Max. Kapazität')
 
     @property
     def capacities(self):

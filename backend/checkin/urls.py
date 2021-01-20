@@ -25,6 +25,7 @@ router.register(r'profile', ProfileViewSet, basename='profile')
 router.register(r'auth', LogoutViewSet, basename='auth')
 
 admin.site.unregister(MicrosoftAccount)
+admin.site.enable_nav_sidebar = False
 
 urlpatterns = [
     path('admin/', admin.site.urls),
