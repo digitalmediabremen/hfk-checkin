@@ -1,6 +1,7 @@
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
 from django_better_admin_arrayfield.models.fields import ArrayField
+from django.contrib.postgres.fields import DateTimeRangeField
 from django.utils.translation import gettext_lazy as _
 import uuid
 
@@ -73,6 +74,8 @@ class RoomAccessPolicy(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     person = models.ForeignKey(Profile, on_delete=models.CASCADE)
     type = models.CharField(choices=ACCESS_POLICY_TYPES, default='ALLOWED', blank=True, null=True, max_length=25)
+    start = models.DateField(_("Von"), blank=True, null=True)
+    end = models.DateField(_("Bis"), blank=True, null=True)
     comment = models.CharField(_("Bemerkung"), blank=True, null=True, max_length=255)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
 
@@ -148,17 +151,18 @@ class RoomAccessPolicy(models.Model):
 
 class RoomBookingRequest(models.Model):
     uuid = models.UUIDField("UUID", db_index=True, default=uuid.uuid4, editable=False)
-    rooms = models.ManyToManyField(Room, verbose_name=_("Räume"))
+    rooms = models.ManyToManyField(Room, verbose_name=_("Raum"))
     # TODO or durationfield!
     start = models.DateTimeField(_("Beginn"))
     end = models.DateTimeField(_("Ende"))
+    timerange = DateTimeRangeField(_("Zeitraum"), blank=True, null=True)
     organizer = models.ForeignKey(Profile, verbose_name=_("Anfragender"), on_delete=models.PROTECT)
     #attendants = combine ORGANIZER and GUESTS
     guests = models.ManyToManyField(Profile, verbose_name=_("Zusätzliche Personen"), related_name='guest_in_booking', blank=True)
     comment = models.TextField(_("Kommentar"), blank=True, null=True)
     title = models.CharField(_("Titel der Nutzung"), blank=True, null=True, max_length=255)
-    is_important = models.BooleanField(_("Wichtig / Priorisiert"), blank=True, help_text=_("Nur mit Begründung. (Siehe Kommentar.) z.B. Prüfungen, Ausnahmeregelungen, Verasnstaltungen etc. "))
-    agreed_to_phone_contact = models.BooleanField(_("Telefonkontakt zugestimmt"), blank=True,null=True)
+    is_important = models.BooleanField(_("!"), blank=True, help_text=_("Nur mit Begründung. (Siehe Kommentar.) z.B. Prüfungen, Ausnahmeregelungen, Verasnstaltungen etc. "))
+    agreed_to_phone_contact = models.BooleanField(_("Telefonkontakt zugestimmt"), blank=True, default=False)
     #uuid
     #history
 
@@ -185,3 +189,21 @@ class RoomBookingRequest(models.Model):
     def number_of_attendants(self):
         return len(self.attendants)
     number_of_attendants.fget.short_description = _('Anzahl Teilnehmer')
+
+class Attendance(models.Model):
+
+    ATTENDANCE_STATUS = (
+        ('WAITING', 'benötigt Genehmigung'),
+        ('CONFIRMED', 'ist genehmigt'),
+        ('DENIED', 'abgelehnt'),
+    )
+
+    reservation = models.ForeignKey(RoomBookingRequest, on_delete=models.CASCADE)
+    person = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    status = models.CharField(choices=ATTENDANCE_STATUS, blank=True, null=True, max_length=25)
+    comment = models.CharField(_("Bemerkung"), blank=True, null=True, max_length=255)
+    updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
+
+    class Meta:
+        verbose_name = _("Teilnahmer")
+        verbose_name_plural = _("Teilnahmer")

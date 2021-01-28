@@ -46,7 +46,8 @@ class Profile(DirtyFieldsMixin, models.Model):
     objects = ProfileQuerySet.as_manager()
 
     def __str__(self):
-        return _("Person mit Profil-ID %i") % (self.id, )
+        return self.get_full_name()
+        # return _("Person mit Profil-ID %i") % (self.id, )
 
     def get_full_name(self):
         return _("%s %s") % (self.first_name, self.last_name)

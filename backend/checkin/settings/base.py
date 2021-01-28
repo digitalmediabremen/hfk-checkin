@@ -74,6 +74,7 @@ DJANGO_APPS = [
     # dal = django-autocomplete-light needs to come BEFORE django.contrib.admin
     'dal',
     'dal_select2',
+    #"nucleus", # before django.contrib.admin
     "django.contrib.admin",
 ]
 THIRD_PARTY_APPS = [
@@ -204,6 +205,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                #"nucleus.context_processors.nucleus",
                 'microsoft_auth.context_processors.microsoft',
             ],
         },
@@ -347,3 +349,33 @@ TIME_INPUT_FORMATS = [
     '%H%M',         # '1430' - for faster entry
     #'%H%M%S',       # '143059' - for faster entry
 ]
+
+# THEMING with Nucleus
+# -------------------------------------------------------------------------------
+NUCLEUS = {
+    'sidebar': {
+        # Title
+        'title': _('Custom title'),
+
+        # Footer
+        'footer': {
+            'title': _('Custom title'),
+            'description': _('Longer text displayed below the title'),
+        },
+
+        # Navigation
+        'navigation': {
+            # Application
+            'auth': {
+                'title': _('Accounts'),  # Override title
+                'icon': 'img/custom-icon.svg'  # Optional
+            },
+
+            # Model
+            'auth.User': {
+                'title': _('Users'),
+                'icon': 'img/custom-icon.svg'  # Optional
+            }
+        }
+    }
+}

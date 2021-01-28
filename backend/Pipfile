@@ -51,6 +51,7 @@ django-import-export = "*"
 tablib = {extras = ["cli", "csv", "xlsx"], version = "*"}
 django-impersonate = "*"
 django-better-admin-arrayfield = "*"
+django-nucleus = "*"
 
 [requires]
 python_version = "3.8.5"
