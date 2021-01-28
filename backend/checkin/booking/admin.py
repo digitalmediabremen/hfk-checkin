@@ -1,8 +1,13 @@
 from django.contrib import admin
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 from django.utils.translation import ugettext_lazy as _
+from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
 from .models import *
+
+class GuestInline(admin.TabularInline):
+    model = GuestInRoomBooking
+    #readonly_fields = ('updated_at',)
 
 class RoomAccessPolicyInline(admin.StackedInline):
     autocomplete_fields = ('person',)
@@ -11,7 +16,7 @@ class RoomAccessPolicyInline(admin.StackedInline):
     extra = 0
 
 class RoomAdmin(admin.ModelAdmin, DynamicArrayMixin):
-    autocomplete_fields = ('delegates',)
+    autocomplete_fields = ('access_delegates','booking_delegates')
     inlines = [RoomAccessPolicyInline]
     search_fields = ('numbers','name')
     list_display = ('display_numbers', 'name', 'bookable', 'updated_at')
@@ -52,20 +57,13 @@ class AttendanceInline(admin.TabularInline):
 class RoomBookingRequestAdmin(admin.ModelAdmin):
     inlines = [AttendanceInline]
     readonly_fields = ('attendants','number_of_attendants','uuid')
-    autocomplete_fields = ('rooms','organizer','guests')
+    autocomplete_fields = ('rooms','organizer')
     # TODO display full_names instead of ID / __str__ of profile (if user has permission to do so)
-    list_filter = ('rooms','start','end')
-    list_display = ['short_uuid', 'organizer', 'rooms_display', 'start', 'end', 'number_of_attendants', 'is_important', 'title']
-    #fields = ['rooms', ('start', 'end'), 'organizer']
-    #two fields on the same line does not work.
-    # fieldsets = (
-    #     ('Raum/Buchungseinheit', {
-    #         'fields': ('rooms',)
-    #     }),
-    #     ('Zeit', {
-    #         'fields': (('start','end'),)
-    #     }),
-    # )
+    list_display = ['short_uuid', 'organizer', 'rooms_display', 'start', 'end', 'number_of_attendants', 'is_important', 'status']
+    list_filter = ('rooms','start','end', 'status','is_important',
+                   ('created_at', DateRangeFilter),
+                   ('updated_at', DateTimeRangeFilter),)
+    inlines = [GuestInline]
 
     def rooms_display(self, object):
         return ", ".join([r.display_name for r in object.rooms.all()])
