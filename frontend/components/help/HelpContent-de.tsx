@@ -42,7 +42,7 @@ const HelpContentDe = () => {
                     <br />
                     <br />
                     Vergiss beim Verlassen der jeweiligen Räume und auch beim
-                    Verlassen des Speicher XI bitte nicht dich auszuchecken!
+                    Verlassen des Gebäudes bitte nicht dich auszuchecken!
                 </Text>
             </HelpSection>
             <HelpSection
