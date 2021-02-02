@@ -52,7 +52,17 @@ class ProfileAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
     def get_result_label(self, item):
-        return format_html("%04d – %s" % (item.pk, item.get_full_name()))
+        extra_markers = []
+        if item.phone:
+            extra_markers.append("T")
+        if item.email:
+            extra_markers.append("E")
+        if item.student_number:
+            extra_markers.append("M")
+        if item.verified:
+            extra_markers.append("Geprüft")
+        extra = " ".join(extra_markers)
+        return format_html("<strong>%s</strong> %s" % (item.get_full_name(), extra))
 
     def get_selected_result_label(self, item):
         return self.get_result_label(item)
@@ -121,6 +131,8 @@ class PaperLogSingleLineForm(forms.ModelForm):
         return from_current_timezone(combine_date_and_time(date, self.cleaned_data, 'time_left'))
 
     def clean(self):
+        if not self.cleaned_data.get('time_entered', None) or not self.cleaned_data.get('time_left', None):
+            return
         if self.cleaned_data['time_entered'] > self.cleaned_data['time_left']:
             raise ValidationError(_("Uhrzeiten: Der Eingang muss vor dem Ausgang liegen."))
         try:
@@ -152,15 +164,16 @@ class PaperLogSingleLineInline(admin.TabularInline):
 class PaperLogAdminForm(forms.ModelForm):
     profile = forms.ModelChoiceField(
         queryset=Profile.objects.all(),
-        widget=autocomplete.ModelSelect2(url='paper-profile-autocomplete'),
+        widget=autocomplete.ModelSelect2(url='paper-profile-autocomplete', attrs={'data-html': True}),
         blank=True,
         required=False,
         label=_("Suche nach vorhandenem Profil"),
-        help_text=_("Sie können nach Vornamen, Nachnamen und E-Mail-Addressen suchen.")
+        help_text=_("Sie können nach Vornamen, Nachnamen, Telefonnummer (T), Matrikelnummer (M) und E-Mail-Addressen (E) suchen.<br/>" \
+                    "Geprüfte Profile sind bevorzugt auszuwählen. Bei der Suche wird anhand von Abkürzungen angegeben, welche Informationen im Profil hinterlegt sind.")
     )
-    signed = forms.BooleanField(label=_("Unterschrift vorhanden?"), help_text=_("Aktivieren Sie das Feld, wenn das Papierprotokoll unterschrieben wurde."), required=False)
-    save_profile_changes = forms.BooleanField(required=False, initial=True, label=_("Änderungen an vorhandenem Profil speichern?"),
-                                              help_text=_("Aktivieren Sie das Feld, um Ihre Änderungen in diesem Formular in den Personendatensatz zu übernhemen. Neue Profile werden immer gespeichert."))
+    signed = forms.BooleanField(label=_("Unterschrift vorhanden?"), initial=True, help_text=_("Aktivieren Sie das Feld, wenn das Papierprotokoll unterschrieben wurde."), required=False)
+    # save_profile_changes = forms.BooleanField(required=False, initial=True, label=_("Änderungen an vorhandenem Profil speichern?"),
+    #                                           help_text=_("Aktivieren Sie das Feld, um Ihre Änderungen in diesem Formular in den Personendatensatz zu übernhemen. Neue Profile werden immer gespeichert."))
 
     class Meta:
         model = PaperLog
@@ -180,7 +193,7 @@ class PaperLogAdminForm(forms.ModelForm):
         profile.last_name = self.cleaned_data.get('last_name')
         profile.phone = self.cleaned_data.get('phone')
         profile.student_number = self.cleaned_data.get('student_number')
-        if self.cleaned_data.get('save_profile_changes', False) or new and profile.is_dirty():
+        if self.cleaned_data.get('save_profile_changes', True) or new and profile.is_dirty():
             # save and return profile
             profile.save()
             self.cleaned_data['profile'] = profile
@@ -201,14 +214,23 @@ class PaperLogAdmin(admin.ModelAdmin):
     list_filter = (('date', DateRangeFilter),('created_at', DateTimeRangeFilter),'signed')
     fieldsets = (
         ('Personendaten suchen', {
-            'fields': ('profile', 'save_profile_changes'),
+            'fields': ('profile',),
         }),
         ('Personendaten hinzufügen, falls Person nicht zu finden ist oder vorhandenes Profil ändern', {
             'fields': ('first_name', 'last_name', 'phone', 'student_number'),
             #'classes': ('collapse',),
+            'description': 'Achtung: Falls oben ein Profil ausgewählt wurde, werden die hier eingegebenen Daten gewählten Profil gespeichert.<br/>' \
+            'Stellen Sie sicher, dass oben kein Profil gewählt ist, falls sie eine bisher nicht erfasste Person hinterlegen wollen.</br>',
         }),
         (None, {
             'fields': ('date', 'signed','comment'),
+        }),
+        (None, {
+            'fields': [],
+            'description': 'Geben Sie nachfolgend die Aufenthalte in einzelen Räumen / an einzelnen Standtorten ein. '\
+            'Bitte Achten sie darauf Uhrzeiten, die auf den <strong>Folgetag (nach 23:59)</strong> fallen, mit der entsp. Checkbox zu markieren. Anderfalls würden die Zeitangaben falsch erfasst werden. '\
+            'Das Feld "Persönliche Referenz" muss nur bei wichtigen Mitteilungen eingegeben werden.<br/>Bitte konsultieren Sie bei Fragen und Problemen mit der Eingabe die Gebrauchsanweisung oder melden Sie sich bei ' \
+            'checkin@hfk-bremen.de.',
         }),
     )
 

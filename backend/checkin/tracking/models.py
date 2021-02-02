@@ -24,7 +24,7 @@ LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
 class ProfileQuerySet(models.QuerySet):
     def annotate_search(self):
-        qs = self.annotate(search=SearchVector('first_name', 'last_name','email'))
+        qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
         return qs
 
 class Profile(DirtyFieldsMixin, models.Model):
@@ -408,8 +408,8 @@ class PaperLog(models.Model):
     comment = models.TextField(_("Eingabekommentar"), blank=True, null=True, help_text=_("Nutzen die dieses Feld für alle weiteren Bemerkugen zum vorliegenden Papierprotokoll oder zu Ihrer Eingabe."))
 
     class Meta:
-        verbose_name = _("Manuelle Besuchsdokumentation")
-        verbose_name_plural = _("Manuelle Besuchsdokumentationen")
+        verbose_name = _("Papierprotokoll")
+        verbose_name_plural = _("Papierprotokolle")
 
     def __str__(self):
         return ugettext("Besuchsdokumentation von %s am %s" % (self.profile.get_full_name(), self.date))
@@ -431,7 +431,7 @@ class PaperCheckin(Checkin):
     objects = Checkin.all
 
     class Meta:
-        verbose_name = _("Manuell eingegebener Aufenthalt")
-        verbose_name_plural = _("Manuell eingegebene Aufenthalte")
+        verbose_name = _("Aufenthalt (per Papierprotokoll)")
+        verbose_name_plural = _("Aufenthalte (per Papierprotokoll)")
         ordering = ('pk',)
 
