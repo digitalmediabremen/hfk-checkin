@@ -31,8 +31,7 @@
     {% if user.is_authenticated %}
       <p class="errornote">
         {% blocktrans trimmed %}
-          You are authenticated as {{ username }}, but are not authorized to
-          access this page. Would you like to login to a different account?
+          Sie sind als {{ username }} angemeldet. Dieser Account hat noch keine Berechtigung zum Zugriff auf die Verwaltungsoberfläche.<br/>Bitte melden Sie sich bei checkin@hfk-bremen.de um Ihren Account freischalten zu lassen.
         {% endblocktrans %}
       </p>
     {% endif %}
