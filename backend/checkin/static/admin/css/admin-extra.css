@@ -122,3 +122,9 @@ div.breadcrumbs a {
 div.breadcrumbs a:focus, div.breadcrumbs a:hover {
     color: #D81830;
 }
+
+/* Paper Log entry form */
+
+.dynamic-paperlogsingleline_set .datetimeshortcuts {
+    display: none;
+}

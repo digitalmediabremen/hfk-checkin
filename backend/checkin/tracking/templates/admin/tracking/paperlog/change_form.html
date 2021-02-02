@@ -1,0 +1,92 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block extrastyle %}{{ block.super }}
+<style type="text/css">
+    {#input[name="_save"],input[name="_continue"],input[name="_saveasnew"]{#}
+    {#    display: none;#}
+    {#}#}
+</style>
+{% endblock %}
+
+{% block admin_change_form_document_ready %}{{ block.super }}
+    <script type="text/javascript">
+        django.jQuery(function($) {
+            // update profile fields by selection
+            select = $("#id_profile")
+            select.change(function () {
+                profile_id = select.val()
+                if (!profile_id) {
+                    return;
+                }
+                $.ajax({
+                    url: '/api/profile/' + profile_id + '/',
+                    format: 'json',
+                    success: function (data) {
+                        $('#id_first_name').val(data.first_name)
+                        $('#id_last_name').val(data.last_name)
+                        $('#id_phone').val(data.phone)
+                        $('#id_student_number').val(data.student_number)
+                    }
+                })
+            });
+
+            // add yesterday button to vDateField
+            const DateTimeShortcutsExtension = {
+                calendarInputs: [],
+                init: function () {
+                    for (const inp of document.getElementsByTagName('input')) {
+                        if (inp.type === 'text' && inp.classList.contains('vDateField')) {
+                            // FIXME: recounting the original field numbering from DateTimeShortcuts.js
+                            const num = DateTimeShortcutsExtension.calendarInputs.length;
+                            DateTimeShortcutsExtension.calendarInputs[num] = inp;
+                            //DateTimeShortcutsExtension.dismissCalendarFunc[num] = function() { DateTimeShortcuts.dismissCalendar(num); return true; };
+                            
+                            const shortcuts_span = inp.parentNode.getElementsByClassName(DateTimeShortcuts.shortCutsClass)[0];
+                            
+                            const yesterday_link = document.createElement('a');
+                            yesterday_link.href = '#';
+                            yesterday_link.appendChild(document.createTextNode(gettext('Yesterday')));
+                            yesterday_link.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                DateTimeShortcuts.handleCalendarQuickLink(num, -1);
+                            });
+                            shortcuts_span.insertBefore(document.createTextNode('\u00A0|\u00A0'), shortcuts_span.firstChild);
+                            shortcuts_span.insertBefore(yesterday_link, shortcuts_span.firstChild);
+                            //shortcuts_span.insertBefore(document.createTextNode('\u00A0'), shortcuts_span.firstChild);
+
+                            const yesteryesterday_link = document.createElement('a');
+                            yesteryesterday_link.href = '#';
+                            yesteryesterday_link.appendChild(document.createTextNode(gettext('Vorgestern')));
+                            yesteryesterday_link.addEventListener('click', function (e) {
+                                e.preventDefault();
+                                DateTimeShortcuts.handleCalendarQuickLink(num, -2);
+                            });
+                            shortcuts_span.insertBefore(document.createTextNode('\u00A0|\u00A0'), shortcuts_span.firstChild);
+                            shortcuts_span.insertBefore(yesteryesterday_link, shortcuts_span.firstChild);
+                            shortcuts_span.insertBefore(document.createTextNode('\u00A0'), shortcuts_span.firstChild);
+                        }
+                    }
+                }
+            }
+            window.addEventListener('load', DateTimeShortcutsExtension.init);
+
+        }(django.jQuery));
+    </script>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+    <div class="submit-row">
+    {% block submit-row %}
+        <input type="submit" value="{% translate 'Sichern und zurück zur Liste' %}" class="default" name="_save">
+{#        {% if show_delete_link and original %}#}
+{#            {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}#}
+{#            <p class="deletelink-box"><a href="{% add_preserved_filters delete_url %}" class="deletelink">{% translate "Diese Zetteldatensatz vollständig löschen" %}</a></p>#}
+{#        {% endif %}#}
+        {#{% if show_save_as_new %}<input type="submit" value="{% translate 'Save as new' %}" name="_saveasnew">{% endif %}#}
+        <input type="submit" value="{% translate 'Sichern und neuen Zettel eingeben' %}" name="_addanother">
+        {#{% if show_save_and_continue %}<input type="submit" value="{% if can_change %}{% translate 'Save and continue editing' %}{% else %}{% translate 'Save and view' %}{% endif %}" name="_continue">{% endif %}#}
+        {#{% if show_close %}<a href="{% url opts|admin_urlname:'changelist' %}" class="closelink">{% translate 'Close' %}</a>{% endif %}#}
+    {% endblock %}
+    </div>
+{% endblock %}

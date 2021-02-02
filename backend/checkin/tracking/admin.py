@@ -16,12 +16,17 @@ from django.contrib.auth.admin import UserAdmin
 from impersonate.admin import UserAdminImpersonateMixin
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 
+from .views.paper_log import PaperLogAdmin
+
+
 class NewUserAdmin(UserAdminImpersonateMixin, UserAdmin):
     open_new_window = True
     pass
 
+
 admin.site.unregister(User)
 admin.site.register(User, NewUserAdmin)
+
 
 class ProfileAdmin(SimpleHistoryAdmin):
     # TODO: default query set nur nicht Verifiziert
@@ -33,6 +38,7 @@ class ProfileAdmin(SimpleHistoryAdmin):
     list_filter = ('updated_at','created_at','verified')
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('created_at', 'updated_at')
+    search_fields = ['first_name', 'last_name', 'phone']
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request)
@@ -69,7 +75,9 @@ def generate_pdfs_for_selected_objects(modeladmin, request, queryset):
     selected = queryset.values_list('code', flat=True)
     return HttpResponseRedirect(reverse('pdf-export') + '?codes=%s' % ','.join(str(code) for code in selected))
 
+
 generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für ausgewählte Standorte generieren")
+
 
 class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin, DynamicArrayMixin):
     readonly_fields = ('code',)
@@ -82,6 +90,7 @@ class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin, DynamicArrayMixin):
     search_fields = ['org_name', 'org_number','code']
     list_max_show_all = 1000
     mptt_indent_field = "org_name_method"
+    search_fields = ['code','org_name', 'org_number']
 
     def get_list_display(self, request):
         if request.user.has_perm('tracking.can_display_location_loads'):
@@ -147,9 +156,10 @@ class CheckinAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
 
-admin.site.register(Location,LocationAdmin)
-admin.site.register(Checkin,CheckinAdmin)
-admin.site.register(Profile,ProfileAdmin)
-admin.site.register(ActivityProfile,ActivityProfileAdmin)
+
+admin.site.register(Location, LocationAdmin)
+admin.site.register(Checkin, CheckinAdmin)
+admin.site.register(Profile, ProfileAdmin)
+admin.site.register(ActivityProfile, ActivityProfileAdmin)
 admin.site.register(LocationUsage)
 admin.site.register(BookingMethod)

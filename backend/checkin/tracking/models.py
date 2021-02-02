@@ -1,6 +1,6 @@
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from random import randint
 from django.urls import reverse
 from django.contrib.auth.models import User
@@ -23,7 +23,12 @@ CHECKIN_RETENTION_TIME = timedelta(weeks=3)
 CHECKIN_LIFETIME = timedelta(hours=24)
 LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
-class Profile(models.Model):
+class ProfileQuerySet(models.QuerySet):
+    def annotate_search(self):
+        qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
+        return qs
+
+class Profile(DirtyFieldsMixin, models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
     first_name = models.CharField(_("Vorname"), max_length=1000)
     last_name = models.CharField(_("Nachname"), max_length=1000)
@@ -31,11 +36,14 @@ class Profile(models.Model):
                                  message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
+    student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
     # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
     history = HistoricalRecords()
+
+    objects = ProfileQuerySet.as_manager()
 
     def __str__(self):
         return _("Person mit Profil-ID %i") % (self.id, )
@@ -338,15 +346,16 @@ class Origin(models.TextChoices):
 class Checkin(models.Model):
     profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT, null=True)
     location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.PROTECT, null=True)
-    time_entered = models.DateTimeField(_("Checkin"), auto_now_add=True)
+    time_entered = models.DateTimeField(_("Checkin"), default=timezone.datetime.now)
     time_left = models.DateTimeField(_("Checkout"), blank=True, null=True)
     # created_at = models.DateTimeField(auto_now_add=True)
     origin_entered = models.CharField(_("Datenquelle Checkin"), choices=Origin.choices, blank=True, null=True, max_length=100)
     origin_left = models.CharField(_("Datenquelle Checkout"), choices=Origin.choices, blank=True, null=True, max_length=100)
 
+    # NOTICE: the order of managers is important
+    all = CheckinQuerySet.as_manager() # this needs to come first, so the manger uses is not LimitedCheckinManager.
     objects = LimitedCheckinManager().from_queryset(CheckinQuerySet)()
-    # objects = CheckinQuerySet.as_manager()
-    all = CheckinQuerySet.as_manager()
+    default_manager = objects
 
     class Meta:
         verbose_name = _("Checkin")
@@ -386,3 +395,46 @@ class Checkin(models.Model):
     #         if already_made_checkin.count() > 0:
     #             raise ValidationError(_("Mehrfache Checkins am gleichen Ort sind nicht möglich."))
     #     return super(Checkin, self).save(*args, **kwargs)
+
+
+class PaperLog(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name=_("Person"))
+    first_name = models.CharField(verbose_name=_("Vorname"), max_length=255, blank=True)
+    last_name = models.CharField(verbose_name=_("Nachname"), max_length=255, blank=True)
+    # TODO add email (is currently not on paper form)
+    # email = models.CharField(verbose_name=_("Telefonnummer"), max_length=20, blank=True)
+    phone = models.CharField(verbose_name=_("Telefonnummer"), max_length=20, blank=True)
+    student_number = models.CharField(verbose_name=_("Matrikelnummer"), max_length=20, blank=True)
+    date = models.DateField(verbose_name=_("Datum"), help_text=_("Ohne Datum ist die Eingabe und Kontaktnachverfolgung nicht möglich. Bitte stellen Sie anderweitig Nachforschungen an, falls das Datum fehlt oder unlesbar ist, und wiederholen Sie dann die Eingabe.<br/>Alle Zeitangaben werden in Ihrer Zeitzone (%(timezone)s) interpretiert.") % {'timezone': timezone.get_current_timezone()})
+    signed = models.BooleanField(verbose_name=_("Unterschrift vorhanden"))
+    created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Eingegeben am"))
+    comment = models.TextField(_("Eingabekommentar"), blank=True, null=True, help_text=_("Nutzen die dieses Feld für alle weiteren Bemerkugen zum vorliegenden Papierprotokoll oder zu Ihrer Eingabe."))
+
+    class Meta:
+        verbose_name = _("Papierprotokoll")
+        verbose_name_plural = _("Papierprotokolle")
+
+    def __str__(self):
+        return ugettext("Besuchsdokumentation von %s am %s" % (self.profile.get_full_name(), self.date))
+
+    def __repr__(self):
+        type_ = type(self)
+        module = type_.__module__
+        qualname = type_.__qualname__
+        return f"<{module}.{qualname} object at {hex(id(self))}>"
+
+
+class PaperCheckin(Checkin):
+    log = models.ForeignKey(PaperLog, editable=False, on_delete=models.CASCADE)
+    location_comment = models.CharField(verbose_name=_("persönliche Referenz"), max_length=255, blank=True)
+    entered_after_midnight = models.BooleanField(verbose_name=_("Eingang nach 23:59 (Folgetag)"), blank=True)
+    left_after_midnight = models.BooleanField(verbose_name=_("Ausgang nach 23:59 (Folgetag)"), blank=True)
+
+    # prevent old checkins to be inaccessible (filtered out) on the form
+    objects = Checkin.all
+
+    class Meta:
+        verbose_name = _("Aufenthalt (per Papierprotokoll)")
+        verbose_name_plural = _("Aufenthalte (per Papierprotokoll)")
+        ordering = ('pk',)
+
