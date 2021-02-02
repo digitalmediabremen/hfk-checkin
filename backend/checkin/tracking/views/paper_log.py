@@ -228,7 +228,7 @@ class PaperLogAdmin(admin.ModelAdmin):
         (None, {
             'fields': [],
             'description': 'Geben Sie nachfolgend die Aufenthalte in einzelen Räumen / an einzelnen Standtorten ein. '\
-            'Bitte Achten sie darauf Uhrzeiten, die auf den <strong>Folgetag (nach 23:59)</strong> fallen, mit der entsp. Checkbox zu markieren. Anderfalls würden die Zeitangaben falsch erfasst werden. '\
+            'Uhrzeiten müssen das Format <strong>HH:MM</strong> oder verkürzt <strong>HHMM</strong> (ohne Doppelpunkt) haben. Zweistellige Eingaben sind ungültig. Bitte achten sie darauf Uhrzeiten, die auf den <strong>Folgetag (nach 23:59)</strong> fallen, mit der entsp. Checkbox zu markieren. Anderfalls würden die Zeitangaben falsch erfasst werden. '\
             'Das Feld "Persönliche Referenz" muss nur bei wichtigen Mitteilungen eingegeben werden.<br/>Bitte konsultieren Sie bei Fragen und Problemen mit der Eingabe die Gebrauchsanweisung oder melden Sie sich bei ' \
             'checkin@hfk-bremen.de.',
         }),
