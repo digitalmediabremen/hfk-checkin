@@ -21,9 +21,7 @@ export const Content: React.FunctionComponent = ({ children }) => (
                 }
             `}
         </style>
-        <div className="content">
-            {children}
-        </div>
+        <div className="content">{children}</div>
     </>
 );
 
@@ -31,6 +29,7 @@ const Page: React.FunctionComponent<IPageProps> = ({
     children,
     hasActiveSubpage,
 }) => {
+    const subpageable = hasActiveSubpage !== undefined;
     return (
         <>
             <style jsx>
@@ -54,24 +53,30 @@ const Page: React.FunctionComponent<IPageProps> = ({
                         min-height: 100vh;
                         // min-height: calc(100vh - ${theme.footerHeight}px);
                     }
+
+                    .clip {
+                        overflow: hidden;
+                    }
                 `}
             </style>
-            <div
-                className={classNames("wrapper", {
-                    hasActiveSubpage,
-                    subpageable: hasActiveSubpage !== undefined,
-                })}
-            >
-                <main className="page">
-                    <StatusBar
-                        action={() => {
-                            if (!features.checkin) return undefined;
-                            return <EnterCodeButton />;
-                        }}
-                    />
-                    <Content>{children}</Content>
-                </main>
-                <Footer />
+            <div className="clip">
+                <div
+                    className={classNames("wrapper", {
+                        hasActiveSubpage,
+                        subpageable,
+                    })}
+                >
+                    <main className="page">
+                        <StatusBar
+                            action={() => {
+                                if (!features.checkin) return undefined;
+                                return <EnterCodeButton />;
+                            }}
+                        />
+                        <Content>{children}</Content>
+                    </main>
+                    <Footer />
+                </div>
             </div>
         </>
     );
