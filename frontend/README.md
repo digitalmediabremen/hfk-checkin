@@ -6,6 +6,7 @@ _.env.local_
 ```
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_FEATURE_CHECKIN=1
 ```
 
 ## npm commands
@@ -14,3 +15,12 @@ NEXT_PUBLIC_BASE_URL=http://localhost:3000
 * `npm run build` builds the application
 * `npm run translate` find translation-strings and output new translation file to console
 
+
+# HfK-Getin
+
+In order to see the getin application set your `.env` as follows:
+_.env.local_
+```
+NEXT_PUBLIC_FEATURE_CHECKIN=0
+NEXT_PUBLIC_FEATURE_GETIN=1
+```
