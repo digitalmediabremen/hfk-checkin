@@ -46,7 +46,7 @@ const SubPageHeader = ({ title }: { title: string }) => (
 interface SubPageProps {
     title: string;
     onBack: () => void;
-    children: () => React.ReactNode
+    children: () => React.ReactNode;
     active: boolean;
 }
 
@@ -60,7 +60,7 @@ const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
     return (
         <>
             <style jsx>{`
-                .subpage {
+                .sub-wrapper {
                     position: fixed;
                     min-height: 100vh;
                     width: 100vw;
@@ -73,13 +73,18 @@ const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
                     z-index: 100;
                     transform: translateX(100vw);
                 }
+
+                .subpage {
+                    max-width: 500px;
+                    margin: 0 auto;
+                }
             `}</style>
-            <section className="subpage" onClick={onBack}>
+            <div className="sub-wrapper" onClick={onBack}>
                 <SubPageHeader title={title} />
-                <Content>
-                    {children()}
-                </Content>
-            </section>
+                <section className="subpage">
+                    <Content>{children()}</Content>
+                </section>
+            </div>
         </>
     );
 };
