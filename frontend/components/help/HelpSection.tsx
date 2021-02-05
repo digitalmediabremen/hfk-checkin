@@ -45,9 +45,9 @@ const HelpTitle: React.FunctionComponent = ({ children }) => {
                     padding: ${theme.spacing(1)}px;
                     border: 2px solid ${theme.primaryColor};
                     border-radius: ${theme.borderRadius}px;
-                    margin: 0 -${theme.spacing(1)}px ${theme.spacing(2)}px -${theme.spacing(
+                    margin: 0 -${theme.spacing(1) + 2}px ${theme.spacing(2)}px -${theme.spacing(
                             1
-                        )}px;
+                        ) + 2}px;
                     font-weight: "bold";
                     font-size: 1em;
                     color: ${theme.primaryColor};

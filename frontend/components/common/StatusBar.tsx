@@ -78,15 +78,6 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     height: ${theme.topBarHeight}px;
                 }
 
-                .status-bar-spacer {
-                    width: 100%;
-
-                    //safari fix
-                    font-size: 1em;
-                    height: calc(${theme.spacing(6)}px + 1.5em + 1px);
-                    display: block;
-                }
-
                 .status.bar {
                     // overwrite
                     padding: ${theme.spacing(0)}px ${theme.spacing(3)}px;
@@ -139,8 +130,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     transition: none;
                 }
             `}</style>
-            <div className="status-bar-spacer"></div>
-            <div className="status-bar">
+            <header className="status-bar">
                 <div className="bar">
                     <>
                         {profile && (
@@ -206,7 +196,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                         <span>{states[1]?.message}</span>
                     </div>
                 </CSSTransition>
-            </div>
+            </header>
         </>
     );
 };

@@ -2,7 +2,7 @@ import theme from "../../styles/theme";
 import React, { memo, useState, useEffect } from "react";
 import AlignContent from "./AlignContent";
 
-export const DotPulse = ({invertColor}: {invertColor?: boolean}) => {
+export const DotPulse = ({ invertColor }: { invertColor?: boolean }) => {
     const color = invertColor ? theme.secondaryColor : theme.primaryColor;
     return (
         <>
@@ -103,22 +103,33 @@ export const DotPulse = ({invertColor}: {invertColor?: boolean}) => {
     );
 };
 
-export const LoadingInline = ({loading, ...other}: {loading: boolean, invertColor?: boolean}) => {
+export const LoadingInline = ({
+    loading,
+    ...other
+}: {
+    loading: boolean;
+    invertColor?: boolean;
+}) => {
     const showAnimation = useShowAnimation(loading);
 
-    if (showAnimation && loading) return (<>
-        <style jsx>{`
-            span {
-                display: inline-block;
-                position: relative;
-                padding: 0px 20px;
-                transform: scale(.7);
-            }
-        `}</style>
-        <span><DotPulse {...other} /></span>
-    </>)
+    if (showAnimation && loading)
+        return (
+            <>
+                <style jsx>{`
+                    span {
+                        display: inline-block;
+                        position: relative;
+                        padding: 0px 20px;
+                        transform: scale(0.7);
+                    }
+                `}</style>
+                <span>
+                    <DotPulse {...other} />
+                </span>
+            </>
+        );
     return null;
-}
+};
 
 interface LoadingProps {
     loading: boolean;
@@ -142,7 +153,13 @@ const useShowAnimation = (loading: boolean) => {
     }, [loading]);
 
     return showAnimation;
-}
+};
+
+export const LoadingScreen = () => (
+    <AlignContent align="center">
+        <DotPulse />
+    </AlignContent>
+);
 
 const Loading: React.FunctionComponent<LoadingProps> = ({
     children,
@@ -150,12 +167,7 @@ const Loading: React.FunctionComponent<LoadingProps> = ({
 }) => {
     const showAnimation = useShowAnimation(loading);
 
-    if (loading && showAnimation)
-        return (
-            <AlignContent align="center">
-                <DotPulse />
-            </AlignContent>
-        );
+    if (loading && showAnimation) return <LoadingScreen />;
 
     if (loading) return null;
 
@@ -166,7 +178,7 @@ const Loading: React.FunctionComponent<LoadingProps> = ({
             <style jsx>{`
                 .show {
                     opacity: 0;
-                    animation: show .2s linear forwards;
+                    animation: show 0.2s linear forwards;
                 }
 
                 @keyframes show {
@@ -176,7 +188,7 @@ const Loading: React.FunctionComponent<LoadingProps> = ({
                     100% {
                         opacity: 1;
                     }
-                }     
+                }
             `}</style>
             <div className="show">{children}</div>
         </>

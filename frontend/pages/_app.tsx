@@ -24,7 +24,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                 <AppStateProvider>
                     <LocaleProvider locale={locale || getInitialLocale()}>
                         <ErrorDispatcher status={status} error={error}>
-                            <AppWrapper profileFromServer={profile}>
+                            <AppWrapper>
                                 <Component error={error} {...props} />
                             </AppWrapper>
                         </ErrorDispatcher>

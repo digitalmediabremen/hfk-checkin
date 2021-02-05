@@ -69,6 +69,7 @@ export const Input: SFC<InputProps> = (props) => {
                 <input
                     {...otherProps}
                     id={name}
+                    lang="de"
                     name={name}
                     type={type || "text"}
                     value={value}
