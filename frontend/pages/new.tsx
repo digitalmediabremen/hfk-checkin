@@ -22,11 +22,13 @@ const NewProfilePage: NextPage = () => {
 
     const { appState } = useAppState();
 
-    useEffect(() => { if (appState.profile) router.replace(config.appUrls.enterCode) }, [appState.profile]);
+    useEffect(() => {
+        if (appState.profile) router.replace(config.appUrls.enterCode);
+    }, [appState.profile]);
 
     const { t, locale } = useTranslation("createProfile");
 
-    if (appState.profile || !appState.initialized) return null
+    if (appState.profile || !appState.initialized) return null;
 
     return (
         <>
@@ -36,14 +38,16 @@ const NewProfilePage: NextPage = () => {
                         `Präsenzlehre und ein flexibleres Zugangsverfahren zu den Räumen der HfK sind nur möglich, wenn alle HfK-Mitglieder die Corona-Maßnahmen unterstützen`,
                         {},
                         "Halte dich an die Regeln..."
-                    )}.
+                    )}
+                    .
                 </Text>
                 <Text paragraph>
                     {t(
                         `Bitte dokumentiere deinen Aufenthalt in den Gebäuden und Räumen der HfK in eigenverantwortlich und halte dich an die HfK-Hygieneregeln`,
                         {},
                         "Dokumentiere deinen Aufenthalt..."
-                    )}.
+                    )}
+                    .
                 </Text>
             </FormGroup>
             <FormGroup>
@@ -53,7 +57,12 @@ const NewProfilePage: NextPage = () => {
                 </Button>
             </FormGroup>
             <Subtitle>{t("Gäste")}</Subtitle>
-            <Notice>{t("Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig")}.</Notice>
+            <Notice>
+                {t(
+                    "Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig"
+                )}
+                .
+            </Notice>
             <Button outline onClick={handleGuest}>
                 {t("Gastzugang")}
             </Button>

@@ -1,4 +1,5 @@
 const withPWA = require("next-pwa");
+const features = require("./features");
 
 module.exports = withPWA({
     pwa: {
@@ -15,4 +16,12 @@ module.exports = withPWA({
             },
         ];
     },
+    async rewrites() {
+        return [
+          {
+            source: '/',
+            destination: features.getHomeUrl(),
+          },
+        ]
+      },
 });

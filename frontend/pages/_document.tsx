@@ -1,12 +1,11 @@
 import Document, {
     DocumentContext,
-    Html,
     Head,
+    Html,
     Main,
     NextScript,
 } from "next/document";
-import { config } from "process";
-import theme from "../styles/theme";
+import { getManifestUrl } from "../features";
 import { getInitialLocale, LocaleConsumer } from "../localization";
 
 class MyDocument extends Document {
@@ -21,10 +20,10 @@ class MyDocument extends Document {
     render() {
         return (
             <LocaleConsumer>
-                {({locale}) => (
+                {({ locale }) => (
                     <Html lang={locale} translate="no">
                         <Head>
-                            <link rel="manifest" href="/manifest.json" />
+                            <link rel="manifest" href={getManifestUrl()} />
                             <link
                                 rel="icon"
                                 type="image/x-icon"

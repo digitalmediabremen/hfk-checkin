@@ -6,6 +6,8 @@ import Profile from "../../model/Profile";
 import theme from "../../styles/theme";
 import StatusBar from "./StatusBar";
 import { useUpdateProfileFromAppStateAndUpdate } from "../api/ApiHooks";
+import EnterCodeButton from "./EnterCodeButton";
+import features from "../../features";
 
 interface AppWrapperProps {
     profileFromServer?: Profile;
@@ -35,25 +37,30 @@ const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
                         color: ${theme.primaryColor};
                     }
 
-                    .footer span {
+                    .footer a {
                         margin-right: ${theme.spacing(4)}px;
                     }
 
-                    .footer span:hover {
+                    .footer a:hover {
                         cursor: pointer;
                     }
                 `}
             </style>
             <div className="wrapper">
-                <StatusBar />
+                <StatusBar action={
+                    () => {
+                        if (!features.checkin) return undefined;
+                        return <EnterCodeButton />
+                    }
+                }/>
                 <div className="content">{children}</div>
             </div>
             <div className="footer">
                 <Link href={appUrls.privacy}>
-                    <span>{t("Datenschutzinformationen")}</span>
+                    <a>{t("Datenschutzinformationen")}</a>
                 </Link>
                 <Link href={appUrls.help}>
-                    <span>{t("Hilfe")}</span>
+                    <a>{t("Hilfe")}</a>
                 </Link>
             </div>
         </>

@@ -1,17 +1,18 @@
-import React, { useEffect } from "react";
-import { useRouter } from "next/router";
-import needsProfile from "../../components/api/needsProfile";
-import Profile from "../../model/Profile";
-import useParam from "../../components/hooks/useParam";
+import React from "react";
 import {
-    useCheckin,
-    useActiveCheckins,
     ResultModifierFunction,
+    useActiveCheckins,
+    useCheckin,
 } from "../../components/api/ApiHooks";
-import { CheckinComponent } from "../checkin/[locationCode]";
-import Title from "../../components/common/Title";
+import needsProfile from "../../components/api/needsProfile";
+import showIf from "../../components/api/showIf";
 import Loading from "../../components/common/Loading";
+import Title from "../../components/common/Title";
+import useParam from "../../components/hooks/useParam";
+import features from "../../features";
 import { LastCheckin } from "../../model/Checkin";
+import Profile from "../../model/Profile";
+import { CheckinComponent } from "../checkin/[locationCode]";
 
 interface CheckoutPageProps {
     profile: Profile;
@@ -60,4 +61,4 @@ const CheckoutPage: React.FunctionComponent<CheckoutPageProps> = ({
     );
 };
 
-export default needsProfile(CheckoutPage);
+export default showIf(() => features.checkin, needsProfile(CheckoutPage));

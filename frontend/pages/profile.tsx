@@ -12,6 +12,8 @@ import needsProfile from "../components/api/needsProfile";
 import Profile from "../model/Profile";
 import { useTranslation } from "../localization";
 import { DotPulse, LoadingInline } from "../components/common/Loading";
+import showIf from "../components/api/showIf";
+import features from "../features";
 
 interface ProfilePageProps {
     profile: Profile;
@@ -79,4 +81,4 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
     );
 };
 
-export default needsProfile(ProfilePage);
+export default showIf(() => features.checkin, needsProfile(ProfilePage));

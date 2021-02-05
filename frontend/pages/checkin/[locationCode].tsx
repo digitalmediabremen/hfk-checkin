@@ -7,6 +7,7 @@ import {
     useDoCheckout,
 } from "../../components/api/ApiHooks";
 import needsProfile from "../../components/api/needsProfile";
+import showIf from "../../components/api/showIf";
 import AlignContent from "../../components/common/AlignContent";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../../components/common/Button";
@@ -18,6 +19,7 @@ import Subtitle from "../../components/common/Subtitle";
 import Title from "../../components/common/Title";
 import useParam from "../../components/hooks/useParam";
 import { appUrls } from "../../config";
+import features from "../../features";
 import { useTranslation } from "../../localization";
 import { LastCheckin } from "../../model/Checkin";
 import Profile from "../../model/Profile";
@@ -203,4 +205,4 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
     );
 };
 
-export default needsProfile(CheckinPage);
+export default showIf(() => features.checkin, needsProfile(CheckinPage));

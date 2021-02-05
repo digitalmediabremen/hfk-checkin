@@ -1,9 +1,9 @@
-import { CommentStatement } from "ts-morph";
+import features, { getHomeUrl } from "./features";
 
 const presentOrThrow = (envvar: string | undefined) => {
     if (!envvar) throw "env variable not set";
     return envvar;
-}
+};
 
 const uri = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
 
@@ -12,30 +12,37 @@ export const apiUrl = `${uri}/api`;
 export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
 
 export const httpStatuses = {
-    "notAuthorized": 403,
-    "notVerified": 401,
-    "alreadyCheckedIn": 202,
-    "unprocessable": 500
+    notAuthorized: 403,
+    notVerified: 401,
+    alreadyCheckedIn: 202,
+    unprocessable: 500,
 } as const;
 
 export const appUrls = {
-    "setprofile": "/set-profile",
-    "verifyProfile": "/verify-profile",
-    "verifyNow": "/verify-now",
-    "profile": "/profile",
-    "loginMicrosoft": `${authRedirectUrl}/?next=${appBase}/`,
-    "createProfile": "/new",
-    "enterCode": "/",
-    "checkin": (code: string): [string, string] => ["/checkin/[locationCode]", `/checkin/${code}`],
-    "checkout": (checkinId: number): [string, string] => ["/checkout/[checkinId]", `/checkout/${checkinId}`],
-    "introduction": "/intro",
-    "privacy": "/privacy",
-    "help": "/help"
+    home: getHomeUrl(),
+    setprofile: "/set-profile",
+    verifyProfile: "/verify-profile",
+    verifyNow: "/verify-now",
+    profile: "/profile",
+    loginMicrosoft: `${authRedirectUrl}/?next=${appBase}/`,
+    createProfile: "/new",
+    enterCode: "/checkin",
+    checkin: (code: string): [string, string] => [
+        "/checkin/[locationCode]",
+        `/checkin/${code}`,
+    ],
+    checkout: (checkinId: number): [string, string] => [
+        "/checkout/[checkinId]",
+        `/checkout/${checkinId}`,
+    ],
+    introduction: "/intro",
+    privacy: "/privacy",
+    help: "/help",
 } as const;
 
-export const production = process.env.NODE_ENV === "production"
-export const isClient = typeof window === "object"
-export const isServer = typeof window === "undefined"
+export const production = process.env.NODE_ENV === "production";
+export const isClient = typeof window === "object";
+export const isServer = typeof window === "undefined";
 
 // language
 export const defaultLocale = "en" as const;

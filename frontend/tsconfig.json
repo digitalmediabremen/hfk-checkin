@@ -17,10 +17,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "typeRoots" : ["./node_modules/@types", "./types"]
+    "typeRoots" : ["./node_modules/@types", "./types"],
   },
   "include": [
     "next-env.d.ts",
+    "features.js",
     "**/*.ts",
     "**/*.tsx"
   ],
