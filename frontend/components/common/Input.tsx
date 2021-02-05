@@ -47,7 +47,7 @@ export const Input: SFC<InputProps> = (props) => {
                     width: 100%;
                 }
                 input {
-                    color: ${theme.textColor};
+                    color: ${theme.primaryColor};
                     border-radius: ${theme.borderRadius}px;
                     border: 2px solid gray;
                     padding: ${theme.spacing(2)}px ${theme.spacing(1)}px;

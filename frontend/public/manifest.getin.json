@@ -1,6 +1,6 @@
 {
-	"name": "Hfk Checkin",
-	"short_name": "HfK-Checkin",
+	"name": "HfK Getin",
+	"short_name": "HfK-Getin",
 	"icons": [
 		{
 			"src": "icons/icon-144x144.png",
@@ -18,7 +18,7 @@
 			"type": "image/png"
 		}
 	],
-	"start_url": "/checkin",
+	"start_url": "/",
 	"display": "standalone",
 	"orientation": "portrait",
 	"background_color": "#fff",

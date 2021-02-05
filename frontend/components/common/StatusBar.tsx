@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import * as React from "react";
+import React, { ReactNode } from "react";
 import { CSSTransition } from "react-transition-group";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
@@ -9,9 +8,12 @@ import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
 import EllipseText from "./EllipseText";
 
-interface ErrorBarProps {}
+interface StatusBarProps {
+    action?: () => ReactNode;
+}
 
-const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
+const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
+    const { action } = props;
     const { appState, dispatch } = useAppState();
     const { profile } = appState;
     const { status } = appState;
@@ -20,7 +22,6 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
     >(!!status ? [status] : []);
     const { t } = useTranslation();
     const [timeoutId, setTimeoutId] = React.useState<any>(undefined);
-    const router = useRouter();
 
     React.useEffect(() => {
         if (status) {
@@ -53,14 +54,6 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
     return (
         <>
             <style jsx>{`
-                .not-selectable {
-                    -webkit-touch-callout: none; /* iOS Safari */
-                    -webkit-user-select: none; /* Safari */
-                    -khtml-user-select: none; /* Konqueror HTML */
-                    -moz-user-select: none; /* Old versions of Firefox */
-                    -ms-user-select: none; /* Internet Explorer/Edge */
-                    user-select: none;
-                }
                 .status-bar {
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
@@ -82,31 +75,6 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                     padding: ${theme.spacing(2)}px ${theme.spacing(3)}px;
                     display: flex;
                     align-items: center;
-                }
-
-                .bar .icon {
-                    font-size: 1.5em;
-                    margin-left: auto;
-                    font-weight: bold;
-                    width: 1.7em;
-                    height: 1.7em;
-                    flex-shrink: 0;
-                    line-height: 1.5em;
-                    text-align: center;
-                    border-radius: ${theme.borderRadius}px;
-                    border: 2px solid ${theme.primaryColor};
-                    transition: transform 0.2s, opacity 0.2s;
-                    transform: scale(1);
-                    opacity: 1;
-                }
-
-                .bar .icon:hover {
-                    cursor: pointer;
-                }
-
-                .status-bar[data-pathname="/"] .icon {
-                    transform: scale(0.8);
-                    opacity: 0;
                 }
 
                 .status-bar-spacer {
@@ -171,13 +139,13 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                 }
             `}</style>
             <div className="status-bar-spacer"></div>
-            <div className="status-bar" data-pathname={router.pathname}>
+            <div className="status-bar">
                 <div className="bar">
                     <>
                         {profile && (
-                            <Link href={appUrls.profile}>
-                                <EllipseText>
-                                    <span className="profile">
+                            <EllipseText>
+                                <Link href={appUrls.home}>
+                                    <a className="profile">
                                         <b>
                                             {profile.first_name}{" "}
                                             {profile.last_name}{" "}
@@ -186,9 +154,9 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                                         </b>
                                         <br />
                                         {!!profile.phone && profile.phone}
-                                    </span>
-                                </EllipseText>
-                            </Link>
+                                    </a>
+                                </Link>
+                            </EllipseText>
                         )}
                         {!profile && (
                             <>
@@ -198,9 +166,7 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                             </>
                         )}
                     </>
-                    <Link href={appUrls.enterCode}>
-                        <span className="icon not-selectable">#</span>
-                    </Link>
+                    {action?.()}
                 </div>
 
                 <CSSTransition

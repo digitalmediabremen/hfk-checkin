@@ -1,21 +1,21 @@
 import { useRouter } from "next/router";
 import { SFC, useCallback, useEffect, useState } from "react";
-import { useLocation } from "../components/api/ApiHooks";
-import needsProfile from "../components/api/needsProfile";
-import { ButtonWithLoading } from "../components/common/Button";
-import LocationCodeInput from "../components/common/LocationCodeInput";
-import Notice from "../components/common/Notice";
-import { appUrls } from "../config";
-import { useTranslation } from "../localization";
-import Profile from "../model/Profile";
-import theme from "../styles/theme";
-import Subtitle from "../components/common/Subtitle";
-import Text from "../components/common/Text";
-import QRIcon from "../components/common/QRIcon";
 import SmoothCollapse from "react-smooth-collapse";
+import { useLocation } from "../../components/api/ApiHooks";
+import needsProfile from "../../components/api/needsProfile";
+import showIf from "../../components/api/showIf";
+import { ButtonWithLoading } from "../../components/common/Button";
+import LocationCodeInput from "../../components/common/LocationCodeInput";
+import Notice from "../../components/common/Notice";
+import QRIcon from "../../components/common/QRIcon";
+import Subtitle from "../../components/common/Subtitle";
+import Text from "../../components/common/Text";
+import { appUrls } from "../../config";
+import features from "../../features";
+import { useTranslation } from "../../localization";
+import theme from "../../styles/theme";
 
-interface CheckInPageProps {
-}
+interface CheckInPageProps {}
 
 const isValidLocationCode = (locationCode: string) =>
     locationCode.replace(/" "/g, "").length === 4;
@@ -76,21 +76,20 @@ const CheckInPage: SFC<CheckInPageProps> = () => {
                 }
 
                 .qr-text {
-                    padding-right: ${theme.spacing(1)}px
+                    padding-right: ${theme.spacing(1)}px;
                 }
 
                 .qr-icon svg {
                     width: 100%;
                 }
-
             `}</style>
             <Subtitle>{t("Checkin / Checkout")}</Subtitle>
             <SmoothCollapse expanded={showCodeInputInfo}>
-            <Notice>
-                {t(
-                    "Bitte gib die 4-stellige Nummer des Standortes ein, den du jetzt betrittst oder verlässt."
-                )}
-            </Notice>
+                <Notice>
+                    {t(
+                        "Bitte gib die 4-stellige Nummer des Standortes ein, den du jetzt betrittst oder verlässt."
+                    )}
+                </Notice>
             </SmoothCollapse>
 
             <div className="location-code-container">
@@ -108,19 +107,25 @@ const CheckInPage: SFC<CheckInPageProps> = () => {
                 </div>
                 <div className="qr-text">
                     <Text>
-                        {t("oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.")}
+                        {t(
+                            "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren."
+                        )}
                     </Text>
                 </div>
             </div>
 
-            <ButtonWithLoading noBottomMargin loading={loading} onClick={() => {}}>
+            <ButtonWithLoading
+                noBottomMargin
+                loading={loading}
+                onClick={() => {}}
+            >
                 {t("Einchecken")}
             </ButtonWithLoading>
         </>
     );
 };
 
-export default needsProfile(CheckInPage);
+export default showIf(() => features.checkin, needsProfile(CheckInPage));
 
 // export const getServerSideProps: GetServerSideProps = withLocaleProp(
 //     async (context) => {
