@@ -155,21 +155,21 @@ const useShowAnimation = (loading: boolean) => {
     return showAnimation;
 };
 
-export const LoadingScreen = () => (
-    <AlignContent align="center">
-        <DotPulse />
-    </AlignContent>
-);
+export const LoadingScreen = () => {
+    const showAnimation = useShowAnimation(true);
+    if (!showAnimation) return null;
+    return (
+        <AlignContent align="center">
+            <DotPulse />
+        </AlignContent>
+    );
+};
 
 const Loading: React.FunctionComponent<LoadingProps> = ({
     children,
     loading,
 }) => {
-    const showAnimation = useShowAnimation(loading);
-
-    if (loading && showAnimation) return <LoadingScreen />;
-
-    if (loading) return null;
+    if (loading) return <LoadingScreen />;
 
     // if (!loadingOnMount) return "wasnt loading on mount"
 

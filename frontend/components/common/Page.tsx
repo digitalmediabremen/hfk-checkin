@@ -51,11 +51,14 @@ const Page: React.FunctionComponent<IPageProps> = ({
                         padding-bottom: ${theme.footerHeight}px;
                         padding-top: ${theme.topBarHeight}px;
                         min-height: 100vh;
+                        max-width: 500px;
+                        margin: 0 auto;
                         // min-height: calc(100vh - ${theme.footerHeight}px);
                     }
 
                     .clip {
                         overflow: hidden;
+                        width: 100vw;
                     }
                 `}
             </style>

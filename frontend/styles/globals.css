@@ -6,11 +6,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-}
-
-#__next {
-    max-width: 500px;
-    margin: 0 auto;
+    overflow-x: hidden;
 }
 
 textarea, select, input, button { outline: none; }
