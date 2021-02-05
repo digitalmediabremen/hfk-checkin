@@ -9,8 +9,7 @@ import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
 import EllipseText from "./EllipseText";
 
-interface ErrorBarProps {
-}
+interface ErrorBarProps {}
 
 const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
     const { appState, dispatch } = useAppState();
@@ -54,7 +53,6 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
     return (
         <>
             <style jsx>{`
-
                 .not-selectable {
                     -webkit-touch-callout: none; /* iOS Safari */
                     -webkit-user-select: none; /* Safari */
@@ -137,7 +135,8 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                     width: 100%;
                 }
 
-                .status, .status.error {
+                .status,
+                .status.error {
                     background-color: ${theme.primaryColor};
                     color: ${theme.secondaryColor};
                     font-weight: bold;
@@ -177,8 +176,8 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                     <>
                         {profile && (
                             <Link href={appUrls.profile}>
-                                <span className="profile">
-                                    <EllipseText>
+                                <EllipseText>
+                                    <span className="profile">
                                         <b>
                                             {profile.first_name}{" "}
                                             {profile.last_name}{" "}
@@ -187,8 +186,8 @@ const StatusBar: React.FunctionComponent<ErrorBarProps> = () => {
                                         </b>
                                         <br />
                                         {!!profile.phone && profile.phone}
-                                    </EllipseText>
-                                </span>
+                                    </span>
+                                </EllipseText>
                             </Link>
                         )}
                         {!profile && (
