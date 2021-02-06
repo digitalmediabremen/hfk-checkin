@@ -9,6 +9,7 @@ import Text from "../components/common/Text";
 import { useTranslation } from "../localization";
 import Notice from "../components/common/Notice";
 import { useAppState } from "../components/common/AppStateProvider";
+import { Page } from "../components/common/Page";
 
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
@@ -31,7 +32,7 @@ const NewProfilePage: NextPage = () => {
     if (appState.profile || !appState.initialized) return null;
 
     return (
-        <>
+        <Page>
             <FormGroup>
                 <Text paragraph>
                     {t(
@@ -66,7 +67,7 @@ const NewProfilePage: NextPage = () => {
             <Button outline onClick={handleGuest}>
                 {t("Gastzugang")}
             </Button>
-        </>
+        </Page>
     );
 };
 

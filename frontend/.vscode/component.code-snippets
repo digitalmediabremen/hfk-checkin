@@ -1,0 +1,23 @@
+{
+    "Create observed React FC": {
+        "prefix": ["fc", "ofc"],
+        "body": [
+            "import React from \"react\";",
+            "",
+            "interface ${TM_FILENAME/(.*)\\..+$/$1/}Props { }",
+            "",
+            "const ${TM_FILENAME/(.*)\\..+$/$1/}: React.FunctionComponent<${TM_FILENAME/(.*)\\..+$/$1/}Props> = ({",
+            "\n}) => {",
+            "\treturn (",
+            "\t\t<>",
+            "\t\t\t<style jsx>{`",
+            "\t\t\t`}</style>",
+            "\t\t</>",
+            "\t);",
+            "};",
+            "",
+            "export default ${TM_FILENAME/(.*)\\..+$/$1/};"
+        ],
+        "description": "Creates a new React FC with MobX observer"
+    }
+}

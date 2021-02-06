@@ -7,6 +7,7 @@ import showIf from "../../components/api/showIf";
 import { ButtonWithLoading } from "../../components/common/Button";
 import LocationCodeInput from "../../components/common/LocationCodeInput";
 import Notice from "../../components/common/Notice";
+import Layout from "../../components/common/Page";
 import QRIcon from "../../components/common/QRIcon";
 import Subtitle from "../../components/common/Subtitle";
 import Text from "../../components/common/Text";
@@ -48,7 +49,7 @@ const CheckInPage: SFC<CheckInPageProps> = () => {
     }, [location, loading]);
 
     return (
-        <>
+        <Layout>
             <style jsx>{`
                 .location-code-container {
                     margin-bottom: ${theme.spacing(6)}px;
@@ -121,7 +122,7 @@ const CheckInPage: SFC<CheckInPageProps> = () => {
             >
                 {t("Einchecken")}
             </ButtonWithLoading>
-        </>
+        </Layout>
     );
 };
 

@@ -15,7 +15,7 @@ interface StatusBarProps {
 const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
     const { action } = props;
     const { appState, dispatch } = useAppState();
-    const { profile } = appState;
+    const { profile, initialized } = appState;
     const { status } = appState;
     const [states, setStates] = React.useState<
         Array<{ message: string; isError: boolean; id?: number }>
@@ -53,7 +53,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
 
     return (
         <>
-            <style jsx>{`
+        <style jsx>{`
                 .status-bar {
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
@@ -149,7 +149,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                                 </Link>
                             </EllipseText>
                         )}
-                        {!profile && (
+                        {!profile && initialized && (
                             <>
                                 HfK
                                 <br />

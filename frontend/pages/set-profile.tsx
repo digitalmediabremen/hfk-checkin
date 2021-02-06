@@ -8,6 +8,7 @@ import { ButtonWithLoading } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import { Input } from "../components/common/Input";
 import Notice from "../components/common/Notice";
+import Layout from "../components/common/Page";
 import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
@@ -73,8 +74,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     }, [success]);
 
     const validationErrors = {
-        required: t("erforderlich")
-    }
+        required: t("erforderlich"),
+    };
 
     const formik = useFormik<ProfileUpdate>({
         initialValues: {
@@ -90,77 +91,80 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     if (!appState.initialized) return null;
 
     return (
-        <form
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck="false"
-            onSubmit={formik.handleSubmit}
-        >
-            <FormGroup>
-                <Input
-                    name="first_name"
-                    label={t("Vorname")}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.first_name}
-                    disabled={!isUserCreation}
-                    focus={isUserCreation}
-                    error={
-                        formik.touched.first_name && formik.errors.first_name
-                            ? formik.errors.first_name
-                            : undefined
-                    }
-                />
-
-                <Input
-                    name="last_name"
-                    label={t("Nachname")}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.last_name}
-                    disabled={!isUserCreation}
-                    error={
-                        formik.touched.last_name && formik.errors.last_name
-                            ? formik.errors.last_name
-                            : undefined
-                    }
-                />
-            </FormGroup>
-            <FormGroup>
-                <PhoneInput
-                    name="phone"
-                    label={t("Telefonnummer")}
-                    onPhoneNumberChange={(phone) =>
-                        formik.setFieldValue("phone", phone)
-                    }
-                    onBlur={formik.handleBlur}
-                    value={formik.values.phone}
-                    focus={!isUserCreation}
-                    error={
-                        formik.touched.phone && formik.errors.phone
-                            ? formik.errors.phone
-                            : undefined
-                    }
-                />
-                {!initialProfile?.phone && (
-                    <Notice>
-                        {t(
-                            `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
-                            {},
-                            "Deine Angaben werden ausschließlich zur Rückverfolgung..."
-                        )}
-                    </Notice>
-                )}
-            </FormGroup>
-
-            <ButtonWithLoading
-                loading={loading}
-                disabled={!formik.dirty || !formik.isValid}
-                onClick={() => {}}
+        <Layout>
+            <form
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck="false"
+                onSubmit={formik.handleSubmit}
             >
-                {isUserCreation ? t("Registrieren") : t("Speichern")}
-            </ButtonWithLoading>
-        </form>
+                <FormGroup>
+                    <Input
+                        name="first_name"
+                        label={t("Vorname")}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.first_name}
+                        disabled={!isUserCreation}
+                        focus={isUserCreation}
+                        error={
+                            formik.touched.first_name &&
+                            formik.errors.first_name
+                                ? formik.errors.first_name
+                                : undefined
+                        }
+                    />
+
+                    <Input
+                        name="last_name"
+                        label={t("Nachname")}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.last_name}
+                        disabled={!isUserCreation}
+                        error={
+                            formik.touched.last_name && formik.errors.last_name
+                                ? formik.errors.last_name
+                                : undefined
+                        }
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <PhoneInput
+                        name="phone"
+                        label={t("Telefonnummer")}
+                        onPhoneNumberChange={(phone) =>
+                            formik.setFieldValue("phone", phone)
+                        }
+                        onBlur={formik.handleBlur}
+                        value={formik.values.phone}
+                        focus={!isUserCreation}
+                        error={
+                            formik.touched.phone && formik.errors.phone
+                                ? formik.errors.phone
+                                : undefined
+                        }
+                    />
+                    {!initialProfile?.phone && (
+                        <Notice>
+                            {t(
+                                `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
+                                {},
+                                "Deine Angaben werden ausschließlich zur Rückverfolgung..."
+                            )}
+                        </Notice>
+                    )}
+                </FormGroup>
+
+                <ButtonWithLoading
+                    loading={loading}
+                    disabled={!formik.dirty || !formik.isValid}
+                    onClick={() => {}}
+                >
+                    {isUserCreation ? t("Registrieren") : t("Speichern")}
+                </ButtonWithLoading>
+            </form>
+        </Layout>
     );
 };
 

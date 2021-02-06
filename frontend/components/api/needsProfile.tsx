@@ -1,5 +1,5 @@
 import Profile from "../../model/Profile";
-import { useEffect, Component } from "react";
+import React, { useEffect, Component } from "react";
 import { useRouter } from "next/router";
 import { appUrls } from "../../config";
 import { useAppState } from "../common/AppStateProvider";
@@ -7,6 +7,7 @@ import { useUpdateProfileFromAppStateAndUpdate } from "./ApiHooks";
 import { useTranslation } from "../../localization";
 import Title from "../common/Title";
 import Loading from "../common/Loading";
+import Layout from "../common/Page";
 
 interface NeedsProfileProps {
     profile: Profile;
@@ -58,7 +59,7 @@ const needsProfile = <P extends object>(
     }
 
     if (!profile && error) {
-        return <Title>Da ist etwas schief gelaufen.</Title>;
+        return <Layout><Title>Da ist etwas schief gelaufen.</Title></Layout>;
     }
 
     return (
