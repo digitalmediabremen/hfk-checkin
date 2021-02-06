@@ -2,7 +2,7 @@ import classNames from "classnames";
 import * as React from "react";
 import theme from "../../styles/theme";
 import EllipseText from "./EllipseText";
-import { Content } from "./Page";
+import { Content, Page } from "./Page";
 import Subtitle from "./Subtitle";
 import Title from "./Title";
 
@@ -11,6 +11,7 @@ const SubPageHeader = ({ title }: { title: string }) => (
         <style jsx>{`
             .header {
                 height: ${theme.topBarHeight + 1}px;
+                background: white;
                 border-bottom: 1px solid ${theme.primaryColor};
                 display: flex;
                 align-items: center;
@@ -18,6 +19,13 @@ const SubPageHeader = ({ title }: { title: string }) => (
                 padding: 0 ${theme.spacing(6)}px;
                 box-sizing: border-box;
                 z-index: 2001;
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 200;
             }
             .title {
                 display: inline;
@@ -61,29 +69,23 @@ const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
         <>
             <style jsx>{`
                 .sub-wrapper {
-                    position: fixed;
-                    min-height: 100vh;
+                    position: absolute;
+                    height: 100vh;
                     width: 100vw;
                     top: 0px;
                     left: 0vw;
                     right: 0px;
                     bottom: 0px;
-                    overflow-x: scroll;
+                    overflow: hidden;
                     background-color: ${theme.secondaryColor};
                     z-index: 100;
                     transform: translateX(100vw);
                 }
-
-                .subpage {
-                    max-width: 500px;
-                    margin: 0 auto;
-                }
             `}</style>
             <div className="sub-wrapper" onClick={onBack}>
-                <SubPageHeader title={title} />
-                <section className="subpage">
-                    <Content>{children()}</Content>
-                </section>
+                <Page scroll topBar={<SubPageHeader title={title} />}>
+                        {children()}
+                </Page>
             </div>
         </>
     );
