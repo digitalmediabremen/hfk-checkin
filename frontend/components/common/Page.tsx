@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import * as React from "react";
+import React, { ReactNode } from "react";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import theme from "../../styles/theme";
@@ -8,7 +8,7 @@ import EnterCodeButton from "./EnterCodeButton";
 import Footer from "./Footer";
 import StatusBar from "./StatusBar";
 
-interface IPageProps {
+interface LayoutProps {
     hasActiveSubpage?: boolean;
 }
 
@@ -25,7 +25,55 @@ export const Content: React.FunctionComponent = ({ children }) => (
     </>
 );
 
-const Page: React.FunctionComponent<IPageProps> = ({
+interface PageProps {
+    topBar?: ReactNode;
+    footer?: ReactNode;
+    scroll?: boolean;
+}
+
+export const Page: React.FunctionComponent<PageProps> = ({
+    children,
+    topBar,
+    footer,
+    scroll
+}) => {
+    return (
+        <>
+            <style jsx>{`
+                .page {
+                    min-height: 100vh;
+                    max-width: 500px;
+                    margin: 0 auto;
+                    // overflow-x: scroll;
+                }
+                .scroll {
+                    height: 100vh;
+                    overflow-x: scroll;
+                }
+                .page.with-topbar {
+                    padding-top: ${theme.topBarHeight}px;
+                }
+                .page.with-footer {
+                    padding-bottom: ${theme.footerHeight}px;
+                }
+            `}</style>
+            <div className={classNames({ scroll })}>
+                <div
+                    className={classNames("page", {
+                        "with-topbar": !!topBar,
+                        "with-footer": !!footer,
+                    })}
+                >
+                    {topBar}
+                    <Content>{children}</Content>
+                </div>
+                {footer}
+            </div>
+        </>
+    );
+};
+
+const Layout: React.FunctionComponent<LayoutProps> = ({
     children,
     hasActiveSubpage,
 }) => {
@@ -47,15 +95,6 @@ const Page: React.FunctionComponent<IPageProps> = ({
                         transform: translateX(-100vw);
                     }
 
-                    .page {
-                        padding-bottom: ${theme.footerHeight}px;
-                        padding-top: ${theme.topBarHeight}px;
-                        min-height: 100vh;
-                        max-width: 500px;
-                        margin: 0 auto;
-                        // min-height: calc(100vh - ${theme.footerHeight}px);
-                    }
-
                     .clip {
                         overflow: hidden;
                         width: 100vw;
@@ -69,20 +108,24 @@ const Page: React.FunctionComponent<IPageProps> = ({
                         subpageable,
                     })}
                 >
-                    <main className="page">
-                        <StatusBar
-                            action={() => {
-                                if (!features.checkin) return undefined;
-                                return <EnterCodeButton />;
-                            }}
-                        />
-                        <Content>{children}</Content>
-                    </main>
-                    <Footer />
+                    <Page
+                        scroll={subpageable}
+                        topBar={
+                            <StatusBar
+                                action={() => {
+                                    if (!features.checkin) return undefined;
+                                    return <EnterCodeButton />;
+                                }}
+                            />
+                        }
+                        footer={<Footer />}
+                    >
+                        {children}
+                    </Page>
                 </div>
             </div>
         </>
     );
 };
 
-export default Page;
+export default Layout;
