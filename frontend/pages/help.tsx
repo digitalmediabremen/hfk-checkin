@@ -1,6 +1,6 @@
 import * as React from "react";
 import smoothscroll from 'smoothscroll-polyfill';
-import Page from "../components/common/Page";
+import Layout from "../components/common/Page";
 import Title from "../components/common/Title";
 import HelpContentEn from "../components/help/HelpContent-en";
 import { isClient } from "../config";
@@ -14,10 +14,10 @@ const HelpPage: React.FunctionComponent<HelpPageProps> = (props) => {
     
     const { t, locale } = useTranslation();
     return (
-        <Page>
+        <Layout>
             <Title>{t("Hilfe")}</Title>
             {locale === "en" && <HelpContentEn />}
-        </Page>
+        </Layout>
     );
 };
 

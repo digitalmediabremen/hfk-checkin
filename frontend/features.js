@@ -11,7 +11,7 @@ const features = {
 };
 
 function getHomeUrl () {
-    if (features.checkin) return "/checkin";
+    if (features.checkin) return "/profile";
     if (features.getin) return "/request";
     return "/";
 };

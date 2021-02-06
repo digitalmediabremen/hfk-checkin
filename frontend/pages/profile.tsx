@@ -14,6 +14,7 @@ import { useTranslation } from "../localization";
 import { DotPulse, LoadingInline } from "../components/common/Loading";
 import showIf from "../components/api/showIf";
 import features from "../features";
+import Layout from "../components/common/Page";
 
 interface ProfilePageProps {
     profile: Profile;
@@ -39,7 +40,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
     };
 
     return (
-        <>
+        <Layout>
             <style jsx>{`
                 .button-group {
                     margin-top: ${theme.spacing(2)}px;
@@ -77,7 +78,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
                     </Button> */}
                 {/* </div> */}
             </AlignContent>
-        </>
+        </Layout>
     );
 };
 

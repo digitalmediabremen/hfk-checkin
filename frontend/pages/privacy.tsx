@@ -6,18 +6,18 @@ import Subtitle from "../components/common/Subtitle";
 import Text from "../components/common/Text";
 import PrivacyContentDe from "../components/privacy/PrivacyContent-de";
 import PrivacyContentEn from "../components/privacy/PrivacyContent-en";
-import Page from "../components/common/Page";
+import Layout from "../components/common/Page";
 
 interface PrivacyPageProps {}
 
 const PrivacyPage: React.FunctionComponent<PrivacyPageProps> = (props) => {
     const { t, locale } = useTranslation();
     return (
-        <Page>
+        <Layout>
             <Title>{t("Datenschutzinformationen")}</Title>
             {locale === "de" && <PrivacyContentDe />}
             {locale === "en" && <PrivacyContentEn />}
-        </Page>
+        </Layout>
     );
 };
 
