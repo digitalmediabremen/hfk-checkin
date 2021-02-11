@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import React, { ReactNode } from "react";
+import { CSSTransition } from "react-transition-group";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import theme from "../../styles/theme";
@@ -7,10 +8,6 @@ import { useUpdateProfileFromAppStateAndUpdate } from "../api/ApiHooks";
 import EnterCodeButton from "./EnterCodeButton";
 import Footer from "./Footer";
 import StatusBar from "./StatusBar";
-
-interface LayoutProps {
-    hasActiveSubpage?: boolean;
-}
 
 export const Content: React.FunctionComponent = ({ children }) => (
     <>
@@ -35,7 +32,7 @@ export const Page: React.FunctionComponent<PageProps> = ({
     children,
     topBar,
     footer,
-    scroll
+    scroll,
 }) => {
     return (
         <>
@@ -73,11 +70,19 @@ export const Page: React.FunctionComponent<PageProps> = ({
     );
 };
 
+interface LayoutProps {
+    showSubPage?: boolean;
+    onSubpageDeactivated?: () => void;
+}
+
+import css from "styled-jsx/css";
+
 const Layout: React.FunctionComponent<LayoutProps> = ({
     children,
-    hasActiveSubpage,
+    showSubPage,
+    onSubpageDeactivated,
 }) => {
-    const subpageable = hasActiveSubpage !== undefined;
+    const subpageable = showSubPage !== undefined;
     return (
         <>
             <style jsx>
@@ -91,8 +96,18 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
                         width: 100vw;
                     }
 
-                    .wrapper.hasActiveSubpage {
+                    .wrapper.enter-active,
+                    .wrapper.enter-done {
                         transform: translateX(-100vw);
+                    }
+                    .wrapper.exit-active, .wrapper-exit-done {
+                        transform: translateX(0vw);
+                    }
+
+                    // disable transition effect when animation not running
+                    // to avoid animating window size changes.
+                    .wrapper.enter-done,  .wrapper-exit-done {
+                        transition: none;
                     }
 
                     .clip {
@@ -101,28 +116,36 @@ const Layout: React.FunctionComponent<LayoutProps> = ({
                     }
                 `}
             </style>
+
             <div className="clip">
-                <div
-                    className={classNames("wrapper", {
-                        hasActiveSubpage,
-                        subpageable,
-                    })}
+                <CSSTransition
+                    timeout={200}
+                    key={0}
+                    in={showSubPage}
+                    onExited={onSubpageDeactivated}
+                    
                 >
-                    <Page
-                        scroll={subpageable}
-                        topBar={
-                            <StatusBar
-                                action={() => {
-                                    if (!features.checkin) return undefined;
-                                    return <EnterCodeButton />;
-                                }}
-                            />
-                        }
-                        footer={<Footer />}
+                    <div
+                        className={classNames("wrapper", {
+                            subpageable,
+                        })}
                     >
-                        {children}
-                    </Page>
-                </div>
+                        <Page
+                            scroll={subpageable}
+                            topBar={
+                                <StatusBar
+                                    action={() => {
+                                        if (!features.checkin) return undefined;
+                                        return <EnterCodeButton />;
+                                    }}
+                                />
+                            }
+                            footer={<Footer />}
+                        >
+                            {children}
+                        </Page>
+                    </div>
+                </CSSTransition>
             </div>
         </>
     );

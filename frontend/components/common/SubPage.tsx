@@ -1,12 +1,13 @@
 import classNames from "classnames";
 import * as React from "react";
+import { ArrowLeft } from "react-feather";
 import theme from "../../styles/theme";
 import EllipseText from "./EllipseText";
 import { Content, Page } from "./Page";
 import Subtitle from "./Subtitle";
 import Title from "./Title";
 
-const SubPageHeader = ({ title }: { title: string }) => (
+const SubPageHeader = ({ title, onBack }: { title: string, onBack: () => void}) => (
     <>
         <style jsx>{`
             .header {
@@ -14,6 +15,7 @@ const SubPageHeader = ({ title }: { title: string }) => (
                 background: white;
                 border-bottom: 1px solid ${theme.primaryColor};
                 display: flex;
+                line-height: 0;
                 align-items: center;
                 justify-content: center;
                 padding: 0 ${theme.spacing(6)}px;
@@ -28,43 +30,41 @@ const SubPageHeader = ({ title }: { title: string }) => (
                 z-index: 200;
             }
             .title {
-                display: inline;
-                font-size: 1.3em;
+                display: inline-block;
+                font-size: 20px;
                 font-weight: bold;
                 color: ${theme.primaryColor};
+                max-width: 100%;
             }
 
             .back {
-                font-size: 2em;
-                line-height: 0em;
+                line-height: 0;
                 position: absolute;
                 left: ${theme.spacing(2)}px;
                 color: ${theme.primaryColor};
+                transform: translateY(1px);
             }
         `}</style>
-        <div className="header">
-            <span className="back">{"<"}</span>
-            <EllipseText>
-                <h1 className="title">{title}</h1>
-            </EllipseText>
+        <div className="header" onClick={onBack}>
+            <span className="back">
+                <ArrowLeft strokeWidth={1} />
+            </span>
+
+            <h1 className="title">
+                {title}
+            </h1>
         </div>
     </>
 );
 
-interface SubPageProps {
+export interface SubPageProps {
     title: string;
     onBack: () => void;
     children: () => React.ReactNode;
-    active: boolean;
 }
 
 const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
-    const { children, title, onBack, active } = props;
-    const [intitialRender, activate] = React.useState(active);
-    React.useEffect(() => {
-        if (active) activate(true);
-    }, [active]);
-    if (!intitialRender) return null;
+    const { children, title, onBack } = props;
     return (
         <>
             <style jsx>{`
@@ -82,9 +82,12 @@ const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
                     transform: translateX(100vw);
                 }
             `}</style>
-            <div className="sub-wrapper" onClick={onBack}>
-                <Page scroll topBar={<SubPageHeader title={title} />}>
-                        {children()}
+            <div className="sub-wrapper">
+                <Page
+                    scroll
+                    topBar={<SubPageHeader onBack={onBack} title={title} />}
+                >
+                    {children()}
                 </Page>
             </div>
         </>
