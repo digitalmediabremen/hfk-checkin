@@ -32,13 +32,14 @@ class RoomAdmin(admin.ModelAdmin, DynamicArrayMixin):
 class RoomAccess(Room):
     class Meta:
         proxy = True
+        managed = False
         verbose_name = _("Zugangsberechtigungen")
         verbose_name_plural = _("Zugangsberechtigungen zu Räumen")
 
 class RoomAccessAdmin(RoomAdmin):
-    autocomplete_fields = ('delegates',)
+    #autocomplete_fields = ('access_delegates','booking_delegates')
     inlines = [RoomAccessPolicyInline]
-    fields = ('name','numbers','delegates')
+    fields = ('name','numbers','access_delegates','booking_delegates')
     readonly_fields = fields
     list_display = RoomAdmin.list_display
 
@@ -56,7 +57,7 @@ class AttendanceInline(admin.TabularInline):
 
 class RoomBookingRequestAdmin(admin.ModelAdmin):
     inlines = [AttendanceInline]
-    readonly_fields = ('attendants','number_of_attendants','uuid')
+    readonly_fields = ('number_of_attendants','uuid')
     autocomplete_fields = ('rooms','organizer')
     # TODO display full_names instead of ID / __str__ of profile (if user has permission to do so)
     list_display = ['short_uuid', 'organizer', 'rooms_display', 'start', 'end', 'number_of_attendants', 'is_important', 'status']
@@ -75,6 +76,7 @@ admin.site.register(RoomBookingRequest,RoomBookingRequestAdmin)
 class ReservationAttendance(RoomBookingRequest):
     class Meta:
         proxy = True
+        managed = False
         verbose_name = _("Teilnahmelisten und -berechtigungen")
         verbose_name_plural = _("Teilnahmelisten und -berechtigungen zu Buchungen")
 
