@@ -26,7 +26,9 @@ pipenv install
 ```
 
 ### Set the right settings
-`export DJANGO_SETTINGS_MODULE=checkin.settings.local`
+```
+export DJANGO_SETTINGS_MODULE=checkin.settings.local
+```
 
 ### Set right SITE_DOMAIN
 This is custom variable to set the domain in Django's [sites framework](https://docs.djangoproject.com/en/3.1/ref/contrib/sites/))
