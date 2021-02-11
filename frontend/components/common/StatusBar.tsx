@@ -74,6 +74,10 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     height: ${theme.topBarHeight}px;
                 }
 
+                .profile {
+                    line-height: 1.3em;
+                }
+
                 .status.bar {
                     // overwrite
                     padding: ${theme.spacing(0)}px ${theme.spacing(3)}px;
@@ -132,7 +136,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                         {profile && (
                             <EllipseText>
                                 <Link href={appUrls.home}>
-                                    <a>
+                                    <a className="profile">
                                         <b>
                                             {profile.first_name}{" "}
                                             {profile.last_name}{" "}
@@ -147,7 +151,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                         )}
                         {!profile && initialized && (
                             <Link href={appUrls.home}>
-                                <a>
+                                <a className="profile">
                                     HfK
                                     <br />
                                     Checkin

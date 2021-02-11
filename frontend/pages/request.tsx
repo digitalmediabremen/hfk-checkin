@@ -1,12 +1,18 @@
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
+import needsProfile from "../components/api/needsProfile";
 import showIf from "../components/api/showIf";
+import useSubPage from "../components/api/useSubPage";
+import FormElement from "../components/common/FormElement";
+import FormElementWithSubpage from "../components/common/FormElementWithSubpage";
 import { Input } from "../components/common/Input";
 import { LoadingScreen } from "../components/common/Loading";
 import Layout from "../components/common/Page";
 import SubPage from "../components/common/SubPage";
 import Title from "../components/common/Title";
+import { appUrls } from "../config";
 import features from "../features";
+import { useTranslation } from "../localization";
 
 const DynamicComponent = dynamic(
     () => import("../components/help/HelpContent-de"),
@@ -16,31 +22,55 @@ const DynamicComponent = dynamic(
     }
 );
 
+type SubPagesType = "zeit" | "raum" | "personen" | "grund" | "nachricht";
+
 const RequestRoomPage = () => {
-    const [date, setDate] = useState<string>("2020-10-10");
-    const [active, setActive] = useState(false);
+    const { t } = useTranslation();
+    const {
+        subPageProps,
+        pageProps
+    } = useSubPage<SubPagesType>();
     return (
-        <Layout hasActiveSubpage={active}>
+        <Layout {...pageProps()}>
             <style jsx>{``}</style>
             <div>
-                <Title>Main Page</Title>
-                <SubPage active={active} title="Unterseite" onBack={() => setActive(!active)}>
-                    {() => <DynamicComponent />}
-                </SubPage>
-                <input type="time"></input>
-                <Input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.currentTarget.value)}
-                    name="test"
-                    label="test"
+                <FormElementWithSubpage
+                    {...subPageProps("zeit", () => <DynamicComponent />)}
+                    subPageTitle={t("Zeit eingeben")}
+                    // value={["Hallo", "Welt"]}
+                    label={t("Zeit")}
+                    shortLabel={t("Zeit")}
                 />
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem magnam excepturi iure sequi porro, esse adipisci ullam nisi voluptatem cupiditate nostrum aliquam quidem dolorem accusamus corrupti, fuga totam reiciendis? Lorem ipsum dolor sit amet consectetur adipisicing elit. Et libero magnam facere a doloribus officiis, molestias excepturi dolores reiciendis quidem voluptas praesentium optio sint laboriosam at sapiente, quis explicabo! Similique! Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptates veniam laborum quod, architecto non dicta odit hic laboriosam consequuntur neque cum. Odit mollitia ad quod distinctio sequi, recusandae aspernatur. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Architecto eveniet nesciunt nisi ullam. Ipsum, velit voluptatibus! Voluptatibus error laudantium ullam sequi officia, quas, nesciunt, quae nam vero tempora numquam sint!
-                <input onClick={() => setActive(!active)} type="date"></input>
-
+                <FormElementWithSubpage
+                    {...subPageProps("raum", () => <DynamicComponent />)}
+                    subPageTitle={t("Raum auswählen")}
+                    value={["erste Zeile", "zweite Zeile"]}
+                    label={t("Raum")}
+                />
+                <FormElementWithSubpage
+                    {...subPageProps("personen", () => <DynamicComponent />)}
+                    subPageTitle={t("Personen hinzufügen")}
+                    // value={["erste Zeile", "zweite Zeile"]}
+                    label={t("Personen")}
+                    shortLabel={t("Pers.")}
+                />
+                <FormElementWithSubpage
+                    {...subPageProps("grund", () => <DynamicComponent />)}
+                    subPageTitle={t("Buchungsgrund")}
+                    value={["erste Zeile", "zweite Zeile", "dritte Zeile"]}
+                    label={t("Buchungsgrund")}
+                    shortLabel={t("Grund")}
+                />
+                <FormElementWithSubpage
+                    {...subPageProps("nachricht", () => <DynamicComponent />)}
+                    subPageTitle={t("Nachricht")}
+                    value={["erste Zeile", "zweite Zeile"]}
+                    label={t("Nachricht")}
+                    shortLabel={t("Nach.")}
+                />
             </div>
         </Layout>
     );
 };
 
-export default showIf(() => features.getin, RequestRoomPage);
+export default showIf(() => features.getin, needsProfile(RequestRoomPage));

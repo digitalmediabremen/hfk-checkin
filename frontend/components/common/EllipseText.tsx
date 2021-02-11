@@ -11,6 +11,9 @@ const EllipseText = React.forwardRef<HTMLSpanElement, EllipseTextProps>(
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
+                        display: inline-block;
+                        width: 100%;
+                        line-height: inherit;
                     }
                 `}</style>
                 <span ref={ref}>{children}</span>
