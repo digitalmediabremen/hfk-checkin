@@ -53,7 +53,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
 
     return (
         <>
-        <style jsx>{`
+            <style jsx>{`
                 .status-bar {
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
@@ -65,10 +65,6 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     right: 0;
                     z-index: 200;
                     background: #fff;
-                }
-
-                .profile:hover {
-                    cursor: pointer;
                 }
 
                 .bar {
@@ -136,7 +132,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                         {profile && (
                             <EllipseText>
                                 <Link href={appUrls.home}>
-                                    <a className="profile">
+                                    <a>
                                         <b>
                                             {profile.first_name}{" "}
                                             {profile.last_name}{" "}
@@ -150,11 +146,13 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                             </EllipseText>
                         )}
                         {!profile && initialized && (
-                            <>
-                                HfK
-                                <br />
-                                Checkin
-                            </>
+                            <Link href={appUrls.home}>
+                                <a>
+                                    HfK
+                                    <br />
+                                    Checkin
+                                </a>
+                            </Link>
                         )}
                     </>
                     {action?.()}
