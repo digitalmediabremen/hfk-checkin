@@ -1,0 +1,1 @@
+from checkin.tracking.models import Profile
