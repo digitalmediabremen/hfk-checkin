@@ -79,11 +79,11 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    margin-left: 50px;
+                    margin-left: 48px;
                     transform: translate(-50%, -50%);
                     font-weight: normal;
-                    // display: none;
                 }
+
             `}</style>
             {styles}
             <FormElementBase {...formElementBaseProps}>
@@ -92,6 +92,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                 <div className="date-wrapper">
                     {hasOverlap && <span className="plus-one-day">+1 Tag</span>}
                     <TimeInputPolyfill
+                        title=""
                         aria-label="Close"
                         type="time"
                         name="time"
