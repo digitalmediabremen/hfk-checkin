@@ -1,25 +1,26 @@
-import * as React from "react";
+import React, { Fragment, FunctionComponent, ReactNode } from "react";
+import css from "styled-jsx/css";
 
-interface EllipseTextProps {}
-
-const EllipseText = React.forwardRef<HTMLSpanElement, EllipseTextProps>(
-    ({ children }, ref) => {
-        return (
-            <>
-                <style jsx>{`
-                    span {
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                        display: inline-block;
-                        width: 100%;
-                        line-height: inherit;
-                    }
-                `}</style>
-                <span ref={ref}>{children}</span>
-            </>
-        );
+const { className, styles } = css.resolve`
+    * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: inherit; 
     }
-);
+`;
+
+interface EllipseTextProps {
+    children: (className: string) => ReactNode;
+}
+
+const EllipseText: FunctionComponent<EllipseTextProps> = ({children}) => {
+    return (
+        <>
+            {children(className)}
+            {styles}
+        </>
+    );
+};
 
 export default EllipseText;

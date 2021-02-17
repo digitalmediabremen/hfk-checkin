@@ -5,6 +5,7 @@ import { appUrls } from "../../config";
 import theme from "../../styles/theme";
 import EllipseText from "./EllipseText";
 import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import FormElementLabel from "./FormElementLabel";
 
 export interface FormElementProps extends FormElementBaseProps {
     label: string;
@@ -23,8 +24,7 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
     const [firstValue, ...otherValues] = !Array.isArray(value)
         ? [value]
         : value;
-    const multiline = !!otherValues;
-    const shownLabel = (value !== undefined && shortLabel) || label;
+    const multiline = otherValues.length > 0;
     return (
         <>
             <style jsx>{`
@@ -32,46 +32,40 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                     margin-left: auto;
                 }
 
-                .multiline {
+                .form-value.multiline {
                     line-height: 1.3em;
                 }
 
                 .form-value {
-                }
-
-                .form-label {
-                    min-width: 0;
-                    font-size: 12px;
-                    line-height: 12px;
-                    text-transform: Uppercase;
-                    color: ${theme.disabledColor};
-
-                    margin-bottom: -1px;
-                    padding-right: ${theme.spacing(1)}px;
-                }
-
-                .form-label.constrain-width {
-                    flex: 0 1 ${theme.spacing(7)}px;
+                    line-height: 1em;
+                    display: inline;
+                    width: 100%;
                 }
             `}</style>
             <FormElementBase extendedWidth {...formElementBaseProps}>
-                <span
-                    className={classNames("form-label", {
-                        "constrain-width": !!value,
-                    })}
-                >
-                    <EllipseText>{shownLabel}</EllipseText>
-                </span>
+                <FormElementLabel
+                    name={label}
+                    shortName={shortLabel}
+                    extendedWidth={!value}
+                />
                 {value && (
-                    <div className={classNames("form-value", { multiline })}>
-                        <b>{firstValue}</b>
-                        {otherValues.map((value) => (
-                            <Fragment key={value}>
-                                <br />
-                                {value}
-                            </Fragment>
-                        ))}
-                    </div>
+                    <EllipseText>
+                        {(ellipsed) => (
+                            <div
+                                className={classNames("form-value", ellipsed, {
+                                    multiline,
+                                })}
+                            >
+                                <b>{firstValue}</b>
+                                {otherValues.map((value) => (
+                                    <Fragment key={value}>
+                                        <br />
+                                        {value}
+                                    </Fragment>
+                                ))}
+                            </div>
+                        )}
+                    </EllipseText>
                 )}
                 {arrow && (
                     <span className="push-right">
