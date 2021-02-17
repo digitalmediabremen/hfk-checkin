@@ -6,19 +6,22 @@ import React, {
     useState,
 } from "react";
 import { useTranslation } from "../../localization";
-import FormElementBase from "./FormElementBase";
+import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import FormElementLabel from "./FormElementLabel";
 import "date-input-polyfill";
 import { empty, notEmpty } from "../../src/util/TypeUtil";
 import {
     assertDateString,
     fromDateString,
+    fromTime,
     getDateString,
     getFormattedDate,
+    maxDate,
     minDate,
 } from "../../src/util/DateTimeUtil";
+import FormInput from "./FormInput";
 
-interface FormDateInputProps {
+interface FormDateInputProps extends FormElementBaseProps {
     value?: Date;
     onChange: (date: Date | undefined) => void;
     minValue?: Date;
@@ -30,13 +33,16 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
     onChange,
     minValue,
     label,
+    ...formElementBaseProps
 }) => {
     const { t, locale } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
 
+    console.log("min-value", minValue);
+
     const value =
         notEmpty(minValue) && notEmpty(_value)
-            ? minDate(_value, minValue)
+            ? maxDate(_value, minValue)
             : _value;
 
     const inputDate = value ? getDateString(value) : "";
@@ -48,11 +54,11 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
             const dateString = e.target.value as string | null;
 
             // validate input
-            if (empty(dateString)) return onChange(undefined);
+            if (empty(dateString) || dateString === "") return onChange(undefined);
             assertDateString(dateString);
             const inputDate = fromDateString(dateString);
             const newDate = notEmpty(minValue)
-                ? minDate(inputDate, minValue)
+                ? maxDate(inputDate, minValue)
                 : inputDate;
             onChange(newDate);
         },
@@ -87,60 +93,12 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
                     transform: translate(-50%, -50%);
                 }
 
-                input,
                 .pretty-value {
                     font-weight: bold;
                 }
-
-                input {
-                    text-align: center;
-                    background: none;
-                    border: none;
-                    padding: 0;
-                    margin: 0;
-                    color: blue;
-                    opacity: 0;
-                    display: block;
-                    width: 100%;
-
-                    /* safari date fix */
-                    -webkit-appearance: textfield;
-                    -moz-appearance: textfield;
-                    min-height: 1.2em;
-                }
-
-                input[type="date"]::-webkit-datetime-edit {
-                    text-align: center;
-                    width: 100%;
-                    background: red;
-                }
-
-                // ::-webkit-datetime-edit
-                input::-webkit-datetime-edit-fields-wrapper {
-                }
-                // ::-webkit-datetime-edit-month-field
-                // ::-webkit-datetime-edit-day-field
-                // ::-webkit-datetime-edit-year-field
-                // ::-webkit-datetime-edit-text,
-                input::-webkit-clear-button,
-                input::-webkit-inner-spin-button {
-                    display: none;
-                }
-
-                input[type="date"]::-webkit-calendar-picker-indicator {
-                    background: transparent;
-                    bottom: 0;
-                    color: transparent;
-                    cursor: pointer;
-                    height: auto;
-                    left: 0;
-                    position: absolute;
-                    right: 0;
-                    top: 0;
-                    width: auto;
-                }
             `}</style>
             <FormElementBase
+                { ...formElementBaseProps }
                 onClick={() => {
                     console.log("click");
                     inputRef.current?.focus();
@@ -149,13 +107,17 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
                 <FormElementLabel name={label} />
                 <div className="date-wrapper">
                     <span className="pretty-value">{formattedDate}</span>
-                    <input
+                    <FormInput
+                        style={{
+                            textAlign: "center",
+                            opacity: 0
+                        }}
                         ref={inputRef}
                         type="date"
-                        min="2021-03-01"
+                        { ...( notEmpty(minValue) ? { min: getDateString(minValue) } : undefined) }
                         value={inputDate}
                         onChange={handleChange}
-                    ></input>
+                    ></FormInput>
                 </div>
             </FormElementBase>
         </>

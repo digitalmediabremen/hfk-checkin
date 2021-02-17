@@ -98,7 +98,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                     background-color: ${theme.disabledColor}
                 }
 
-                .button:hover, .button:active {
+                 .button:active {
                     cursor: pointer;
                     transform: scale(0.95);
                 }
