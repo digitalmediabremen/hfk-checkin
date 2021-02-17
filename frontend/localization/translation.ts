@@ -3,6 +3,7 @@ import { Translation } from ".";
 const translation: Translation = {
     "en": {
       "common": {
+        "Zeit eingeben": "enter time",
         "nicht verifiziert": "Not verified",
         "Hilfe": "Help",
         "jetzt": "now",

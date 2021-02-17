@@ -20,7 +20,7 @@ const useSubPage = <SubPagesType extends string>() => {
 
     const pageProps = useCallback(() => ({
         showSubPage: showSubPage,
-        onSubpageDeactivated: () => setActiveSubPage(undefined)
+        onSubPageHide: () => setActiveSubPage(undefined),
     }), [showSubPage]);
 
     return {

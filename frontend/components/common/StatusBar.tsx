@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import Link from "next/link";
 import React, { ReactNode } from "react";
 import { CSSTransition } from "react-transition-group";
@@ -6,7 +7,7 @@ import { useTranslation } from "../../localization";
 import Profile from "../../model/Profile";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
-import EllipseText from "./EllipseText";
+import EllipseText, { className } from "./EllipseText";
 
 interface StatusBarProps {
     action?: () => ReactNode;
@@ -135,18 +136,24 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     <>
                         {profile && (
                             <EllipseText>
-                                <Link href={appUrls.home}>
-                                    <a className="profile">
-                                        <b>
-                                            {profile.first_name}{" "}
-                                            {profile.last_name}{" "}
-                                            {!profile.verified &&
-                                                ` (${t("nicht verifiziert")})`}
-                                        </b>
-                                        <br />
-                                        {!!profile.phone && profile.phone}
-                                    </a>
-                                </Link>
+                                {(ellipsed) => (
+                                    <Link href={appUrls.home}>
+                                        <a
+                                            className={classNames("profile", ellipsed)}
+                                        >
+                                            <b>
+                                                {profile.first_name}{" "}
+                                                {profile.last_name}{" "}
+                                                {!profile.verified &&
+                                                    ` (${t(
+                                                        "nicht verifiziert"
+                                                    )})`}
+                                            </b>
+                                            <br />
+                                            {!!profile.phone && profile.phone}
+                                        </a>
+                                    </Link>
+                                )}
                             </EllipseText>
                         )}
                         {!profile && initialized && (

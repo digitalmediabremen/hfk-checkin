@@ -6,7 +6,7 @@ import Subtitle from "../components/common/Subtitle";
 import Text from "../components/common/Text";
 import PrivacyContentDe from "../components/privacy/PrivacyContent-de";
 import PrivacyContentEn from "../components/privacy/PrivacyContent-en";
-import Layout from "../components/common/Page";
+import Layout from "../components/common/Layout";
 
 interface PrivacyPageProps {}
 
