@@ -1,11 +1,7 @@
-import classNames from "classnames";
 import * as React from "react";
 import { ArrowLeft } from "react-feather";
 import theme from "../../styles/theme";
-import EllipseText from "./EllipseText";
-import { Content, Page } from "./Page";
-import Subtitle from "./Subtitle";
-import Title from "./Title";
+import Page from "./Page";
 
 const SubPageHeader = ({ title, onBack }: { title: string, onBack: () => void}) => (
     <>
@@ -27,7 +23,6 @@ const SubPageHeader = ({ title, onBack }: { title: string, onBack: () => void}) 
                 top: 0;
                 left: 0;
                 right: 0;
-                z-index: 200;
             }
             .title {
                 display: inline-block;

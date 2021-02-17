@@ -177,6 +177,7 @@ const Loading: React.FunctionComponent<LoadingProps> = ({
         <>
             <style jsx>{`
                 .show {
+                    will-change: opacity;
                     opacity: 0;
                     animation: show 0.2s linear forwards;
                 }
