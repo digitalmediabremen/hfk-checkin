@@ -8,6 +8,7 @@ import FormCheckbox from "../../common/FormCheckbox";
 import FormElementBase from "../../common/FormElementBase";
 import Notice from "../../common/Notice";
 import SectionTitle from "../../common/SectionTitle";
+import SubPage from "../../common/SubPage";
 
 interface SetPersonSubpageProps {}
 
@@ -20,7 +21,12 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
         <>
             <style jsx>{``}</style>
             <SectionTitle>{t("Studierende hinzufügen")}</SectionTitle>
-            <FormAmountInput value={amount} minValue={1} onChange={setAmount} bottomSpacing={2} />
+            <FormAmountInput
+                value={amount}
+                minValue={1}
+                onChange={setAmount}
+                bottomSpacing={2}
+            />
             <Notice>
                 {t(
                     "Gib die Anzahl der Studierenden an, die an dieser Buchung teilnehmen."
@@ -37,6 +43,9 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
             <Button outline onClick={() => {}}>
                 {t("Externe hinzufügen")}
             </Button>
+            <SubPage title="SubSubSeitsdflkjsdflkjsdfe" onBack={() => {}} depth={2}>
+                {() => <>test</>}
+            </SubPage>
             <Notice>
                 {t(
                     "HfK externe Personen müssen angemeldet werden. Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. Deine Anfrage wird an das Corona Office geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern"

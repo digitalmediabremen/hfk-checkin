@@ -36,9 +36,13 @@ const Page: React.FunctionComponent<PageProps> = ({
                     margin: 0 auto;
                     // overflow-x: scroll;
                 }
-                .scroll {
+                .page-wrapper {
+                    position: absolute;
+                    width: 100vw;
                     height: 100vh;
-                    overflow-x: scroll;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    background-color: #fff;
                 }
                 .page.with-topbar {
                     padding-top: ${theme.topBarHeight}px;
@@ -47,7 +51,7 @@ const Page: React.FunctionComponent<PageProps> = ({
                     padding-bottom: ${theme.footerHeight}px;
                 }
             `}</style>
-            <div className={classNames({ scroll })}>
+            <div className={classNames({ "page-wrapper": scroll })}>
                 <div
                     className={classNames("page", {
                         "with-topbar": !!topBar,

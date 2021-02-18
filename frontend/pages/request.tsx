@@ -4,9 +4,11 @@ import needsProfile from "../components/api/needsProfile";
 import showIf from "../components/api/showIf";
 import useSubPage from "../components/api/useSubPage";
 import { Button } from "../components/common/Button";
+import FormElement from "../components/common/FormElement";
 import FormElementWithSubpage from "../components/common/FormElementWithSubpage";
 import Layout from "../components/common/Layout";
 import { LoadingScreen } from "../components/common/Loading";
+import SubPage from "../components/common/SubPage";
 import features from "../features";
 import { useTranslation } from "../localization";
 
@@ -28,45 +30,64 @@ const SetPersonSubpage = createDynamicPage(
     () => import("../components/getin/subpages/SetPersonSubpage")
 );
 
-type SubPagesType = "zeit" | "raum" | "personen" | "grund" | "nachricht";
-
 const RequestRoomPage = () => {
     const { t } = useTranslation();
-    const { subPageProps, pageProps } = useSubPage<SubPagesType>();
+    const { subPageProps, pageProps, handlerProps } = useSubPage({
+        zeit: 1,
+        raum: 1,
+        personen: [2, "raum"],
+        grund: 1,
+        nachricht: 1,
+    });
+
     return (
-        <Layout {...pageProps()}>
+        <Layout {...pageProps()} subPages={<>
+            <SubPage title={t("Zeit festlegen")} {...subPageProps("zeit")}>
+                {() => <SetTimeSubpage />}
+            </SubPage>
+            <SubPage title={t("Raum auswählen")} {...subPageProps("raum")}>
+                {() => <SetRoomSubpage />}
+            </SubPage>
+            <SubPage
+                title={t("Personen hinzufügen")}
+                {...subPageProps("personen")}
+            >
+                {() => <SetPersonSubpage />}
+            </SubPage>
+            <SubPage
+                title={t("Personen hinzufügen")}
+                {...subPageProps("personen")}
+            >
+                {() => <SetPersonSubpage />}
+            </SubPage>
+            <SubPage title={t("Grund angeben")} {...subPageProps("grund")}>
+                {() => <SetTimeSubpage />}
+            </SubPage>
+            <SubPage title={t("Nachricht")} {...subPageProps("nachricht")}>
+                {() => <SetTimeSubpage />}
+            </SubPage>
+        </>}>
             <style jsx>{``}</style>
             <div>
-                <FormElementWithSubpage
-                    {...subPageProps("zeit", () => <SetTimeSubpage />)}
-                    subPageTitle={t("Zeit eingeben")}
+                <FormElement
+                    {...handlerProps("zeit")}
                     label={t("Zeitangaben tätigen")}
                     shortLabel={t("Zeit")}
+                    arrow
                 />
-                <FormElementWithSubpage
-                    {...subPageProps("raum", () => <SetRoomSubpage />)}
-                    subPageTitle={t("Raum auswählen")}
+                <FormElement
+                    {...handlerProps("raum")}
                     value={["erste Zeile", "zweite Zeile"]}
                     label={t("Raum")}
                 />
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Cupiditate necessitatibus adipisci velit sit iusto blanditiis
-                aliquam nostrum facilis in mollitia. Adipisci, ducimus soluta.
-                Atque ut officia hic nam, qui eaque. Lorem ipsum dolor sit amet
-                consectetur adipisicing elit. Possimus, enim alias? Nesciunt
-                assumenda ad nulla? Delectus ducimus, ad incidunt nulla,
-                repudiandae quisquam dolores, magnam modi similique neque id a
-                fugit!
-                <FormElementWithSubpage
-                    {...subPageProps("personen", () => <SetPersonSubpage />)}
-                    subPageTitle={t("Personen hinzufügen")}
+                <FormElement
+                    {...handlerProps("personen")}
                     value="Leonard Puhl"
                     label={t("Personen")}
                     shortLabel={t("Pers.")}
                 />
-                <FormElementWithSubpage
-                    {...subPageProps("grund", () => <DynamicComponent />)}
-                    subPageTitle={t("Buchungsgrund")}
+                <FormElement
+                    {...handlerProps("grund")}
                     value={[
                         "erste Zeile die auch sehr lang ist und nervt.",
                         "zweite Zeile",
@@ -75,9 +96,8 @@ const RequestRoomPage = () => {
                     label={t("Buchungsgrund")}
                     shortLabel={t("Grund")}
                 />
-                <FormElementWithSubpage
-                    {...subPageProps("nachricht", () => <DynamicComponent />)}
-                    subPageTitle={t("Nachricht")}
+                <FormElement
+                    {...handlerProps("nachricht")}
                     value={["erste Zeile", "zweite Zeile"]}
                     label={t("Nachricht")}
                     shortLabel={t("Nach.")}
