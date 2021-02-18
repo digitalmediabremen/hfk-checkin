@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import React, { ReactNode } from "react";
+import { use100vh } from "react-div-100vh";
 import theme from "../../styles/theme";
 
 export const Content: React.FunctionComponent = ({ children }) => (
@@ -27,21 +28,22 @@ const Page: React.FunctionComponent<PageProps> = ({
     footer,
     scroll,
 }) => {
+    const height = use100vh();
     return (
         <>
             <style jsx>{`
                 .page {
-                    min-height: 100vh;
+                    height: ${height}px;
                     max-width: 500px;
                     margin: 0 auto;
-                    // overflow-x: scroll;
+                    overflow-y: auto;
+                    overflow-x: hidden;
                 }
                 .page-wrapper {
                     position: absolute;
                     width: 100vw;
-                    height: 100vh;
-                    overflow-y: auto;
-                    overflow-x: hidden;
+                    height: ${height}px;
+                    overflow: hidden;
                     background-color: #fff;
                 }
                 .page.with-topbar {
