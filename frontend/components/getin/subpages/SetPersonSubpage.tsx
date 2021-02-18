@@ -10,9 +10,11 @@ import Notice from "../../common/Notice";
 import SectionTitle from "../../common/SectionTitle";
 import SubPage from "../../common/SubPage";
 
-interface SetPersonSubpageProps {}
+export interface SetPersonSubpageProps {
+    onAddExternalPerson: () => void
+}
 
-const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) => {
+const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({ onAddExternalPerson}) => {
     const { t } = useTranslation();
     const [amount, setAmount] = useState(1);
     const [checked, setChecked] = useState(false);
@@ -40,12 +42,9 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
             />
             <Divider />
             <SectionTitle>{t("HfK externe Person anmelden")}</SectionTitle>
-            <Button outline onClick={() => {}}>
+            <Button outline onClick={onAddExternalPerson}>
                 {t("Externe hinzufügen")}
             </Button>
-            <SubPage title="SubSubSeitsdflkjsdflkjsdfe" onBack={() => {}} depth={2}>
-                {() => <>test</>}
-            </SubPage>
             <Notice>
                 {t(
                     "HfK externe Personen müssen angemeldet werden. Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. Deine Anfrage wird an das Corona Office geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern"

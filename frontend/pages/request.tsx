@@ -1,72 +1,101 @@
 import dynamic from "next/dynamic";
 import React from "react";
-import needsProfile from "../components/api/needsProfile";
 import showIf from "../components/api/showIf";
 import useSubPage from "../components/api/useSubPage";
 import { Button } from "../components/common/Button";
 import FormElement from "../components/common/FormElement";
-import FormElementWithSubpage from "../components/common/FormElementWithSubpage";
 import Layout from "../components/common/Layout";
 import { LoadingScreen } from "../components/common/Loading";
 import SubPage from "../components/common/SubPage";
+import { SetPersonSubpageProps } from "../components/getin/subpages/SetPersonSubpage";
+
 import features from "../features";
 import { useTranslation } from "../localization";
 
-const createDynamicPage = (func: () => any) =>
-    dynamic(func, {
+const createDynamicPage = <
+    T extends {}
+>(
+    func: () => any
+) =>
+    (dynamic(func, {
         loading: () => <LoadingScreen />,
         ssr: false,
-    });
+    }) as unknown) as React.ComponentType<T>;
 
-const SetTimeSubpage = createDynamicPage(
+const DynamicSetTimeSubpage = createDynamicPage(
     () => import("../components/getin/subpages/SetTimeSubpage")
 );
 
-const SetRoomSubpage = createDynamicPage(
+const DynamicSetRoomSubpage = createDynamicPage(
     () => import("../components/getin/subpages/SetRoomSubpage")
 );
 
-const SetPersonSubpage = createDynamicPage(
+const DynamicSetPersonSubpage = createDynamicPage<SetPersonSubpageProps>(
     () => import("../components/getin/subpages/SetPersonSubpage")
 );
 
 const RequestRoomPage = () => {
     const { t } = useTranslation();
     const { subPageProps, pageProps, handlerProps } = useSubPage({
-        zeit: 1,
-        raum: 1,
-        personen: [2, "raum"],
-        grund: 1,
-        nachricht: 1,
+        zeit: {},
+        raum: {},
+        personen: {},
+        grund: {},
+        nachricht: {},
     });
 
     return (
-        <Layout {...pageProps()} subPages={<>
-            <SubPage title={t("Zeit festlegen")} {...subPageProps("zeit")}>
-                {() => <SetTimeSubpage />}
-            </SubPage>
-            <SubPage title={t("Raum auswählen")} {...subPageProps("raum")}>
-                {() => <SetRoomSubpage />}
-            </SubPage>
-            <SubPage
-                title={t("Personen hinzufügen")}
-                {...subPageProps("personen")}
-            >
-                {() => <SetPersonSubpage />}
-            </SubPage>
-            <SubPage
-                title={t("Personen hinzufügen")}
-                {...subPageProps("personen")}
-            >
-                {() => <SetPersonSubpage />}
-            </SubPage>
-            <SubPage title={t("Grund angeben")} {...subPageProps("grund")}>
-                {() => <SetTimeSubpage />}
-            </SubPage>
-            <SubPage title={t("Nachricht")} {...subPageProps("nachricht")}>
-                {() => <SetTimeSubpage />}
-            </SubPage>
-        </>}>
+        <Layout
+            {...pageProps()}
+            subPages={
+                <>
+                    <SubPage
+                        title={t("Zeit festlegen")}
+                        {...subPageProps("zeit")}
+                    >
+                        {() => <DynamicSetTimeSubpage />}
+                    </SubPage>
+                    <SubPage
+                        title={t("Raum auswählen")}
+                        {...subPageProps("raum")}
+                    >
+                        {() => <DynamicSetRoomSubpage />}
+                    </SubPage>
+                    <SubPage
+                        title={t("Personen hinzufügen")}
+                        {...subPageProps("personen")}
+                    >
+                        {() => (
+                            <DynamicSetPersonSubpage
+                                onAddExternalPerson={() => {}}
+                            />
+                        )}
+                    </SubPage>
+                    <SubPage
+                        title={t("Personen hinzufügen")}
+                        {...subPageProps("personen")}
+                    >
+                        {() => (
+                            <DynamicSetPersonSubpage
+                                onAddExternalPerson={handlerProps("grund").onClick}
+                            />
+                        )}
+                    </SubPage>
+                    <SubPage
+                        title={t("Grund angeben")}
+                        {...subPageProps("grund", "personen")}
+                    >
+                        {() => <DynamicSetTimeSubpage />}
+                    </SubPage>
+                    <SubPage
+                        title={t("Nachricht")}
+                        {...subPageProps("nachricht")}
+                    >
+                        {() => <DynamicSetTimeSubpage />}
+                    </SubPage>
+                </>
+            }
+        >
             <style jsx>{``}</style>
             <div>
                 <FormElement
