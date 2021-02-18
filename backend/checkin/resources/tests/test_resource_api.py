@@ -8,7 +8,7 @@ from freezegun import freeze_time
 from guardian.shortcuts import assign_perm, remove_perm
 from ..enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
 
-from resources.models import (Day, Equipment, Period, Reservation, ReservationMetadataSet, ResourceEquipment,
+from checkin.resources.models import (Day, Equipment, Period, Reservation, ReservationMetadataSet, ResourceEquipment,
                               ResourceType, Unit, UnitAuthorization, UnitGroup)
 from .utils import assert_response_objects, check_only_safe_methods_allowed, is_partial_dict_in_list, MAX_QUERIES
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from resources.models import Equipment, ResourceGroup, ResourceEquipment
+from checkin.resources.models import Equipment, ResourceGroup, ResourceEquipment
 from django.urls import reverse
 
 from .utils import assert_response_objects, check_only_safe_methods_allowed

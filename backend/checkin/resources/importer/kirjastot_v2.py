@@ -9,7 +9,7 @@ import delorean
 from django.db import transaction
 from django.db.models import Q
 
-from resources.models import Unit, UnitIdentifier
+from checkin.resources.models import Unit, UnitIdentifier
 from .base import Importer, register_importer
 
 from sentry_sdk import capture_message

@@ -4,7 +4,7 @@ import requests
 from django.conf import settings
 from django.db import transaction
 from sentry_sdk import capture_message
-from resources.models import Unit
+from checkin.resources.models import Unit
 from typing import Dict, List
 from .base import Importer, register_importer
 

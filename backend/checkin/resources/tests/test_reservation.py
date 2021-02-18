@@ -8,8 +8,8 @@ from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
-from resources.enums import UnitAuthorizationLevel
-from resources.models import (
+from checkin.resources.enums import UnitAuthorizationLevel
+from checkin.resources.models import (
     Day,
     Period,
     Reservation,

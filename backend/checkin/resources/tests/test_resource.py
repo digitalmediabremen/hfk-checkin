@@ -7,10 +7,10 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import activate
 from PIL import Image
 
-from resources.enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
-from resources.errors import InvalidImage
-from resources.models import ResourceImage, Resource
-from resources.tests.utils import create_resource_image, get_test_image_data, get_field_errors
+from checkin.resources.enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
+from checkin.resources.errors import InvalidImage
+from checkin.resources.models import ResourceImage, Resource
+from checkin.resources.tests.utils import create_resource_image, get_test_image_data, get_field_errors
 
 
 @pytest.mark.django_db

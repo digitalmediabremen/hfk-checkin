@@ -5,7 +5,7 @@ from django.urls import reverse
 from guardian.shortcuts import assign_perm
 
 from .utils import check_only_safe_methods_allowed
-from resources.tests.test_api import JWTMixin
+from checkin.resources.tests.test_api import JWTMixin
 
 
 @pytest.fixture

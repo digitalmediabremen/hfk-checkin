@@ -16,8 +16,8 @@ from rest_framework.exceptions import ErrorDetail
 
 from caterings.models import CateringOrder, CateringProvider
 
-from resources.enums import UnitAuthorizationLevel
-from resources.models import (Period, Day, Reservation, Resource, ResourceGroup, ReservationMetadataField,
+from checkin.resources.enums import UnitAuthorizationLevel
+from checkin.resources.models import (Period, Day, Reservation, Resource, ResourceGroup, ReservationMetadataField,
                               ReservationMetadataSet, UnitAuthorization, ReservationCancelReasonCategory,
                               ReservationCancelReason, Attachment)
 from notifications.models import NotificationTemplate, NotificationType

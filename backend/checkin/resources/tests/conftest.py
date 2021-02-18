@@ -5,10 +5,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from rest_framework.test import APIClient, APIRequestFactory
 
-from resources.enums import UnitAuthorizationLevel
-from resources.models import Resource, ResourceType, Unit, UnitIdentifier, Purpose, Day, Period
-from resources.models import Equipment, EquipmentAlias, ResourceEquipment, EquipmentCategory, TermsOfUse, ResourceGroup
-from resources.models import AccessibilityValue, AccessibilityViewpoint, ResourceAccessibility, UnitAccessibility
+from checkin.resources.enums import UnitAuthorizationLevel
+from checkin.resources.models import Resource, ResourceType, Unit, UnitIdentifier, Purpose, Day, Period
+from checkin.resources.models import Equipment, EquipmentAlias, ResourceEquipment, EquipmentCategory, TermsOfUse, ResourceGroup
+from checkin.resources.models import AccessibilityValue, AccessibilityViewpoint, ResourceAccessibility, UnitAccessibility
 from munigeo.models import Municipality
 
 

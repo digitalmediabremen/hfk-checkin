@@ -9,7 +9,7 @@ import functools
 from django.conf import settings
 from modeltranslation.translator import translator
 
-from resources.models import Resource, Unit, UnitIdentifier
+from checkin.resources.models import Resource, Unit, UnitIdentifier
 from munigeo.models import Municipality
 
 

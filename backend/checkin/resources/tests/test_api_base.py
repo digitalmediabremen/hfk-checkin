@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from resources.api.base import TranslatedModelSerializer
-from resources.models import ResourceEquipment
+from checkin.resources.api.base import TranslatedModelSerializer
+from checkin.resources.models import ResourceEquipment
 
 
 @pytest.mark.django_db

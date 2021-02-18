@@ -5,7 +5,7 @@ from django.http.response import FileResponse, HttpResponseBadRequest
 from django.views.generic import DetailView
 from easy_thumbnails.files import get_thumbnailer
 
-from resources.models import ResourceImage
+from checkin.resources.models import ResourceImage
 
 
 def parse_dimension_string(dim):
