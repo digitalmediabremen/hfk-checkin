@@ -1,5 +1,5 @@
 import React, { SFC, useContext, useReducer, Reducer, useEffect } from "react";
-import { AppAction, AppState } from "../../model/AppState";
+import { AppAction, AppState } from "../../src/model/AppState";
 
 const initialAppState: AppState = {
     initialized: false,

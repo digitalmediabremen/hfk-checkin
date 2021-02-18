@@ -24,7 +24,7 @@ const useSubPage = <SubPagesMap extends SubPagesMapType>(
     const [direction, setDirection] = useState<TransitionDirection>("left");
     // register router events
     useEffect(() => {
-        const changeHandler = (route: string, e) => {
+        const changeHandler = (route: string) => {
             // console.log("event", route, e)
         }
         router.events.on("routeChangeStart", changeHandler);

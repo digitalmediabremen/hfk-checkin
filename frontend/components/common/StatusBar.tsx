@@ -4,10 +4,10 @@ import React, { ReactNode } from "react";
 import { CSSTransition } from "react-transition-group";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
-import Profile from "../../model/Profile";
+import Profile from "../../src/model/Profile";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
-import EllipseText, { className } from "./EllipseText";
+import EllipseText from "./EllipseText";
 
 interface StatusBarProps {
     action?: () => ReactNode;

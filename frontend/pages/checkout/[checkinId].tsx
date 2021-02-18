@@ -10,8 +10,8 @@ import Loading from "../../components/common/Loading";
 import Title from "../../components/common/Title";
 import useParam from "../../components/hooks/useParam";
 import features from "../../features";
-import { LastCheckin } from "../../model/Checkin";
-import Profile from "../../model/Profile";
+import { LastCheckin } from "../../src/model/Checkin";
+import Profile from "../../src/model/Profile";
 import { CheckinComponent } from "../checkin/[locationCode]";
 
 interface CheckoutPageProps {

@@ -1,9 +1,9 @@
-import Profile, { ProfileUpdate, assertProfile } from "../../model/Profile";
+import Profile, { ProfileUpdate, assertProfile } from "../../src/model/Profile";
 import * as config from "../../config";
 import { NextPageContext } from "next";
-import { Location } from "../../model/Location";
+import { Location } from "../../src/model/Location";
 import { ServerResponse } from "http";
-import { Checkin, CheckinOrigin, LastCheckin } from "../../model/Checkin";
+import { Checkin, CheckinOrigin, LastCheckin } from "../../src/model/Checkin";
 
 export type ApiResponse<T> =
     | {

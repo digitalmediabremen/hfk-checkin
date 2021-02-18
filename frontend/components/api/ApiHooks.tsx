@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { usePageVisibility } from "react-page-visibility";
 import { httpStatuses } from "../../config";
-import { Checkin, LastCheckin } from "../../model/Checkin";
-import { Location } from "../../model/Location";
-import Profile, { ProfileUpdate } from "../../model/Profile";
+import { Checkin, LastCheckin } from "../../src/model/Checkin";
+import { Location } from "../../src/model/Location";
+import Profile, { ProfileUpdate } from "../../src/model/Profile";
 import { useAppState, AppStateProvider } from "../common/AppStateProvider";
 import {
     doCheckinRequest,
