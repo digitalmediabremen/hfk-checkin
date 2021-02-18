@@ -21,8 +21,8 @@ import useParam from "../../components/hooks/useParam";
 import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
-import { LastCheckin } from "../../model/Checkin";
-import Profile from "../../model/Profile";
+import { LastCheckin } from "../../src/model/Checkin";
+import Profile from "../../src/model/Profile";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: LastCheckin;

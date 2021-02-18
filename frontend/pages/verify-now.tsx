@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { appUrls } from "../config";
 import Subtitle from "../components/common/Subtitle";
 import { useUpdateProfileFromAppStateAndUpdate } from "../components/api/ApiHooks";
-import Profile from "../model/Profile";
+import Profile from "../src/model/Profile";
 import theme from "../styles/theme";
 
 interface VerifyProfilePageProps {}
