@@ -4,11 +4,14 @@ import theme from "../../styles/theme";
 
 export interface FormElementBaseProps {
     button?: true;
+    primary?: boolean;
     noBottomSpacing?: true;
     bottomSpacing?: number;
     extendedWidth?: true;
     onClick?: () => void;
     noOutline?: boolean;
+    className?: string;
+    narrow?: boolean;
 }
 
 const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
@@ -19,14 +22,23 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     onClick,
     children,
     noOutline,
+    primary,
+    narrow,
+    className,
 }) => {
     const ComponentType = button ? "button" : "div";
     const outline = !noOutline;
+    const interactable = !!onClick;
     return (
         <>
             <style jsx>{`
                 .form-element-base {
+                    border: none;
                     display: flex;
+                    width: ${extendedWidth
+                        ? `calc(100% + ${theme.spacing(3) - 2}px)`
+                        : "100%"};
+
                     align-items: center;
 
                     margin-bottom: ${noBottomSpacing
@@ -38,14 +50,32 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     margin-right: ${extendedWidth
                         ? -theme.spacing(1.5) + 1
                         : 0}px;
-                    min-height: ${theme.spacing(7)}px;
+
+                    padding: 0;
+
+                    min-height: ${theme.spacing(narrow ? 6 : 7)}px;
                     color: ${theme.primaryColor};
+                    background-color: ${theme.secondaryColor};
 
                     line-height: 0;
                 }
 
-                .form-element-base:hover {
-                    cursor: ${onClick ? "pointer": "inherit"};
+                .form-element-base.primary {
+                    background-color: ${theme.primaryColor};
+                    color: ${theme.secondaryColor};
+                }
+
+                .form-element-base.interactable:hover {
+                    cursor: "pointer";
+                }
+
+                .form-element-base.interactable {
+                    transition: transform 0.2s;
+                    touch-action: manipulation;
+                }
+
+                .form-element-base.interactable:active {
+                    transform: scale(0.98);
                 }
 
                 .outline {
@@ -56,7 +86,11 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
             `}</style>
             <ComponentType
                 onClick={onClick}
-                className={classNames("form-element-base", { outline })}
+                className={classNames("form-element-base", className, {
+                    outline,
+                    primary,
+                    interactable,
+                })}
             >
                 {children}
             </ComponentType>
