@@ -1,20 +1,23 @@
 import React, { useState } from "react";
-import { Minus, Plus, Square } from "react-feather";
+import { ArrowLeft, ArrowRight, Minus, Plus, Square } from "react-feather";
 import { useTranslation } from "../../../localization";
 import { Button } from "../../common/Button";
 import Divider from "../../common/Divider";
 import FormAmountInput from "../../common/FormAmountInput";
 import FormCheckbox from "../../common/FormCheckbox";
 import FormElementBase from "../../common/FormElementBase";
+import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 import SectionTitle from "../../common/SectionTitle";
 import SubPage from "../../common/SubPage";
 
 export interface SetPersonSubpageProps {
-    onAddExternalPerson: () => void
+    onAddExternalPerson: () => void;
 }
 
-const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({ onAddExternalPerson}) => {
+const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
+    onAddExternalPerson,
+}) => {
     const { t } = useTranslation();
     const [amount, setAmount] = useState(1);
     const [checked, setChecked] = useState(false);
@@ -27,6 +30,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({ onAd
                 value={amount}
                 minValue={1}
                 onChange={setAmount}
+                
                 bottomSpacing={2}
             />
             <Notice>
@@ -42,9 +46,14 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({ onAd
             />
             <Divider />
             <SectionTitle>{t("HfK externe Person anmelden")}</SectionTitle>
-            <Button outline onClick={onAddExternalPerson}>
+            <NewButton
+                onClick={onAddExternalPerson}
+                iconRight={<ArrowRight strokeWidth={1} />}
+                bottomSpacing={3}
+            >
                 {t("Externe hinzufügen")}
-            </Button>
+            </NewButton>
+
             <Notice>
                 {t(
                     "HfK externe Personen müssen angemeldet werden. Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. Deine Anfrage wird an das Corona Office geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern"

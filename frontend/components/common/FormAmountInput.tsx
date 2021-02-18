@@ -18,7 +18,7 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
     ...formBaseElementProps
 }) => {
     const calculateValue = (v: number) =>
-        Math.max(Math.max(v, minValue || v), maxValue || v);
+        Math.min(Math.max(v, minValue || v), maxValue || v);
 
     const value = calculateValue(_value);
     const handleChange = (modifier: number) => {
@@ -48,6 +48,7 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                     border-radius: 50%;
                     cursor: pointer;
                     outline: none;
+                    touch-action: manipulation;
                 }
 
                 button.button-circle[disabled] {
@@ -65,7 +66,7 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                 }
             `}</style>
             <FormElementBase noOutline {...formBaseElementProps}>
-                <span className="amount">{value}</span>
+                <span key={value} className="amount">{value}</span>
                 <div className="control">
                     <button
                         disabled={plusDisabled}

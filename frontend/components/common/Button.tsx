@@ -74,7 +74,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                 }
 
                 .button > span {
-                    font-size: 1.3em;
+                    font-size: 1.0em;
                     font-weight: bold;
                     position: relative;
                     width: auto;

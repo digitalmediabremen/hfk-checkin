@@ -1,19 +1,37 @@
-import { useState, useCallback, ReactNode } from "react";
+import { route } from "next/dist/next-server/server/router";
+import { useRouter } from "next/router";
+import { useState, useCallback, ReactNode, useEffect } from "react";
 import { LayoutProps, TransitionDirection } from "../common/Layout";
 import { SubPageProps } from "../common/SubPage";
 
 type DepthMapEntry = {};
 type SubPagesMapType = Record<string, DepthMapEntry>;
 
+// const activeSubPageFromRoute (route: string)
+
 const useSubPage = <SubPagesMap extends SubPagesMapType>(
     subPagesMap: SubPagesMap
 ) => {
     type SubPagesType = keyof SubPagesMap;
-    const [activeSubPage, setActiveSubPage] = useState<
-        SubPagesType | undefined
-    >();
+    const router = useRouter();
+
+    const activeSubPage = Object.keys(router.query)[0];
+    const setActiveSubPage = (subPage?: SubPagesType) =>
+        router.push(`/request${`/?${subPage || "s"}`}`, undefined, {
+            shallow: true,
+        });
 
     const [direction, setDirection] = useState<TransitionDirection>("left");
+    // register router events
+    useEffect(() => {
+        const changeHandler = (route: string, e) => {
+            // console.log("event", route, e)
+        }
+        router.events.on("routeChangeStart", changeHandler);
+        return () => {
+            router.events.off("routeChangeStart", changeHandler)
+        }
+    }, []);
 
     const subPageProps: (
         subpage: SubPagesType,
