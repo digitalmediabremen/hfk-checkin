@@ -1,24 +1,17 @@
-import React, {
-    ChangeEvent,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
-import { useTranslation } from "../../localization";
-import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
-import FormElementLabel from "./FormElementLabel";
 import "date-input-polyfill";
-import { empty, notEmpty } from "../../src/util/TypeUtil";
+import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "../../localization";
 import {
     assertDateString,
     fromDateString,
-    fromTime,
     getDateString,
     getFormattedDate,
     maxDate,
     minDate,
 } from "../../src/util/DateTimeUtil";
+import { empty, notEmpty } from "../../src/util/TypeUtil";
+import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import FormElementLabel from "./FormElementLabel";
 import FormInput from "./FormInput";
 
 interface FormDateInputProps extends FormElementBaseProps {
@@ -40,6 +33,11 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
 
     console.log("min-value", minValue);
 
+    useEffect(() => {
+        async function im() {}
+        im();
+    });
+
     const value =
         notEmpty(minValue) && notEmpty(_value)
             ? maxDate(_value, minValue)
@@ -54,7 +52,8 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
             const dateString = e.target.value as string | null;
 
             // validate input
-            if (empty(dateString) || dateString === "") return onChange(undefined);
+            if (empty(dateString) || dateString === "")
+                return onChange(undefined);
             assertDateString(dateString);
             const inputDate = fromDateString(dateString);
             const newDate = notEmpty(minValue)
@@ -98,7 +97,7 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
                 }
             `}</style>
             <FormElementBase
-                { ...formElementBaseProps }
+                {...formElementBaseProps}
                 onClick={() => {
                     console.log("click");
                     inputRef.current?.focus();
@@ -110,11 +109,13 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
                     <FormInput
                         style={{
                             textAlign: "center",
-                            opacity: 0
+                            opacity: 0,
                         }}
                         ref={inputRef}
                         type="date"
-                        { ...( notEmpty(minValue) ? { min: getDateString(minValue) } : undefined) }
+                        {...(notEmpty(minValue)
+                            ? { min: getDateString(minValue) }
+                            : undefined)}
                         value={inputDate}
                         onChange={handleChange}
                     ></FormInput>

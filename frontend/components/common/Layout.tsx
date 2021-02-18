@@ -40,11 +40,11 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
                         transition: transform 300ms;
                     }
 
-                    .page-animation.left > :global(.page-wrapper) {
+                    :global(.left  .page-animation > .page-wrapper) {
                         transform: translateX(-100vw);
                     }
 
-                    .page-animation.right > :global(.page-wrapper) {
+                    :global(.right .page-animation > .page-wrapper) {
                         transform: translateX(100vw);
                     }
 
@@ -60,23 +60,23 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
 
                     // leave
 
-                    .page-animation.exit-active.left > :global(.page-wrapper) {
-                        transform: translateX(-100vw);
+                    :global(.left .page-animation.exit-active > .page-wrapper) {
+                        transform: translateX(100vw);
                     }
 
-                    .page-animation.exit-active.right > :global(.page-wrapper) {
-                        transform: translateX(100vw);
+                    :global(.right .page-animation.exit-active > .page-wrapper) {
+                        transform: translateX(-100vw);
                     }
 
                     .page-animation.exit-done > :global(.page-wrapper) {
                         z-index: 1;
                     }
 
-                    .page-animation.exit-done.right > :global(.page-wrapper) {
+                    :global(.left .page-animation.exit-done > .page-wrapper) {
                         transform: translateX(100vw);
                     }
 
-                    .page-animation.exit-done.left > :global(.page-wrapper) {
+                    :global(.left .page-animation.exit-done.right > .page-wrapper) {
                         transform: translateX(-100vw);
                     }
 
@@ -96,14 +96,14 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
                 `}
             </style>
 
-            <TransitionGroup component="div" appear>
+            <TransitionGroup className={direction} component="div" appear>
                 <CSSTransition
                     key={activeSubPage || "home"}
                     timeout={300}
                     mountOnEnter={true}
                     unmountOnExit={true}
                 >
-                    <div className={classNames("page-animation", direction)}>
+                    <div className={classNames("page-animation")}>
                         {children}
                     </div>
                 </CSSTransition>

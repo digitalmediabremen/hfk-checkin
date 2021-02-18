@@ -2,52 +2,35 @@ import { useState, useCallback, ReactNode } from "react";
 import { LayoutProps, TransitionDirection } from "../common/Layout";
 import { SubPageProps } from "../common/SubPage";
 
-type ExcludeArray<T> = T extends Array<unknown> ? never : T;
-type DepthMapEntry<T> = number | [number, keyof ExcludeArray<T>];
-type DepthMapType<T> = Record<string, DepthMapEntry<T>>;
+type DepthMapEntry = {};
+type SubPagesMapType = Record<string, DepthMapEntry>;
 
-const useSubPage = <SubPagesType extends DepthMapType<SubPagesType>>(
-    depthMap: SubPagesType
+const useSubPage = <SubPagesMap extends SubPagesMapType>(
+    subPagesMap: SubPagesMap
 ) => {
-    const getDepth = (entry: DepthMapEntry<SubPagesType>): number => {
-        if (Array.isArray(entry)) {
-            const [depth] = entry;
-            return depth;
-        }
-        return entry;
-    };
-
-    const getNextSubPage = (
-        entry: DepthMapEntry<SubPagesType>
-    ): undefined | keyof SubPagesType => {
-        if (Array.isArray(entry)) {
-            const [, subpage] = entry;
-            return subpage as keyof SubPagesType;
-        }
-        return undefined;
-    };
-
+    type SubPagesType = keyof SubPagesMap;
     const [activeSubPage, setActiveSubPage] = useState<
-        keyof SubPagesType | undefined
+        SubPagesType | undefined
     >();
 
     const [direction, setDirection] = useState<TransitionDirection>("left");
 
     const subPageProps: (
-        subpage: keyof SubPagesType
+        subpage: SubPagesType,
+        returnToSubPage?: SubPagesType
     ) => Omit<SubPageProps, "title" | "children"> = useCallback(
-        (subpage: keyof SubPagesType) => ({
+        (subpage: SubPagesType, returnToSubPage?: SubPagesType) => ({
             active: activeSubPage === subpage,
-            onBack: (nextSubPage?: keyof SubPagesType) => {
-                setActiveSubPage(nextSubPage);
+            onBack: (nextSubPage?: SubPagesType) => {
+                setActiveSubPage(nextSubPage || returnToSubPage);
                 setDirection("left");
-            }
+            },
         }),
         [activeSubPage]
     );
 
     const handlerProps = useCallback(
-        (nextSubPage: keyof SubPagesType) => ({
+        (nextSubPage: SubPagesType) => ({
             onClick: () => {
                 setDirection("right");
                 setActiveSubPage(nextSubPage);
