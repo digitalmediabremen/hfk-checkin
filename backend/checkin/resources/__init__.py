@@ -1,1 +1,1 @@
-default_app_config = 'resources.apps.ResourceConfig'
+default_app_config = 'checkin.resources.apps.ResourceConfig'

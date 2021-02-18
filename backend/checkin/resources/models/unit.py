@@ -1,6 +1,6 @@
 import pytz
 from django.conf import settings
-from django.contrib.gis.db import models
+from django.db import models
 from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
@@ -13,7 +13,7 @@ from .utils import create_datetime_days_from_now, get_translated, get_translated
 from .availability import get_opening_hours
 from .permissions import UNIT_PERMISSIONS
 
-from munigeo.models import Municipality
+#from munigeo.models import Municipality
 
 
 class UnitQuerySet(models.QuerySet):
@@ -71,7 +71,7 @@ class Unit(ModifiableModel, AutoIdentifiedModel):
     name = models.CharField(verbose_name=_('Name'), max_length=200)
     description = models.TextField(verbose_name=_('Description'), null=True, blank=True)
 
-    location = models.PointField(verbose_name=_('Location'), null=True, srid=settings.DEFAULT_SRID)
+#    location = models.PointField(verbose_name=_('Location'), null=True, srid=settings.DEFAULT_SRID)
     time_zone = models.CharField(verbose_name=_('Time zone'), max_length=50,
                                  default=_get_default_timezone)
 
@@ -84,13 +84,13 @@ class Unit(ModifiableModel, AutoIdentifiedModel):
     www_url = models.URLField(verbose_name=_('WWW link'), max_length=400, null=True, blank=True)
     address_postal_full = models.CharField(verbose_name=_('Full postal address'), max_length=100,
                                            null=True, blank=True)
-    municipality = models.ForeignKey(Municipality, null=True, blank=True, verbose_name=_('Municipality'),
-                                     on_delete=models.SET_NULL)
+#    municipality = models.ForeignKey(Municipality, null=True, blank=True, verbose_name=_('Municipality'),
+#                                     on_delete=models.SET_NULL)
 
-    picture_url = models.URLField(verbose_name=_('Picture URL'), max_length=200,
-                                  null=True, blank=True)
-    picture_caption = models.CharField(verbose_name=_('Picture caption'), max_length=200,
-                                       null=True, blank=True)
+#    picture_url = models.URLField(verbose_name=_('Picture URL'), max_length=200,
+#                                  null=True, blank=True)
+#    picture_caption = models.CharField(verbose_name=_('Picture caption'), max_length=200,
+#                                       null=True, blank=True)
 
     reservable_max_days_in_advance = models.PositiveSmallIntegerField(verbose_name=_('Reservable max. days in advance'),
                                                                       null=True, blank=True)

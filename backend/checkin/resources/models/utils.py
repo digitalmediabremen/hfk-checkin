@@ -15,8 +15,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.utils.timezone import localtime
 from rest_framework.reverse import reverse
-from icalendar import Calendar, Event, vDatetime, vText, vGeo
-import xlsxwriter
+#from icalendar import Calendar, Event, vDatetime, vText, vGeo
+#import xlsxwriter
 
 
 DEFAULT_LANG = settings.LANGUAGES[0][0]
@@ -134,7 +134,7 @@ def generate_reservation_xlsx(reservations):
 
     :rtype: bytes
     """
-    from resources.models import Reservation, RESERVATION_EXTRA_FIELDS
+    from checkin.resources.models import Reservation, RESERVATION_EXTRA_FIELDS
 
     output = io.BytesIO()
     workbook = xlsxwriter.Workbook(output)

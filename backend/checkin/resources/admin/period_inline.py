@@ -2,7 +2,7 @@ from collections import OrderedDict
 from django import forms
 from django.contrib.admin.options import InlineModelAdmin
 from django.utils.translation import ugettext_lazy
-from resources.models import Day, Period, Resource, Unit
+from checkin.resources.models import Day, Period, Resource, Unit
 
 DAYS_OF_WEEK_MAP = dict(Day.DAYS_OF_WEEK)
 WEEKDAY_PREFIX = "wd-"

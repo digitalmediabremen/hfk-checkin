@@ -10,7 +10,7 @@ import django.db.models as dbm
 from django.db.models import Q
 from django.apps import apps
 from django.conf import settings
-from django.contrib.gis.db import models
+from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
@@ -18,14 +18,14 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
-from django.utils.six import BytesIO
+from six import BytesIO
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.contrib.postgres.fields import HStoreField, DateTimeRangeField
-from .gistindex import GistIndex
+#from .gistindex import GistIndex
 from psycopg2.extras import DateTimeTZRange
-from image_cropping import ImageRatioField
-from PIL import Image
+#from image_cropping import ImageRatioField
+#from PIL import Image
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from guardian.core import ObjectPermissionChecker
 
@@ -117,26 +117,26 @@ class Purpose(ModifiableModel, NameIdentifiedModel):
         return "%s (%s)" % (get_translated(self, 'name'), self.id)
 
 
-class TermsOfUse(ModifiableModel, AutoIdentifiedModel):
-    TERMS_TYPE_PAYMENT = 'payment_terms'
-    TERMS_TYPE_GENERIC = 'generic_terms'
-
-    TERMS_TYPES = (
-        (TERMS_TYPE_PAYMENT, _('Payment terms')),
-        (TERMS_TYPE_GENERIC, _('Generic terms'))
-    )
-
-    id = models.CharField(primary_key=True, max_length=100)
-    name = models.CharField(verbose_name=_('Name'), max_length=200)
-    text = models.TextField(verbose_name=_('Text'))
-    terms_type = models.CharField(blank=False, verbose_name=_('Terms type'), max_length=40, choices=TERMS_TYPES, default=TERMS_TYPE_GENERIC)
-
-    class Meta:
-        verbose_name = pgettext_lazy('singular', 'terms of use')
-        verbose_name_plural = pgettext_lazy('plural', 'terms of use')
-
-    def __str__(self):
-        return get_translated_name(self)
+# class TermsOfUse(ModifiableModel, AutoIdentifiedModel):
+#     TERMS_TYPE_PAYMENT = 'payment_terms'
+#     TERMS_TYPE_GENERIC = 'generic_terms'
+#
+#     TERMS_TYPES = (
+#         (TERMS_TYPE_PAYMENT, _('Payment terms')),
+#         (TERMS_TYPE_GENERIC, _('Generic terms'))
+#     )
+#
+#     id = models.CharField(primary_key=True, max_length=100)
+#     name = models.CharField(verbose_name=_('Name'), max_length=200)
+#     text = models.TextField(verbose_name=_('Text'))
+#     terms_type = models.CharField(blank=False, verbose_name=_('Terms type'), max_length=40, choices=TERMS_TYPES, default=TERMS_TYPE_GENERIC)
+#
+#     class Meta:
+#         verbose_name = pgettext_lazy('singular', 'terms of use')
+#         verbose_name_plural = pgettext_lazy('plural', 'terms of use')
+#
+#     def __str__(self):
+#         return get_translated_name(self)
 
 
 class ResourceQuerySet(models.QuerySet):
@@ -218,7 +218,7 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
     area = models.PositiveIntegerField(verbose_name=_('Area (m2)'), null=True, blank=True)
 
     # if not set, location is inherited from unit
-    location = models.PointField(verbose_name=_('Location'), null=True, blank=True, srid=settings.DEFAULT_SRID)
+#    location = models.PointField(verbose_name=_('Location'), null=True, blank=True, srid=settings.DEFAULT_SRID)
 
     min_period = models.DurationField(verbose_name=_('Minimum reservation time'),
                                       default=datetime.timedelta(minutes=30))
@@ -226,40 +226,40 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
     slot_size = models.DurationField(verbose_name=_('Slot size for reservation time'),
                                      default=datetime.timedelta(minutes=30))
 
-    equipment = EquipmentField(Equipment, through='ResourceEquipment', verbose_name=_('Equipment'))
+    #equipment = EquipmentField(Equipment, through='ResourceEquipment', verbose_name=_('Equipment'))
     max_reservations_per_user = models.PositiveIntegerField(verbose_name=_('Maximum number of active reservations per user'),
                                                             null=True, blank=True)
     reservable = models.BooleanField(verbose_name=_('Reservable'), default=False)
     reservation_info = models.TextField(verbose_name=_('Reservation info'), null=True, blank=True)
     responsible_contact_info = models.TextField(verbose_name=_('Responsible contact info'), blank=True)
-    generic_terms = models.ForeignKey(TermsOfUse, verbose_name=_('Generic terms'), null=True, blank=True,
-                                      on_delete=models.SET_NULL, related_name='resources_where_generic_terms')
-    payment_terms = models.ForeignKey(TermsOfUse, verbose_name=_('Payment terms'), null=True, blank=True,
-                                      on_delete=models.SET_NULL, related_name='resources_where_payment_terms')
+#    generic_terms = models.ForeignKey(TermsOfUse, verbose_name=_('Generic terms'), null=True, blank=True,
+#                                      on_delete=models.SET_NULL, related_name='resources_where_generic_terms')
+#    payment_terms = models.ForeignKey(TermsOfUse, verbose_name=_('Payment terms'), null=True, blank=True,
+#                                      on_delete=models.SET_NULL, related_name='resources_where_payment_terms')
     specific_terms = models.TextField(verbose_name=_('Specific terms'), blank=True)
     reservation_requested_notification_extra = models.TextField(verbose_name=_(
         'Extra content to "reservation requested" notification'), blank=True)
     reservation_confirmed_notification_extra = models.TextField(verbose_name=_(
         'Extra content to "reservation confirmed" notification'), blank=True)
-    min_price = models.DecimalField(verbose_name=_('Min price'), max_digits=8, decimal_places=2,
-                                             blank=True, null=True, validators=[MinValueValidator(Decimal('0.00'))])
-    max_price = models.DecimalField(verbose_name=_('Max price'), max_digits=8, decimal_places=2,
-                                             blank=True, null=True, validators=[MinValueValidator(Decimal('0.00'))])
-
-    price_type = models.CharField(
-        max_length=32, verbose_name=_('price type'), choices=PRICE_TYPE_CHOICES, default=PRICE_TYPE_HOURLY
-    )
-
-    access_code_type = models.CharField(verbose_name=_('Access code type'), max_length=20, choices=ACCESS_CODE_TYPES,
-                                        default=ACCESS_CODE_TYPE_NONE)
+#    min_price = models.DecimalField(verbose_name=_('Min price'), max_digits=8, decimal_places=2,
+#                                              blank=True, null=True, validators=[MinValueValidator(Decimal('0.00'))])
+#    max_price = models.DecimalField(verbose_name=_('Max price'), max_digits=8, decimal_places=2,
+#                                              blank=True, null=True, validators=[MinValueValidator(Decimal('0.00'))])
+#
+#     price_type = models.CharField(
+#         max_length=32, verbose_name=_('price type'), choices=PRICE_TYPE_CHOICES, default=PRICE_TYPE_HOURLY
+#     )
+#
+#     access_code_type = models.CharField(verbose_name=_('Access code type'), max_length=20, choices=ACCESS_CODE_TYPES,
+#                                         default=ACCESS_CODE_TYPE_NONE)
     # Access codes can be generated either by the general Respa code or
     # the Kulkunen app. Kulkunen will set the `generate_access_codes`
     # attribute by itself if special access code considerations are
     # needed.
-    generate_access_codes = models.BooleanField(
-        verbose_name=_('Generate access codes'), default=True, editable=False,
-        help_text=_('Should access codes generated by the general system')
-    )
+    # generate_access_codes = models.BooleanField(
+    #     verbose_name=_('Generate access codes'), default=True, editable=False,
+    #     help_text=_('Should access codes generated by the general system')
+    # )
     reservable_max_days_in_advance = models.PositiveSmallIntegerField(verbose_name=_('Reservable max. days in advance'),
                                                                       null=True, blank=True)
     reservable_min_days_in_advance = models.PositiveSmallIntegerField(verbose_name=_('Reservable min. days in advance'),
@@ -272,7 +272,7 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
         verbose_name=_('External reservation URL'),
         help_text=_('A link to an external reservation system if this resource is managed elsewhere'),
         null=True, blank=True)
-    reservation_extra_questions = models.TextField(verbose_name=_('Reservation extra questions'), blank=True)
+    # reservation_extra_questions = models.TextField(verbose_name=_('Reservation extra questions'), blank=True)
     attachments = models.ManyToManyField(Attachment, verbose_name=_('Attachments'), blank=True)
 
     objects = ResourceQuerySet.as_manager()
@@ -740,115 +740,115 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
             raise ValidationError({'min_period': _('This value must be a multiple of slot_size')})
 
 
-class ResourceImage(ModifiableModel):
-    TYPES = (
-        ('main', _('Main photo')),
-        ('ground_plan', _('Ground plan')),
-        ('map', _('Map')),
-        ('other', _('Other')),
-    )
-    resource = models.ForeignKey('Resource', verbose_name=_('Resource'), db_index=True,
-                                 related_name='images', on_delete=models.CASCADE)
-    type = models.CharField(max_length=20, verbose_name=_('Type'), choices=TYPES)
-    caption = models.CharField(max_length=100, verbose_name=_('Caption'), null=True, blank=True)
-    # FIXME: name images based on resource, type, and sort_order
-    image = models.ImageField(verbose_name=_('Image'), upload_to='resource_images')
-    image_format = models.CharField(max_length=10)
-    cropping = ImageRatioField('image', '800x800', verbose_name=_('Cropping'))
-    sort_order = models.PositiveSmallIntegerField(verbose_name=_('Sort order'))
+# class ResourceImage(ModifiableModel):
+#     TYPES = (
+#         ('main', _('Main photo')),
+#         ('ground_plan', _('Ground plan')),
+#         ('map', _('Map')),
+#         ('other', _('Other')),
+#     )
+#     resource = models.ForeignKey('Resource', verbose_name=_('Resource'), db_index=True,
+#                                  related_name='images', on_delete=models.CASCADE)
+#     type = models.CharField(max_length=20, verbose_name=_('Type'), choices=TYPES)
+#     caption = models.CharField(max_length=100, verbose_name=_('Caption'), null=True, blank=True)
+#     # FIXME: name images based on resource, type, and sort_order
+#     image = models.ImageField(verbose_name=_('Image'), upload_to='resource_images')
+#     image_format = models.CharField(max_length=10)
+#     cropping = ImageRatioField('image', '800x800', verbose_name=_('Cropping'))
+#     sort_order = models.PositiveSmallIntegerField(verbose_name=_('Sort order'))
+#
+#     def save(self, *args, **kwargs):
+#         self._process_image()
+#         if self.sort_order is None:
+#             other_images = self.resource.images.order_by('-sort_order')
+#             if not other_images:
+#                 self.sort_order = 0
+#             else:
+#                 self.sort_order = other_images[0].sort_order + 1
+#         if self.type == "main":
+#             other_main_images = self.resource.images.filter(type="main")
+#             if other_main_images.exists():
+#                 # Demote other main images to "other".
+#                 # The other solution would be to raise an error, but that would
+#                 # lead to a more awkward API experience (having to first patch other
+#                 # images for the resource, then fix the last one).
+#                 other_main_images.update(type="other")
+#         return super(ResourceImage, self).save(*args, **kwargs)
+#
+#     def full_clean(self, exclude=(), validate_unique=True):
+#         if "image" not in exclude:
+#             self._process_image()
+#         return super(ResourceImage, self).full_clean(exclude, validate_unique)
+#
+#     def _process_image(self):
+#         """
+#         Preprocess the uploaded image file, if required.
+#
+#         This may transcode the image to a JPEG or PNG if it's not either to begin with.
+#
+#         :raises InvalidImage: Exception raised if the uploaded file is not valid.
+#         """
+#         if not self.image:  # No image set - we can't do this right now
+#             return
+#
+#         if self.image_format:  # Assume that if image_format is set, no further processing is required
+#             return
+#
+#         try:
+#             img = Image.open(self.image)
+#             img.load()
+#         except Exception as exc:
+#             raise InvalidImage("Image %s not valid (%s)" % (self.image, exc)) from exc
+#
+#         if img.format not in ("JPEG", "PNG"):  # Needs transcoding.
+#             if self.type in ("map", "ground_plan"):
+#                 target_format = "PNG"
+#                 save_kwargs = {}
+#             else:
+#                 target_format = "JPEG"
+#                 save_kwargs = {"quality": 75, "progressive": True}
+#             image_bio = BytesIO()
+#             img.save(image_bio, format=target_format, **save_kwargs)
+#             self.image = ContentFile(
+#                 image_bio.getvalue(),
+#                 name=os.path.splitext(self.image.name)[0] + ".%s" % target_format.lower()
+#             )
+#             self.image_format = target_format
+#         else:  # All good -- keep the file as-is.
+#             self.image_format = img.format
+#
+#     def get_full_url(self):
+#         base_url = getattr(settings, 'RESPA_IMAGE_BASE_URL', None)
+#         if not base_url:
+#             return None
+#         return base_url.rstrip('/') + reverse('resource-image-view', args=[str(self.id)])
+#
+#     def __str__(self):
+#         return "%s image for %s" % (self.get_type_display(), str(self.resource))
+#
+#     class Meta:
+#         verbose_name = _('resource image')
+#         verbose_name_plural = _('resource images')
+#         unique_together = (('resource', 'sort_order'),)
 
-    def save(self, *args, **kwargs):
-        self._process_image()
-        if self.sort_order is None:
-            other_images = self.resource.images.order_by('-sort_order')
-            if not other_images:
-                self.sort_order = 0
-            else:
-                self.sort_order = other_images[0].sort_order + 1
-        if self.type == "main":
-            other_main_images = self.resource.images.filter(type="main")
-            if other_main_images.exists():
-                # Demote other main images to "other".
-                # The other solution would be to raise an error, but that would
-                # lead to a more awkward API experience (having to first patch other
-                # images for the resource, then fix the last one).
-                other_main_images.update(type="other")
-        return super(ResourceImage, self).save(*args, **kwargs)
 
-    def full_clean(self, exclude=(), validate_unique=True):
-        if "image" not in exclude:
-            self._process_image()
-        return super(ResourceImage, self).full_clean(exclude, validate_unique)
-
-    def _process_image(self):
-        """
-        Preprocess the uploaded image file, if required.
-
-        This may transcode the image to a JPEG or PNG if it's not either to begin with.
-
-        :raises InvalidImage: Exception raised if the uploaded file is not valid.
-        """
-        if not self.image:  # No image set - we can't do this right now
-            return
-
-        if self.image_format:  # Assume that if image_format is set, no further processing is required
-            return
-
-        try:
-            img = Image.open(self.image)
-            img.load()
-        except Exception as exc:
-            raise InvalidImage("Image %s not valid (%s)" % (self.image, exc)) from exc
-
-        if img.format not in ("JPEG", "PNG"):  # Needs transcoding.
-            if self.type in ("map", "ground_plan"):
-                target_format = "PNG"
-                save_kwargs = {}
-            else:
-                target_format = "JPEG"
-                save_kwargs = {"quality": 75, "progressive": True}
-            image_bio = BytesIO()
-            img.save(image_bio, format=target_format, **save_kwargs)
-            self.image = ContentFile(
-                image_bio.getvalue(),
-                name=os.path.splitext(self.image.name)[0] + ".%s" % target_format.lower()
-            )
-            self.image_format = target_format
-        else:  # All good -- keep the file as-is.
-            self.image_format = img.format
-
-    def get_full_url(self):
-        base_url = getattr(settings, 'RESPA_IMAGE_BASE_URL', None)
-        if not base_url:
-            return None
-        return base_url.rstrip('/') + reverse('resource-image-view', args=[str(self.id)])
-
-    def __str__(self):
-        return "%s image for %s" % (self.get_type_display(), str(self.resource))
-
-    class Meta:
-        verbose_name = _('resource image')
-        verbose_name_plural = _('resource images')
-        unique_together = (('resource', 'sort_order'),)
-
-
-class ResourceEquipment(ModifiableModel):
-    """This model represents equipment instances in resources.
-
-    Contains data and description related to a specific equipment instance.
-    Data field can be used to set custom attributes for more flexible and fast filtering.
-    """
-    resource = models.ForeignKey(Resource, related_name='resource_equipment', on_delete=models.CASCADE)
-    equipment = models.ForeignKey(Equipment, related_name='resource_equipment', on_delete=models.CASCADE)
-    data = HStoreField(null=True, blank=True)
-    description = models.TextField(blank=True)
-
-    class Meta:
-        verbose_name = pgettext_lazy('singular', 'resource equipment')
-        verbose_name_plural = pgettext_lazy('plural', 'resource equipment')
-
-    def __str__(self):
-        return "%s / %s" % (self.equipment, self.resource)
+# class ResourceEquipment(ModifiableModel):
+#     """This model represents equipment instances in resources.
+#
+#     Contains data and description related to a specific equipment instance.
+#     Data field can be used to set custom attributes for more flexible and fast filtering.
+#     """
+#     resource = models.ForeignKey(Resource, related_name='resource_equipment', on_delete=models.CASCADE)
+#     equipment = models.ForeignKey(Equipment, related_name='resource_equipment', on_delete=models.CASCADE)
+#     data = HStoreField(null=True, blank=True)
+#     description = models.TextField(blank=True)
+#
+#     class Meta:
+#         verbose_name = pgettext_lazy('singular', 'resource equipment')
+#         verbose_name_plural = pgettext_lazy('plural', 'resource equipment')
+#
+#     def __str__(self):
+#         return "%s / %s" % (self.equipment, self.resource)
 
 
 class ResourceGroup(ModifiableModel):
@@ -884,9 +884,9 @@ class ResourceDailyOpeningHours(models.Model):
         unique_together = [
             ('resource', 'open_between')
         ]
-        indexes = [
-            GistIndex(fields=['open_between'])
-        ]
+        # indexes = [
+        #     GistIndex(fields=['open_between'])
+        # ]
 
     def __str__(self):
         if isinstance(self.open_between, tuple):

@@ -8,7 +8,7 @@ import mimetypes
 from django.utils import timezone
 import django.contrib.postgres.fields as pgfields
 from django.conf import settings
-from django.contrib.gis.db import models
+from django.db import models
 from django.utils import translation
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
@@ -16,8 +16,11 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from psycopg2.extras import DateTimeTZRange
 
-from notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
-from resources.signals import (
+#from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
+NotificationTemplate = object()
+NotificationTemplateException = object()
+NotificationType = object()
+from checkin.resources.signals import (
     reservation_modified, reservation_confirmed, reservation_cancelled
 )
 from .base import ModifiableModel
