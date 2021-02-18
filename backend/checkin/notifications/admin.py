@@ -33,7 +33,7 @@ from post_office.admin import EmailTemplateAdmin, EmailTemplate
 class NotificationEmailTemplateAdmin(EmailTemplateAdmin):
     fieldsets = [
         (None, {
-            'fields': ('name', 'description','template'),
+            'fields': ('name', 'description','type'),
         }),
         (_("Default Content"), {
             'fields': ('subject', 'content', 'html_content'),

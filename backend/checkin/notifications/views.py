@@ -2,6 +2,10 @@ from __future__ import unicode_literals
 from django.views.generic.base import ContextMixin, TemplateResponseMixin, TemplateView
 from django.views import View
 from django.utils import timezone
+from checkin.notifications.models import NotificationEmailTemplate
+from django.http import HttpResponse
+from django.template import loader
+from .management.commands.send_test_email import Command as SendTestEmailCommand
 
 class PreviewView(TemplateView):
     template_name = 'notifications/email_base.html'
@@ -17,3 +21,19 @@ class PreviewView(TemplateView):
             'button_link': 'http://',
         }
         #return context
+
+
+class TemplatePreviewView(View):
+
+    def get(self, request, *args, **kwargs):
+        t = SendTestEmailCommand.get_template_object()
+        # context = {
+        #     'title': "This is a test notification.",
+        #     'subtitle': "Hello World!",
+        #     'message': "If you receive this message your settings might be correct.",
+        #     'subject': "Test Notification from management command",
+        # }
+        context = SendTestEmailCommand.get_context()
+        tt = t.get_template()
+        content = tt.render(context)
+        return HttpResponse(content)

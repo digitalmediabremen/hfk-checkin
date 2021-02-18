@@ -135,7 +135,7 @@ from django.utils.formats import date_format
 
 from post_office.models import EmailTemplate
 from .template_field import TemplateField
-from django.forms.widgets import Select
+from django.template.loader import get_template
 
 class NotificationTypes(models.TextChoices):
     RESERVATION_REQUESTED = 'reservation_requested', _('Reservation requested')
@@ -159,9 +159,9 @@ class NotificationEmailTemplate(EmailTemplate):
     """ extends django-postoffice's EmailTemplate to include with file based templates and type definitions"""
 
     type = models.CharField(
-        verbose_name=_('Type'), choices=NotificationTypes.choices, max_length=100, unique=True, db_index=True
+        verbose_name=_('Type'), choices=NotificationTypes.choices, max_length=100, unique=True, db_index=True, blank=True
     )
-    template = TemplateField(match='^notifications/.+\.html$', blank=True)
+    #template = TemplateField(match='^notifications/.+\.html$', blank=True)
 
     class Meta:
         #app_label = 'post_office' # do not change. will move migrations into another app. no good!
@@ -169,3 +169,15 @@ class NotificationEmailTemplate(EmailTemplate):
         verbose_name = _("Email Template")
         verbose_name_plural = _("Email Templates")
         ordering = ['name']
+
+    def get_template(self):
+        if not self.template:
+            return None
+        return get_template(self.template)
+
+    # def get_html_content(self):
+    #     """ overwrite original field EmailTemplate.html_content """
+    #     t = self.get_template()
+    #     if t is None:
+    #         return None
+    #     return open(t.origin.name, 'r').read()
