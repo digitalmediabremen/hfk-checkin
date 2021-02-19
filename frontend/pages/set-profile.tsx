@@ -12,7 +12,7 @@ import Layout from "../components/common/Page";
 import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
-import Profile, { ProfileUpdate } from "../src/model/Profile";
+import Profile, { ProfileUpdate } from "../src/model/api/Profile";
 
 interface EditProfileProps {
     profile?: Profile;

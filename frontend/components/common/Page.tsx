@@ -9,6 +9,13 @@ export const Content: React.FunctionComponent = ({ children }) => (
             {`
                 .content {
                     margin: ${theme.spacing(2)}px ${theme.spacing(3)}px;
+                    max-width: 500px;
+                }
+
+                @media screen and (min-width: 500px) {
+                    .content {
+                        margin: ${theme.spacing(2)}px auto;
+                    }
                 }
             `}
         </style>
@@ -33,19 +40,24 @@ const Page: React.FunctionComponent<PageProps> = ({
         <>
             <style jsx>{`
                 .page {
-                    height: ${height}px;
-                    max-width: 500px;
+                    min-height: ${height}px;
                     margin: 0 auto;
-                    overflow-y: auto;
-                    overflow-x: hidden;
+                    //
                 }
                 .page-wrapper {
                     position: absolute;
                     width: 100vw;
                     height: ${height}px;
-                    overflow: hidden;
                     background-color: #fff;
+                    overflow: hidden;
                 }
+
+                .scroll-container {
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    height: ${height}px
+                }
+
                 .page.with-topbar {
                     padding-top: ${theme.topBarHeight}px;
                 }
@@ -54,16 +66,18 @@ const Page: React.FunctionComponent<PageProps> = ({
                 }
             `}</style>
             <div className={classNames({ "page-wrapper": scroll })}>
-                <div
-                    className={classNames("page", {
-                        "with-topbar": !!topBar,
-                        "with-footer": !!footer,
-                    })}
-                >
-                    {topBar}
-                    <Content>{children}</Content>
+                {topBar}
+                <div className={classNames({ "scroll-container": scroll })}>
+                    <div
+                        className={classNames("page", {
+                            "with-topbar": !!topBar,
+                            "with-footer": !!footer,
+                        })}
+                    >
+                        <Content>{children}</Content>
+                    </div>
+                    {footer}
                 </div>
-                {footer}
             </div>
         </>
     );

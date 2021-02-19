@@ -1,9 +1,9 @@
 import Profile from "./Profile";
-import { Location } from "./Location";
+import Location from "./Location";
 
 export type LastCheckin = Omit<Checkin, "profile">;
 
-export interface Checkin {
+export default interface Checkin {
     id: number;
     time_entered: string;
     time_left: string | null;

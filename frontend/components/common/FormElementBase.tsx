@@ -29,6 +29,11 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     const ComponentType = button ? "button" : "div";
     const outline = !noOutline;
     const interactable = !!onClick;
+
+    const calculateMargin = () => {
+        if (extendedWidth) return -theme.spacing(1.5) + 1;
+        return 0;
+    }
     return (
         <>
             <style jsx>{`
@@ -44,12 +49,8 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     margin-bottom: ${noBottomSpacing
                         ? 0
                         : theme.spacing(bottomSpacing || 1)}px;
-                    margin-left: ${extendedWidth
-                        ? -theme.spacing(1.5) + 1
-                        : 0}px;
-                    margin-right: ${extendedWidth
-                        ? -theme.spacing(1.5) + 1
-                        : 0}px;
+                    margin-left: ${calculateMargin()}px;
+                    margin-right: ${calculateMargin()}px;
 
                     padding: 0;
 
@@ -78,10 +79,14 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     transform: scale(0.98);
                 }
 
-                .outline {
+                .form-element-base.outline {
                     border-radius: ${theme.borderRadius}px;
                     border: 2px solid ${theme.primaryColor};
                     padding: ${theme.spacing(0.5)}px ${theme.spacing(1) + 2}px;
+                }
+
+                .form-element-base:not(.outline) {
+
                 }
             `}</style>
             <ComponentType

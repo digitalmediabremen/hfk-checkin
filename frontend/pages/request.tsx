@@ -1,16 +1,24 @@
+import { NextPage } from "next";
 import dynamic from "next/dynamic";
 import React from "react";
+import { useProfile } from "../components/api/ApiHooks";
+import needsProfile from "../components/api/needsProfile";
 import showIf from "../components/api/showIf";
 import useSubPage from "../components/api/useSubPage";
 import { Button } from "../components/common/Button";
+import FormCheckbox from "../components/common/FormCheckbox";
 import FormElement from "../components/common/FormElement";
+import FormElementBase from "../components/common/FormElementBase";
 import Layout from "../components/common/Layout";
 import { LoadingScreen } from "../components/common/Loading";
+import NewButton from "../components/common/NewButton";
+import Notice from "../components/common/Notice";
 import SubPage from "../components/common/SubPage";
 import { SetPersonSubpageProps } from "../components/getin/subpages/SetPersonSubpage";
 
 import features from "../features";
 import { useTranslation } from "../localization";
+import Profile from "../src/model/api/Profile";
 
 const createDynamicPage = <T extends {}>(func: () => any) =>
     (dynamic(func, {
@@ -34,7 +42,7 @@ const DynamicAddExternalPersonSubpage = createDynamicPage(
     () => import("../components/getin/subpages/AddExternalPersonSubPage")
 );
 
-const RequestRoomPage = () => {
+const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
     const { t } = useTranslation();
     const { subPageProps, pageProps, handlerProps } = useSubPage({
         zeit: {},
@@ -68,7 +76,9 @@ const RequestRoomPage = () => {
                     >
                         {() => (
                             <DynamicSetPersonSubpage
-                                onAddExternalPerson={handlerProps("add-person").onClick}
+                                onAddExternalPerson={
+                                    handlerProps("add-person").onClick
+                                }
                             />
                         )}
                     </SubPage>
@@ -76,9 +86,7 @@ const RequestRoomPage = () => {
                         title={t("Externe hinzufügen")}
                         {...subPageProps("add-person", "personen")}
                     >
-                        {() => (
-                            <DynamicAddExternalPersonSubpage />
-                        )}
+                        {() => <DynamicAddExternalPersonSubpage />}
                     </SubPage>
                     <SubPage
                         title={t("Grund angeben")}
@@ -98,15 +106,15 @@ const RequestRoomPage = () => {
             <style jsx>{``}</style>
             <div>
                 <FormElement
-                    {...handlerProps("zeit")}
-                    label={t("Zeitangaben tätigen")}
-                    shortLabel={t("Zeit")}
-                    arrow
-                />
-                <FormElement
                     {...handlerProps("raum")}
                     value={["erste Zeile", "zweite Zeile"]}
                     label={t("Raum")}
+                    arrow
+                />
+                <FormElement
+                    {...handlerProps("zeit")}
+                    label={t("Zeitangaben tätigen")}
+                    shortLabel={t("Zeit")}
                     arrow
                 />
                 <FormElement
@@ -132,13 +140,25 @@ const RequestRoomPage = () => {
                     value={["erste Zeile", "zweite Zeile"]}
                     label={t("Nachricht")}
                     shortLabel={t("Nach.")}
-                    bottomSpacing={2}
+                    bottomSpacing={1}
                     arrow
                 />
-                <Button onClick={() => {}}>Submit</Button>
+                <FormCheckbox
+                    extendedWidth
+                    small
+                    value={false}
+                    label={t(
+                        "Bitte ruft mich bei Rückfragen zu dieser Buchung unter {phone} zurück.",
+                        { phone: profile?.phone }
+                    )}
+                    bottomSpacing={3}
+                />
+                <NewButton primary onClick={() => {}}>
+                    {t("Anfragen")}
+                </NewButton>
             </div>
         </Layout>
     );
 };
 
-export default showIf(() => features.getin, RequestRoomPage);
+export default showIf(() => features.getin, needsProfile(RequestRoomPage));

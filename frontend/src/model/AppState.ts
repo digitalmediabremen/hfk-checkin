@@ -1,4 +1,6 @@
-import Profile from "./Profile";
+import NewReservation from "./api/NewReservation";
+import NewReservationBlueprint from "./api/NewReservationBlueprint";
+import Profile from "./api/Profile";
 
 export interface AppState {
     status?: {
@@ -9,6 +11,8 @@ export interface AppState {
     disableNextUpdate: boolean;
     highlightCheckinById?: number, // id
     initialized: boolean;
+    reservation?: NewReservationBlueprint;
+    reservationTemplate?: NewReservation;
 }
 
 export type AppAction = {
@@ -31,4 +35,6 @@ export type AppAction = {
     message: string,
 } | {
     type: "highlightedCheckinWasDisplayed",
+} | {
+    type: "readReservationFromLocalStorage"
 }

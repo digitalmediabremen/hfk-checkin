@@ -1,4 +1,4 @@
-import Profile from "../../src/model/Profile";
+import Profile from "../../src/model/api/Profile";
 import React, { useEffect, Component } from "react";
 import { useRouter } from "next/router";
 import { appUrls } from "../../config";

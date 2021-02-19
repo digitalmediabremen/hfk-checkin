@@ -1,9 +1,11 @@
-import Profile, { ProfileUpdate, assertProfile } from "../../src/model/Profile";
+import Profile, { ProfileUpdate, assertProfile } from "../../src/model/api/Profile";
 import * as config from "../../config";
 import { NextPageContext } from "next";
-import { Location } from "../../src/model/Location";
+import Location from "../../src/model/api/Location";
 import { ServerResponse } from "http";
-import { Checkin, CheckinOrigin, LastCheckin } from "../../src/model/Checkin";
+import Checkin, { CheckinOrigin, LastCheckin } from "../../src/model/api/Checkin";
+import validate from "../../src/model/api/Profile.validator";
+import Reservation from "../../src/model/api/Reservation";
 
 export type ApiResponse<T> =
     | {
@@ -39,7 +41,7 @@ const toQueryString = (params?: RequestParameters) => {
 export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     endpoint: string,
     requestData: RequestBody,
-    responseTypeGuard?: (p: any) => asserts p is ResultType
+    responseTypeGuard?: (p: any) => ResultType
 ): Promise<Response<ResultType>> => {
     const { headers, requestParameters, ...otherRequestData } = requestData;
     const stringifiedRequestParameters = toQueryString(requestParameters)
@@ -85,7 +87,10 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         })
         .then(({ data: typedData, status }) => {
             // @ts-ignore
-            if (!!responseTypeGuard) responseTypeGuard(typedData);
+            if (!!responseTypeGuard) {
+                console.debug(`Check Model for endpoint "${endpoint}"`)
+                responseTypeGuard(typedData);
+            }
             return {
                 typedData,
                 status,
@@ -154,19 +159,15 @@ export const getLocationRequest = async (
     });
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
-    await apiRequest<Profile>("profile/me/", { headers }, assertProfile);
+    await apiRequest<Profile>("profile/me/", { headers }, validate);
+
 
 export const getCheckinRequest = async (
     checkinId: string,
     options?: RequestOptions
 ) => await apiRequest<LastCheckin>(`checkin/${checkinId}/`, { ...options });
 
-export const redirectServerSide = (
-    serverResponse: ServerResponse,
-    toPath: string
-) => {
-    serverResponse.writeHead(302, {
-        Location: toPath,
-    });
-    serverResponse.end();
-};
+export const getReservationRequest = async (
+    reservationId: string,
+    options?: RequestOptions
+) => await apiRequest<Reservation>(`reservation/${reservationId}/`, { ...options }, validate);

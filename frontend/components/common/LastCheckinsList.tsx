@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useTranslation } from "../../localization";
-import { LastCheckin } from "../../src/model/Checkin";
+import { LastCheckin } from "../../src/model/api/Checkin";
 import theme from "../../styles/theme";
 import Subtitle from "./Subtitle";
 import { useAppState } from "./AppStateProvider";

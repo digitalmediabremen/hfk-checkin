@@ -1,13 +1,17 @@
+import { Profiler } from "react";
+import { Writable, WritableKeys } from "../../util/TypeUtil";
 import { LastCheckin } from "./Checkin";
 
 interface Profile {
-    id: number;
+    readonly id: number;
     first_name: string;
     last_name: string;
     phone: string;
-    verified: boolean;
-    last_checkins: Array<LastCheckin>;
+    readonly verified: boolean;
+    readonly last_checkins: Array<LastCheckin>;
 }
+
+export type SimpleProfile = Omit<Profile, "last_checkins">
 
 export const assertProfile = (p: any): asserts p is Profile => {
     if (
@@ -21,4 +25,5 @@ export const assertProfile = (p: any): asserts p is Profile => {
 };
 
 export default Profile;
-export type ProfileUpdate = Omit<Profile, "verified" | "id" | "last_checkins">;
+
+export type ProfileUpdate = Writable<Profile>;

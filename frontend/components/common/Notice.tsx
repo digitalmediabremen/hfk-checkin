@@ -19,7 +19,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 .wrapper {
                     display: flex;
                     color: ${theme.primaryColor};
-                    margin-bottom: ${theme.spacing(2)}px;
+                    // margin-bottom: ${theme.spacing(2)}px;
                 }
 
                 h3 {
