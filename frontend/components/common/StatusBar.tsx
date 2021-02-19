@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 import { CSSTransition } from "react-transition-group";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
-import Profile from "../../src/model/Profile";
+import Profile from "../../src/model/api/Profile";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
 import EllipseText from "./EllipseText";

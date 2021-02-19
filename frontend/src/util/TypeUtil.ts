@@ -23,3 +23,30 @@ export function assertNotEmpty<TValue>(
 ): asserts value is TValue {
     if (!notEmpty(value)) throw new Error(error || "value is empty");
 }
+
+type tm = {
+    "number": number,
+    "object": object,
+    "string": string,
+}
+
+export function assert(t: boolean) {
+    if (!t) throw "assertion failed"
+}
+
+type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
+    T
+>() => T extends Y ? 1 : 2
+    ? A
+    : B;
+
+export type WritableKeys<T> = {
+    [P in keyof T]-?: IfEquals<
+        { [Q in P]: T[P] },
+        { -readonly [Q in P]: T[P] },
+        P
+    >;
+}[keyof T];
+
+export type Writable<T> = Pick<T, WritableKeys<T>>; 
+

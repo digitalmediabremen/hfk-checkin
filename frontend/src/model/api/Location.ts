@@ -1,4 +1,5 @@
-export interface Location {
+
+export default interface Location {
     id: number;
     code: string;
     org_number: string;

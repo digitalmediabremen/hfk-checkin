@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "npm run translate -- --quiet && next build",
     "start": "next start -p $PORT",
-    "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.tsx -"
+    "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.tsx -",
+    "validator": "run-for-every-file --src 'src/model/api/' --file '*.ts' --not-file '*.validator.ts'  --run 'typescript-json-validator {{src-file}} && sed -i \"\" \"/^export [{]/d\" src/model/api/{{file-name}}.validator.ts'"
   },
   "dependencies": {
     "@types/classnames": "^2.2.11",
@@ -17,6 +18,8 @@
     "date-input-polyfill": "^2.14.0",
     "formik": "^2.2.0",
     "get-user-locale": "^1.4.0",
+    "json-stringify-date": "^1.0.2",
+    "json.date-extensions": "^1.2.2",
     "libphonenumber-js": "^1.8.4",
     "next": "^10.0.1",
     "next-pwa": "^3.1.5",
@@ -40,10 +43,12 @@
     "@types/styled-jsx": "^2.2.8",
     "@types/yargs": "^15.0.9",
     "colors": "^1.4.0",
+    "run-for-every-file": "^1.1.0",
     "string-similarity": "^4.0.2",
     "ts-morph": "^8.1.2",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3",
+    "typescript-json-validator": "^2.4.2",
     "yargs": "^16.1.0"
   }
 }

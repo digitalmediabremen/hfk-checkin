@@ -12,7 +12,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     return (
         <>
             <style jsx>{``}</style>
-            <FormElementBase>
+            <FormElementBase extendedWidth>
                 <FormInput
                     placeholder="Raum einfügen"
                     onChange={handleChange}

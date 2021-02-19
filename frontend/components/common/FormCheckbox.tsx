@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import React from "react";
 import { Square, CheckSquare } from "react-feather";
 import theme from "../../styles/theme";
@@ -8,12 +9,14 @@ interface FormCheckboxProps
     value: boolean;
     onChange?: (value: boolean) => void;
     label: string;
+    small?: boolean;
 }
 
 const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
     value,
     onChange,
     label,
+    small,
     ...formElementBaseProps
 }) => {
     const Icon = value ? CheckSquare : Square;
@@ -33,6 +36,12 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
                     font-weight: bold;
                     line-height: 1.3em;
                 }
+
+                .label.small {
+                    font-weight: bold;
+                    font-size: 12px;
+                    line-height: 1.3em;
+                }
             `}</style>
             <FormElementBase
                 noOutline
@@ -42,7 +51,7 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
                 <span className="icon">
                     <Icon />
                 </span>
-                <span className="label">{label}</span>
+                <span className={classNames("label", {small})}>{label}</span>
             </FormElementBase>
         </>
     );
