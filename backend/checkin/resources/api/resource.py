@@ -12,7 +12,7 @@ from django.conf import settings
 from django.db.models import OuterRef, Prefetch, Q, Subquery, Value, Sum
 from django.db.models.functions import Coalesce, Least
 from django.urls import reverse
-from django.db.models.functions import Distance
+#from django.db.models.functions import Distance
 from django.contrib.gis.geos import Point
 from django.contrib.auth import get_user_model
 
