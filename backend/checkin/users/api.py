@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, serializers, generics, mixins, viewsets
 
-from resources.models.utils import build_ical_feed_url
-from resources.models import Unit
+# from resources.models.utils import build_ical_feed_url
+# from resources.models import Unit
 
 
 all_views = []
@@ -28,24 +28,24 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         model = get_user_model()
 
-    def get_ical_feed_url(self, obj):
-        return build_ical_feed_url(obj.get_or_create_ical_token(), self.context['request'])
+    # def get_ical_feed_url(self, obj):
+    #     return build_ical_feed_url(obj.get_or_create_ical_token(), self.context['request'])
 
-    def get_staff_perms(self, obj):
-        perm_objs = obj.userobjectpermission_set.all()
-        perms = {}
-        # We support only units for now
-        for p in perm_objs:
-            if p.content_type.model_class() != Unit:
-                continue
-            obj_perms = perms.setdefault(p.object_pk, [])
-            perm_name = p.permission.codename
-            if perm_name.startswith('unit:'):
-                perm_name = perm_name[5:]
-            obj_perms.append(perm_name)
-        if not perms:
-            return {}
-        return {'unit': perms}
+    # def get_staff_perms(self, obj):
+    #     perm_objs = obj.userobjectpermission_set.all()
+    #     perms = {}
+    #     # We support only units for now
+    #     for p in perm_objs:
+    #         if p.content_type.model_class() != Unit:
+    #             continue
+    #         obj_perms = perms.setdefault(p.object_pk, [])
+    #         perm_name = p.permission.codename
+    #         if perm_name.startswith('unit:'):
+    #             perm_name = perm_name[5:]
+    #         obj_perms.append(perm_name)
+    #     if not perms:
+    #         return {}
+    #     return {'unit': perms}
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):

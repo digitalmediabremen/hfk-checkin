@@ -20,6 +20,10 @@ from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutoco
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from checkin.users.admin import UserAdmin
+
 router = routers.SimpleRouter()
 router.register(r'location', LocationViewSet)
 router.register(r'checkin', CheckinViewSet, basename='checkin')
@@ -29,6 +33,11 @@ router.register(r'room', RoomViewSet, basename='room')
 router.register(r'bookingrequest', BookingRequestViewSet, basename='bookingrequest')
 
 admin.site.unregister(MicrosoftAccount)
+# register microsoft_account's hijacked UserAdmin
+admin.site.unregister(User)
+# put our own UserAdmin back in to place
+admin.site.register(User, UserAdmin)
+
 admin.site.enable_nav_sidebar = False
 
 urlpatterns = [

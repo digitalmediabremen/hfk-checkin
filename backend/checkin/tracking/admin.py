@@ -13,32 +13,20 @@ from django.utils.html import format_html
 
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from impersonate.admin import UserAdminImpersonateMixin
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
-
-from .views.paper_log import PaperLogAdmin
-
-
-class NewUserAdmin(UserAdminImpersonateMixin, UserAdmin):
-    open_new_window = True
-    pass
-
-
-admin.site.unregister(User)
-admin.site.register(User, NewUserAdmin)
 
 
 class ProfileAdmin(SimpleHistoryAdmin):
     # TODO: default query set nur nicht Verifiziert
     # TODO: default query set nur neue Nutzer
 
-    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','created_at')
+    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','user','created_at')
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
     list_filter = ('updated_at','created_at','verified')
     search_fields = ['first_name', 'last_name','phone','email']
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at','user')
     search_fields = ['first_name', 'last_name', 'phone']
 
     def get_list_display(self, request):
