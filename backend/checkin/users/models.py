@@ -167,7 +167,6 @@ class Profile(models.Model):
     class Meta:
         verbose_name = _("Person")
         verbose_name_plural = _("Personen")
-        db_table = 'tracking.profile'
         permissions = [
             ("can_view_all_users", _("Kann alle Personen anzeigen")),
             ("can_view_real_names", _("Kann Klarnamen anzeigen")),
