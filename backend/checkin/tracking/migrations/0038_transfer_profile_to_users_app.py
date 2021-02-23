@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0005_transfer_profile_to_users_app'),
         ('tracking', '0037_auto_20210110_1534'),
     ]
 
