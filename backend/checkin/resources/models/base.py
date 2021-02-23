@@ -7,8 +7,8 @@ import uuid
 from .utils import generate_id
 
 from checkin.users.models import Profile, User
-USER_MODEL = Profile
-AUTH_USER_MODEL = User
+USER_MODEL = 'users.Profile'
+AUTH_USER_MODEL = 'users.User'
 
 class UUIDModelMixin(models.Model):
     uuid = models.UUIDField(verbose_name='UUID', primary_key=True, default=uuid.uuid4, editable=False)
