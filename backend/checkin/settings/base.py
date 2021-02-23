@@ -98,7 +98,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    #'checkin.tracking',
+    'checkin.tracking',
     #'checkin.booking',
     'checkin.resources',
     #'checkin.notifications',
