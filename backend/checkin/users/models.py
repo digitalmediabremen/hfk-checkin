@@ -3,9 +3,21 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-#from checkin.resources.models import Resource
-# import for backwards compatibility:
-from checkin.tracking.models import Profile
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.validators import RegexValidator
+from simple_history.models import HistoricalRecords
+
+
+# set to anonyoumous user
+# def get_sentinel_user():
+#     return get_user_model().objects.get_or_create(username='deleted')[0]
+#
+# class MyModel(models.Model):
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.SET(get_sentinel_user),
+#     )
 
 
 class UserManager(BaseUserManager):
@@ -121,3 +133,65 @@ class User(AbstractUser):
     #         return settings.LANGUAGES[0][0]
     #     else:
     #         return self.preferred_language
+
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
+    first_name = models.CharField(_("Vorname"), max_length=1000)
+    last_name = models.CharField(_("Nachname"), max_length=1000)
+    phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
+                                 message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
+    phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
+    email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
+    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
+    created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
+    # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
+    history = HistoricalRecords()
+
+    def __str__(self):
+        return self.get_full_name()
+        # return _("Person mit Profil-ID %i") % (self.id, )
+
+    def get_full_name(self):
+        return _("%s %s") % (self.first_name, self.last_name)
+
+    def get_full_profile(self):
+        return _("%s %s (P: %s / E: %s)") % (self.first_name, self.last_name, self.phone, self.email)
+
+    @property
+    def complete(self):
+        return (bool(self.first_name) and bool(self.last_name) and bool(self.phone))
+
+    class Meta:
+        verbose_name = _("Person")
+        verbose_name_plural = _("Personen")
+        db_table = 'tracking.profile'
+        permissions = [
+            ("can_view_all_users", _("Kann alle Personen anzeigen")),
+            ("can_view_real_names", _("Kann Klarnamen anzeigen")),
+            ("can_view_full_email", _("Kann vollständige E-Mail-Adresse anzeigen")),
+            ("can_view_full_phone_number", _("Kann vollständige Telefonnummer anzeigen")),
+        ]
+
+    @property
+    def last_checkins(self):
+        if 'checkin.tracking' in settings.INSTALLED_APPS:
+            from checkin.tracking.models import Checkin
+            return Checkin.objects.filter(profile=self)[:10]
+        return []
+
+
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    """ Update profile on every save or if user is created."""
+    # if created:
+    if not instance.first_name or not instance.last_name or not instance.email:
+        return
+    profile, new = Profile.objects.get_or_create(user=instance)
+    profile.first_name = instance.first_name
+    profile.last_name = instance.last_name
+    profile.email = instance.email
+    profile.verified = True
+    profile.save()

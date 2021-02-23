@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib import admin
 from django.utils.translation import gettext, gettext_lazy as _
 from impersonate.admin import UserAdminImpersonateMixin
+from simple_history.admin import SimpleHistoryAdmin
 
 # from checkin.tracking.admin import ProfileAdmin
 # from .models import Profile
@@ -155,5 +156,50 @@ User = get_user_model()
 #     ]
 #     actions = [anonymize_user_data]
 
+if not admin.site.is_registered(User):
+    admin.site.register(User, UserAdmin)
 
-#admin.site.register(User, UserAdmin)
+from .models import Profile
+
+@admin.register(Profile)
+class ProfileAdmin(SimpleHistoryAdmin):
+    # TODO: default query set nur nicht Verifiziert
+    # TODO: default query set nur neue Nutzer
+
+    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','user','created_at')
+    # ! overwritten by get_list_display to upgrade permission
+    # readonly_fields = ('last_checkin',)
+    list_editable = ('verified',)
+    list_filter = ('updated_at','created_at','verified')
+    search_fields = ['first_name', 'last_name','phone','email']
+    readonly_fields = ('created_at', 'updated_at','user')
+
+    def get_list_display(self, request):
+        phone = 'phone' if request.user.has_perm('tracking.can_view_full_phone_number') else 'phone_obfuscated'
+        email = 'email' if request.user.has_perm('tracking.can_view_full_email') else 'email_obfuscated'
+        list_display = ['id', 'first_name', 'last_name', phone, email, 'verified', 'created_at']
+        return list_display
+
+    # TODO hide email in change view or make sure people understand change view will display all fields.
+
+    def get_queryset(self, request):
+        qs = super(ProfileAdmin, self).get_queryset(request)
+        if request.user.has_perm('tracking.can_view_all_users'):
+            return qs
+        return qs.exclude(verified=True)
+
+    def phone_obfuscated(self, object):
+        if object.phone:
+            m = object.phone
+            return f'{m[0]}{m[1]}{m[2]}{m[3]}{m[4]}{"*" * (len(m) - 6)}{m[-1]}'
+    phone_obfuscated.short_description = _("Telefonnummer")
+
+    def email_obfuscated(self, object):
+        if object.email:
+            m = object.email.split('@')
+            return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}{m[0][-2]}{m[0][-1]}@{m[1]}'
+    email_obfuscated.short_description = _("E-Mail Adresse")
+
+    # def has_add_permission(self, request):
+    #     return False
+    # Needed to add person in bookingrequests (and paper entry)

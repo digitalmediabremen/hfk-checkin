@@ -23,70 +23,7 @@ CHECKIN_RETENTION_TIME = timedelta(weeks=4)
 CHECKIN_LIFETIME = timedelta(hours=24)
 LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
-class ProfileQuerySet(models.QuerySet):
-    def annotate_search(self):
-        qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
-        return qs
-
-class Profile(DirtyFieldsMixin, models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
-    first_name = models.CharField(_("Vorname"), max_length=1000)
-    last_name = models.CharField(_("Nachname"), max_length=1000)
-    phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
-                                 message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
-    phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
-    email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
-    student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
-    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
-    updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
-    created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
-    # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
-    history = HistoricalRecords()
-
-    objects = ProfileQuerySet.as_manager()
-
-    def __str__(self):
-        return self.get_full_name()
-        # return _("Person mit Profil-ID %i") % (self.id, )
-
-    def get_full_name(self):
-        return _("%s %s") % (self.first_name, self.last_name)
-
-    def get_full_profile(self):
-        return _("%s %s (P: %s / E: %s)") % (self.first_name, self.last_name, self.phone, self.email)
-
-    @property
-    def complete(self):
-        return (bool(self.first_name) and bool(self.last_name) and bool(self.phone))
-
-    class Meta:
-        verbose_name = _("Person")
-        verbose_name_plural = _("Personen")
-        permissions = [
-            ("can_view_all_users", _("Kann alle Personen anzeigen")),
-            ("can_view_real_names", _("Kann Klarnamen anzeigen")),
-            ("can_view_full_email", _("Kann vollständige E-Mail-Adresse anzeigen")),
-            ("can_view_full_phone_number", _("Kann vollständige Telefonnummer anzeigen")),
-        ]
-
-    @property
-    def last_checkins(self):
-        return Checkin.objects.filter(profile=self)[:10]
-
-
-@receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
-    """ Update profile on every save or if user is created."""
-    # if created:
-    if not instance.first_name or not instance.last_name or not instance.email:
-        return
-    profile, new = Profile.objects.get_or_create(user=instance)
-    profile.first_name = instance.first_name
-    profile.last_name = instance.last_name
-    profile.email = instance.email
-    profile.verified = True
-    profile.save()
-
+from checkin.users.models import Profile
 
 class ActivityProfile(models.Model):
     name_de = models.CharField(_("Bezeichnung DE"), max_length=255)
