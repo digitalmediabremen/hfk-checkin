@@ -18,7 +18,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('users', '0005_historicalprofile_profile'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
