@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('users', '0005_transfer_profile_to_users_app'),
-        ('tracking', '0037_auto_20210110_1534'),
+        ('tracking', '0050_auto_20210110_1534'),
     ]
 
     operations = [
