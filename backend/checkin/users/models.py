@@ -62,6 +62,8 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+    objects = UserManager()
+
     # def _get_username_val(self):
     #     return getattr(self, self.USERNAME_FIELD)
     #
