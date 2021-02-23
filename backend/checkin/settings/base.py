@@ -87,7 +87,7 @@ THIRD_PARTY_APPS = [
     #'import_export',
     'wkhtmltopdf',
     'rest_framework',
-    'microsoft_auth',
+    #'microsoft_auth',
     'corsheaders',
     'impersonate',
     'rangefilter',
@@ -116,7 +116,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
-    'microsoft_auth.backends.MicrosoftAuthenticationBackend',
+    #'microsoft_auth.backends.MicrosoftAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 ]
@@ -218,7 +218,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 #"nucleus.context_processors.nucleus",
-                'microsoft_auth.context_processors.microsoft',
+                #'microsoft_auth.context_processors.microsoft',
             ],
         },
     }
@@ -396,7 +396,7 @@ NUCLEUS = {
 # -------------------------------------------------------------------------------
 import sys
 TESTING = sys.argv[1:2] == ['test']
-if TESTING:
+if TESTING and 'microsoft_auth' in INSTALLED_APPS:
     logger.warn("TESTING MODE: removing microsoft_auth from INSTALLED_APPS.")
     INSTALLED_APPS.remove('microsoft_auth')
 # INSTALLED_APPS += ('django_nose',)
