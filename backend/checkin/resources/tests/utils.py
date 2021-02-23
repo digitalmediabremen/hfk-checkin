@@ -4,65 +4,65 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.test.testcases import SimpleTestCase
-from django.utils.six import BytesIO
+from six import BytesIO
 from django.utils.encoding import force_text
 from dateutil import parser
 from PIL import Image
 
-from resources.models import ResourceImage
+#from resources.models import ResourceImage
 
 UNSAFE_METHODS = ('post', 'put', 'patch', 'delete')
 
 MAX_QUERIES = 50
 
 
-def get_test_image_data(size=(32, 32), color=(250, 250, 210), format="JPEG"):
-    """
-    Get binary image data with the given specs.
-
-    :param size: Size tuple
-    :type size: tuple[int, int]
-    :param color: RGB color triple
-    :type color: tuple[int, int, int]
-    :param format: PIL image format specifier
-    :type format: str
-    :return: Binary data
-    :rtype: bytes
-    """
-    img = Image.new(mode="RGB", size=size)
-    img.paste(color, box=size + (0, 0))
-    sio = BytesIO()
-    img.save(sio, format=format, quality=75)
-    return sio.getvalue()
-
-
-def create_resource_image(resource, size=(32, 32), color=(250, 250, 210), format="JPEG", **instance_kwargs):
-    """
-    Create a ResourceImage object with image data with the given specs.
-
-    :param resource: Resource to attach the ResourceImage to.
-    :type resource: resources.models.Resource
-    :param size: Size tuple
-    :type size: tuple[int, int]
-    :param color: RGB color triple
-    :type color: tuple[int, int, int]
-    :param format: PIL image format specifier
-    :type format: str
-    :param instance_kwargs: Other kwargs for `ResourceImage`. Some values are sanely prefilled.
-    :type instance_kwargs: dict
-    :return: Saved ResourceImage
-    :rtype: resources.models.ResourceImage
-    """
-    instance_kwargs.setdefault("sort_order", resource.images.count() + 1)
-    instance_kwargs.setdefault("type", "main")
-    instance_kwargs.setdefault("image", ContentFile(
-        get_test_image_data(size=size, color=color, format=format),
-        name="%s.%s" % (instance_kwargs["sort_order"], format.lower())
-    ))
-    ri = ResourceImage(resource=resource, **instance_kwargs)
-    ri.full_clean()
-    ri.save()
-    return ri
+# def get_test_image_data(size=(32, 32), color=(250, 250, 210), format="JPEG"):
+#     """
+#     Get binary image data with the given specs.
+#
+#     :param size: Size tuple
+#     :type size: tuple[int, int]
+#     :param color: RGB color triple
+#     :type color: tuple[int, int, int]
+#     :param format: PIL image format specifier
+#     :type format: str
+#     :return: Binary data
+#     :rtype: bytes
+#     """
+#     img = Image.new(mode="RGB", size=size)
+#     img.paste(color, box=size + (0, 0))
+#     sio = BytesIO()
+#     img.save(sio, format=format, quality=75)
+#     return sio.getvalue()
+#
+#
+# def create_resource_image(resource, size=(32, 32), color=(250, 250, 210), format="JPEG", **instance_kwargs):
+#     """
+#     Create a ResourceImage object with image data with the given specs.
+#
+#     :param resource: Resource to attach the ResourceImage to.
+#     :type resource: resources.models.Resource
+#     :param size: Size tuple
+#     :type size: tuple[int, int]
+#     :param color: RGB color triple
+#     :type color: tuple[int, int, int]
+#     :param format: PIL image format specifier
+#     :type format: str
+#     :param instance_kwargs: Other kwargs for `ResourceImage`. Some values are sanely prefilled.
+#     :type instance_kwargs: dict
+#     :return: Saved ResourceImage
+#     :rtype: resources.models.ResourceImage
+#     """
+#     instance_kwargs.setdefault("sort_order", resource.images.count() + 1)
+#     instance_kwargs.setdefault("type", "main")
+#     instance_kwargs.setdefault("image", ContentFile(
+#         get_test_image_data(size=size, color=color, format=format),
+#         name="%s.%s" % (instance_kwargs["sort_order"], format.lower())
+#     ))
+#     ri = ResourceImage(resource=resource, **instance_kwargs)
+#     ri.full_clean()
+#     ri.save()
+#     return ri
 
 
 _dummy_test_case = SimpleTestCase()
@@ -183,7 +183,7 @@ def assert_response_objects(response, objects):
     if not (isinstance(objects, list) or isinstance(objects, tuple)):
         objects = [objects]
 
-    expected_ids = {obj.id for obj in objects}
+    expected_ids = {obj.pk for obj in objects}
     actual_ids = {obj['id'] for obj in data}
     assert expected_ids == actual_ids, '%s does not match %s' % (expected_ids, actual_ids)
     assert len(objects) == len(data), '%s does not match %s' % (len(data), len(objects))

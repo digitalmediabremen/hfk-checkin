@@ -1,4 +1,4 @@
-from django.conf import settings
+from .. import settings
 from django.utils import timezone
 import django_filters
 from modeltranslation.translator import NotRegistered, translator
@@ -18,45 +18,52 @@ LANGUAGES = [x[0] for x in settings.LANGUAGES]
 
 
 class TranslatedModelSerializer(serializers.ModelSerializer):
+    # we don't need it for now.
+    pass
 
-    def __init__(self, *args, **kwargs):
-        super(TranslatedModelSerializer, self).__init__(*args, **kwargs)
-        model = self.Meta.model
-        try:
-            trans_opts = translator.get_options_for_model(model)
-        except NotRegistered:
-            self.translated_fields = []
-            return
-
-        self.translated_fields = trans_opts.fields.keys()
-        # Remove the pre-existing data in the bundle.
-        for field_name in self.translated_fields:
-            for lang in LANGUAGES:
-                key = "%s_%s" % (field_name, lang)
-                if key in self.fields:
-                    del self.fields[key]
-
-    def to_representation(self, obj):
-        ret = super(TranslatedModelSerializer, self).to_representation(obj)
-        if obj is None:
-            return ret
-
-        for field_name in self.translated_fields:
-            if field_name not in self.fields:
-                continue
-            d = {}
-            for lang in LANGUAGES:
-                key = "%s_%s" % (field_name, lang)
-                val = getattr(obj, key, None)
-                if val in (None, ""):
-                    continue
-                d[lang] = val
-
-            # If no text provided, leave the field as null
-            d = (d or None)
-            ret[field_name] = d
-
-        return ret
+    # """
+    # Represent all (available) LANGUAGES on translated_fields, instead of just returning the correct language for
+    # the current user (or its default).
+    # """
+    #
+    # def __init__(self, *args, **kwargs):
+    #     super(TranslatedModelSerializer, self).__init__(*args, **kwargs)
+    #     model = self.Meta.model
+    #     try:
+    #         trans_opts = translator.get_options_for_model(model)
+    #     except NotRegistered:
+    #         self.translated_fields = []
+    #         return
+    #
+    #     self.translated_fields = trans_opts.fields.keys()
+    #     # Remove the pre-existing data in the bundle.
+    #     for field_name in self.translated_fields:
+    #         for lang in LANGUAGES:
+    #             key = "%s_%s" % (field_name, lang)
+    #             if key in self.fields:
+    #                 del self.fields[key]
+    #
+    # def to_representation(self, obj):
+    #     ret = super(TranslatedModelSerializer, self).to_representation(obj)
+    #     if obj is None:
+    #         return ret
+    #
+    #     for field_name in self.translated_fields:
+    #         if field_name not in self.fields:
+    #             continue
+    #         d = {}
+    #         for lang in LANGUAGES:
+    #             key = "%s_%s" % (field_name, lang)
+    #             val = getattr(obj, key, None)
+    #             if val in (None, ""):
+    #                 continue
+    #             d[lang] = val
+    #
+    #         # If no text provided, leave the field as null
+    #         d = (d or None)
+    #         ret[field_name] = d
+    #
+    #     return ret
 
 
 class NullableTimeField(serializers.TimeField):
@@ -96,9 +103,10 @@ class ExtraDataMixin():
 
         if 'context' in kwargs and 'request' in kwargs['context']:
             request = kwargs['context']['request']
-            includes = request.GET.getlist(self.INCLUDE_PARAMETER_NAME)
-            kwargs['context']['includes'] = includes
-            self.fields.update(self.get_extra_fields(includes, context=kwargs['context']))
+            if hasattr(request, 'GET'):
+                includes = request.GET.getlist(self.INCLUDE_PARAMETER_NAME)
+                kwargs['context']['includes'] = includes
+                self.fields.update(self.get_extra_fields(includes, context=kwargs['context']))
 
     def get_extra_fields(self, includes, context):
         """ Return a dictionary of extra serializer fields.
@@ -111,3 +119,13 @@ class ExtraDataMixin():
             return fields
         """
         return {}
+
+class ModifiableModelSerializerMixin():
+    """
+    Mixin for serializers on models inheriting for "ModifiableModel".
+    """
+    created_at = serializers.DateTimeField(read_only=True)
+    modified_at = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        fields = ['created_at', 'modified_at']

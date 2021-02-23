@@ -3,9 +3,27 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
-
+import uuid
 from .utils import generate_id
 
+from checkin.users.models import Profile, User
+USER_MODEL = Profile
+AUTH_USER_MODEL = User
+
+class UUIDModelMixin(models.Model):
+    uuid = models.UUIDField(verbose_name='UUID', primary_key=True, default=uuid.uuid4, editable=False)
+
+    @property
+    def id(self):
+        return self.uuid
+
+    @property
+    def short_uuid(self):
+        return str(self.uuid)[:7].upper()
+    short_uuid.fget.short_description = _("UUID")
+
+    class Meta:
+        abstract = True
 
 class AutoIdentifiedModel(models.Model):
 
@@ -45,14 +63,17 @@ class NameIdentifiedModel(models.Model):
 
 
 class ModifiableModel(models.Model):
-    created_at = models.DateTimeField(verbose_name=_('Time of creation'), default=timezone.now)
+    """
+    Abstract "Mixin" to generalize created_by/at and modified_by/at fields for many models.
+    """
+    created_at = models.DateTimeField(verbose_name=_('Time of creation'), default=timezone.now, editable=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Created by'),
                                    null=True, blank=True, related_name="%(class)s_created",
-                                   on_delete=models.SET_NULL)
-    modified_at = models.DateTimeField(verbose_name=_('Time of modification'), default=timezone.now)
+                                   on_delete=models.SET_NULL, editable=False)
+    modified_at = models.DateTimeField(verbose_name=_('Time of modification'), default=timezone.now, editable=False)
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Modified by'),
                                     null=True, blank=True, related_name="%(class)s_modified",
-                                    on_delete=models.SET_NULL)
+                                    on_delete=models.SET_NULL, editable=False)
 
     class Meta:
         abstract = True

@@ -236,7 +236,7 @@ def build_reservations_ical_file(reservations):
         event = Event()
         begin_utc = timezone.localtime(reservation.begin, timezone.utc)
         end_utc = timezone.localtime(reservation.end, timezone.utc)
-        event['uid'] = 'respa_reservation_{}'.format(reservation.id)
+        event['uid'] = 'respa_reservation_{}'.format(reservation.pk)
         event['dtstart'] = vDatetime(begin_utc)
         event['dtend'] = vDatetime(end_utc)
         unit = reservation.resource.unit

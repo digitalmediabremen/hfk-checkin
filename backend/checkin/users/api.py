@@ -17,14 +17,14 @@ def register_view(klass, name, base_name=None):
 
 class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.ReadOnlyField(source='get_display_name')
-    ical_feed_url = serializers.SerializerMethodField()
-    staff_perms = serializers.SerializerMethodField()
+    #ical_feed_url = serializers.SerializerMethodField()
+    #staff_perms = serializers.SerializerMethodField()
 
     class Meta:
         fields = [
-            'last_login', 'username', 'email', 'date_joined',
-            'first_name', 'last_name', 'uuid', 'department_name',
-            'is_staff', 'display_name', 'ical_feed_url', 'staff_perms', 'favorite_resources'
+            'last_login', 'email', 'date_joined',
+            'first_name', 'last_name', 'id',
+            'is_staff', 'display_name' #, 'ical_feed_url', 'staff_perms', 'favorite_resources'
         ]
         model = get_user_model()
 

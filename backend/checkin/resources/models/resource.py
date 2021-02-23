@@ -11,7 +11,8 @@ from django.db.models import Q
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-from django.core.exceptions import ValidationError
+from django_better_admin_arrayfield.models.fields import ArrayField
+from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.core.validators import MinValueValidator
 from django.urls import reverse
@@ -28,20 +29,26 @@ from psycopg2.extras import DateTimeTZRange
 #from PIL import Image
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from guardian.core import ObjectPermissionChecker
+from simple_history.models import HistoricalRecords
 
 from ..auth import is_authenticated_user, is_general_admin, is_superuser
-from ..errors import InvalidImage
-from ..fields import EquipmentField
-from .accessibility import AccessibilityValue, AccessibilityViewpoint, ResourceAccessibility
-from .base import AutoIdentifiedModel, NameIdentifiedModel, ModifiableModel
+#from ..errors import InvalidImage
+#from ..fields import EquipmentField
+#from .accessibility import AccessibilityValue, AccessibilityViewpoint, ResourceAccessibility
+from .base import AutoIdentifiedModel, NameIdentifiedModel, ModifiableModel, UUIDModelMixin, USER_MODEL
 from .utils import create_datetime_days_from_now, get_translated, get_translated_name, humanize_duration
-from .equipment import Equipment
+#from .equipment import Equipment
 from .unit import Unit
-from .availability import get_opening_hours
-from .permissions import RESOURCE_GROUP_PERMISSIONS, UNIT_ROLE_PERMISSIONS
-from ..enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
+#from .availability import get_opening_hours
+from .permissions import RESOURCE_GROUP_PERMISSIONS#, UNIT_ROLE_PERMISSIONS
+#from ..enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
+from .mixins import AbstractReservableModel, AbstractAccessRestrictedModel
+
+# TODO remove UNIT_ROLE_PERMISSIONS
+UNIT_ROLE_PERMISSIONS = {}
 
 
+# FIXME not in use
 def generate_access_code(access_code_type):
     if access_code_type == Resource.ACCESS_CODE_TYPE_NONE:
         return ''
@@ -52,7 +59,7 @@ def generate_access_code(access_code_type):
     else:
         raise NotImplementedError('Don\'t know how to generate an access code of type "%s"' % access_code_type)
 
-
+# FIXME not in use
 def validate_access_code(access_code, access_code_type):
     if access_code_type == Resource.ACCESS_CODE_TYPE_NONE:
         return
@@ -82,15 +89,15 @@ def determine_hours_time_range(begin, end, tz):
     return begin, end
 
 
-class ResourceType(ModifiableModel, AutoIdentifiedModel):
+class ResourceType(ModifiableModel, UUIDModelMixin):
     MAIN_TYPES = (
         ('space', _('Space')),
         ('person', _('Person')),
         ('item', _('Item'))
     )
-    id = models.CharField(primary_key=True, max_length=100)
     main_type = models.CharField(verbose_name=_('Main type'), max_length=20, choices=MAIN_TYPES)
     name = models.CharField(verbose_name=_('Name'), max_length=200)
+    #history = HistoricalRecords()
 
     class Meta:
         verbose_name = _("resource type")
@@ -98,9 +105,10 @@ class ResourceType(ModifiableModel, AutoIdentifiedModel):
         ordering = ('name',)
 
     def __str__(self):
-        return "%s (%s)" % (get_translated(self, 'name'), self.id)
+        return "%s" % (get_translated(self, 'name'),)
 
 
+# FIXME not in use
 class Purpose(ModifiableModel, NameIdentifiedModel):
     id = models.CharField(primary_key=True, max_length=100)
     parent = models.ForeignKey('Purpose', verbose_name=_('Parent'), null=True, blank=True, related_name="children",
@@ -114,29 +122,7 @@ class Purpose(ModifiableModel, NameIdentifiedModel):
         ordering = ('name',)
 
     def __str__(self):
-        return "%s (%s)" % (get_translated(self, 'name'), self.id)
-
-
-# class TermsOfUse(ModifiableModel, AutoIdentifiedModel):
-#     TERMS_TYPE_PAYMENT = 'payment_terms'
-#     TERMS_TYPE_GENERIC = 'generic_terms'
-#
-#     TERMS_TYPES = (
-#         (TERMS_TYPE_PAYMENT, _('Payment terms')),
-#         (TERMS_TYPE_GENERIC, _('Generic terms'))
-#     )
-#
-#     id = models.CharField(primary_key=True, max_length=100)
-#     name = models.CharField(verbose_name=_('Name'), max_length=200)
-#     text = models.TextField(verbose_name=_('Text'))
-#     terms_type = models.CharField(blank=False, verbose_name=_('Terms type'), max_length=40, choices=TERMS_TYPES, default=TERMS_TYPE_GENERIC)
-#
-#     class Meta:
-#         verbose_name = pgettext_lazy('singular', 'terms of use')
-#         verbose_name_plural = pgettext_lazy('plural', 'terms of use')
-#
-#     def __str__(self):
-#         return get_translated_name(self)
+        return "%s (%s)" % (get_translated(self, 'name'), self.pk)
 
 
 class ResourceQuerySet(models.QuerySet):
@@ -169,7 +155,8 @@ class ResourceQuerySet(models.QuerySet):
         return self.filter(Q(unit__in=list(units) + list(units_where_role)) | Q(groups__in=resource_groups)).distinct()
 
 
-class Attachment(ModifiableModel, AutoIdentifiedModel):
+# FIXME not in use
+class Attachment(ModifiableModel, UUIDModelMixin):
     name = models.CharField(verbose_name=_('Name'), max_length=200)
     attachment_file = models.FileField(verbose_name=_('File'), upload_to='attachment_files')
 
@@ -177,12 +164,31 @@ class Attachment(ModifiableModel, AutoIdentifiedModel):
         return self.name
 
 
-class Resource(ModifiableModel, AutoIdentifiedModel):
-    AUTHENTICATION_TYPES = (
-        ('none', _('None')),
-        ('weak', _('Weak')),
-        ('strong', _('Strong'))
-    )
+# class AbstractResource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, AbstractAccessRestrictedModel):
+#     """
+#     A Resource is anything that can be reserved
+#     """
+#
+#     class Meta:
+#         abstract = True
+
+
+class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, AbstractAccessRestrictedModel):
+    """
+    A Resource, here a room, is a bookable object. Reservations will relate to Resources.
+    Fields related to reservation parameters of a Resource are abstracted in AbstractReservableModel and shared with Units.
+    Fields related to permissions are abstracted in AbstractAccessRestrictedModel.
+    FIXME AbstractAccessRestrictedModel overlaps with the model for UnitAuthorizations and/or object permissions (guardian).
+    """
+    # TODO might be renamed to Room or Space (and abstracted from Resource, which can also be a Person or Item)
+    # TODO rename to Room
+
+    # from respa: access codes
+    # currently not used and bypassed, but not removed from source
+    # Resource.access_code_type defaults to ACCESS_CODE_TYPE_NONE
+
+    # FIXME not in use
+    # defaults to ACCESS_CODE_TYPE_NONE
     ACCESS_CODE_TYPE_NONE = 'none'
     ACCESS_CODE_TYPE_PIN4 = 'pin4'
     ACCESS_CODE_TYPE_PIN6 = 'pin6'
@@ -192,106 +198,78 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
         (ACCESS_CODE_TYPE_PIN6, _('6-digit PIN code')),
     )
 
-    PRICE_TYPE_HOURLY = 'hourly'
-    PRICE_TYPE_DAILY = 'daily'
-    PRICE_TYPE_WEEKLY = 'weekly'
-    PRICE_TYPE_FIXED = 'fixed'
-    PRICE_TYPE_CHOICES = (
-        (PRICE_TYPE_HOURLY, _('Hourly')),
-        (PRICE_TYPE_DAILY, _('Daily')),
-        (PRICE_TYPE_WEEKLY, _('Weekly')),
-        (PRICE_TYPE_FIXED, _('Fixed')),
-    )
-    id = models.CharField(primary_key=True, max_length=100)
-    public = models.BooleanField(default=True, verbose_name=_('Public'))
+    #id = models.CharField(primary_key=True, max_length=100)
+    #public = models.BooleanField(default=True, verbose_name=_('Public'))
+    #public = True
+    numbers = ArrayField(models.CharField(max_length=24), verbose_name=_("Room number(s)"), blank=True, null=True,
+                         help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
+    name = models.CharField(_("Name"), max_length=200)
+    alternative_names = ArrayField(models.CharField(max_length=200), verbose_name=_("Alternative names"), blank=True, null=True)
+    description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
+
+    PARENT_FIELD_NAME = 'unit'
     unit = models.ForeignKey('Unit', verbose_name=_('Unit'), db_index=True, null=True, blank=True,
                              related_name="resources", on_delete=models.PROTECT)
-    type = models.ForeignKey(ResourceType, verbose_name=_('Resource type'), db_index=True,
+    type = models.ForeignKey(ResourceType, verbose_name=_('Resource type'), db_index=True, null=True, blank=True,
                              on_delete=models.PROTECT)
-    purposes = models.ManyToManyField(Purpose, verbose_name=_('Purposes'))
-    name = models.CharField(verbose_name=_('Name'), max_length=200)
-    description = models.TextField(verbose_name=_('Description'), null=True, blank=True)
-    need_manual_confirmation = models.BooleanField(verbose_name=_('Need manual confirmation'), default=False)
-    authentication = models.CharField(blank=False, verbose_name=_('Authentication'),
-                                      max_length=20, choices=AUTHENTICATION_TYPES)
+    # FIXME type would be better named category? what are types actually?
+    #purposes = models.ManyToManyField(Purpose, verbose_name=_('Purposes'), blank=True)
+    # FIXME purposes = usages?
+    #features = wheelchair access, projector, tags...
+
     people_capacity = models.PositiveIntegerField(verbose_name=_('People capacity'), null=True, blank=True)
-    area = models.PositiveIntegerField(verbose_name=_('Area (m2)'), null=True, blank=True)
-
-    # if not set, location is inherited from unit
-#    location = models.PointField(verbose_name=_('Location'), null=True, blank=True, srid=settings.DEFAULT_SRID)
-
-    min_period = models.DurationField(verbose_name=_('Minimum reservation time'),
-                                      default=datetime.timedelta(minutes=30))
-    max_period = models.DurationField(verbose_name=_('Maximum reservation time'), null=True, blank=True)
-    slot_size = models.DurationField(verbose_name=_('Slot size for reservation time'),
-                                     default=datetime.timedelta(minutes=30))
-
-    #equipment = EquipmentField(Equipment, through='ResourceEquipment', verbose_name=_('Equipment'))
-    max_reservations_per_user = models.PositiveIntegerField(verbose_name=_('Maximum number of active reservations per user'),
-                                                            null=True, blank=True)
-    reservable = models.BooleanField(verbose_name=_('Reservable'), default=False)
-    reservation_info = models.TextField(verbose_name=_('Reservation info'), null=True, blank=True)
-    responsible_contact_info = models.TextField(verbose_name=_('Responsible contact info'), blank=True)
-#    generic_terms = models.ForeignKey(TermsOfUse, verbose_name=_('Generic terms'), null=True, blank=True,
-#                                      on_delete=models.SET_NULL, related_name='resources_where_generic_terms')
-#    payment_terms = models.ForeignKey(TermsOfUse, verbose_name=_('Payment terms'), null=True, blank=True,
-#                                      on_delete=models.SET_NULL, related_name='resources_where_payment_terms')
-    specific_terms = models.TextField(verbose_name=_('Specific terms'), blank=True)
-    reservation_requested_notification_extra = models.TextField(verbose_name=_(
-        'Extra content to "reservation requested" notification'), blank=True)
-    reservation_confirmed_notification_extra = models.TextField(verbose_name=_(
-        'Extra content to "reservation confirmed" notification'), blank=True)
-#    min_price = models.DecimalField(verbose_name=_('Min price'), max_digits=8, decimal_places=2,
-#                                              blank=True, null=True, validators=[MinValueValidator(Decimal('0.00'))])
-#    max_price = models.DecimalField(verbose_name=_('Max price'), max_digits=8, decimal_places=2,
-#                                              blank=True, null=True, validators=[MinValueValidator(Decimal('0.00'))])
-#
-#     price_type = models.CharField(
-#         max_length=32, verbose_name=_('price type'), choices=PRICE_TYPE_CHOICES, default=PRICE_TYPE_HOURLY
-#     )
-#
-#     access_code_type = models.CharField(verbose_name=_('Access code type'), max_length=20, choices=ACCESS_CODE_TYPES,
-#                                         default=ACCESS_CODE_TYPE_NONE)
-    # Access codes can be generated either by the general Respa code or
-    # the Kulkunen app. Kulkunen will set the `generate_access_codes`
-    # attribute by itself if special access code considerations are
-    # needed.
-    # generate_access_codes = models.BooleanField(
-    #     verbose_name=_('Generate access codes'), default=True, editable=False,
-    #     help_text=_('Should access codes generated by the general system')
-    # )
-    reservable_max_days_in_advance = models.PositiveSmallIntegerField(verbose_name=_('Reservable max. days in advance'),
-                                                                      null=True, blank=True)
-    reservable_min_days_in_advance = models.PositiveSmallIntegerField(verbose_name=_('Reservable min. days in advance'),
-                                                                      null=True, blank=True)
-    reservation_metadata_set = models.ForeignKey(
-        'resources.ReservationMetadataSet', verbose_name=_('Reservation metadata set'),
-        null=True, blank=True, on_delete=models.SET_NULL
-    )
-    external_reservation_url = models.URLField(
-        verbose_name=_('External reservation URL'),
-        help_text=_('A link to an external reservation system if this resource is managed elsewhere'),
-        null=True, blank=True)
-    # reservation_extra_questions = models.TextField(verbose_name=_('Reservation extra questions'), blank=True)
-    attachments = models.ManyToManyField(Attachment, verbose_name=_('Attachments'), blank=True)
+    area = models.DecimalField(verbose_name=_('Area (m2)'), help_text=_("in Quadratmetern"), max_digits=8,
+                                    decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
+                                    blank=True, null=True)
+    floor_number = models.IntegerField(verbose_name=_('Floor number'), null=True, blank=True)
+    floor_name = models.CharField(verbose_name=_('Floor name'), max_length=200, null=True, blank=True)
+    #history = HistoricalRecords()
 
     objects = ResourceQuerySet.as_manager()
 
     class Meta:
-        verbose_name = _("resource")
-        verbose_name_plural = _("resources")
+        verbose_name = _("Room")
+        verbose_name_plural = _("Rooms")
         ordering = ('unit', 'name',)
 
     def __str__(self):
-        return "%s (%s)/%s" % (get_translated(self, 'name'), self.id, self.unit)
+        return self.display_name
 
-    @cached_property
-    def main_image(self):
-        resource_image = next(
-            (image for image in self.images.all() if image.type == 'main'),
-            None)
+    @property
+    def public(self):
+        DeprecationWarning("Resource has no attribute 'public' any more.")
+        return True
 
-        return resource_image.image if resource_image else None
+    @property
+    def access_code_type(self):
+        DeprecationWarning("Resource do not implement access code types any more.")
+        return Resource.ACCESS_CODE_TYPE_NONE
+
+    @property
+    def display_name(self):
+        if self.numbers:
+            return "%s (%s)" % (get_translated(self, 'name'), self.display_numbers)
+        else:
+            return "%s" % (get_translated(self, 'name'),)
+    display_name.fget.short_description = _('Name')
+
+    @property
+    def display_numbers(self):
+        if self.numbers:
+            return " / ".join(self.numbers)
+        else:
+            return str()
+    display_numbers.fget.short_description = _('Numbers')
+    display_numbers.fget.admin_order_field = 'numbers'
+
+    @property
+    def time_zone(self):
+        if self.unit and self.unit.time_zone:
+            return self.unit.time_zone
+        return str(timezone.get_default_timezone())
+
+    def get_tz(self):
+        return pytz.timezone(self.time_zone)
 
     def validate_reservation_period(self, reservation, user, data=None):
         """
@@ -336,8 +314,9 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
         else:
             end = tz.localize(end)
 
-        if begin.date() != end.date():
-            raise ValidationError(_("You cannot make a multi day reservation"))
+        # TODO multi-day reservation
+        # if begin.date() != end.date():
+        #     raise ValidationError(_("You cannot make a multi day reservation"))
 
         if not self.can_ignore_opening_hours(user):
             opening_hours = self.get_opening_hours(begin.date(), end.date())
@@ -367,11 +346,23 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
             if reservation_count >= max_count:
                 raise ValidationError(_("Maximum number of active reservations for this resource exceeded."))
 
-    def check_reservation_collision(self, begin, end, reservation):
-        overlapping = self.reservations.filter(end__gt=begin, begin__lt=end).active()
+    def get_reservation_collisions_qs(self, begin, end, reservation=None):
+        overlapping = self.reservations.overlaps_or_touches(begin, end)
         if reservation:
             overlapping = overlapping.exclude(pk=reservation.pk)
-        return overlapping.exists()
+        return overlapping
+
+    def check_reservation_collision(self, begin, end, reservation):
+        return self.get_reservation_collisions_qs(begin, end, reservation).exists()
+
+    def check_capacity_exhausted(self, begin, end, reservation=None):
+        if not self.people_capacity:
+            return False
+        # TODO implement capacity usage calculation
+        # TODO needs attendance number calculation first
+        # self.get_reservation_collisions_qs(begin, end, reservation)
+        return True
+
 
     def get_available_hours(self, start=None, end=None, duration=None, reservation=None, during_closing=False):
         """
@@ -461,94 +452,109 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
         return hours_list
 
     def get_opening_hours(self, begin=None, end=None, opening_hours_cache=None):
-        """
-        :rtype : dict[str, datetime.datetime]
-        :type begin: datetime.date
-        :type end: datetime.date
-        """
-        tz = pytz.timezone(self.unit.time_zone)
+        tz = pytz.timezone(self.time_zone)
         begin, end = determine_hours_time_range(begin, end, tz)
-
-        if opening_hours_cache is None:
-            hours_objs = self.opening_hours.filter(open_between__overlap=(begin, end, '[)'))
-        else:
-            hours_objs = opening_hours_cache
-
         opening_hours = dict()
-        for h in hours_objs:
-            opens = h.open_between.lower.astimezone(tz)
-            closes = h.open_between.upper.astimezone(tz)
-            date = opens.date()
-            hours_item = OrderedDict(opens=opens, closes=closes)
-            date_item = opening_hours.setdefault(date, [])
-            date_item.append(hours_item)
-
-        # Set the dates when the resource is closed.
         date = begin.date()
         end = end.date()
         while date < end:
-            if date not in opening_hours:
-                opening_hours[date] = [OrderedDict(opens=None, closes=None)]
+            opening_hours[date] = [OrderedDict(opens=datetime.time(0,0,0), closes=datetime.time(23,59,59))]
             date += datetime.timedelta(days=1)
 
         return opening_hours
 
+    # def get_opening_hours(self, begin=None, end=None, opening_hours_cache=None):
+    #     """
+    #     :rtype : dict[str, datetime.datetime]
+    #     :type begin: datetime.date
+    #     :type end: datetime.date
+    #     """
+    #     tz = pytz.timezone(self.unit.time_zone)
+    #     begin, end = determine_hours_time_range(begin, end, tz)
+    #
+    #     if opening_hours_cache is None:
+    #         hours_objs = self.opening_hours.filter(open_between__overlap=(begin, end, '[)'))
+    #     else:
+    #         hours_objs = opening_hours_cache
+    #
+    #     opening_hours = dict()
+    #     for h in hours_objs:
+    #         opens = h.open_between.lower.astimezone(tz)
+    #         closes = h.open_between.upper.astimezone(tz)
+    #         date = opens.date()
+    #         hours_item = OrderedDict(opens=opens, closes=closes)
+    #         date_item = opening_hours.setdefault(date, [])
+    #         date_item.append(hours_item)
+    #
+    #     # Set the dates when the resource is closed.
+    #     date = begin.date()
+    #     end = end.date()
+    #     while date < end:
+    #         if date not in opening_hours:
+    #             opening_hours[date] = [OrderedDict(opens=None, closes=None)]
+    #         date += datetime.timedelta(days=1)
+    #
+    #     return opening_hours
+
     def update_opening_hours(self):
-        hours = self.opening_hours.order_by('open_between')
-        existing_hours = {}
-        for h in hours:
-            assert h.open_between.lower not in existing_hours
-            existing_hours[h.open_between.lower] = h.open_between.upper
+        return
 
-        unit_periods = list(self.unit.periods.all())
-        resource_periods = list(self.periods.all())
-
-        # Periods set for the resource always carry a higher priority. If
-        # nothing is defined for the resource for a given day, use the
-        # periods configured for the unit.
-        for period in unit_periods:
-            period.priority = 0
-        for period in resource_periods:
-            period.priority = 1
-
-        earliest_date = None
-        latest_date = None
-        all_periods = unit_periods + resource_periods
-        for period in all_periods:
-            if earliest_date is None or period.start < earliest_date:
-                earliest_date = period.start
-            if latest_date is None or period.end > latest_date:
-                latest_date = period.end
-
-        # Assume we delete everything, but remove items from the delete
-        # list if the hours are identical.
-        to_delete = existing_hours
-        to_add = {}
-        if all_periods:
-            hours = get_opening_hours(self.unit.time_zone, all_periods,
-                                      earliest_date, latest_date)
-            for hours_items in hours.values():
-                for h in hours_items:
-                    if not h['opens'] or not h['closes']:
-                        continue
-                    if h['opens'] in to_delete and h['closes'] == to_delete[h['opens']]:
-                            del to_delete[h['opens']]
-                            continue
-                    to_add[h['opens']] = h['closes']
-
-        if to_delete:
-            ret = ResourceDailyOpeningHours.objects.filter(
-                open_between__in=[(opens, closes, '[)') for opens, closes in to_delete.items()],
-                resource=self
-            ).delete()
-            assert ret[0] == len(to_delete)
-
-        add_objs = [
-            ResourceDailyOpeningHours(resource=self, open_between=(opens, closes, '[)'))
-            for opens, closes in to_add.items()
-        ]
-        if add_objs:
-            ResourceDailyOpeningHours.objects.bulk_create(add_objs)
+    # def update_opening_hours(self):
+    #     hours = self.opening_hours.order_by('open_between')
+    #     existing_hours = {}
+    #     for h in hours:
+    #         assert h.open_between.lower not in existing_hours
+    #         existing_hours[h.open_between.lower] = h.open_between.upper
+    # 
+    #     unit_periods = list(self.unit.periods.all())
+    #     resource_periods = list(self.periods.all())
+    # 
+    #     # Periods set for the resource always carry a higher priority. If
+    #     # nothing is defined for the resource for a given day, use the
+    #     # periods configured for the unit.
+    #     for period in unit_periods:
+    #         period.priority = 0
+    #     for period in resource_periods:
+    #         period.priority = 1
+    # 
+    #     earliest_date = None
+    #     latest_date = None
+    #     all_periods = unit_periods + resource_periods
+    #     for period in all_periods:
+    #         if earliest_date is None or period.start < earliest_date:
+    #             earliest_date = period.start
+    #         if latest_date is None or period.end > latest_date:
+    #             latest_date = period.end
+    # 
+    #     # Assume we delete everything, but remove items from the delete
+    #     # list if the hours are identical.
+    #     to_delete = existing_hours
+    #     to_add = {}
+    #     if all_periods:
+    #         hours = get_opening_hours(self.unit.time_zone, all_periods,
+    #                                   earliest_date, latest_date)
+    #         for hours_items in hours.values():
+    #             for h in hours_items:
+    #                 if not h['opens'] or not h['closes']:
+    #                     continue
+    #                 if h['opens'] in to_delete and h['closes'] == to_delete[h['opens']]:
+    #                         del to_delete[h['opens']]
+    #                         continue
+    #                 to_add[h['opens']] = h['closes']
+    # 
+    #     if to_delete:
+    #         ret = ResourceDailyOpeningHours.objects.filter(
+    #             open_between__in=[(opens, closes, '[)') for opens, closes in to_delete.items()],
+    #             resource=self
+    #         ).delete()
+    #         assert ret[0] == len(to_delete)
+    # 
+    #     add_objs = [
+    #         ResourceDailyOpeningHours(resource=self, open_between=(opens, closes, '[)'))
+    #         for opens, closes in to_add.items()
+    #     ]
+    #     if add_objs:
+    #         ResourceDailyOpeningHours.objects.bulk_create(add_objs)
 
     def is_admin(self, user):
         """
@@ -624,6 +630,8 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
         return is_allowed
 
     def get_users_with_perm(self, perm):
+        # TODO
+        return {}
         users = {u for u in get_users_with_perms(self.unit) if u.has_perm('unit:%s' % perm, self.unit)}
         for rg in self.groups.all():
             users |= {u for u in get_users_with_perms(rg) if u.has_perm('group:%s' % perm, rg)}
@@ -639,10 +647,12 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
         return self._has_perm(user, 'can_comment_reservations')
 
     def can_ignore_opening_hours(self, user):
+        return True
+        # TODO
         return self._has_perm(user, 'can_ignore_opening_hours')
 
-    def can_view_reservation_extra_fields(self, user):
-        return self._has_perm(user, 'can_view_reservation_extra_fields')
+    # def can_view_reservation_extra_fields(self, user):
+    #     return self._has_perm(user, 'can_view_reservation_extra_fields')
 
     def can_view_reservation_user(self, user):
         return self._has_perm(user, 'can_view_reservation_user')
@@ -650,41 +660,44 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
     def can_access_reservation_comments(self, user):
         return self._has_perm(user, 'can_access_reservation_comments')
 
-    def can_view_reservation_catering_orders(self, user):
-        return self._has_perm(user, 'can_view_reservation_catering_orders')
-
-    def can_modify_reservation_catering_orders(self, user):
-        return self._has_perm(user, 'can_modify_reservation_catering_orders')
-
-    def can_view_reservation_product_orders(self, user):
-        return self._has_perm(user, 'can_view_reservation_product_orders', allow_admin=False)
-
-    def can_modify_paid_reservations(self, user):
-        return self._has_perm(user, 'can_modify_paid_reservations', allow_admin=False)
+    # def can_view_reservation_catering_orders(self, user):
+    #     return self._has_perm(user, 'can_view_reservation_catering_orders')
+    #
+    # def can_modify_reservation_catering_orders(self, user):
+    #     return self._has_perm(user, 'can_modify_reservation_catering_orders')
+    #
+    # def can_view_reservation_product_orders(self, user):
+    #     return self._has_perm(user, 'can_view_reservation_product_orders', allow_admin=False)
+    #
+    # def can_modify_paid_reservations(self, user):
+    #     return self._has_perm(user, 'can_modify_paid_reservations', allow_admin=False)
 
     def can_approve_reservations(self, user):
         return self._has_perm(user, 'can_approve_reservation', allow_admin=False)
 
-    def can_view_reservation_access_code(self, user):
-        return self._has_perm(user, 'can_view_reservation_access_code')
-
-    def can_bypass_payment(self, user):
-        return self._has_perm(user, 'can_bypass_payment')
-
-    def can_create_staff_event(self, user):
-        return self._has_perm(user, 'can_create_staff_event')
+    # def can_view_reservation_access_code(self, user):
+    #     return self._has_perm(user, 'can_view_reservation_access_code')
+    #
+    # def can_bypass_payment(self, user):
+    #     return self._has_perm(user, 'can_bypass_payment')
+    #
+    # def can_create_staff_event(self, user):
+    #     return self._has_perm(user, 'can_create_staff_event')
 
     def can_create_special_type_reservation(self, user):
         return self._has_perm(user, 'can_create_special_type_reservation')
 
     def can_bypass_manual_confirmation(self, user):
-        return self._has_perm(user, 'can_bypass_manual_confirmation')
+        # TODO nobody should bypass?
+        return False
+        #return self._has_perm(user, 'can_bypass_manual_confirmation')
 
     def can_create_reservations_for_other_users(self, user):
         return self._has_perm(user, 'can_create_reservations_for_other_users')
 
     def can_create_overlapping_reservations(self, user):
-        return self._has_perm(user, 'can_create_overlapping_reservations')
+        return False
+        #return self._has_perm(user, 'can_create_overlapping_reservations')
 
     def can_ignore_max_reservations_per_user(self, user):
         return self._has_perm(user, 'can_ignore_max_reservations_per_user')
@@ -692,8 +705,8 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
     def can_ignore_max_period(self, user):
         return self._has_perm(user, 'can_ignore_max_period')
 
-    def can_set_custom_price_for_reservations(self, user):
-        return self._has_perm(user, 'can_set_custom_price_for_reservations')
+    # def can_set_custom_price_for_reservations(self, user):
+    #     return self._has_perm(user, 'can_set_custom_price_for_reservations')
 
     def is_access_code_enabled(self):
         return self.access_code_type != Resource.ACCESS_CODE_TYPE_NONE
@@ -710,34 +723,32 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
     def get_reservable_after(self):
         return create_datetime_days_from_now(self.get_reservable_min_days_in_advance())
 
-    def has_rent(self):
-        return self.products.current().rents().exists()
+    # def has_rent(self):
+    #     return self.products.current().rents().exists()
 
     def get_supported_reservation_extra_field_names(self, cache=None):
-        if not self.reservation_metadata_set_id:
-            return []
-        if cache:
-            metadata_set = cache[self.reservation_metadata_set_id]
-        else:
-            metadata_set = self.reservation_metadata_set
-        return [x.field_name for x in metadata_set.supported_fields.all()]
+        return []
+    #     if not self.reservation_metadata_set_id:
+    #         return []
+    #     if cache:
+    #         metadata_set = cache[self.reservation_metadata_set_id]
+    #     else:
+    #         metadata_set = self.reservation_metadata_set
+    #     return [x.field_name for x in metadata_set.supported_fields.all()]
 
     def get_required_reservation_extra_field_names(self, cache=None):
-        if not self.reservation_metadata_set:
-            return []
-        if cache:
-            metadata_set = cache[self.reservation_metadata_set_id]
-        else:
-            metadata_set = self.reservation_metadata_set
-        return [x.field_name for x in metadata_set.required_fields.all()]
-
-    def clean(self):
-        if self.min_price is not None and self.max_price is not None and self.min_price > self.max_price:
-            raise ValidationError(
-                {'min_price': _('This value cannot be greater than max price')}
-            )
-        if self.min_period % self.slot_size != datetime.timedelta(0):
-            raise ValidationError({'min_period': _('This value must be a multiple of slot_size')})
+        return []
+    #     if not self.reservation_metadata_set:
+    #         return []
+    #     if cache:
+    #         metadata_set = cache[self.reservation_metadata_set_id]
+    #     else:
+    #         metadata_set = self.reservation_metadata_set
+    #     return [x.field_name for x in metadata_set.required_fields.all()]
+    #
+    # def clean(self):
+    #     if self.min_period % self.slot_size != datetime.timedelta(0):
+    #         raise ValidationError({'min_period': _('This value must be a multiple of slot_size')})
 
 
 # class ResourceImage(ModifiableModel):
@@ -821,7 +832,7 @@ class Resource(ModifiableModel, AutoIdentifiedModel):
 #         base_url = getattr(settings, 'RESPA_IMAGE_BASE_URL', None)
 #         if not base_url:
 #             return None
-#         return base_url.rstrip('/') + reverse('resource-image-view', args=[str(self.id)])
+#         return base_url.rstrip('/') + reverse('resource-image-view', args=[str(self.pk)])
 #
 #     def __str__(self):
 #         return "%s image for %s" % (self.get_type_display(), str(self.resource))

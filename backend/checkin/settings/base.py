@@ -5,12 +5,15 @@ Base settings to build other settings files upon.
 import dj_database_url
 from pathlib import Path
 from os import environ
+import logging
 getenv = environ.get
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 APPS_DIR = Path.joinpath(BASE_DIR, "checkin")
 
 READ_DOT_ENV_FILE = getenv("DJANGO_READ_DOT_ENV_FILE", default=False)
+
+logger = logging.getLogger(__name__)
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -75,6 +78,7 @@ DJANGO_APPS = [
     'dal',
     'dal_select2',
     #"nucleus", # before django.contrib.admin
+    'modeltranslation', # before django.contrib.admin
     "django.contrib.admin",
 ]
 THIRD_PARTY_APPS = [
@@ -88,11 +92,16 @@ THIRD_PARTY_APPS = [
     'impersonate',
     'rangefilter',
     'django_better_admin_arrayfield',
+    'post_office',
+    'guardian',
+    'django_filters',
 ]
 
 LOCAL_APPS = [
-    'checkin.tracking',
-    'checkin.booking',
+    #'checkin.tracking',
+    #'checkin.booking',
+    'checkin.resources',
+    #'checkin.notifications',
     'checkin.users',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -108,7 +117,8 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
     'microsoft_auth.backends.MicrosoftAuthenticationBackend',
-    "django.contrib.auth.backends.ModelBackend"
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 ]
 # # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 # AUTH_USER_MODEL = "people.User"
@@ -381,3 +391,24 @@ NUCLEUS = {
         }
     }
 }
+
+# TESTING
+# -------------------------------------------------------------------------------
+import sys
+TESTING = sys.argv[1:2] == ['test']
+if TESTING:
+    logger.warn("TESTING MODE: removing microsoft_auth from INSTALLED_APPS.")
+    INSTALLED_APPS.remove('microsoft_auth')
+# INSTALLED_APPS += ('django_nose',)
+# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+# NOSE_ARGS = [
+#     str(BASE_DIR),
+#     '-s',
+#     '--nologcapture',
+#     '--with-coverage',
+#     # '--with-progressive',
+#     # '--cover-package=pandaid-rest-api'
+#     '--exclude-path=*/*/admin',
+#     '--exclude-path=*/*/models',
+#     '--exclude-path=*/*/api',
+# ]

@@ -1,19 +1,25 @@
+# use absolute imports in __init__.py
+# otherwise tests will not work
+
 #from .accessibility import AccessibilityValue, AccessibilityViewpoint, ResourceAccessibility, UnitAccessibility
-from .availability import Day, Period, get_opening_hours
-from .reservation import (
+#from .availability import Day, Period, get_opening_hours
+from checkin.resources.models.reservation import (
     Reservation, RESERVATION_EXTRA_FIELDS,
     #ReservationMetadataField, ReservationMetadataSet,
     #ReservationCancelReasonCategory, ReservationCancelReason
+    ReservationWarning
 )
-from .resource import (
+from checkin.resources.models.resource import (
     Resource, ResourceType, ResourceGroup,
     # Purpose, ResourceEquipment,
     # ResourceDailyOpeningHours, TermsOfUse,
     Attachment,
 )
-#from .equipment import Equipment, EquipmentAlias, EquipmentCategory
-from .unit import Unit, UnitAuthorization, UnitIdentifier
-#from .unit_group import UnitGroup, UnitGroupAuthorization
+#from checkin.resources.models.equipment import Equipment, EquipmentAlias, EquipmentCategory
+from checkin.resources.models.unit import Unit
+#from checkin.resources.models.unit_group import UnitGroup, UnitGroupAuthorization
+
+from checkin.resources.models.attendance import Attendance
 
 # __all__ = [
 #     'AccessibilityValue',

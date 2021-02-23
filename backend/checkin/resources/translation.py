@@ -10,15 +10,16 @@ from .models import *
 
 @register(Unit)
 class UnitTranslationOptions(TranslationOptions):
-    fields = ('name', 'www_url', 'street_address', 'description')
+    fields = ('name', 'description')
 
 
 @register(Resource)
 class ResourceTranslationOptions(TranslationOptions):
-    fields = ('name', 'description', 'specific_terms',
-              'reservation_confirmed_notification_extra',
-              'reservation_requested_notification_extra',
-              'reservation_info', 'responsible_contact_info')
+    pass
+    # fields = ('name', 'description', 'specific_terms',
+    #           'reservation_confirmed_notification_extra',
+    #           'reservation_requested_notification_extra',
+    #           'reservation_info', 'responsible_contact_info')
 
 
 @register(ResourceType)

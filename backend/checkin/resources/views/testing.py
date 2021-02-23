@@ -3,8 +3,8 @@ import pprint
 
 from django.http import HttpResponse
 
-import resources.models
-import resources.timetools
+import checkin.resources.models
+import checkin.resources.timetools
 
 
 def testing_view(request):

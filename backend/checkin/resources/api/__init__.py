@@ -1,10 +1,13 @@
+# use absolute imports in __init__.py
+# otherwise tests will not work
+
 from .base import all_views
-from users.api import all_views as users_views
-from .resource import ResourceListViewSet, ResourceViewSet, PurposeViewSet
-from .reservation import ReservationViewSet
-from .unit import UnitViewSet
-from .search import TypeaheadViewSet
-from .equipment import EquipmentViewSet
+from checkin.users.api import all_views as users_views
+from checkin.resources.api.resource import ResourceListViewSet, ResourceViewSet#, PurposeViewSet
+from checkin.resources.api.reservation import ReservationViewSet
+from checkin.resources.api.unit import UnitViewSet
+#from checkin.resources.api.search import TypeaheadViewSet
+#from checkin.resources.api.equipment import EquipmentViewSet
 
 from rest_framework import routers
 
@@ -14,7 +17,7 @@ class RespaAPIRouter(routers.DefaultRouter):
         super(RespaAPIRouter, self).__init__()
         self.registered_api_views = set()
         self._register_all_views()
-        self.register("search", TypeaheadViewSet, basename="search")
+        #self.register("search", TypeaheadViewSet, basename="search")
 
     def _register_view(self, view):
         if view['class'] in self.registered_api_views:

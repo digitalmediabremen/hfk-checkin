@@ -10,12 +10,18 @@ from django.views import defaults as default_views
 # admin.site.site_title = _("HFK CHECKIN")
 # admin.site.index_title = _("Übersicht")
 
-from checkin.tracking.views.location import LocationsPDFView, LocationsView
+
 from rest_framework import routers
 from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
 from checkin.booking.api import RoomViewSet, BookingRequestViewSet
 from microsoft_auth.models import MicrosoftAccount
 from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
+from rest_framework.schemas import get_schema_view
+
+if 'microsoft_auth' in settings.INSTALLED_APPS:
+    from microsoft_auth.models import MicrosoftAccount
+    from microsoft_auth.admin import UserAdmin as MicrosoftUserAdmin
+from checkin.resources.api import RespaAPIRouter
 
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
@@ -24,38 +30,61 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from checkin.users.admin import UserAdmin
 
-router = routers.SimpleRouter()
-router.register(r'location', LocationViewSet)
-router.register(r'checkin', CheckinViewSet, basename='checkin')
-router.register(r'profile', ProfileViewSet, basename='profile')
-router.register(r'auth', LogoutViewSet, basename='auth')
-router.register(r'room', RoomViewSet, basename='room')
-router.register(r'bookingrequest', BookingRequestViewSet, basename='bookingrequest')
+urlpatterns = []
+checkin_api_router = routers.SimpleRouter()
 
-admin.site.unregister(MicrosoftAccount)
-# register microsoft_account's hijacked UserAdmin
-admin.site.unregister(User)
-# put our own UserAdmin back in to place
-admin.site.register(User, UserAdmin)
+if 'checkin.tracking' in settings.INSTALLED_APPS:
+    from checkin.tracking.views.location import LocationsPDFView, LocationsView
+    from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
+    #from checkin.booking.api import RoomViewSet, BookingRequestViewSet
+    checkin_api_router.register(r'location', LocationViewSet)
+    checkin_api_router.register(r'checkin', CheckinViewSet, basename='checkin')
+    checkin_api_router.register(r'profile', ProfileViewSet, basename='profile')
+    checkin_api_router.register(r'auth', LogoutViewSet, basename='auth')
+    #checkin_api_router.register(r'room', RoomViewSet, basename='room')
+    #checkin_api_router.register(r'bookingrequest', BookingRequestViewSet, basename='bookingrequest')
+    urlpatterns += [
+        path('location/html/', LocationsView.as_view(), name='html-export'),
+        path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),
+        path('api/', include(checkin_api_router.urls)),
+    ]
+
+respa_router = RespaAPIRouter()
+
+if 'microsoft_auth' in settings.INSTALLED_APPS:
+    admin.site.unregister(MicrosoftAccount)
+    # register microsoft_account's hijacked UserAdmin
+    admin.site.unregister(User)
+    # put our own UserAdmin back in to place
+    admin.site.register(User, UserAdmin)
 
 admin.site.enable_nav_sidebar = False
 
-urlpatterns = [
+urlpatterns += [
     path('admin/', admin.site.urls),
     path('paperlog-location-autocomplete/', LocationAutocomplete.as_view(), name='paper-location-autocomplete'),
     path('paperlog-profile-autocomplete/', ProfileAutocomplete.as_view(), name='paper-profile-autocomplete'),
     path('impersonate/', include('impersonate.urls')),
-    path('login/', include('microsoft_auth.urls', namespace='microsoft')),
     path('login/redirect/', to_ms_redirect),
     path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout
-    path('location/html/', LocationsView.as_view(), name='html-export'),
-    path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),
-    path('api/', include(router.urls)),
+    path('api/booking/', include(respa_router.urls)),
+    path('openapi', get_schema_view(
+            title="Checkin API",
+            description="API for a little web service to make space and people find each other. (Currently limited to booking-related functions.)",
+            version="2.0.0",
+            patterns=[path('api/booking/', include(respa_router.urls))]
+        ), name='openapi-schema'),
 ]
+
+if 'checkin.notifications' in settings.INSTALLED_APPS:
+    path('notifications/', include('checkin.notifications.urls')),
+
+if 'microsoft_auth' in settings.INSTALLED_APPS:
+    urlpatterns += [path('login/', include('microsoft_auth.urls', namespace='microsoft'))]
 
 if "debug_toolbar" in settings.INSTALLED_APPS:
     import debug_toolbar
-    urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit

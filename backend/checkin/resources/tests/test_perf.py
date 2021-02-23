@@ -4,7 +4,7 @@ import arrow
 import pytest
 from django.conf import settings
 
-from checkin.resources.models import Day, Period, Reservation, Resource, ResourceType, Unit
+from checkin.resources.models import Reservation, Resource, ResourceType, Unit # Day, Period,
 
 TEST_PERFORMANCE = bool(getattr(settings, "TEST_PERFORMANCE", False))
 
@@ -12,8 +12,8 @@ TEST_PERFORMANCE = bool(getattr(settings, "TEST_PERFORMANCE", False))
 @pytest.mark.skipif(not TEST_PERFORMANCE, reason="TEST_PERFORMANCE not enabled")
 @pytest.mark.django_db
 def test_api_resource_scalability(api_client):
-    u1 = Unit.objects.create(name='Unit 1', id='unit_1', time_zone='Europe/Helsinki')
-    rt = ResourceType.objects.create(name='Type 1', id='type_1', main_type='space')
+    u1 = Unit.objects.create(name='Unit 1', pk='unit_1', time_zone='Europe/Helsinki')
+    rt = ResourceType.objects.create(name='Type 1', pk='type_1', main_type='space')
     p1 = Period.objects.create(start='2015-06-01', end='2015-09-01', unit=u1, name='')
     Day.objects.create(period=p1, weekday=0, opens='08:00', closes='22:00')
     Day.objects.create(period=p1, weekday=1, opens='08:00', closes='16:00')
@@ -33,7 +33,7 @@ def test_api_resource_scalability(api_client):
     for n in [1, 10, 100, 1000]:
         Resource.objects.all().delete()
         for i in range(n):
-            resource = Resource.objects.create(name=('Resource ' + str(i)), id=('r' + str(i)), unit=u1, type=rt)
+            resource = Resource.objects.create(name=('Resource ' + str(i)), pk=('r' + str(i)), unit=u1, type=rt)
             Reservation.objects.create(resource=resource, begin=begin_res, end=end_res)
 
         # Time the resource listing (resource query and serialization ~ O(n))
@@ -58,8 +58,8 @@ def test_api_resource_scalability(api_client):
 @pytest.mark.skipif(not TEST_PERFORMANCE, reason="TEST_PERFORMANCE not enabled")
 @pytest.mark.django_db
 def test_avail_resource_scalability(client):
-    u1 = Unit.objects.create(name='Unit 1', id='unit_1', time_zone='Europe/Helsinki')
-    rt = ResourceType.objects.create(name='Type 1', id='type_1', main_type='space')
+    u1 = Unit.objects.create(name='Unit 1', pk='unit_1', time_zone='Europe/Helsinki')
+    rt = ResourceType.objects.create(name='Type 1', pk='type_1', main_type='space')
     p1 = Period.objects.create(start='2015-06-01', end='2015-09-01', unit=u1, name='')
     Day.objects.create(period=p1, weekday=0, opens='08:00', closes='22:00')
     Day.objects.create(period=p1, weekday=1, opens='08:00', closes='16:00')
@@ -79,7 +79,7 @@ def test_avail_resource_scalability(client):
     for n in [1, 10, 100, 1000]:
         Resource.objects.all().delete()
         for i in range(n):
-            resource = Resource.objects.create(name=('Resource ' + str(i)), id=('r' + str(i)), unit=u1, type=rt)
+            resource = Resource.objects.create(name=('Resource ' + str(i)), pk=('r' + str(i)), unit=u1, type=rt)
             Reservation.objects.create(resource=resource, begin=begin_res, end=end_res)
 
         # Time the general availability for n resources and reservations

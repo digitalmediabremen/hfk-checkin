@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.dateformat import format
 from psycopg2.extras import DateRange, DateTimeTZRange
 
-from .models import Day, Period, Reservation, Resource, ResourceType, Unit
+from .models import Reservation, Resource, ResourceType, Unit # Day, Period,
 
 OpenHours = namedtuple("OpenHours", ['opens', 'closes'])
 FreeTime = namedtuple("FreeTime", ['begin', 'end', 'duration'])
@@ -534,12 +534,12 @@ def periods_to_opening_hours(resource, begin_dt, end_dt):
 
 
 def set():
-    u1 = Unit.objects.create(name='Unit 1', id='unit_1')
-    rt = ResourceType.objects.create(name='Type 1', id='type_1', main_type='space')
-    Resource.objects.create(name='Resource 1a', id='r1a', unit=u1, type=rt)
-    Resource.objects.create(name='Resource 1b', id='r1b', unit=u1, type=rt)
-    Resource.objects.create(name='Resource 2a', id='r2a', unit=u1, type=rt)
-    Resource.objects.create(name='Resource 2b', id='r2b', unit=u1, type=rt)
+    u1 = Unit.objects.create(name='Unit 1', pk='unit_1')
+    rt = ResourceType.objects.create(name='Type 1', pk='type_1', main_type='space')
+    Resource.objects.create(name='Resource 1a', pk='r1a', unit=u1, type=rt)
+    Resource.objects.create(name='Resource 1b', pk='r1b', unit=u1, type=rt)
+    Resource.objects.create(name='Resource 2a', pk='r2a', unit=u1, type=rt)
+    Resource.objects.create(name='Resource 2b', pk='r2b', unit=u1, type=rt)
 
     # Regular hours for one week
     p1 = Period.objects.create(start=datetime.date(2015, 8, 3), end=datetime.date(2015, 8, 9),
