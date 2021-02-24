@@ -3,6 +3,9 @@ from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from .base import AUTH_USER_MODEL
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AbstractReservableModel(models.Model):
     """
@@ -17,7 +20,8 @@ class AbstractReservableModel(models.Model):
     PARENT = None # will be loaded in __init__
 
     reservable = models.BooleanField(_("Buchbar"), default=True)
-    reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"), blank=True,
+    reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
+                                                   blank=True,
                                                    related_name='%(app_label)s_%(class)s_reservation_delegated')
     #_need_manual_confirmation = models.BooleanField(verbose_name=_('Need manual confirmation'), default=False, blank=True)
     #usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
@@ -85,7 +89,23 @@ class AbstractReservableModel(models.Model):
         return not self.allow_overlapping_reservations
 
     def get_reservation_delegates_display(self):
-        return ", ".join([d.get_display_name for d in self.reservation_delegates.all()])
+        return ", ".join([d.get_display_name() for d in self.get_reservation_delegates()])
+
+    def get_reservation_delegates(self):
+        """
+        Returns list of Users delegated to manage reservations on this resource.
+        If resource has none, it will use reservation_delegates of Unit.
+
+        FIXME could use Resource.can_approve_reservations or is_manager instead!
+        :return:
+        """
+        if self.reservation_delegates.exists():
+            return self.reservation_delegates.all()
+        else:
+            if self.unit:
+                return self.unit.reservation_delegates.all()
+        logger.error("%s: No reservation delegates found." % self)
+        return []
 
 
 class AbstractAccessRestrictedModel(models.Model):

@@ -4,9 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from .mixins import ExtraReadonlyFieldsOnUpdateMixin, CommonExcludeMixin, PopulateCreatedAndModifiedMixin
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
-from ..models import Attendance
+from ..models import Attendance, Reservation
 from django.contrib import messages
 import warnings
+from django.core.exceptions import ValidationError
 
 
 logger = logging.getLogger(__name__)
@@ -41,7 +42,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             'fields': ('state', 'approver'),
         }),
         (_('Details'), {
-            # 'classes': ('collapse',),
+            'classes': ('collapse',),
             'fields': ('comments', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'organizer_is_attending', 'type'),
         }),
         # (_('Creation and modifications'), {
@@ -61,9 +62,29 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     def validate_and_warn(self, request, obj):
         with warnings.catch_warnings(record=True) as warns:
-            obj.validate_reservation()
+            try:
+                obj.validate_reservation()
+            except ValidationError as e:
+                pass
+                # form will validate and show errors anyway
+                # messages.add_message(request, messages.ERROR, str(e.message))
         for w in warns:
             messages.add_message(request, messages.WARNING, str(w.message))
+        # give some info
+        # TODO move all warnings to validate_reservation()
+        if obj:
+            if obj.state in [Reservation.CANCELLED, Reservation.DENIED]:
+                messages.add_message(request, messages.ERROR, _("Has been cancelled or denied."))
+            if obj.has_priority:
+                messages.add_message(request, messages.WARNING, _("Has priority."))
+            if obj.exclusive_resource_usage:
+                messages.add_message(request, messages.WARNING, _("Uses space exclusively."))
+            if not obj.organizer_is_attending:
+                messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
+                if obj.organizer in obj.attendees.all():
+                    messages.add_message(request, messages.WARNING, _("Yet the organizer is in the attendance list."))
+            if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
+                messages.add_message(request, messages.WARNING, _("The organizer is missing from attendance list."))
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         if obj:
@@ -81,7 +102,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     def save_model(self, request, obj, form, change):
         if self._original_state:
             obj.process_state_change(self._original_state, obj.state, request.user)
-        messages.add_message(request, messages.INFO, str(obj.get_state_verbose()))
+        messages.add_message(request, messages.INFO, _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
         super().save_model(request, obj, form, change)
 
     # def save_formset(self, request, form, formset, change):

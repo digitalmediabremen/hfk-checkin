@@ -20,17 +20,18 @@ class UnitAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, FixedGuarde
         (_('Reservation policy'), {
             # 'classes': ('collapse',),
             'description': _("These parameters will apply to resources assigned to this unit. They will only apply if the resource does not define its own parameters."),
-            'fields': ('reservable', 'reservation_delegates', 'reservation_info', 'need_manual_confirmation',
-                       'min_period', 'max_period', 'slot_size', 'max_reservations_per_user',
-                       'reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
-                       'reservable_max_days_in_advance', 'reservable_min_days_in_advance',
-                       'external_reservation_url'),
+            'fields': ('reservation_delegates',)
+                    # 'reservable',  'reservation_info', #'need_manual_confirmation',
+                    #    'min_period', 'max_period', 'slot_size', 'max_reservations_per_user',
+                    #    'reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
+                    #    'reservable_max_days_in_advance', 'reservable_min_days_in_advance',
+                    #    'external_reservation_url'),
         }),
     )
     # readonly_fields = ('uuid',)
     autocomplete_fields = ('reservation_delegates',)
-    list_display = ('name', 'slug', 'reservable', 'modified_at')
-    list_filter = ('reservable',)
+    list_display = ('name', 'slug', 'modified_at')
+    #list_filter = ('reservable',)
     ordering = ('name',)
 
     def save_related(self, request, form, formsets, change):

@@ -33,12 +33,13 @@ from post_office.admin import EmailTemplateAdmin, EmailTemplate
 class NotificationEmailTemplateAdmin(EmailTemplateAdmin):
     fieldsets = [
         (None, {
-            'fields': ('name', 'description','type'),
+            'fields': ('type','name', 'description'),
         }),
         (_("Default Content"), {
             'fields': ('subject', 'content', 'html_content'),
         }),
     ]
+    inlines = []
 
     class Meta:
         section = 'post_office'

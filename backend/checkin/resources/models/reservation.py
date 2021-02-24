@@ -19,9 +19,8 @@ from psycopg2.extras import DateTimeTZRange
 import warnings
 
 #from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
+from checkin.notifications.models import NotificationEmailTemplate
 from checkin.notifications.types import NotificationType
-NotificationTemplate = object
-NotificationTemplateException = object
 from checkin.resources.signals import (
     reservation_modified, reservation_confirmed, reservation_cancelled
 )
@@ -29,7 +28,7 @@ from .base import ModifiableModel, UUIDModelMixin
 from .resource import generate_access_code, validate_access_code
 from .resource import Resource, USER_MODEL
 from .utils import (
-    get_dt, save_dt, is_valid_time_slot, humanize_duration, send_respa_mail,
+    get_dt, save_dt, is_valid_time_slot, humanize_duration, send_template_mail,
     DEFAULT_LANG, localize_datetime, format_dt_range, build_reservations_ical_file
 )
 
@@ -55,6 +54,7 @@ class ReservationCapacityWarning(ReservationWarning):
 
 class ReservationAvailabilityWarning(ReservationWarning):
     pass
+
 
 class ReservationTimingWarning(ReservationWarning):
     pass
@@ -200,7 +200,7 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         ordering = ('begin','end')
 
     def __str__(self):
-        return "%s %s" % (self._meta.verbose_name, self.short_uuid)
+        return "%s" % (self.short_uuid,)
 
     @property
     def identifier(self):
@@ -319,9 +319,9 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         # Notifications
         if new_state == Reservation.REQUESTED:
             # FIXME generate status messages (set_state_verbose) here? or in reservation logic? ... multilang?
+            notified_users = self.send_reservation_requested_mail()
+            notified_officials = self.send_reservation_requested_mail_to_officials()
             self.set_state_verbose(_("Reservation was just requested and is now forwarded to %s." % self.resource.get_reservation_delegates_display()))
-            self.send_reservation_requested_mail()
-            self.send_reservation_requested_mail_to_officials()
         elif new_state == Reservation.CONFIRMED:
             self.set_state_verbose(_("Reservation was just confirmed by %s." % user))
             if self.need_manual_confirmation():
@@ -360,7 +360,7 @@ class Reservation(ModifiableModel, UUIDModelMixin):
     def get_state_verbose(self):
         # TODO add this verbose state in modelhistory details?
         if self._state_verbose is None:# or not isinstance(self._state_verbose, str):
-            return _("This reservation (%s) is currently on status: %s" % (self.identifier, self.state))
+            return _("Reservation %s has now state %s." % (self.identifier, self.state))
         else:
             return self._state_verbose
 
@@ -453,7 +453,7 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         #     raise ValidationError("You must specify a organizer.")
 
         if not user.profile.verified:
-            raise ValidationError(gettext("Profile of organizer (%s) is not verified. Please verify before making reservations" % user))
+            raise ValidationError(gettext("Profile of organizer (%s) is not verified. Please verify before making reservations." % user))
 
         if not self.resource.can_make_reservations(user):
             raise ValidationError(gettext("Organizer (%s) is not to make reservations on this resource." % user))
@@ -542,20 +542,18 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
 
     def get_notification_context(self, language_code, user=None, notification_type=None):
-        # TODO
-        #raise NotImplementedError("Notifications are not implemented.")
-        return
 
         if not user:
             user = self.user
         with translation.override(language_code):
-            reserver_name = self.reserver_name
-            reserver_email_address = self.reserver_email_address
+            reserver_name = self.organizer.get_full_name()
+            reserver_email_address = self.organizer.email
             if not reserver_name and self.user and self.user.get_display_name():
                 reserver_name = self.user.get_display_name()
             if not reserver_email_address and user and user.email:
                 reserver_email_address = user.email
             context = {
+                'reservation': self,
                 'resource': self.resource.name,
                 'begin': localize_datetime(self.begin),
                 'end': localize_datetime(self.end),
@@ -566,26 +564,26 @@ class Reservation(ModifiableModel, UUIDModelMixin):
                 'reserver_email_address': reserver_email_address,
             }
             directly_included_fields = (
-                'number_of_participants',
-                'host_name',
-                'event_subject',
-                'event_description',
-                'reserver_phone_number',
-                'billing_first_name',
-                'billing_last_name',
-                'billing_email_address',
-                'billing_phone_number',
-                'billing_address_street',
-                'billing_address_zip',
-                'billing_address_city',
+                # 'number_of_participants',
+                # 'host_name',
+                # 'event_subject',
+                # 'event_description',
+                # 'reserver_phone_number',
+                # 'billing_first_name',
+                # 'billing_last_name',
+                # 'billing_email_address',
+                # 'billing_phone_number',
+                # 'billing_address_street',
+                # 'billing_address_zip',
+                # 'billing_address_city',
             )
             for field in directly_included_fields:
                 context[field] = getattr(self, field)
             if self.resource.unit:
                 context['unit'] = self.resource.unit.name
-                context['unit_id'] = self.resource.unit.pk
-            if self.can_view_access_code(user) and self.access_code:
-                context['access_code'] = self.access_code
+                context['unit_uuid'] = self.resource.unit.pk
+            # if self.can_view_access_code(user) and self.access_code:
+            #     context['access_code'] = self.access_code
 
             if notification_type in [NotificationType.RESERVATION_CONFIRMED, NotificationType.RESERVATION_CREATED]:
                 if self.resource.reservation_confirmed_notification_extra:
@@ -605,18 +603,19 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
             # Get last main and ground plan images. Normally there shouldn't be more than one of each
             # of those images.
-            images = self.resource.images.filter(type__in=('main', 'ground_plan')).order_by('-sort_order')
-            main_image = next((i for i in images if i.type == 'main'), None)
-            ground_plan_image = next((i for i in images if i.type == 'ground_plan'), None)
+            # images = self.resource.images.filter(type__in=('main', 'ground_plan')).order_by('-sort_order')
+            # main_image = next((i for i in images if i.type == 'main'), None)
+            # ground_plan_image = next((i for i in images if i.type == 'ground_plan'), None)
+            # TODO ground_plan?
 
-            if main_image:
-                main_image_url = main_image.get_full_url()
-                if main_image_url:
-                    context['resource_main_image_url'] = main_image_url
-            if ground_plan_image:
-                ground_plan_image_url = ground_plan_image.get_full_url()
-                if ground_plan_image_url:
-                    context['resource_ground_plan_image_url'] = ground_plan_image_url
+            # if main_image:
+            #     main_image_url = main_image.get_full_url()
+            #     if main_image_url:
+            #         context['resource_main_image_url'] = main_image_url
+            # if ground_plan_image:
+            #     ground_plan_image_url = ground_plan_image.get_full_url()
+            #     if ground_plan_image_url:
+            #         context['resource_ground_plan_image_url'] = ground_plan_image_url
 
             order = getattr(self, 'order', None)
             if order:
@@ -629,14 +628,13 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         Stuff common to all reservation related mails.
 
         If user isn't given use self.user.
+        :returns list of recipient emails
         """
-        # TODO
-        #raise NotImplementedError("Notifications are not implemented.")
-        return
 
         try:
-            notification_template = NotificationTemplate.objects.get(type=notification_type)
-        except NotificationTemplate.DoesNotExist:
+            notification_template = NotificationEmailTemplate.objects.get(type=notification_type)
+        except NotificationEmailTemplate.DoesNotExist:
+            logger.debug("DoesNotExists: NotificationEmailTemplate for type %s" % str(notification_type))
             return
 
         if getattr(self, 'order', None) and self.billing_email_address:
@@ -644,40 +642,39 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         elif user:
             email_address = user.email
         else:
-            if not (self.reserver_email_address or self.user):
+            if not (self.organizer.email or self.user):
                 return
-            email_address = self.reserver_email_address or self.user.email
+            email_address = self.organizer.email or self.user.email
             user = self.user
 
         language = user.get_preferred_language() if user else DEFAULT_LANG
         context = self.get_notification_context(language, notification_type=notification_type)
 
-        try:
-            rendered_notification = notification_template.render(context, language)
-        except NotificationTemplateException as e:
-            logger.error(e, exc_info=True, extra={'user': user.uuid})
-            return
+        logger.debug("Sending notification to %s" % str(email_address))
 
-        send_respa_mail(
+        send_template_mail(
             email_address,
-            rendered_notification['subject'],
-            rendered_notification['body'],
-            rendered_notification['html_body'],
-            attachments
+            notification_template,
+            context,
+            attachments,
         )
 
+        return email_address
+
     def send_reservation_requested_mail(self):
-        self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED)
+        return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED)
 
     def send_reservation_requested_mail_to_officials(self):
-        notify_users = self.resource.get_users_with_perm('can_approve_reservation')
+        #notify_users = self.resource.get_users_with_perm('can_approve_reservation')
+        notify_users = self.resource.get_reservation_delegates()
+        logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
         for user in notify_users:
-            self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user)
+            return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user)
 
     def send_reservation_denied_mail(self):
-        self.send_reservation_mail(NotificationType.RESERVATION_DENIED)
+        return self.send_reservation_mail(NotificationType.RESERVATION_DENIED)
 
     def send_reservation_confirmed_mail(self):
         reservations = [self]
@@ -687,11 +684,11 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         # attachments = [ics_attachment] + self.get_resource_email_attachments()
         attachments = self.get_resource_email_attachments()
 
-        self.send_reservation_mail(NotificationType.RESERVATION_CONFIRMED,
+        return self.send_reservation_mail(NotificationType.RESERVATION_CONFIRMED,
                                    attachments=attachments)
 
     def send_reservation_cancelled_mail(self):
-        self.send_reservation_mail(NotificationType.RESERVATION_CANCELLED)
+        return self.send_reservation_mail(NotificationType.RESERVATION_CANCELLED)
 
     def send_reservation_created_mail(self):
         reservations = [self]
@@ -699,20 +696,20 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
         attachments = [ics_attachment] + self.get_resource_email_attachments()
 
-        self.send_reservation_mail(NotificationType.RESERVATION_CREATED,
+        return self.send_reservation_mail(NotificationType.RESERVATION_CREATED,
                                    attachments=attachments)
 
-    def send_reservation_created_with_access_code_mail(self):
-        reservations = [self]
-        ical_file = build_reservations_ical_file(reservations)
-        ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
-        attachments = [ics_attachment] + self.get_resource_email_attachments()
-        self.send_reservation_mail(NotificationType.RESERVATION_CREATED_WITH_ACCESS_CODE,
-                                   attachments=attachments)
-
-    def send_reservation_waiting_for_payment_mail(self):
-        self.send_reservation_mail(NotificationType.RESERVATION_WAITING_FOR_PAYMENT,
-                                   attachments=[])
+    # def send_reservation_created_with_access_code_mail(self):
+    #     reservations = [self]
+    #     ical_file = build_reservations_ical_file(reservations)
+    #     ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
+    #     attachments = [ics_attachment] + self.get_resource_email_attachments()
+    #     self.send_reservation_mail(NotificationType.RESERVATION_CREATED_WITH_ACCESS_CODE,
+    #                                attachments=attachments)
+    #
+    # def send_reservation_waiting_for_payment_mail(self):
+    #     self.send_reservation_mail(NotificationType.RESERVATION_WAITING_FOR_PAYMENT,
+    #                                attachments=[])
 
     def get_resource_email_attachments(self):
         attachments = []
@@ -727,8 +724,8 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
         return attachments
 
-    def send_access_code_created_mail(self):
-        self.send_reservation_mail(NotificationType.RESERVATION_ACCESS_CODE_CREATED)
+    # def send_access_code_created_mail(self):
+    #     self.send_reservation_mail(NotificationType.RESERVATION_ACCESS_CODE_CREATED)
 
 
 # class ReservationMetadataField(models.Model):

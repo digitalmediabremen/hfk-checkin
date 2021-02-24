@@ -98,7 +98,29 @@ def humanize_duration(duration):
     return ' '.join(filter(None, (hours_string, mins_string)))
 
 
-notification_logger = logging.getLogger('respa.notifications')
+notification_logger = logging.getLogger(__name__)
+
+from post_office import mail
+
+def send_template_mail(recipients, template, context, attachments=None, priority='now'):
+    if not getattr(settings, 'NOTIFICATION_MAILS_ENABLED', True):
+        notification_logger.debug('Notifications are disabled by NOTIFICATION_MAILS_ENABLED.')
+        return
+
+    default_domain = Site.objects.get_current().domain.split(':')[0] # remove port if present
+    from_address = (getattr(settings, 'NOTIFICATION_MAILS_FROM_ADDRESS', None) or
+                    'noreply@%s' % default_domain)
+
+    notification_logger.info('Sending notification email from %s to %s using template %s' % (from_address, recipients, template))
+
+    mail.send(
+        recipients,
+        from_address,
+        priority=priority,
+        template=template,
+        context=context,
+        attachments=attachments
+    )
 
 
 def send_respa_mail(email_address, subject, body, html_body=None, attachments=None):

@@ -10,7 +10,7 @@ from .base import AutoIdentifiedModel, ModifiableModel, UUIDModelMixin
 from .utils import create_datetime_days_from_now, get_translated, get_translated_name
 #from .availability import get_opening_hours
 from .permissions import UNIT_PERMISSIONS
-from .mixins import AbstractReservableModel, AbstractAccessRestrictedModel
+from .mixins import AUTH_USER_MODEL
 from ..auth import is_authenticated_user, is_general_admin, is_superuser, is_staff
 #from ..auth import is_unit_admin, is_unit_manager, is_unit_viewer
 
@@ -37,7 +37,7 @@ def _get_timezone_choices():
 def _generate_slug():
     return ''.join(random.sample(string.ascii_lowercase, 10))
 
-class Unit(ModifiableModel, UUIDModelMixin, AbstractReservableModel):
+class Unit(ModifiableModel, UUIDModelMixin):
     """
     A unit is representing a (physical) location or building.
     Resources, Rooms and Equipment might be assigned to Units.
@@ -54,6 +54,8 @@ class Unit(ModifiableModel, UUIDModelMixin, AbstractReservableModel):
     description = models.TextField(verbose_name=_('Description'), null=True, blank=True)
     time_zone = models.CharField(verbose_name=_('Time zone'), max_length=50,
                                  default=_get_default_timezone, choices=_get_timezone_choices())
+    reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
+                                                   blank=False, related_name='%(app_label)s_%(class)s_reservation_delegated')
 
 #    objects = UnitQuerySet.as_manager()
 
