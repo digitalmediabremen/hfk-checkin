@@ -84,6 +84,9 @@ class AbstractReservableModel(models.Model):
         # all resources need manual confirmation
         return not self.allow_overlapping_reservations
 
+    def get_reservation_delegates_display(self):
+        return ", ".join([d.get_display_name for d in self.reservation_delegates.all()])
+
 
 class AbstractAccessRestrictedModel(models.Model):
     """

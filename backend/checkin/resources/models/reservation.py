@@ -152,7 +152,7 @@ class Reservation(ModifiableModel, UUIDModelMixin):
     #staff_event = models.BooleanField(verbose_name=_('Is staff event'), default=False)
     type = models.CharField(
         blank=False, verbose_name=_('Type'), max_length=32, choices=TYPE_CHOICES, default=TYPE_NORMAL)
-
+    _state_verbose = None #
 
     @property
     def organizer(self):
@@ -162,7 +162,8 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         """
         if hasattr(self.user, 'profile'):
             return self.user.profile
-        return self.user
+        raise ValueError("User without Profile set as organizer on Reservation.")
+        #return self.user
 
     # attendance related fields
     # TODO
@@ -282,11 +283,11 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         # return False
         #return self.resource.can_view_reservation_access_code(user)
 
-    def set_state(self, new_state, user, commit=True):
+    def set_state(self, new_state, user):
         old_state = self.state
         new_state = self.process_state_change(old_state, new_state, user)
         self.state = new_state
-        self.save(commit)
+        self.save()
 
     def process_state_change(self, old_state, new_state, user):
         # Make sure it is a known state
@@ -303,6 +304,7 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
         if new_state == Reservation.CONFIRMED:
             self.approver = user
+            self.set_state_verbose(_("Reservation was just confirmed."))
             reservation_confirmed.send(sender=self.__class__, instance=self,
                                        user=user)
         elif old_state == Reservation.CONFIRMED:
@@ -312,9 +314,12 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
         # Notifications
         if new_state == Reservation.REQUESTED:
+            # FIXME generate status messages (set_state_verbose) here? or in reservation logic? ... multilang?
+            self.set_state_verbose(_("Reservation was just requested and is now forwarded to %s." % self.resource.get_reservation_delegates_display()))
             self.send_reservation_requested_mail()
             self.send_reservation_requested_mail_to_officials()
         elif new_state == Reservation.CONFIRMED:
+            self.set_state_verbose(_("Reservation was just confirmed by %s." % user))
             if self.need_manual_confirmation():
                 self.send_reservation_confirmed_mail()
             # elif self.access_code:
@@ -324,8 +329,10 @@ class Reservation(ModifiableModel, UUIDModelMixin):
                     # notifications are not sent from staff created reservations to avoid spam
                     self.send_reservation_created_mail()
         elif new_state == Reservation.DENIED:
+            self.set_state_verbose(_("Reservation was denied by %s." % user))
             self.send_reservation_denied_mail()
         elif new_state == Reservation.CANCELLED:
+            self.set_state_verbose(_("Reservation was canceled by %s." % user))
             order = self.get_order()
             if order:
                 if order.state == order.CANCELLED:
@@ -342,6 +349,15 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         #         self.send_reservation_waiting_for_payment_mail()
 
         return new_state
+
+    def set_state_verbose(self, value):
+        self._state_verbose = value
+
+    def get_state_verbose(self):
+        if self._state_verbose is None:# or not isinstance(self._state_verbose, str):
+            return _("This reservation (%s) is currently on status: %s" % (self.identifier, self.state))
+        else:
+            return self._state_verbose
 
     def can_modify(self, user):
         if not user:
@@ -430,6 +446,12 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         # we need a users?!
         # if not self.user:
         #     raise ValidationError("You must specify a organizer.")
+
+        if not user.profile.verified:
+            raise ValidationError(gettext("Profile of organizer (%s) is not verified. Please verify before making reservations" % user))
+
+        if not self.resource.can_make_reservations(user):
+            raise ValidationError(gettext("Organizer (%s) is not to make reservations on this resource." % user))
 
         user_is_admin = user and self.resource.is_admin(user)
 

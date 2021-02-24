@@ -88,15 +88,17 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     organizer = EmailField(source='user.email', read_only=True) # or depending on permission
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
+    state = serializers.ReadOnlyField()
+    state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
     need_manual_confirmation = serializers.ReadOnlyField()
     # attendees = AttendanceSerializer()
     # comment or reason or usage
     number_of_attendees = serializers.IntegerField(read_only=True)
-    number_of_extra_attendees = serializers.IntegerField(default=0)
-    has_priority = serializers.BooleanField(default=False)
+    number_of_extra_attendees = serializers.IntegerField(initial=0)
+    has_priority = serializers.BooleanField(initial=False)
     agreed_to_phone_contact = serializers.BooleanField()
-    exclusive_resource_usage = serializers.BooleanField(default=False)
-    organizer_is_attending = serializers.BooleanField(default=True, write_only=True)
+    exclusive_resource_usage = serializers.BooleanField(initial=False)
+    organizer_is_attending = serializers.BooleanField(initial=True, write_only=True)
     #user_permissions = serializers.SerializerMethodField()
     #cancel_reason = ReservationCancelReasonSerializer(required=False)
 
@@ -105,7 +107,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     class Meta:
         model = Reservation
         fields = [
-            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'comments', 'is_own', 'state', 'need_manual_confirmation',
+            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'comments', 'is_own', 'state', 'state_verbose', 'need_manual_confirmation',
             'number_of_attendees', 'number_of_extra_attendees', #'cancel_reason'
         ] + list(RESERVATION_EXTRA_FIELDS) + list(ModifiableModelSerializerMixin.Meta.fields)
         read_only_fields = list(RESERVATION_EXTRA_FIELDS)
@@ -694,24 +696,17 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
             override_data['user'] = self.request.user
         override_data['state'] = Reservation.CREATED
         instance = serializer.save(**override_data)
-        # validated_data = {**serializer.validated_data, **override_data}
-        # if serializer.instance:
-        #     instance = serializer.update(serializer.instance, validated_data)
-        # else:
-        #     instance = serializer.create(validated_data)
+        resource = instance.resource
 
-        # TODO move to reservation Model!
-        # resource = serializer.validated_data['resource']
-        #
-        # if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
-        #     new_state = Reservation.REQUESTED
-        # else:
-        #     if instance.get_order():
-        #         new_state = Reservation.WAITING_FOR_PAYMENT
-        #     else:
-        #         new_state = Reservation.CONFIRMED
-        #
-        # instance.set_state(new_state, self.request.user, commit=True)
+        if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
+            new_state = Reservation.REQUESTED
+        else:
+            if instance.get_order():
+                new_state = Reservation.WAITING_FOR_PAYMENT
+            else:
+                new_state = Reservation.CONFIRMED
+
+        instance.set_state(new_state, self.request.user)
 
     def perform_destroy(self, instance):
         instance.set_state(Reservation.CANCELLED, self.request.user)
