@@ -1,4 +1,5 @@
-import features, { getHomeUrl } from "./features";
+import { getHomeUrl } from "./features";
+import { notEmpty } from "./src/util/TypeUtil";
 
 const presentOrThrow = (envvar: string | undefined) => {
     if (!envvar) throw "env variable not set";
@@ -18,6 +19,13 @@ export const httpStatuses = {
     unprocessable: 500,
 } as const;
 
+function buildSubPageUrl(subPage?: string, param?: string) {
+    let url = "/request";
+    if (subPage) url = `${url}?${subPage}`;
+    if (notEmpty(param)) url = `${url}=${param}`;
+    return url;
+}
+
 export const appUrls = {
     home: getHomeUrl(),
     setprofile: "/set-profile",
@@ -35,9 +43,19 @@ export const appUrls = {
         "/checkout/[checkinId]",
         `/checkout/${checkinId}`,
     ],
+    requestSubpage: buildSubPageUrl,
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
+} as const;
+
+export const requestSubpages = {
+    zeit: {},
+    raum: {},
+    personen: {},
+    "add-person": {},
+    grund: {},
+    nachricht: {},
 } as const;
 
 export const production = process.env.NODE_ENV === "production";
@@ -47,5 +65,4 @@ export const isServer = typeof window === "undefined";
 // language
 export const defaultLocale = "en" as const;
 export const baseLocale = "de" as const;
-export const forceLocale: string | undefined = undefined;
-
+export const forceLocale: string | undefined = "de";

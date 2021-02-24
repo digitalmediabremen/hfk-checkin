@@ -73,8 +73,12 @@ export const createTimeNow = (): Time => {
     return d;
 };
 
-export const fromTime = (time: Time): TimeString => {
-    assertTime(time);
+export const timeFromDateOrNow = (d?: Date) : Time => {
+    if (empty(d)) return createTimeNow();
+    return createTime(d?.getHours(), d?.getMinutes());
+}
+
+export const fromTime = (time: Time | Date): TimeString => {
     function pad(number: number) {
         if (number < 10) {
             return "0" + number;
@@ -108,8 +112,23 @@ export const maxDate = (date: Date, dateToCompare: Date) => {
     return date;
 };
 
-export const addDates = (value: Date, valueToAdd: Date | Time) => {
-    return createDate(value.getTime() + valueToAdd.getTime());
+export const addDates = (value: Date, valueToAdd: Date) => {
+    return createDate(value.getTime() + valueToAdd.getTime()- valueToAdd.getTimezoneOffset() * 60 * 1000);
+};
+ 
+export const addDateTime = (value: Date, valueToAdd: Date) => {
+    return createDatetime(value.getTime() + valueToAdd.getTime() - valueToAdd.getTimezoneOffset() * 60 * 1000);
+};
+export const mergeDateAndTime = (date: Date, time: Date | Time) => {
+    const d = new Date();
+    d.setFullYear(date.getFullYear())
+    d.setMonth(date.getMonth());
+    d.setDate(date.getDate());
+    d.setHours(time.getHours());
+    d.setMinutes(time.getMinutes());
+    d.setSeconds(time.getSeconds());
+    d.setMilliseconds(0);
+    return d;
 };
 
 export const createDateNow = () => {
@@ -118,7 +137,7 @@ export const createDateNow = () => {
 
 export const duration = {
     days: (days: number): Date => {
-        return createDate(ONE_DAY_INTERVAL * (days + 1));
+        return createDate(ONE_DAY_INTERVAL * (days));
     },
 };
 
@@ -148,7 +167,8 @@ export function assertDateString(
         throw `DateString "${dateString}" exceeds value range.`;
 }
 
-export const createDate = (datetime: number): Date => {
+export const createDate = (datetime?: number): Date => {
+    if (empty(datetime)) return createDateNow();
     const d = new Date(datetime);
     d.setHours(0);
     d.setMinutes(0);
@@ -158,8 +178,13 @@ export const createDate = (datetime: number): Date => {
     return d;
 };
 
+export const createDatetime = (datetime: number): Date => {
+    const d = new Date(datetime);
+    return d;
+};
+
 export const fromDateString = (dateString: DateString): Date => {
-    const timestamp = Date.parse(dateString);
+    const timestamp = Date.parse(dateString.replace(/-/g, '/'));
     if (isNaN(timestamp)) throw `DateString in wrong format`;
     const date = new Date(dateString);
     date.setHours(0);

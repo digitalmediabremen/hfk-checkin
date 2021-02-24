@@ -31,8 +31,6 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
     const { t, locale } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
 
-    console.log("min-value", minValue);
-
     useEffect(() => {
         async function im() {}
         im();
@@ -99,8 +97,8 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
             <FormElementBase
                 {...formElementBaseProps}
                 onClick={() => {
-                    console.log("click");
                     inputRef.current?.focus();
+                    inputRef.current?.click();
                 }}
             >
                 <FormElementLabel name={label} />

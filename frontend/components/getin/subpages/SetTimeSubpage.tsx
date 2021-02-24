@@ -1,30 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SmoothCollapse from "react-smooth-collapse";
 import { useTranslation } from "../../../localization";
+import useReservationState from "../../../src/hooks/useReservation";
 import {
     addDates,
+    addDateTime,
+    createDate,
     createDateNow,
+    createTime,
     createTimeNow,
     duration,
+    mergeDateAndTime,
     smallerThan,
     Time,
+    timeFromDateOrNow,
 } from "../../../src/util/DateTimeUtil";
-import { notEmpty } from "../../../src/util/TypeUtil";
+import { empty, notEmpty } from "../../../src/util/TypeUtil";
+import { useAppState } from "../../common/AppStateProvider";
 import Fade from "../../common/Fade";
 import FormDateInput from "../../common/FormDateInput";
+import FormElement from "../../common/FormElement";
 import FormTimeInput from "../../common/FormTimeInput";
 import Notice from "../../common/Notice";
 
 interface SetTimeSubpageProps {}
 
 const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
-    const [date, setDate] = useState<Date | undefined>(createDateNow());
-    const [timeFrom, setTimeFrom] = useState<Time | undefined>(createTimeNow());
-    const [timeTo, setTimeTo] = useState<Time | undefined>(createTimeNow());
+    const { appState, dispatch } = useAppState();
+
+    const { reservation } = appState;
+    const { start: datetimeFrom, end: datetimeTo } = reservation || {};
+
+    const [date, setDate] = useState<Date | undefined>(
+        createDate(datetimeFrom?.getTime())
+    );
+    const [timeFrom, setTimeFrom] = useState<Time | undefined>(
+        timeFromDateOrNow(datetimeFrom)
+    );
+    const [timeTo, setTimeTo] = useState<Time | undefined>(
+        timeFromDateOrNow(datetimeTo)
+    );
     const { t } = useTranslation();
 
     const hasOverlap =
         notEmpty(timeFrom) && notEmpty(timeTo) && smallerThan(timeTo, timeFrom);
+
+    useEffect(() => {
+        if (empty(date)) return;
+        (async () => {
+            if (notEmpty(timeFrom) && notEmpty(timeTo)) {
+                const _datetimeFrom = mergeDateAndTime(date, timeFrom);
+                let _datetimeTo = mergeDateAndTime(date, timeTo);
+                if (hasOverlap) {
+                    _datetimeTo = addDateTime(_datetimeTo, duration.days(1));
+                }
+                dispatch({
+                    type: "updateReservation",
+                    reservation: {
+                        ...reservation,
+                        start: _datetimeFrom,
+                        end: _datetimeTo,
+                    }
+                });
+            }
+        })();
+    }, [date, timeFrom, timeTo, hasOverlap]);
+
+    useEffect(() => {
+        console.log("updated", datetimeFrom, datetimeTo);
+    }, [datetimeFrom, datetimeTo]);
 
     const exceedsBookableRange =
         notEmpty(date) &&
@@ -68,6 +112,18 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                         "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an."
                     )}
                 </Notice>
+                <FormElement
+                    // {...handlerProps("grund")}
+                    value={[
+                        "erste Zeile die auch sehr lang ist und nervt.",
+                        "zweite Zeile",
+                        "dritte Zeile",
+                    ]}
+                    label={t("Buchungsgrund")}
+                    shortLabel={t("Grund")}
+                    arrow
+                    // extendedWidth
+                />
             </SmoothCollapse>
             <Fade in={!exceedsBookableRange}>
                 <Notice>

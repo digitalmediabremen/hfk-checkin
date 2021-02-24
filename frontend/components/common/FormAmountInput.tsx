@@ -7,11 +7,13 @@ interface FormAmountInputProps extends Omit<FormElementBaseProps, "noOutline"> {
     value: number;
     minValue?: number;
     maxValue?: number;
+    label?: string;
     onChange?: (value: number) => void;
 }
 
 const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
     value: _value,
+    label,
     minValue,
     maxValue,
     onChange,
@@ -35,11 +37,18 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                     font-size: 48px;
                     font-weight: bold;
                 }
+
+                .label {
+                    color: ${theme.shadeDisabledColor(.7)};
+                    font-weight: normal;
+                }
                 .control {
                     margin-left: auto;
+                    margin-bottom: -8px;
                 }
 
                 button.button-circle {
+                    position: relative;
                     border: 2px solid ${theme.primaryColor};
                     background-color: ${theme.secondaryColor};
                     color: ${theme.primaryColor};
@@ -49,6 +58,13 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                     cursor: pointer;
                     outline: none;
                     touch-action: manipulation;
+                }
+
+                button.button-circle > :global(svg) {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
                 }
 
                 button.button-circle[disabled] {
@@ -66,7 +82,14 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                 }
             `}</style>
             <FormElementBase noOutline {...formBaseElementProps}>
-                <span key={value} className="amount">{value}</span>
+                <span key={value} className="amount">
+                    {value}
+                    {" "}{label && (
+                        <span className="label">
+                            {label}
+                        </span>
+                    )}
+                </span>
                 <div className="control">
                     <button
                         disabled={plusDisabled}

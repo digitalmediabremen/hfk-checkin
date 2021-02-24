@@ -2,6 +2,8 @@ import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
 import Profile from "./api/Profile";
 
+export type TransitionDirection = "left" | "right";
+
 export interface AppState {
     status?: {
         message: string;
@@ -13,6 +15,7 @@ export interface AppState {
     initialized: boolean;
     reservation?: NewReservationBlueprint;
     reservationTemplate?: NewReservation;
+    subPageTransitionDirection: TransitionDirection;
 }
 
 export type AppAction = {
@@ -37,4 +40,10 @@ export type AppAction = {
     type: "highlightedCheckinWasDisplayed",
 } | {
     type: "readReservationFromLocalStorage"
+} | {
+    type: "updateReservation",
+    reservation: NewReservationBlueprint | undefined
+} | {
+    type: "subPageTransitionDirection",
+    direction: TransitionDirection
 }

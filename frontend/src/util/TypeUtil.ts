@@ -6,7 +6,7 @@ export function empty<TValue>(
 
 export function notEmpty<TValue>(
     value: TValue | null | undefined
-): value is TValue {
+): value is NonNullable<TValue> {
     return !empty(value);
 }
 
@@ -25,14 +25,20 @@ export function assertNotEmpty<TValue>(
 }
 
 type tm = {
-    "number": number,
-    "object": object,
-    "string": string,
+    number: number;
+    object: object;
+    string: string;
+};
+
+export function assertNever(t: never, errorMessage: string): never {
+    throw new Error(errorMessage);
 }
 
-export function assert(t: boolean) {
-    if (!t) throw "assertion failed"
-}
+export type DeepPartial<T> = {
+    [P in keyof T]?: T[P] extends Array<infer I>
+        ? Array<DeepPartial<I>>
+        : DeepPartial<T[P]>;
+};
 
 type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
     T
@@ -48,5 +54,14 @@ export type WritableKeys<T> = {
     >;
 }[keyof T];
 
-export type Writable<T> = Pick<T, WritableKeys<T>>; 
+export type DeepWritable<T> = Writable<
+    {
+        [P in keyof T]: T[P] extends Array<infer I>
+            ? Array<DeepWritable<I>>
+            : T[P] extends Record<string, unknown>
+            ? DeepWritable<T[P]>
+            : T[P];
+    }
+>;
 
+export type Writable<T extends {}> = Pick<T, WritableKeys<T>>;

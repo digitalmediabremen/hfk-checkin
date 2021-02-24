@@ -1,6 +1,7 @@
 import React from "react";
 import TimeInputPolyfill from "react-time-input-polyfill";
 import css from "styled-jsx/css";
+import { useTranslation } from "../../localization";
 import {
     timeFromTimeString,
     TimeString,
@@ -58,6 +59,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
     ...formElementBaseProps
 }) => {
     const inputTimeString = value ? fromTime(value) : "";
+    const {t} = useTranslation();
 
     const handleChange = (timeString: string) => {
         if (timeString === "") return onChange?.(undefined);
@@ -83,14 +85,17 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                     transform: translate(-50%, -50%);
                     font-weight: normal;
                 }
-
             `}</style>
             {styles}
             <FormElementBase {...formElementBaseProps}>
                 <FormElementLabel name={label} />
 
                 <div className="date-wrapper">
-                    {hasOverlap && <span className="plus-one-day">+1 Tag</span>}
+                    {hasOverlap && (
+                        <span className="plus-one-day">
+                            {t("+{days} Tag", { days: 1 })}
+                        </span>
+                    )}
                     <TimeInputPolyfill
                         title=""
                         aria-label="Close"

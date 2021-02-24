@@ -1,26 +1,49 @@
-import React, { useState } from "react";
-import { ArrowLeft, ArrowRight, Minus, Plus, Square } from "react-feather";
+import React from "react";
+import { ArrowRight, Delete } from "react-feather";
 import { useTranslation } from "../../../localization";
-import { Button } from "../../common/Button";
+import useReservationState from "../../../src/hooks/useReservation";
 import Divider from "../../common/Divider";
 import FormAmountInput from "../../common/FormAmountInput";
 import FormCheckbox from "../../common/FormCheckbox";
-import FormElementBase from "../../common/FormElementBase";
+import FormElement from "../../common/FormElement";
 import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 import SectionTitle from "../../common/SectionTitle";
-import SubPage from "../../common/SubPage";
 
 export interface SetPersonSubpageProps {
-    onAddExternalPerson: () => void;
+    onAddExternalPerson: (param?: string) => void;
 }
+
+const remove_item = function(arr: Array<any>, value: unknown) {
+    var b = '' as any;
+    for (b in arr) {
+     if (arr[b] === value) {
+      arr.splice(b, 1);
+      break;
+     }
+    }
+    return arr;
+   };
+   
 
 const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
     onAddExternalPerson,
 }) => {
     const { t } = useTranslation();
-    const [amount, setAmount] = useState(1);
-    const [checked, setChecked] = useState(false);
+
+    const [_amount, _setAmount] = useReservationState(
+        "number_of_extra_attendees"
+    );
+    const [attendees, setAttendees] = useReservationState("attendees");
+    const amountAttendees = attendees?.length || 0;
+    const amount = (_amount || 0) + 1;
+    const setAmount = (value: number) => {
+        _setAmount(value - 1);
+    };
+
+    const [checked, setChecked] = useReservationState(
+        "exclusive_resource_usage"
+    );
 
     return (
         <>
@@ -28,9 +51,9 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
             <SectionTitle>{t("Studierende hinzufügen")}</SectionTitle>
             <FormAmountInput
                 value={amount}
+                label={amountAttendees > 0 ? `+${amountAttendees}` : undefined}
                 minValue={1}
                 onChange={setAmount}
-                
                 bottomSpacing={2}
             />
             <Notice>
@@ -46,12 +69,30 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
             />
             <Divider />
             <SectionTitle>{t("HfK externe Person anmelden")}</SectionTitle>
+            {attendees?.map((profile, index) => (
+                <FormElement
+                    key={index}
+                    value={[
+                        `${profile.first_name} ${profile.last_name} (Extern)`,
+                        `Tel: ${profile.phone}`
+                    ]}
+                    onClick={() => onAddExternalPerson(`${index}`)}
+                    extendedWidth
+                    icon={<Delete strokeWidth={2} />}
+                    onIconClick={() => {
+                        const c = window.confirm(`${t("Delete")} "${profile.first_name} ${profile.last_name} (Extern)"?`);
+                        if (c) setAttendees(remove_item(attendees, profile));
+                    }}
+                ></FormElement>
+            ))}
             <NewButton
-                onClick={onAddExternalPerson}
+                noOutline={amountAttendees > 0}
+                extendedWidth={amountAttendees === 0}
+                onClick={() => onAddExternalPerson(`${attendees?.length || 0}`)}
                 iconRight={<ArrowRight strokeWidth={1} />}
                 bottomSpacing={3}
             >
-                {t("Externe hinzufügen")}
+                {amountAttendees === 0 ? t("Externe hinzufügen"): t("Weitere Externe hinzufügen")}
             </NewButton>
 
             <Notice>
