@@ -114,7 +114,7 @@ class ResourceTypeViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = ResourceTypeFilterSet
 
 
-register_view(ResourceTypeViewSet, 'type')
+register_view(ResourceTypeViewSet, 'resourcetype')
 
 
 # class NestedResourceImageSerializer(TranslatedModelSerializer):
@@ -781,7 +781,8 @@ class ResourceCacheMixin:
 
         # context['accessibility_viewpoint_cache'] = AccessibilityViewpoint.objects.all()
 
-        self._preload_permissions()
+        # TODO load permissions
+        # self._preload_permissions()
 
         return context
 
@@ -898,5 +899,5 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
     #     return self._set_favorite(request, False)
 #
 #
-register_view(ResourceListViewSet, 'resource')
-register_view(ResourceViewSet, 'resource')
+register_view(ResourceListViewSet, 'room')
+register_view(ResourceViewSet, 'room')

@@ -80,4 +80,4 @@ class UnitViewSet(viewsets.ReadOnlyModelViewSet): #munigeo_api.GeoModelAPIView
     filterset_class = UnitFilterSet
 
 
-register_view(UnitViewSet, 'unit')
+register_view(UnitViewSet, 'building')

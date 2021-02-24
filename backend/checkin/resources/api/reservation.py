@@ -186,10 +186,11 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         request_user = self.context['request'].user
 
         # this check is probably only needed for PATCH
-        # try:
-        #     resource = data['resource']
-        # except KeyError:
-        resource = reservation.resource
+        # FIXME this fails
+        try:
+            resource = data['resource']
+        except KeyError:
+            resource = reservation.resource
 
         if not resource.can_make_reservations(request_user):
             raise PermissionDenied(_('You are not allowed to make reservations in this resource.'))

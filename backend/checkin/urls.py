@@ -67,7 +67,7 @@ urlpatterns += [
     path('impersonate/', include('impersonate.urls')),
     path('login/redirect/', to_ms_redirect),
     path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout
-    path('api/booking/', include(respa_router.urls)),
+    path('api/', include(respa_router.urls)),
     path('openapi', get_schema_view(
             title="Checkin API",
             description="API for a little web service to make space and people find each other. (Currently limited to booking-related functions.)",
