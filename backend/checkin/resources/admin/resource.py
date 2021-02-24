@@ -34,7 +34,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Reservation'), {
             #'classes': ('collapse',),
-            'fields': ('reservable', 'reservation_delegates','reservation_info','need_manual_confirmation',
+            'fields': ('reservable', 'reservation_delegates','reservation_info',#'need_manual_confirmation',
                        'min_period','max_period','slot_size','max_reservations_per_user',
                        'reservation_requested_notification_extra','reservation_confirmed_notification_extra',
                        'reservable_max_days_in_advance','reservable_min_days_in_advance',
@@ -53,7 +53,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     #autocomplete_fields
     raw_id_fields = ('reservation_delegates','access_delegates', 'access_allowd_to')
     # list_display extra 'need_manual_confirmation',
-    list_display = ('display_numbers', 'name', 'get_unit_slug', 'people_capacity','area','reservable','need_manual_confirmation','access_restricted','modified_at')
+    list_display = ('display_numbers', 'name', 'get_unit_slug', 'people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
     list_filter = ('unit', 'reservable')#,'need_manual_confirmation') # 'public',
     list_select_related = ('unit',)
     ordering = ('unit', 'name')

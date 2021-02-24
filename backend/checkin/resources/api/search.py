@@ -4,8 +4,10 @@ from rest_framework import viewsets
 from rest_framework.fields import BooleanField
 from rest_framework.response import Response
 
-from resources.api.resource import ResourceListViewSet
-from resources.api.unit import UnitViewSet
+from checkin.resources.api.resource import ResourceListViewSet
+from checkin.resources.api.unit import UnitViewSet
+
+from .base import register_view
 
 
 class TypeaheadViewSet(viewsets.ViewSet):
@@ -16,7 +18,7 @@ class TypeaheadViewSet(viewsets.ViewSet):
     The format of the return data is a mapping of object type to a list
     of object representations.
 
-    By default, just the object's `id` and a related `text`
+    By default, just the object's `uuid` and a related `text`
     are returned. This can be changed with the `full` query parameter.
     If `full` is a truthy value, then the same representation is used as
     with the regular object endpoints.
@@ -69,7 +71,7 @@ class TypeaheadViewSet(viewsets.ViewSet):
                 data = object_viewset.get_serializer(queryset, many=True).data
             else:
                 text_getter = obj_schema["text_getter"]
-                data = [{"id": obj.pk, "text": text_getter(obj)} for obj in queryset]
+                data = [{"uuid": obj.pk, "text": text_getter(obj)} for obj in queryset]
             return (obj_name, data)
 
     def build_q(self, fields, query_parts):
@@ -81,3 +83,5 @@ class TypeaheadViewSet(viewsets.ViewSet):
                 field_q &= Q(**{key: part})
             q |= field_q
         return q
+
+register_view(TypeaheadViewSet, 'search', base_name='search')

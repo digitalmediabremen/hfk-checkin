@@ -6,13 +6,14 @@ from checkin.users.api import all_views as users_views
 from checkin.resources.api.resource import ResourceListViewSet, ResourceViewSet#, PurposeViewSet
 from checkin.resources.api.reservation import ReservationViewSet
 from checkin.resources.api.unit import UnitViewSet
-#from checkin.resources.api.search import TypeaheadViewSet
+from checkin.resources.api.search import TypeaheadViewSet
 #from checkin.resources.api.equipment import EquipmentViewSet
 
 from rest_framework import routers
 
 
 class RespaAPIRouter(routers.DefaultRouter):
+
     def __init__(self):
         super(RespaAPIRouter, self).__init__()
         self.registered_api_views = set()

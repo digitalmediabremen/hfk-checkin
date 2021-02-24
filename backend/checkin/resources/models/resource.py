@@ -127,11 +127,16 @@ class Purpose(ModifiableModel, NameIdentifiedModel):
 
 class ResourceQuerySet(models.QuerySet):
     def visible_for(self, user):
-        if is_general_admin(user):
-            return self
-        is_in_managed_units = Q(unit__in=Unit.objects.managed_by(user))
-        is_public = Q(public=True)
-        return self.filter(is_in_managed_units | is_public)
+        # Resource.public is currently not available
+        # TODO restrict visibility?!
+        return self
+        # is_public = Q(public=True)
+        # if not user.is_authenticated:
+        #     return self.filter(is_public)
+        # if is_general_admin(user):
+        #     return self
+        # is_in_managed_units = Q(unit__in=Unit.objects.managed_by(user))
+        # return self.filter(is_in_managed_units | is_public)
 
     def modifiable_by(self, user):
         if not is_authenticated_user(user):

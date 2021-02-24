@@ -796,7 +796,7 @@ class ResourceListViewSet(mixins.ListModelMixin,
     queryset = queryset.prefetch_related('groups')
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('products')
-    filter_backends = (filters.SearchFilter,)#, ResourceFilterBackend, LocationFilterBackend)
+    filter_backends = (filters.SearchFilter,) #, ResourceFilterBackend, LocationFilterBackend)
 
     search_fields = append_translated(Resource, ('name', 'description', 'unit__name'))
     serializer_class = ResourceSerializer
@@ -811,9 +811,10 @@ class ResourceListViewSet(mixins.ListModelMixin,
         else:
             return ResourceSerializer
 
-    def get_serializer(self, page=[], *args, **kwargs):
-        self._page = page
-        return super().get_serializer(*args, **kwargs)
+    # FIXME this causes the list to be empty
+    # def get_serializer(self, page=[], *args, **kwargs):
+    #     self._page = page
+    #     return super().get_serializer(*args, **kwargs)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -899,5 +900,5 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
     #     return self._set_favorite(request, False)
 #
 #
-register_view(ResourceListViewSet, 'room')
-register_view(ResourceViewSet, 'room')
+register_view(ResourceListViewSet, 'space')
+register_view(ResourceViewSet, 'space')
