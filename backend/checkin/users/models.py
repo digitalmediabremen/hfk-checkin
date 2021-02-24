@@ -75,9 +75,9 @@ class User(AbstractUser):
     # ical_token = models.SlugField(
     #     max_length=16, null=True, blank=True, unique=True, db_index=True, verbose_name="iCal token"
     # )
-    # preferred_language = models.CharField(max_length=8, null=True, blank=True,
-    #                                       verbose_name="Preferred UI language",
-    #                                       choices=settings.LANGUAGES)
+    preferred_language = models.CharField(max_length=8, null=True, blank=True,
+                                          verbose_name="Preferred UI language",
+                                          choices=settings.LANGUAGES)
     # favorite_resources = models.ManyToManyField(Resource, blank=True, verbose_name=_('Favorite resources'),
     #                                             related_name='favorited_by')
 
@@ -130,16 +130,16 @@ class User(AbstractUser):
     #         self.save()
     #     return self.ical_token
     #
-    # def get_preferred_language(self):
-    #     if not self.preferred_language:
-    #         return settings.LANGUAGES[0][0]
-    #     else:
-    #         return self.preferred_language
+    def get_preferred_language(self):
+        if not self.preferred_language:
+            return settings.LANGUAGES[0][0]
+        else:
+            return self.preferred_language
 
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True, editable=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(_("Vorname"), max_length=1000)
     last_name = models.CharField(_("Nachname"), max_length=1000)
     phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
