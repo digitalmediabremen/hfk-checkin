@@ -1,7 +1,10 @@
 import classNames from "classnames";
 import React, { FunctionComponent, ReactElement } from "react";
+import { use100vh } from "react-div-100vh";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import features from "../../features";
+import { TransitionDirection } from "../../src/model/AppState";
+import { useAppState } from "./AppStateProvider";
 import EnterCodeButton from "./EnterCodeButton";
 import Footer from "./Footer";
 import Page from "./Page";
@@ -9,11 +12,9 @@ import StatusBar from "./StatusBar";
 
 interface PageAnimationProps {
     activeSubPage?: string;
-    direction?: TransitionDirection;
+    direction: TransitionDirection;
     show?: boolean;
 }
-
-export type TransitionDirection = "left" | "right";
 
 const PageAnimation: FunctionComponent<PageAnimationProps> = ({
     children,
@@ -22,25 +23,24 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
     show,
 }) => {
     if (!show) return <>{children}</>;
+    const height = use100vh();
     return (
         <>
             <style jsx>
                 {`
                     .page-animation {
-                        // font-size: 12px;
-                        // position: absolute;
-                        // top: 0;
-                        // left: 0;
                         z-index: 10;
+                        overflow: hidden;
                     }
 
                     // start
 
                     .page-animation > :global(.page-wrapper) {
                         transition: transform 300ms;
+                        will-change: transform, z-index;
                     }
 
-                    :global(.left  .page-animation > .page-wrapper) {
+                    :global(.left .page-animation > .page-wrapper) {
                         transform: translateX(-100vw);
                     }
 
@@ -64,7 +64,9 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
                         transform: translateX(100vw);
                     }
 
-                    :global(.right .page-animation.exit-active > .page-wrapper) {
+                    :global(.right
+                            .page-animation.exit-active
+                            > .page-wrapper) {
                         transform: translateX(-100vw);
                     }
 
@@ -76,7 +78,9 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
                         transform: translateX(100vw);
                     }
 
-                    :global(.left .page-animation.exit-done.right > .page-wrapper) {
+                    :global(.left
+                            .page-animation.exit-done.right
+                            > .page-wrapper) {
                         transform: translateX(-100vw);
                     }
 
@@ -88,14 +92,13 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
                     }
 
                     // safari fix
-                    :global(html),
                     :global(body) {
-                        height: 100vh;
+                        height: ${height}px;
                         overflow: hidden;
+                        position: relative;
                     }
                 `}
             </style>
-
             <TransitionGroup className={direction} component="div" appear>
                 <CSSTransition
                     key={activeSubPage || "home"}
@@ -115,7 +118,7 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
 export interface LayoutProps {
     activeSubPage?: string;
     subPages: ReactElement;
-    direction?: TransitionDirection;
+    direction: TransitionDirection;
 }
 
 const Layout: FunctionComponent<LayoutProps> = ({

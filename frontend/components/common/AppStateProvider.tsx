@@ -1,10 +1,7 @@
-import React, { SFC, useContext, useReducer, Reducer, useEffect } from "react";
+import React, { FunctionComponent, useContext, useEffect } from "react";
 import { AppAction, AppState } from "../../src/model/AppState";
-
-import "json.date-extensions"
-import { assert } from "console";
-import useReduceAppState, { initialAppState } from "../api/useAppState";
-
+import { notEmpty } from "../../src/util/TypeUtil";
+import useReduceAppState, { initialAppState } from "../api/useReduceAppState";
 
 const appStateContext = React.createContext<{
     appState: AppState;
@@ -14,24 +11,28 @@ const appStateContext = React.createContext<{
     dispatch: () => undefined,
 });
 
-const { Provider, Consumer } = appStateContext;
+const { Provider } = appStateContext;
 
-export const AppStateProvider: SFC<{}> = ({ children }) => {
-    const [state, dispatch] = useReduceAppState();
+export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
+    const [appState, dispatch] = useReduceAppState();
+    useEffect(() => {
+        if (notEmpty(appState.reservation)) {
+            localStorage.setItem(
+                "reservation",
+                JSON.stringify(appState.reservation)
+            );
+        }
+    }, [appState.reservation]);
 
     useEffect(() => {
-        localStorage.setItem("reservation", JSON.stringify(state));
-      }, [state]);
-    
-    useEffect(() => {
+        console.log("read appstate from localstorage");
+
         dispatch({
-            type: "readReservationFromLocalStorage"
-        })
-    }, [])
+            type: "readReservationFromLocalStorage",
+        });
+    }, []);
 
-    return (
-        <Provider value={{ appState: state, dispatch }}>{children}</Provider>
-    );
+    return <Provider value={{ appState, dispatch }}>{children}</Provider>;
 };
 
 export const useAppState = () => useContext(appStateContext);

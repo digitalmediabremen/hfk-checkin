@@ -7,6 +7,7 @@ interface Profile {
     first_name: string;
     last_name: string;
     phone: string;
+    email?: string;
     readonly verified: boolean;
     readonly last_checkins: Array<LastCheckin>;
 }

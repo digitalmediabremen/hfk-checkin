@@ -1,48 +1,105 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
+import {
+    useReservationArrayState,
+    useSubpageQuery,
+} from "../../../src/hooks/useReservation";
+import { SimpleProfile } from "../../../src/model/api/Profile";
+import { Writable } from "../../../src/util/TypeUtil";
+import useSubPage from "../../api/useSubPage";
+import { useAppState } from "../../common/AppStateProvider";
 import FormTextInput from "../../common/FormTextInput";
-import { Input } from "../../common/Input";
+import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
-import PhoneInput from "../../common/PhoneInput";
 
 interface AddExternalPersonSubPageProps {}
 
 const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPageProps> = ({}) => {
     const { t } = useTranslation();
-    const [name, setName] = useState("");
-    return (
-        <>
-            <style jsx>{``}</style>
-            <FormTextInput
-                label={t("Vorname")}
-                value={name}
-                onChange={setName}
-            ></FormTextInput>
-            <FormTextInput
-                label={t("Nachname")}
-                value={name}
-                onChange={setName}
-                bottomSpacing={3}
-            ></FormTextInput>
+    const index = useSubpageQuery();
+    const [attendees, addAttendee] = useReservationArrayState("attendees");
+    // const [person, setPerson, setPersonField] = useAddExternalPersonState();z
+    const [attendee, setAttendee] = useState<Partial<Writable<SimpleProfile>>>(
+        attendees[index] || {}
+    );
+    // useValidation
 
-            <FormTextInput
-                label={t("Telefon")}
-                value={name}
-                onChange={setName}
-            ></FormTextInput>
-            <FormTextInput
-                label={t("E-Mail")}
-                value={name}
-                onChange={setName}
-                bottomSpacing={2}
-            ></FormTextInput>
+    const { goBack } = useSubPage(requestSubpages);
+    const { register, errors, handleSubmit, control, formState } = useForm<Writable<SimpleProfile>>({
+        mode: "onTouched",
+    });
+
+    const controllerProps = useCallback((
+        name: keyof Writable<SimpleProfile>,
+        translatedName: string,
+        rules?: {}
+    ) => ({
+        mode: "onTouched",
+        name,
+        control,
+        rules: { required: t("{fieldName} darf nicht leer sein.", { fieldName: translatedName }), ...rules },
+        error: errors[name]?.message,
+        label: translatedName,
+        defaultValue: ""
+    }), [errors, control]);
+
+    const handleAddAttendee = (value: Writable<SimpleProfile>) => {
+        // Todo: validate person 
+        addAttendee(value, index);
+        goBack("personen"); 
+    };
+
+    return (
+        <form onSubmit={handleSubmit(handleAddAttendee)}>
+            <style jsx>{``}</style>
+            <Controller
+                as={
+                    <FormTextInput />
+                }
+                {...controllerProps("first_name", t("Vorname"))}
+            />
+
+            <Controller
+                as={
+                    <FormTextInput
+                        bottomSpacing={3}
+                    />
+                }
+                {...controllerProps("last_name", t("Nachname"))}
+            />
+
+            <Controller
+                as={
+                    <FormTextInput/>
+                }
+                {...controllerProps("phone", t("Telefonnummer"), {})}
+            />
+            <Controller
+                as={
+                    <FormTextInput
+
+                        bottomSpacing={2}
+                    ></FormTextInput>
+                }
+                {...controllerProps("email", t("E-Mail"), {
+                    pattern: {
+                        value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+                        message: t("Das ist leider keine E-Mail Adresse"),
+                    },
+                })}
+            />
             {/* <PhoneInput value="22" /> */}
-            <Notice>
+            <Notice bottomSpacing={2}>
                 {t(
                     "Die E-Mail Adresse und die Telefonnummer werden nur verwendet um den Gast bei Rückfragen kontaktieren zu können."
                 )}
             </Notice>
-        </>
+            <NewButton primary>
+                Hinzufügen
+            </NewButton>
+        </form>
     );
 };
 

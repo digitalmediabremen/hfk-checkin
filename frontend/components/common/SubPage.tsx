@@ -23,12 +23,12 @@ const SubPageHeader = ({
                 padding: 0 ${theme.spacing(6)}px;
                 box-sizing: border-box;
                 overflow: hidden;
-                position: fixed;
+                position: relative;
                 width: 100%;
                 top: 0;
                 left: 0;
                 right: 0;
-                z-index: 20;
+                z-index: 2000;
             }
             .title {
                 display: inline-block;

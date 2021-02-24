@@ -7,11 +7,12 @@ export interface FormElementBaseProps {
     primary?: boolean;
     noBottomSpacing?: true;
     bottomSpacing?: number;
-    extendedWidth?: true;
+    extendedWidth?: boolean;
     onClick?: () => void;
     noOutline?: boolean;
     className?: string;
     narrow?: boolean;
+    disabled?: boolean;
 }
 
 const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
@@ -25,6 +26,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     primary,
     narrow,
     className,
+    disabled,
 }) => {
     const ComponentType = button ? "button" : "div";
     const outline = !noOutline;
@@ -33,11 +35,12 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     const calculateMargin = () => {
         if (extendedWidth) return -theme.spacing(1.5) + 1;
         return 0;
-    }
+    };
     return (
         <>
             <style jsx>{`
                 .form-element-base {
+                    overflow: hidden;
                     border: none;
                     display: flex;
                     width: ${extendedWidth
@@ -58,7 +61,11 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     color: ${theme.primaryColor};
                     background-color: ${theme.secondaryColor};
 
-                    line-height: 0;
+                    user-select: none;
+                }
+
+                .form-element-base.disabled {
+                    color: ${theme.disabledColor};
                 }
 
                 .form-element-base.primary {
@@ -66,8 +73,12 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     color: ${theme.secondaryColor};
                 }
 
+                .form-element-base.primary.disabled {
+                    background-color: ${theme.disabledColor};
+                }
+
                 .form-element-base.interactable:hover {
-                    cursor: "pointer";
+                    cursor: pointer;
                 }
 
                 .form-element-base.interactable {
@@ -85,16 +96,21 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     padding: ${theme.spacing(0.5)}px ${theme.spacing(1) + 2}px;
                 }
 
-                .form-element-base:not(.outline) {
+                .form-element-base.outline.disabled {
+                    border-color: ${theme.disabledColor};
+å                }
 
+                .form-element-base:not(.outline) {
                 }
             `}</style>
             <ComponentType
+                disabled={disabled}
                 onClick={onClick}
                 className={classNames("form-element-base", className, {
                     outline,
                     primary,
-                    interactable,
+                    interactable: !disabled,
+                    disabled: disabled
                 })}
             >
                 {children}

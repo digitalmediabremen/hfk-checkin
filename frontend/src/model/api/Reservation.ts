@@ -1,9 +1,11 @@
-import { assert, notEmpty, Writable, WritableKeys } from "../../util/TypeUtil";
+import { notEmpty, Writable, WritableKeys } from "../../util/TypeUtil";
 import Profile, { SimpleProfile } from "./Profile";
 
 interface Resource {}
 
-type ReservationStatus = "OK";
+enum ReservationStatus {
+    REQUESTED = "requested",
+};
 
 enum ReservationReason {
     WORKSHOP_USAGE,
@@ -14,8 +16,8 @@ enum ReservationReason {
 
 export default interface Reservation {
     readonly uuid: string;
-    rooms: Resource[];
-    room_uuid: string;
+    readonly resource: Resource[];
+    resource_uuid: string;
     attendees: SimpleProfile[];
     readonly organizer: SimpleProfile;
     readonly status: ReservationStatus;

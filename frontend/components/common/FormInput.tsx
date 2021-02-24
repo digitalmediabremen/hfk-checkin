@@ -59,14 +59,14 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
     
                     input[type="date"]::-webkit-calendar-picker-indicator {
                         background: transparent;
-                        bottom: 0;
+                        bottom: -24px;
                         color: transparent;
                         cursor: pointer;
                         height: auto;
-                        left: 0;
+                        left: -16px;
                         position: absolute;
-                        right: 0;
-                        top: 0;
+                        right: -16px;
+                        top: -24px;
                         width: auto;
                     }
                 }

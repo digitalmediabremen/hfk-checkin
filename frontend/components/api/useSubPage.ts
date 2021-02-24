@@ -1,7 +1,9 @@
-import { route } from "next/dist/next-server/server/router";
 import { useRouter } from "next/router";
 import { useState, useCallback, ReactNode, useEffect } from "react";
-import { LayoutProps, TransitionDirection } from "../common/Layout";
+import { appUrls } from "../../config";
+import { TransitionDirection } from "../../src/model/AppState";
+import { useAppState } from "../common/AppStateProvider";
+import { LayoutProps } from "../common/Layout";
 import { SubPageProps } from "../common/SubPage";
 
 type DepthMapEntry = {};
@@ -9,28 +11,28 @@ type SubPagesMapType = Record<string, DepthMapEntry>;
 
 // const activeSubPageFromRoute (route: string)
 
+
 const useSubPage = <SubPagesMap extends SubPagesMapType>(
     subPagesMap: SubPagesMap
 ) => {
     type SubPagesType = keyof SubPagesMap;
     const router = useRouter();
-
     const activeSubPage = Object.keys(router.query)[0];
-    const setActiveSubPage = (subPage?: SubPagesType) =>
-        router.push(`/request${`/?${subPage || "s"}`}`, undefined, {
+    const {appState, dispatch} = useAppState();
+    const direction = appState.subPageTransitionDirection;
+
+    const setActiveSubPage = useCallback((subPage?: SubPagesType, param?: string) => {
+        const url = appUrls.requestSubpage(subPage as string, param);
+        router.push(url, url, {
             shallow: true,
         });
+    }, []);
 
-    const [direction, setDirection] = useState<TransitionDirection>("left");
-    // register router events
-    useEffect(() => {
-        const changeHandler = (route: string) => {
-            // console.log("event", route, e)
-        }
-        router.events.on("routeChangeStart", changeHandler);
-        return () => {
-            router.events.off("routeChangeStart", changeHandler)
-        }
+    const setDirection = useCallback((_direction: TransitionDirection) => {
+        dispatch({
+            type: "subPageTransitionDirection",
+            direction: _direction,
+        });
     }, []);
 
     const subPageProps: (
@@ -40,36 +42,41 @@ const useSubPage = <SubPagesMap extends SubPagesMapType>(
         (subpage: SubPagesType, returnToSubPage?: SubPagesType) => ({
             active: activeSubPage === subpage,
             onBack: (nextSubPage?: SubPagesType) => {
-                setActiveSubPage(nextSubPage || returnToSubPage);
                 setDirection("left");
+                setActiveSubPage(nextSubPage || returnToSubPage);
             },
         }),
-        [activeSubPage]
+        [activeSubPage, setActiveSubPage, setDirection]
     );
+
+    const goForward = (subpage: SubPagesType) => {
+        setDirection("right");
+        setActiveSubPage(subpage);
+    }
+
+    const goBack = (subpage: SubPagesType) => {
+        setDirection("left");
+        setActiveSubPage(subpage);
+    }
 
     const handlerProps = useCallback(
         (nextSubPage: SubPagesType) => ({
-            onClick: () => {
+            onClick: (param?: string) => {
+                const p = typeof param === "string" ? param : undefined;
                 setDirection("right");
-                setActiveSubPage(nextSubPage);
+                setActiveSubPage(nextSubPage, p);
             },
         }),
-        [activeSubPage]
-    );
-
-    const pageProps: () => Partial<LayoutProps> = useCallback(
-        () => ({
-            activeSubPage: activeSubPage as string,
-            direction: direction,
-        }),
-        [direction, activeSubPage]
+        [activeSubPage, setActiveSubPage]
     );
 
     return {
         activeSubPage,
+        direction,
         subPageProps,
-        pageProps,
         handlerProps,
+        goForward,
+        goBack
     };
 };
 

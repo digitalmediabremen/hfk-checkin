@@ -59,12 +59,12 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
                     overflow: hidden;
-                    position: fixed;
+                    position: relative;
                     width: 100%;
                     top: 0;
                     left: 0;
                     right: 0;
-                    z-index: 10;
+                    z-index: 100;
                     background: #fff;
                 }
 
@@ -101,7 +101,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     background-color: ${theme.primaryColor};
                     color: ${theme.secondaryColor};
                     font-weight: bold;
-                    z-index: 11;
+                    z-index: 101;
                 }
 
                 .status-enter,

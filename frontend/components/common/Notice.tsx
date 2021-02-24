@@ -6,10 +6,12 @@ import theme from "../../styles/theme";
 interface NoticeProps {
     error?: true;
     title?: string;
+    bottomSpacing?: number;
 }
 
 const Notice: React.FunctionComponent<NoticeProps> = ({
     children,
+    bottomSpacing,
     error,
     title,
 }) => {
@@ -19,7 +21,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 .wrapper {
                     display: flex;
                     color: ${theme.primaryColor};
-                    // margin-bottom: ${theme.spacing(2)}px;
+                    margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
                 }
 
                 h3 {
