@@ -120,11 +120,11 @@ class Reservation(ModifiableModel, UUIDModelMixin):
     REQUESTED = 'requested'
     WAITING_FOR_PAYMENT = 'waiting_for_payment'
     STATE_CHOICES = (
-        (CREATED, _('created')),
-        (CANCELLED, _('cancelled')),
+        (CREATED, _('newly created')),
+        (REQUESTED, _('requested')),
         (CONFIRMED, _('confirmed')),
         (DENIED, _('denied')),
-        (REQUESTED, _('requested')),
+        (CANCELLED, _('cancelled')),
         #(WAITING_FOR_PAYMENT, _('waiting for payment')), # deactiveted with all other payment methods
     )
 
@@ -290,6 +290,10 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         self.save()
 
     def process_state_change(self, old_state, new_state, user):
+        if new_state == Reservation.CREATED:
+            # TODO do not raise ValidationError here. They will not be caught.
+            raise ValidationError(_("Already existing reservations can not have state %s" % Reservation.CREATED))
+
         # Make sure it is a known state
         assert new_state in (
             Reservation.REQUESTED, Reservation.CONFIRMED, Reservation.DENIED,
@@ -354,6 +358,7 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         self._state_verbose = value
 
     def get_state_verbose(self):
+        # TODO add this verbose state in modelhistory details?
         if self._state_verbose is None:# or not isinstance(self._state_verbose, str):
             return _("This reservation (%s) is currently on status: %s" % (self.identifier, self.state))
         else:
@@ -676,9 +681,11 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
     def send_reservation_confirmed_mail(self):
         reservations = [self]
-        ical_file = build_reservations_ical_file(reservations)
-        ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
-        attachments = [ics_attachment] + self.get_resource_email_attachments()
+        # TODO ical attachment
+        # ical_file = build_reservations_ical_file(reservations)
+        # ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
+        # attachments = [ics_attachment] + self.get_resource_email_attachments()
+        attachments = self.get_resource_email_attachments()
 
         self.send_reservation_mail(NotificationType.RESERVATION_CONFIRMED,
                                    attachments=attachments)
@@ -709,6 +716,8 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
     def get_resource_email_attachments(self):
         attachments = []
+        if not hasattr(self.resource, 'attachments'):
+            return attachments
         for attachment in self.resource.attachments.all():
             file_name = os.path.basename(attachment.attachment_file.name)
             file_type = mimetypes.guess_type(attachment.attachment_file.url)[0]

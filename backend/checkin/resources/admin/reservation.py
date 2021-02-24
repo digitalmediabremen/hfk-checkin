@@ -37,18 +37,19 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         (None, {
             'fields': ('resource', 'user',  'begin', 'end', 'uuid')# 'short_uuid')
         }),
+        (_('State'), {
+            'fields': ('state', 'approver'),
+        }),
         (_('Details'), {
             # 'classes': ('collapse',),
             'fields': ('comments', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'organizer_is_attending', 'type'),
-        }),
-        (_('State'), {
-            'fields': ('state', 'approver'),
         }),
         # (_('Creation and modifications'), {
         #     'classes': ('collapse',),
         #     'fields': ('created_at','created_by','modified_at','modified_by'),
         # }),
     )
+    radio_fields = {'state': admin.HORIZONTAL}
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # obj is not None, so this is an edit
@@ -74,12 +75,13 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     def get_form(self, request, obj=None, **kwargs):
         if obj:
-            _original_state = obj.state
+            self._original_state = obj.state
         return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
         if self._original_state:
             obj.process_state_change(self._original_state, obj.state, request.user)
+        messages.add_message(request, messages.INFO, str(obj.get_state_verbose()))
         super().save_model(request, obj, form, change)
 
     # def save_formset(self, request, form, formset, change):
