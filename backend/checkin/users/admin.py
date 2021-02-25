@@ -2,7 +2,9 @@ import random
 import uuid
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.forms import UsernameField
 from django.contrib import admin
+from django import forms
 from django.utils.translation import gettext, gettext_lazy as _
 from impersonate.admin import UserAdminImpersonateMixin
 from simple_history.admin import SimpleHistoryAdmin
@@ -12,6 +14,15 @@ from simple_history.admin import SimpleHistoryAdmin
 #
 # TODO actually move the profiles model to this app
 # admin.site.register(Profile,ProfileAdmin)
+
+User = get_user_model()
+
+
+class UserCreationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ("email",)
+
 
 class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     open_new_window = True
@@ -26,19 +37,20 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2'),
+            'fields': ('email',)#, 'password1', 'password2'),
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
+    add_form = UserCreationForm
 
 #from resources.models import Reservation
 # from allauth.socialaccount.models import SocialAccount, EmailAddress
 #
 #
-User = get_user_model()
+
 #
 #
 # first_names_list = [

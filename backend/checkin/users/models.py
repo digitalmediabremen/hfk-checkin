@@ -111,6 +111,13 @@ class User(AbstractUser):
         address_part = self.email
         return '{0} <{1}>'.format(name_part, address_part).strip()
 
+    @property
+    def is_verified(self):
+        if hasattr(self, 'profile'):
+            return self.profile.verified
+        else:
+            return True
+
     def __str__(self):
         return self.get_email_notation()
 
