@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 USER_MODEL = get_user_model()
-ANONYMOUS_USER_NAME = getattr(settings, 'ANONYMOUS_USER_NAME', "Anonymous User")
+ANONYMOUS_USER_NAME = getattr(settings, 'ANONYMOUS_USER_NAME', "AnonymousUser")
 ANONYMOUS_USER_PK = getattr(settings, 'ANONYMOUS_USER_PK', -1)
 
 
