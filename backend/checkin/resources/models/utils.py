@@ -17,7 +17,7 @@ from django.utils.timezone import localtime
 from rest_framework.reverse import reverse
 #from icalendar import Calendar, Event, vDatetime, vText, vGeo
 #import xlsxwriter
-
+import warnings
 
 DEFAULT_LANG = settings.LANGUAGES[0][0]
 
@@ -102,7 +102,12 @@ notification_logger = logging.getLogger(__name__)
 
 from post_office import mail
 
-def send_template_mail(recipients, template, context, attachments=None, priority='now'):
+
+class EmailInformation(UserWarning):
+    pass
+
+
+def send_template_mail(recipients, template, context, attachments=None, priority=mail.PRIORITY.now):
     if not getattr(settings, 'NOTIFICATION_MAILS_ENABLED', True):
         notification_logger.debug('Notifications are disabled by NOTIFICATION_MAILS_ENABLED.')
         return
@@ -113,7 +118,7 @@ def send_template_mail(recipients, template, context, attachments=None, priority
 
     notification_logger.info('Sending notification email from %s to %s using template %s' % (from_address, recipients, template))
 
-    mail.send(
+    email = mail.send(
         recipients,
         from_address,
         priority=priority,
@@ -122,82 +127,90 @@ def send_template_mail(recipients, template, context, attachments=None, priority
         attachments=attachments
     )
 
+    to_display = ", ".join(email.to)
+    if priority == mail.PRIORITY.now:
+        warnings.warn(_("Send email to %s with subject '%s'.") % (to_display, email.subject), EmailInformation)
+    else:
+        warnings.warn(_("Queued email to %s with subject '%s'.") % (to_display, email.subject), EmailInformation)
 
-def send_respa_mail(email_address, subject, body, html_body=None, attachments=None):
-    if not getattr(settings, 'RESPA_MAILS_ENABLED', False):
-        return
-
-    from_address = (getattr(settings, 'RESPA_MAILS_FROM_ADDRESS', None) or
-                    'noreply@%s' % Site.objects.get_current().domain)
-
-    notification_logger.info('Sending notification email to %s: "%s"' % (email_address, subject))
-
-    text_content = body
-    msg = EmailMultiAlternatives(subject, text_content, from_address, [email_address], attachments=attachments)
-    if html_body:
-        msg.attach_alternative(html_body, 'text/html')
-
-    msg.send()
+    return email
 
 
-def generate_reservation_xlsx(reservations):
-    """
-    Return reservations in Excel xlsx format
+# def send_respa_mail(email_address, subject, body, html_body=None, attachments=None):
+#     if not getattr(settings, 'RESPA_MAILS_ENABLED', False):
+#         return
+#
+#     from_address = (getattr(settings, 'RESPA_MAILS_FROM_ADDRESS', None) or
+#                     'noreply@%s' % Site.objects.get_current().domain)
+#
+#     notification_logger.info('Sending notification email to %s: "%s"' % (email_address, subject))
+#
+#     text_content = body
+#     msg = EmailMultiAlternatives(subject, text_content, from_address, [email_address], attachments=attachments)
+#     if html_body:
+#         msg.attach_alternative(html_body, 'text/html')
+#
+#     msg.send()
 
-    The parameter is expected to be a list of dicts with fields:
-      * unit: unit name str
-      * resource: resource name str
-      * begin: begin time datetime
-      * end: end time datetime
-      * staff_event: is staff event bool
-      * user: user email str (optional)
-      * comments: comments str (optional)
-      * all of RESERVATION_EXTRA_FIELDS are optional as well
 
-    :rtype: bytes
-    """
-    from checkin.resources.models import Reservation, RESERVATION_EXTRA_FIELDS
-
-    output = io.BytesIO()
-    workbook = xlsxwriter.Workbook(output)
-    worksheet = workbook.add_worksheet()
-
-    headers = [
-        ('Unit', 30),
-        ('Resource', 30),
-        ('Begin time', 15),
-        ('End time', 15),
-        ('Created at', 15),
-        ('User', 30),
-        ('Comments', 30),
-        ('Staff event', 10),
-    ]
-
-    for field in RESERVATION_EXTRA_FIELDS:
-        headers.append((Reservation._meta.get_field(field).verbose_name, 20))
-
-    header_format = workbook.add_format({'bold': True})
-    for column, header in enumerate(headers):
-        worksheet.write(0, column, str(_(header[0])), header_format)
-        worksheet.set_column(column, column, header[1])
-
-    date_format = workbook.add_format({'num_format': 'dd.mm.yyyy hh:mm', 'align': 'left'})
-    for row, reservation in enumerate(reservations, 1):
-        worksheet.write(row, 0, reservation['unit'])
-        worksheet.write(row, 1, reservation['resource'])
-        worksheet.write(row, 2, localtime(reservation['begin']).replace(tzinfo=None), date_format)
-        worksheet.write(row, 3, localtime(reservation['end']).replace(tzinfo=None), date_format)
-        worksheet.write(row, 4, localtime(reservation['created_at']).replace(tzinfo=None), date_format)
-        if 'user' in reservation:
-            worksheet.write(row, 5, reservation['user'])
-        if 'comments' in reservation:
-            worksheet.write(row, 6, reservation['comments'])
-        worksheet.write(row, 7, reservation['staff_event'])
-        for i, field in enumerate(RESERVATION_EXTRA_FIELDS, 8):
-            if field in reservation:
-                worksheet.write(row, i, reservation[field])
-    workbook.close()
-    return output.getvalue()
+# def generate_reservation_xlsx(reservations):
+#     """
+#     Return reservations in Excel xlsx format
+#
+#     The parameter is expected to be a list of dicts with fields:
+#       * unit: unit name str
+#       * resource: resource name str
+#       * begin: begin time datetime
+#       * end: end time datetime
+#       * staff_event: is staff event bool
+#       * user: user email str (optional)
+#       * comments: comments str (optional)
+#       * all of RESERVATION_EXTRA_FIELDS are optional as well
+#
+#     :rtype: bytes
+#     """
+#     from checkin.resources.models import Reservation, RESERVATION_EXTRA_FIELDS
+#
+#     output = io.BytesIO()
+#     workbook = xlsxwriter.Workbook(output)
+#     worksheet = workbook.add_worksheet()
+#
+#     headers = [
+#         ('Unit', 30),
+#         ('Resource', 30),
+#         ('Begin time', 15),
+#         ('End time', 15),
+#         ('Created at', 15),
+#         ('User', 30),
+#         ('Comments', 30),
+#         ('Staff event', 10),
+#     ]
+#
+#     for field in RESERVATION_EXTRA_FIELDS:
+#         headers.append((Reservation._meta.get_field(field).verbose_name, 20))
+#
+#     header_format = workbook.add_format({'bold': True})
+#     for column, header in enumerate(headers):
+#         worksheet.write(0, column, str(_(header[0])), header_format)
+#         worksheet.set_column(column, column, header[1])
+#
+#     date_format = workbook.add_format({'num_format': 'dd.mm.yyyy hh:mm', 'align': 'left'})
+#     for row, reservation in enumerate(reservations, 1):
+#         worksheet.write(row, 0, reservation['unit'])
+#         worksheet.write(row, 1, reservation['resource'])
+#         worksheet.write(row, 2, localtime(reservation['begin']).replace(tzinfo=None), date_format)
+#         worksheet.write(row, 3, localtime(reservation['end']).replace(tzinfo=None), date_format)
+#         worksheet.write(row, 4, localtime(reservation['created_at']).replace(tzinfo=None), date_format)
+#         if 'user' in reservation:
+#             worksheet.write(row, 5, reservation['user'])
+#         if 'comments' in reservation:
+#             worksheet.write(row, 6, reservation['comments'])
+#         worksheet.write(row, 7, reservation['staff_event'])
+#         for i, field in enumerate(RESERVATION_EXTRA_FIELDS, 8):
+#             if field in reservation:
+#                 worksheet.write(row, i, reservation[field])
+#     workbook.close()
+#     return output.getvalue()
 
 
 def get_object_or_none(cls, **kwargs):

@@ -85,7 +85,9 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     resource_uuid = serializers.PrimaryKeyRelatedField(queryset=ResourceListViewSet.queryset, source='resource')
     begin = NullableDateTimeField()
     end = NullableDateTimeField()
-    organizer = EmailField(source='user.email', read_only=True) # or depending on permission
+    #organizer = EmailField(source='user.email', read_only=True) # or depending on permission
+    # TODO do all users have permission to show / see organizers?!
+    organizer = UserSerializer(source='user', read_only=True)
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
     state = serializers.ReadOnlyField()
@@ -317,7 +319,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             del data['comments']
 
         if not resource.can_view_reservation_user(user):
-            del data['user']
+            del data['organizer']
 
         # if instance.are_extra_fields_visible(user):
         #     cache = self.context.get('reservation_metadata_set_cache')
@@ -568,7 +570,7 @@ class ReservationFilterSet(django_filters.rest_framework.FilterSet):
 class ReservationPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
-            return True
+            return obj.can_view(request.user)
         return obj.can_modify(request.user)
 
 

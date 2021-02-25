@@ -68,8 +68,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                 pass
                 # form will validate and show errors anyway
                 # messages.add_message(request, messages.ERROR, str(e.message))
-        for w in warns:
-            messages.add_message(request, messages.WARNING, str(w.message))
+            for w in warns:
+                messages.add_message(request, messages.WARNING, str(w.message))
         # give some info
         # TODO move all warnings to validate_reservation()
         if obj:
@@ -100,9 +100,18 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         return super().get_form(request, obj, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        if self._original_state:
+        # FIXME what if no _original_state. New object?
+        if not self._original_state:
+            self._original_state = Reservation.CREATED
+
+        # process state change and catch all warnings as messages
+        with warnings.catch_warnings(record=True) as warns:
             obj.process_state_change(self._original_state, obj.state, request.user)
+            for w in warns:
+                messages.add_message(request, messages.INFO, str(w.message))
+        # show resulted (new state verbose) state as message
         messages.add_message(request, messages.INFO, _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
+        # actually save obj
         super().save_model(request, obj, form, change)
 
     # def save_formset(self, request, form, formset, change):

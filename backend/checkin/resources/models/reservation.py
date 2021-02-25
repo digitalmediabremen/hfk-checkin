@@ -35,6 +35,7 @@ from .utils import (
 DEFAULT_TZ = pytz.timezone(settings.TIME_ZONE)
 AUTH_USER_MODEL = settings.AUTH_USER_MODEL
 
+logging.captureWarnings(True) # capture warnings with logger, e.g. in process_state_change
 logger = logging.getLogger(__name__)
 
 RESERVATION_EXTRA_FIELDS = ('has_priority','agreed_to_phone_contact','exclusive_resource_usage','organizer_is_attending')
@@ -162,7 +163,7 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         """
         if hasattr(self.user, 'profile'):
             return self.user.profile
-        raise ValueError("User without Profile set as organizer on Reservation.")
+        raise ValueError("User (%s) without Profile set as organizer on Reservation." % self.user)
         #return self.user
 
     # attendance related fields
@@ -364,6 +365,10 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         else:
             return self._state_verbose
 
+    def can_view(self, user):
+        # you can only view your own reservations
+        return self.user == user
+
     def can_modify(self, user):
         if not user:
             return False
@@ -452,8 +457,8 @@ class Reservation(ModifiableModel, UUIDModelMixin):
         # if not self.user:
         #     raise ValidationError("You must specify a organizer.")
 
-        if not user.profile.verified:
-            raise ValidationError(gettext("Profile of organizer (%s) is not verified. Please verify before making reservations." % user))
+        if not user.is_verified:
+            raise ValidationError(gettext("Organizer (%s) is not verified. Please verify before making reservations." % user))
 
         if not self.resource.can_make_reservations(user):
             raise ValidationError(gettext("Organizer (%s) is not to make reservations on this resource." % user))
@@ -652,14 +657,14 @@ class Reservation(ModifiableModel, UUIDModelMixin):
 
         logger.debug("Sending notification to %s" % str(email_address))
 
-        send_template_mail(
+        email = send_template_mail(
             email_address,
             notification_template,
             context,
             attachments,
         )
 
-        return email_address
+        return email.to
 
     def send_reservation_requested_mail(self):
         return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED)
