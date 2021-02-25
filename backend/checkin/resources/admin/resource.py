@@ -42,7 +42,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Access'), {
             # 'classes': ('collapse',),
-            'fields': ('access_restricted', 'access_delegates', 'access_allowd_to'),
+            'fields': ('access_restricted', 'access_delegates', 'access_allowed_to'),
         }),
         (_('Changes'), {
             # 'classes': ('collapse',),
@@ -50,8 +50,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
     )
     #readonly_fields = ('uuid',)
-    #autocomplete_fields
-    raw_id_fields = ('reservation_delegates','access_delegates', 'access_allowd_to')
+    autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
     list_display = ('display_numbers', 'name', 'get_unit_slug', 'people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
     list_filter = ('unit', 'reservable')#,'need_manual_confirmation') # 'public',

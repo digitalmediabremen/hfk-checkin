@@ -116,7 +116,7 @@ class AbstractAccessRestrictedModel(models.Model):
     access_restricted = models.BooleanField(_("Access restricted"), blank=True, default=False)
     access_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Access delegates"), blank=True,
                                               related_name='%(app_label)s_%(class)s_access_delegated')
-    access_allowd_to = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Access allowed to"), blank=True,
+    access_allowed_to = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Access allowed to"), blank=True,
                                               related_name='%(app_label)s_%(class)s_access_allowed')
     # TODO was: through='RoomAccessPolicy',
 
