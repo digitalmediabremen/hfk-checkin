@@ -132,6 +132,9 @@ class CheckinAdmin(admin.ModelAdmin):
 
     actions = None
 
+    def get_queryset(self, request):
+        return Checkin.objects
+
     # We cannot call super().get_fields(request, obj) because that method calls
     # get_readonly_fields(request, obj), causing infinite recursion. Ditto for
     # super().get_form(request, obj). So we  assume the default ModelForm.

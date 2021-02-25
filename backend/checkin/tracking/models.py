@@ -19,7 +19,7 @@ from django.contrib.postgres.search import SearchVector
 from dirtyfields import DirtyFieldsMixin
 from django_better_admin_arrayfield.models.fields import ArrayField
 
-CHECKIN_RETENTION_TIME = timedelta(weeks=3)
+CHECKIN_RETENTION_TIME = timedelta(weeks=4)
 CHECKIN_LIFETIME = timedelta(hours=24)
 LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
@@ -241,6 +241,9 @@ class CheckinQuerySet(models.QuerySet):
     def not_older_then(self, oldest=LOAD_LOOKBACK_TIME):
         return self.filter(time_entered__gte=timezone.now()-oldest)
 
+    def older_then(self, timedelta=LOAD_LOOKBACK_TIME):
+        return self.filter(time_entered__lt=timezone.now()-timedelta)
+
     def checkins_for_profile_at_location(self, profile, location):
         return self.order_by('-time_entered').filter(profile=profile, location=location)
 
@@ -431,7 +434,7 @@ class PaperCheckin(Checkin):
     left_after_midnight = models.BooleanField(verbose_name=_("Ausgang nach 23:59 (Folgetag)"), blank=True)
 
     # prevent old checkins to be inaccessible (filtered out) on the form
-    objects = Checkin.all
+    objects = CheckinQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Aufenthalt (per Papierprotokoll)")
