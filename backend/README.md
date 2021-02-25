@@ -48,3 +48,18 @@ python manage.py migrate
 ```
 python manage.py runserver
 ```
+
+## Management commands
+### checkin.tracking
+Anonymize checkin records older then CHECKIN_RETENTION_TIME:
+```
+python manage.py cleanup_checkins
+```
+Print (preliminary) report of personal contacts tracked with the application:
+```
+python manage.py contact_report
+```
+Print (preliminary) report of usage report:
+```
+python manage.py usage_report
+```
