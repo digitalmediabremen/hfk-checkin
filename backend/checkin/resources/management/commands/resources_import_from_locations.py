@@ -17,11 +17,12 @@ class Command(BaseCommand):
     def resource_from_location(self, l):
         r = Resource()
         r.name = l.org_name
-        r.numbers = [l.org_number]
+        r.numbers = [n.strip() for n in l.org_number.split("/")]
         r.area = l.org_size
         r.people_capacity = l.capacity
         r.reservation_info = "\n".join([l.org_comment, l.org_capacity_comment])
-        r.reservable = l.org_bookable
+        #r.reservable = l.org_bookable
+        r.reservable = True # set all to bookable
         # TODO nutzungsarten as group?
         # TODO floor number and name
         # TODO use parent for Unit

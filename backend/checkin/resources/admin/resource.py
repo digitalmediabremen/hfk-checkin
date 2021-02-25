@@ -60,6 +60,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     search_fields = ('name','numbers','unit__name')
     list_display_links = ('display_numbers', 'name')
     readonly_fields = ModifiableModelAdminMixin._fields
+    list_max_show_all = 1000
 
     def get_unit_slug(self, obj):
         if obj.unit:
