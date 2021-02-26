@@ -63,6 +63,8 @@ django-modeltranslation = "==0.16.2"
 django-post-office = "==3.5.3"
 djangorestframework-jwt = "==1.11.0"
 freezegun = "==1.1.0"
+pyyaml = "*"
+uritemplate = "*"
 
 [requires]
 python_version = "3.7.10"
