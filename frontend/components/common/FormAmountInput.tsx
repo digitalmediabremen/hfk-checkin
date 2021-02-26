@@ -34,7 +34,7 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
         <>
             <style jsx>{`
                 .amount {
-                    font-size: 48px;
+                    font-size: $3rem;
                     font-weight: bold;
                 }
 

@@ -26,7 +26,7 @@ const DigitInputElement = React.forwardRef<
                     width: 1em;
                     height: 1.4em;
                     line-height: 1.35em;
-                    font-size: 1em;
+                    font-size: 1rem;
                 }
                 input {
                     position: absolute;
@@ -144,7 +144,7 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
                 }
                 @media screen and (min-width: 500px) {
                     div {
-                        font-size: 7em;
+                        font-size: 7rem;
                         // margin-left: -.15em;
                     }
                 }

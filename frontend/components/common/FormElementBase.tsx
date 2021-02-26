@@ -65,7 +65,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
 
                     padding: 0;
 
-                    min-height: ${theme.spacing(narrow ? 6 : 7)}px;
+                    min-height: ${theme.spacing(narrow ? 5 : 7)}px;
                     color: ${theme.primaryColor};
                     background-color: ${theme.secondaryColor};
 

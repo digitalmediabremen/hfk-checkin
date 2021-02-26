@@ -22,7 +22,6 @@ const { className, styles } = css.resolve`
 const NewButton: React.FunctionComponent<NewButtonProps> = ({
     children,
     onClick,
-    button,
     iconLeft,
     iconRight,
     noOutline,
@@ -50,7 +49,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                     margin: 0;
                     padding: 0;
                     text-align: left;
-                    font-size: 16px;
+                    font-size: 1rem;
                     line-height: 16px;
                     width: 100%;
                     text-transform: uppercase;
@@ -78,7 +77,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                     margin-left: ${-theme.spacing(0)}px;
                 }
             `}</style>
-            <FormElementBase narrow noPadding noOutline={noOutline} {...formElementBaseProps} onClick={onClick} componentType="button">
+            <FormElementBase narrow noPadding={noOutline} noOutline={noOutline} {...formElementBaseProps} onClick={onClick} componentType="button">
                 {iconLeft && <span className="icon left">{iconLeft}</span>}
                 <div className={classNames({"center": !noOutline})}>
                     <EllipseText>

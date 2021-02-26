@@ -39,7 +39,7 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
 
                 .label.small {
                     font-weight: bold;
-                    font-size: 12px;
+                    font-size: 0.75em;
                     line-height: 1.3em;
                 }
             `}</style>
@@ -47,6 +47,7 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
                 noOutline
                 noPadding
                 onClick={handleChange}
+                narrow
                 {...formElementBaseProps}
             >
                 <span className="icon">

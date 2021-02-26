@@ -61,7 +61,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 )}
             </Notice>
             <FormCheckbox
-                value={checked}
+                value={checked || false}
                 label={t("Ich beanspruche den ganzen Raum")}
                 onChange={setChecked}
                 noBottomSpacing

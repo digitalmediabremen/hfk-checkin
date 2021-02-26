@@ -28,7 +28,12 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
         Writable<SimpleProfile>
     >({
         mode: "onTouched",
-        defaultValues: attendees[index],
+        defaultValues: attendees[index] || {
+            email: "",
+            first_name: "",
+            last_name: "",
+            phone: ""
+        },
     });
 
     const controllerProps = useCallback(
