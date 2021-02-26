@@ -184,6 +184,7 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
     # max_price_per_hour = serializers.SerializerMethodField()
     # min_price_per_hour = serializers.SerializerMethodField()
     access_allowed_to_current_user = serializers.SerializerMethodField()
+    capacity = serializers.IntegerField(required=False, source='people_capacity')
 
 
     def get_access_allowed_to_current_user(self, obj):
@@ -381,7 +382,7 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
     class Meta:
         model = Resource
         fields = ('url','uuid','name','alternative_names','numbers','display_name','display_numbers','unit','type',
-                  'floor_number','floor_name','area','description',
+                  'floor_number','floor_name','area','description','capacity',
                   'access_restricted','access_allowed_to_current_user') + tuple(ModifiableModelSerializerMixin.Meta.fields)
         # exclude = ('reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
         #            'access_code_type', 'reservation_metadata_set')
