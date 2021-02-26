@@ -56,6 +56,7 @@ export const requestSubpages = {
     "add-person": {},
     grund: {},
     nachricht: {},
+    "resource-list": {}
 } as const;
 
 export const production = process.env.NODE_ENV === "production";

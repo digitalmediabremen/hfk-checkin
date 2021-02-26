@@ -49,14 +49,16 @@ const useSubPage = <SubPagesMap extends SubPagesMapType>(
         [activeSubPage, setActiveSubPage, setDirection]
     );
 
-    const goForward = (subpage: SubPagesType) => {
+    const goForward = (subpage: SubPagesType, param?: string) => {
+        const p = typeof param === "string" ? param : undefined;
         setDirection("right");
-        setActiveSubPage(subpage);
+        setActiveSubPage(subpage, p);
     }
 
-    const goBack = (subpage: SubPagesType) => {
+    const goBack = (subpage: SubPagesType, param?: string) => {
+        const p = typeof param === "string" ? param : undefined;
         setDirection("left");
-        setActiveSubPage(subpage);
+        setActiveSubPage(subpage, p);
     }
 
     const handlerProps = useCallback(

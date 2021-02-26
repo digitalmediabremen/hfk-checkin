@@ -6,8 +6,8 @@ interface Profile {
     readonly id: number;
     first_name: string;
     last_name: string;
-    phone: string;
-    email?: string;
+    phone: string | null;
+    email: string;
     readonly verified: boolean;
     readonly last_checkins: Array<LastCheckin>;
 }

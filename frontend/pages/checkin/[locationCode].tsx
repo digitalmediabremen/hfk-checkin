@@ -17,7 +17,7 @@ import LastCheckins from "../../components/common/LastCheckinsList";
 import Loading, { LoadingInline } from "../../components/common/Loading";
 import Subtitle from "../../components/common/Subtitle";
 import Title from "../../components/common/Title";
-import useParam from "../../components/hooks/useParam";
+import useParam from "../../src/hooks/useParam";
 import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";

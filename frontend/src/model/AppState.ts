@@ -1,6 +1,7 @@
 import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
 import Profile from "./api/Profile";
+import { ReservationValidation } from "./validateReservation";
 
 export type TransitionDirection = "left" | "right";
 
@@ -14,6 +15,7 @@ export interface AppState {
     highlightCheckinById?: number, // id
     initialized: boolean;
     reservation?: NewReservationBlueprint;
+    reservationValidation: ReservationValidation;
     reservationTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;
 }

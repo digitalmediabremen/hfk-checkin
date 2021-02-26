@@ -36,7 +36,7 @@ import {
 
 const createDynamicPage = <T extends {}>(func: () => any) =>
     (dynamic(func, {
-        loading: () => <LoadingScreen />,
+        loading: () => <LoadingScreen key="loading" />,
         ssr: false,
     }) as unknown) as React.ComponentType<T>;
 
@@ -55,6 +55,10 @@ const DynamicSetPersonSubpage = createDynamicPage<SetPersonSubpageProps>(
 const DynamicAddExternalPersonSubpage = createDynamicPage(
     () => import("../components/getin/subpages/AddExternalPersonSubPage")
 );
+
+const DynamicResourceListSubpage = createDynamicPage(
+    () => import("../components/getin/subpages/ResourceListSubPage")
+)
 
 const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
     if (!start || !end) return undefined;
@@ -105,11 +109,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                         {...subPageProps("personen")}
                     >
                         {() => (
-                            <DynamicSetPersonSubpage
-                                onAddExternalPerson={
-                                    handlerProps("add-person").onClick
-                                }
-                            />
+                            <DynamicSetPersonSubpage />
                         )}
                     </SubPage>
                     <SubPage
@@ -129,6 +129,13 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                         {...subPageProps("nachricht")}
                     >
                         {() => <DynamicSetTimeSubpage />}
+                    </SubPage>
+                    <SubPage
+                        noContentMargin
+                        title={t("Raumliste")}
+                        {...subPageProps("resource-list", "raum")}
+                    >
+                        {() => <DynamicResourceListSubpage />}
                     </SubPage>
                 </>
             }
@@ -190,7 +197,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                     value={false}
                     label={t(
                         "Bitte ruft mich bei Rückfragen zu dieser Buchung unter {phone} zurück.",
-                        { phone: profile?.phone }
+                        { phone: profile.phone }
                     )}
                     bottomSpacing={3}
                 />
@@ -202,4 +209,4 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
     );
 };
 
-export default showIf(() => features.getin, RequestRoomPage);
+export default showIf(() => features.getin, needsProfile(RequestRoomPage));

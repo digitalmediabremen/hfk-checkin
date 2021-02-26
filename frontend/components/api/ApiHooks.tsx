@@ -4,7 +4,8 @@ import { httpStatuses } from "../../config";
 import Checkin, { LastCheckin } from "../../src/model/api/Checkin";
 import Location from "../../src/model/api/Location";
 import Profile, { ProfileUpdate } from "../../src/model/api/Profile";
-import { useAppState, AppStateProvider } from "../common/AppStateProvider";
+import { empty, notEmpty } from "../../src/util/TypeUtil";
+import { useAppState } from "../common/AppStateProvider";
 import {
     doCheckinRequest,
     doCheckoutRequest,
@@ -13,36 +14,46 @@ import {
     getLocationRequest,
     getProfileRequest,
     Response,
-    updateProfileRequest,
+    updateProfileRequest
 } from "./ApiService";
 
-export type UseApiReturnType<RT extends {}> = {
-    request: (request: () => Promise<Response<RT>>) => void;
+type PaginationArrayType<T, P extends boolean> = P extends true
+    ? T extends Array<infer K>
+        ? Array<K | null>
+        : T
+    : T;
+
+export type UseApiReturnType<RT, HasPagination extends boolean = false> = {
+    request: HasPagination extends true
+        ? (
+              request: () => Promise<Response<RT>>,
+              offset?: number,
+              limit?: number
+          ) => Promise<void>
+        : (request: () => Promise<Response<RT>>) => Promise<void>;
 } & (
     | {
           state: "initial";
           error: undefined;
           result: undefined;
           additionalData: undefined;
-
       }
     | {
           state: "loading" | "loading";
           error: undefined;
           additionalData: undefined;
-          result?: RT;
+          result?: PaginationArrayType<RT, HasPagination>;
       }
     | {
           state: "error";
           error: string;
           result: undefined;
           additionalData: AdditionalResponseData;
-
       }
     | {
           state: "success";
           error: undefined;
-          result: RT;    
+          result: PaginationArrayType<RT, HasPagination>;
           additionalData: AdditionalResponseData;
       }
 );
@@ -51,25 +62,55 @@ export interface AdditionalResponseData {
     statusCode: number;
     notVerified: boolean;
     notAuthorized: boolean;
+    dataCount?: number;
 }
+
+type ApiConfig<b extends boolean | undefined> = {
+    onlyLocalErrorReport?: boolean;
+    paginate?: b;
+};
 
 export type ResultModifierFunction<RT extends {}> = (
     res?: RT
 ) => RT | undefined;
 
-export const useApi = <RT extends {}>(_config?: {
-    onlyLocalErrorReport?: boolean;
-}): UseApiReturnType<RT> => {
+export const useApi = <RT, Paginate extends boolean = false>(
+    _config?: ApiConfig<Paginate>
+): UseApiReturnType<RT, Paginate> => {
+    const config = _config || {
+        onlyLocalErrorReport: false,
+        paginate: false,
+    };
     const { appState, dispatch } = useAppState();
-    const [result, setResult] = useState<RT | undefined>(undefined);
+    const [result, _setResult] = useState<
+        PaginationArrayType<RT, Paginate> | undefined
+    >(undefined);
+    const setResult = (data: RT, offset?: number, limit?: number) => {
+        if (
+            config.paginate &&
+            notEmpty(offset) &&
+            notEmpty(limit) &&
+            Array.isArray(data) &&
+            Array.isArray(result)
+        ) {
+            // check if anythin might be empty
+            for (let i = 0; i < offset; i++) {
+                if (empty(result[i])) result[i] = null;
+            }
+            // fill new data
+            for (let i = 0; i < limit; i++) {
+                result[i + offset] = data[i];
+            }
+            _setResult([...result] as PaginationArrayType<RT, Paginate>);
+        } else {
+            _setResult(data as PaginationArrayType<RT, Paginate>);
+        }
+    };
     const [error, setError] = useState<string | undefined>(undefined);
     const [requestInProgress, setRequestInProgress] = useState(false);
     const [additionalData, setAdditionalData] = useState<
         AdditionalResponseData | undefined
     >(undefined);
-    const config = _config || {
-        onlyLocalErrorReport: false,
-    };
 
     const _deriveRequestState = () => {
         if (requestInProgress) return "loading";
@@ -91,36 +132,37 @@ export const useApi = <RT extends {}>(_config?: {
         }
     };
 
-    const _handleRequest = <R extends () => Promise<Response<RT>>>(
-        request: R
+    const _handleRequest = async <R extends () => Promise<Response<RT>>>(
+        request: R,
+        offset?: number,
+        limit?: number
     ) => {
         setError(undefined);
-        setAdditionalData(undefined);
-        (async () => {
-            setRequestInProgress(true);
-            const { error, data, status } = await request();
-            setRequestInProgress(false);
-            setAdditionalData({
-                statusCode: status,
-                notAuthorized: status === httpStatuses.notAuthorized,
-                notVerified: status === httpStatuses.notVerified,
-            });
-            if (error && status <= 500) {
-                _handleError(error || `Unknown Error (${status})`, status);
-            } else if (!!error && status > 500) {
-                throw error;
-            } else if (!config.onlyLocalErrorReport) {
-                // reset error message
-                // but only if request is reporting globally
-                if (appState.status?.isError) {
-                    dispatch({
-                        type: "status",
-                        status: undefined,
-                    });
-                }
+        // setAdditionalData(undefined);
+        setRequestInProgress(true);
+        const { error, data, status, dataCount } = await request();
+        setRequestInProgress(false);
+        setAdditionalData({
+            statusCode: status,
+            notAuthorized: status === httpStatuses.notAuthorized,
+            notVerified: status === httpStatuses.notVerified,
+            dataCount,
+        });
+        if (error && status <= 500) {
+            _handleError(error || `Unknown Error (${status})`, status);
+        } else if (!!error && status > 500) {
+            throw error;
+        } else if (!config.onlyLocalErrorReport) {
+            // reset error message
+            // but only if request is reporting globally
+            if (appState.status?.isError) {
+                dispatch({
+                    type: "status",
+                    status: undefined,
+                });
             }
-            setResult(data);
-        })();
+        }
+        if (data) setResult(data, offset, limit);
     };
 
     return {
@@ -129,7 +171,7 @@ export const useApi = <RT extends {}>(_config?: {
         error,
         request: _handleRequest,
         additionalData,
-    } as UseApiReturnType<RT>;
+    } as UseApiReturnType<RT, Paginate>;
 };
 
 export const useUpdateProfileFromAppStateAndUpdate = (
@@ -147,7 +189,7 @@ export const useUpdateProfileFromAppStateAndUpdate = (
     const { profile: profileFromAppState } = appState;
 
     useEffect(() => {
-        console.log("run update")
+        console.log("run update");
         if (!appState.disableNextUpdate) {
             getProfile();
         } else {
@@ -170,7 +212,7 @@ export const useUpdateProfileFromAppStateAndUpdate = (
         success,
         error,
         profile: profileFromAppState,
-        additionalData
+        additionalData,
     };
 };
 

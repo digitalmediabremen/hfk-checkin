@@ -13,7 +13,7 @@ const SubPageHeader = ({
     <>
         <style jsx>{`
             .header {
-                height: ${theme.topBarHeight + 1}px;
+                height: ${theme.topBarHeight}px;
                 background: white;
                 border-bottom: 1px solid ${theme.primaryColor};
                 display: flex;
@@ -61,15 +61,17 @@ export interface SubPageProps {
     onBack: (subPage?: string) => void;
     children: () => React.ReactNode;
     active: boolean;
+    noContentMargin?: boolean;
 }
 
 const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
-    const { children, title, onBack, active } = props;
+    const { children, title, onBack, active, noContentMargin } = props;
     if (!active) return null;
     return (
         <>
             <style jsx>{``}</style>
             <Page
+                noContentMargin={noContentMargin}
                 scroll
                 topBar={<SubPageHeader onBack={onBack} title={title} />}
             >
