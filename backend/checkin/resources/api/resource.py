@@ -800,7 +800,7 @@ class ResourceListViewSet(mixins.ListModelMixin,
         queryset = queryset.prefetch_related('products')
     filter_backends = (filters.SearchFilter,) #, ResourceFilterBackend, LocationFilterBackend)
 
-    search_fields = append_translated(Resource, ('name', 'description', 'unit__name'))
+    search_fields = append_translated(Resource, ('name', 'numbers', 'description', 'unit__name'))
     serializer_class = ResourceSerializer
     authentication_classes = (
         list(drf_settings.DEFAULT_AUTHENTICATION_CLASSES) +
