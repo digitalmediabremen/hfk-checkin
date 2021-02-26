@@ -78,7 +78,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                     margin-left: ${-theme.spacing(0)}px;
                 }
             `}</style>
-            <FormElementBase narrow noOutline={noOutline} {...formElementBaseProps} onClick={onClick} button>
+            <FormElementBase narrow noPadding noOutline={noOutline} {...formElementBaseProps} onClick={onClick} componentType="button">
                 {iconLeft && <span className="icon left">{iconLeft}</span>}
                 <div className={classNames({"center": !noOutline})}>
                     <EllipseText>

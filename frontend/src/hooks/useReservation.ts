@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrayLiteralExpression } from "ts-morph";
 import { useAppState } from "../../components/common/AppStateProvider";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
@@ -28,23 +28,18 @@ export default function useReservationState<
     const { appState, dispatch } = useAppState();
     const reservation = appState.reservation;
     const value = appState.reservation?.[field];
-    const setHandler = async (
+    const setHandler = useCallback((
         value: NewReservationBlueprint[ReservationFieldType]
     ) => {
-        console.log("set", value);
-        await dispatch({
+        console.log(`reservation mutation: [${field}]: ${value}`);
+        dispatch({
             type: "updateReservation",
             reservation: {
                 ...reservation,
                 [field]: value,
             },
         });
-        console.log("set", {
-            ...reservation,
-            [field]: value,
-        });
-
-    };
+    }, []);
 
     return [value, setHandler] as const;
 }

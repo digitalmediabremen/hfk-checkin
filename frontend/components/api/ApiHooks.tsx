@@ -31,6 +31,7 @@ export type UseApiReturnType<RT, HasPagination extends boolean = false> = {
               limit?: number
           ) => Promise<void>
         : (request: () => Promise<Response<RT>>) => Promise<void>;
+    reset: () => void;
 } & (
     | {
           state: "initial";
@@ -85,7 +86,7 @@ export const useApi = <RT, Paginate extends boolean = false>(
     const [result, _setResult] = useState<
         PaginationArrayType<RT, Paginate> | undefined
     >(undefined);
-    const setResult = (data: RT, offset?: number, limit?: number) => {
+    const setResult = (data?: RT, offset?: number, limit?: number) => {
         if (
             config.paginate &&
             notEmpty(offset) &&
@@ -171,6 +172,9 @@ export const useApi = <RT, Paginate extends boolean = false>(
         error,
         request: _handleRequest,
         additionalData,
+        reset: () => {
+            setResult(undefined)
+        }
     } as UseApiReturnType<RT, Paginate>;
 };
 

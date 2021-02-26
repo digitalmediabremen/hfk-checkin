@@ -50,8 +50,8 @@ const LazyList = <T extends {}>({
             return null;
         }
         nextHighestOffset.current = to;
-        return loadNextPage(from,to);
-    };;
+        return loadNextPage(from, to);
+    };
 
     // Every row is loaded except for our loading indicator row.
     const isItemLoaded = (index: number) => notEmpty(items[index]);

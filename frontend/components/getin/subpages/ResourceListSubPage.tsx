@@ -9,7 +9,7 @@ import { empty } from "../../../src/util/TypeUtil";
 import theme from "../../../styles/theme";
 import useSubPage from "../../api/useSubPage";
 import LazyList from "../../common/LazyList";
-import { LoadingInline } from "../../common/Loading";
+import Loading, { LoadingInline } from "../../common/Loading";
 import ResourceListItem, {
     LoadingListItem,
 } from "../../common/ResourceListItem";
@@ -24,10 +24,14 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
         "resource_uuid"
     );
     const height = (use100vh() || 500) - theme.topBarHeight;
+    const [loaded, setLoaded] = useState(false);
 
     // load initial resources
     useEffect(() => {
-        r.requestResources(undefined, 0, 20);
+        (async () => {
+            await r.requestResources(undefined, 0, 20);
+            setLoaded(true);
+        })()
     }, []);
 
     const handleResourceSelect = useCallback((resourceId: string) => {
@@ -60,7 +64,7 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
     };
 
     return (
-        <>
+        <Loading loading={!loaded}>
             <style jsx>{``}</style>
             <LazyList
                 height={height}
@@ -76,10 +80,11 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
                         resource={item}
                         onSelect={handleResourceSelect(item.uuid)}
                         last={last}
+                        showMeta
                     />
                 )}
             </LazyList>
-        </>
+        </Loading>
     );
 };
 

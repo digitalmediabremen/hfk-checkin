@@ -45,6 +45,7 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
             `}</style>
             <FormElementBase
                 noOutline
+                noPadding
                 onClick={handleChange}
                 {...formElementBaseProps}
             >
