@@ -1,7 +1,9 @@
 import React from "react";
 import { ArrowRight, Delete } from "react-feather";
+import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservation";
+import useSubPage from "../../api/useSubPage";
 import Divider from "../../common/Divider";
 import FormAmountInput from "../../common/FormAmountInput";
 import FormCheckbox from "../../common/FormCheckbox";
@@ -10,25 +12,20 @@ import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 import SectionTitle from "../../common/SectionTitle";
 
-export interface SetPersonSubpageProps {
-    onAddExternalPerson: (param?: string) => void;
-}
+export interface SetPersonSubpageProps {}
 
-const remove_item = function(arr: Array<any>, value: unknown) {
-    var b = '' as any;
+const remove_item = function (arr: Array<any>, value: unknown) {
+    var b = "" as any;
     for (b in arr) {
-     if (arr[b] === value) {
-      arr.splice(b, 1);
-      break;
-     }
+        if (arr[b] === value) {
+            arr.splice(b, 1);
+            break;
+        }
     }
     return arr;
-   };
-   
+};
 
-const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
-    onAddExternalPerson,
-}) => {
+const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) => {
     const { t } = useTranslation();
 
     const [_amount, _setAmount] = useReservationState(
@@ -44,6 +41,8 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
     const [checked, setChecked] = useReservationState(
         "exclusive_resource_usage"
     );
+
+    const { goForward } = useSubPage(requestSubpages);
 
     return (
         <>
@@ -74,13 +73,19 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
                     key={index}
                     value={[
                         `${profile.first_name} ${profile.last_name} (Extern)`,
-                        `Tel: ${profile.phone}`
+                        `Tel: ${profile.phone}`,
                     ]}
-                    onClick={() => onAddExternalPerson(`${index}`)}
+                    onClick={() =>
+                        goForward("add-person", `${index}`)
+                    }
                     extendedWidth
                     icon={<Delete strokeWidth={2} />}
                     onIconClick={() => {
-                        const c = window.confirm(`${t("Delete")} "${profile.first_name} ${profile.last_name} (Extern)"?`);
+                        const c = window.confirm(
+                            `${t("Delete")} "${profile.first_name} ${
+                                profile.last_name
+                            } (Extern)"?`
+                        );
                         if (c) setAttendees(remove_item(attendees, profile));
                     }}
                 ></FormElement>
@@ -88,11 +93,15 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({
             <NewButton
                 noOutline={amountAttendees > 0}
                 extendedWidth={amountAttendees === 0}
-                onClick={() => onAddExternalPerson(`${attendees?.length || 0}`)}
+                onClick={() =>
+                    goForward("add-person", `${attendees?.length || 0}`)
+                }
                 iconRight={<ArrowRight strokeWidth={1} />}
                 bottomSpacing={3}
             >
-                {amountAttendees === 0 ? t("Externe hinzufügen"): t("Weitere Externe hinzufügen")}
+                {amountAttendees === 0
+                    ? t("Externe hinzufügen")
+                    : t("Weitere Externe hinzufügen")}
             </NewButton>
 
             <Notice>

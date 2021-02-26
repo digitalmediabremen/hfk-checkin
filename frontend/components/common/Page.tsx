@@ -27,6 +27,7 @@ interface PageProps {
     topBar?: ReactNode;
     footer?: ReactNode;
     scroll?: boolean;
+    noContentMargin?: boolean;
 }
 
 const Page: React.FunctionComponent<PageProps> = ({
@@ -34,6 +35,7 @@ const Page: React.FunctionComponent<PageProps> = ({
     topBar,
     footer,
     scroll,
+    noContentMargin,
 }) => {
     const height = use100vh();
     return (
@@ -76,7 +78,11 @@ const Page: React.FunctionComponent<PageProps> = ({
                             "with-footer": !!footer,
                         })}
                     >
-                        <Content>{children}</Content>
+                        {noContentMargin ? (
+                            <>{children} </>
+                        ) : (
+                            <Content>{children}</Content>
+                        )}
                     </div>
                     {footer}
                 </div>

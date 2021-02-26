@@ -3,6 +3,7 @@ import React, { Fragment, ReactNode } from "react";
 import { ArrowRight } from "react-feather";
 import { appUrls } from "../../config";
 import theme from "../../styles/theme";
+import FormMultilineValue from "../FormMultilineValue";
 import EllipseText from "./EllipseText";
 import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import FormElementLabel from "./FormElementLabel";
@@ -25,10 +26,6 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
     value,
     ...formElementBaseProps
 }) => {
-    const [firstValue, ...otherValues] = !Array.isArray(value)
-        ? [value]
-        : value;
-    const multiline = otherValues.length > 0;
     const handleIconClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
         event.stopPropagation();
         onIconClick?.();
@@ -67,16 +64,6 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                 .icon-interactable:hover {
                     cursor: pointer;
                 }
-
-                .form-value.multiline {
-                    line-height: 21px;
-                }
-
-                .form-value {
-                    line-height: 1em;
-                    display: inline;
-                    width: 100%;
-                }
             `}</style>
             <FormElementBase {...formElementBaseProps}>
                 {label && (
@@ -87,23 +74,7 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                     />
                 )}
                 {value && (
-                    <EllipseText>
-                        {(ellipsed) => (
-                            <div
-                                className={classNames("form-value", ellipsed, {
-                                    multiline,
-                                })}
-                            >
-                                <b>{firstValue}</b>
-                                {otherValues.map((value) => (
-                                    <Fragment key={value}>
-                                        <br />
-                                        {value}
-                                    </Fragment>
-                                ))}
-                            </div>
-                        )}
-                    </EllipseText>
+                    <FormMultilineValue value={value} />
                 )}
                 {(arrow || icon) && (
                     <span

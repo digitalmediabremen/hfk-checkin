@@ -21,68 +21,62 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
     const index = useSubpageQuery();
     const [attendees, addAttendee] = useReservationArrayState("attendees");
     // const [person, setPerson, setPersonField] = useAddExternalPersonState();z
-    const [attendee, setAttendee] = useState<Partial<Writable<SimpleProfile>>>(
-        attendees[index] || {}
-    );
     // useValidation
 
     const { goBack } = useSubPage(requestSubpages);
-    const { register, errors, handleSubmit, control, formState } = useForm<Writable<SimpleProfile>>({
+    const { errors, handleSubmit, control } = useForm<
+        Writable<SimpleProfile>
+    >({
         mode: "onTouched",
+        defaultValues: attendees[index],
     });
 
-    const controllerProps = useCallback((
-        name: keyof Writable<SimpleProfile>,
-        translatedName: string,
-        rules?: {}
-    ) => ({
-        mode: "onTouched",
-        name,
-        control,
-        rules: { required: t("{fieldName} darf nicht leer sein.", { fieldName: translatedName }), ...rules },
-        error: errors[name]?.message,
-        label: translatedName,
-        defaultValue: ""
-    }), [errors, control]);
+    const controllerProps = useCallback(
+        (
+            name: keyof Writable<SimpleProfile>,
+            translatedName: string,
+            rules?: {}
+        ) => ({
+            mode: "onTouched",
+            name,
+            control,
+            rules: {
+                required: t("{fieldName} darf nicht leer sein.", {
+                    fieldName: translatedName,
+                }),
+                ...rules,
+            },
+            error: errors[name]?.message,
+            label: translatedName,
+        }),
+        [errors, control]
+    );
 
     const handleAddAttendee = (value: Writable<SimpleProfile>) => {
-        // Todo: validate person 
+        // Todo: validate person
         addAttendee(value, index);
-        goBack("personen"); 
+        goBack("personen");
     };
 
     return (
         <form onSubmit={handleSubmit(handleAddAttendee)}>
             <style jsx>{``}</style>
             <Controller
-                as={
-                    <FormTextInput />
-                }
+                as={<FormTextInput />}
                 {...controllerProps("first_name", t("Vorname"))}
             />
 
             <Controller
-                as={
-                    <FormTextInput
-                        bottomSpacing={3}
-                    />
-                }
+                as={<FormTextInput bottomSpacing={3} />}
                 {...controllerProps("last_name", t("Nachname"))}
             />
 
             <Controller
-                as={
-                    <FormTextInput/>
-                }
+                as={<FormTextInput />}
                 {...controllerProps("phone", t("Telefonnummer"), {})}
             />
             <Controller
-                as={
-                    <FormTextInput
-
-                        bottomSpacing={2}
-                    ></FormTextInput>
-                }
+                as={<FormTextInput bottomSpacing={2}></FormTextInput>}
                 {...controllerProps("email", t("E-Mail"), {
                     pattern: {
                         value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
@@ -96,9 +90,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
                     "Die E-Mail Adresse und die Telefonnummer werden nur verwendet um den Gast bei Rückfragen kontaktieren zu können."
                 )}
             </Notice>
-            <NewButton primary>
-                Hinzufügen
-            </NewButton>
+            <NewButton primary>Hinzufügen</NewButton>
         </form>
     );
 };

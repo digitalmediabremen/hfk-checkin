@@ -169,7 +169,7 @@ const Loading: React.FunctionComponent<LoadingProps> = ({
     children,
     loading,
 }) => {
-    if (loading) return <LoadingScreen />;
+    if (loading) return <LoadingScreen key="loading" />;
 
     // if (!loadingOnMount) return "wasnt loading on mount"
 

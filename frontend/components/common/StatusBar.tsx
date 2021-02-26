@@ -72,7 +72,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                     padding: ${theme.spacing(2)}px ${theme.spacing(3)}px;
                     display: flex;
                     align-items: center;
-                    height: ${theme.topBarHeight}px;
+                    height: ${theme.topBarHeight - 1}px;
                 }
 
                 .profile {

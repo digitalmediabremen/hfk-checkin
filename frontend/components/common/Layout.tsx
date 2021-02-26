@@ -117,8 +117,8 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
 
 export interface LayoutProps {
     activeSubPage?: string;
-    subPages: ReactElement;
-    direction: TransitionDirection;
+    subPages?: ReactElement;
+    direction?: TransitionDirection;
 }
 
 const Layout: FunctionComponent<LayoutProps> = ({
@@ -131,7 +131,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
         <PageAnimation
             show={subPages !== undefined}
             activeSubPage={activeSubPage}
-            direction={direction}
+            direction={direction || "left"}
         >
             <>
                 <Page

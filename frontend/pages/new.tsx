@@ -1,7 +1,7 @@
 import { NextPage, NextPageContext } from "next";
 import { useRouter } from "next/router";
 import * as config from "../config";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
@@ -9,7 +9,7 @@ import Text from "../components/common/Text";
 import { useTranslation } from "../localization";
 import Notice from "../components/common/Notice";
 import { useAppState } from "../components/common/AppStateProvider";
-import { Page } from "../components/common/Page";
+import Layout from "../components/common/Layout";
 
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
@@ -32,7 +32,7 @@ const NewProfilePage: NextPage = () => {
     if (appState.profile || !appState.initialized) return null;
 
     return (
-        <Page>
+        <Layout>
             <FormGroup>
                 <Text paragraph>
                     {t(
@@ -67,7 +67,7 @@ const NewProfilePage: NextPage = () => {
             <Button outline onClick={handleGuest}>
                 {t("Gastzugang")}
             </Button>
-        </Page>
+        </Layout>
     );
 };
 

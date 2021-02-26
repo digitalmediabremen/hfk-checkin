@@ -8,7 +8,7 @@ import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import Loading from "../../components/common/Loading";
 import Title from "../../components/common/Title";
-import useParam from "../../components/hooks/useParam";
+import useParam from "../../src/hooks/useParam";
 import features from "../../features";
 import { LastCheckin } from "../../src/model/api/Checkin";
 import Profile from "../../src/model/api/Profile";

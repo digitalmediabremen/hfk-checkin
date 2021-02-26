@@ -3,11 +3,13 @@ import { Reducer, useCallback, useReducer } from "react";
 import { AppAction, AppState } from "../../src/model/AppState";
 import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { assertNever, empty } from "../../src/util/TypeUtil";
+import validateReservation from "../../src/model/validateReservation";
 
 export const initialAppState: AppState = {
     initialized: false,
     disableNextUpdate: false,
     subPageTransitionDirection: "right",
+    reservationValidation: [],
 };
 
 const useReduceAppState = () =>
@@ -27,19 +29,21 @@ const useReduceAppState = () =>
                         localStorage.getItem("reservation") || ""
                     ) as unknown;
                     const reservation = validate(check);
+                    const reservationWithDates = {
+                        ...reservation,
+                        start: new Date(
+                            (reservation.start as unknown) as string
+                        ),
+                        end: new Date((reservation.end as unknown) as string),
+                    };
 
                     // now convert dates
                     return {
                         ...previousState,
-                        reservation: {
-                            ...reservation,
-                            start: new Date(
-                                (reservation.start as unknown) as string
-                            ),
-                            end: new Date(
-                                (reservation.end as unknown) as string
-                            ),
-                        },
+                        reservation: reservationWithDates,
+                        reservationValidation: validateReservation(
+                            reservationWithDates
+                        ),
                     };
                 } catch (e) {
                     console.error(e);
@@ -97,6 +101,9 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     reservation: action.reservation,
+                    reservationValidation: validateReservation(
+                        action.reservation || {}
+                    ), 
                 };
             case "subPageTransitionDirection":
                 const { direction } = action;

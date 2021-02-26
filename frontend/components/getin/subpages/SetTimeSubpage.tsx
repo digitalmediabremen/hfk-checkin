@@ -60,19 +60,15 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                         ...reservation,
                         start: _datetimeFrom,
                         end: _datetimeTo,
-                    }
+                    },
                 });
             }
         })();
     }, [date, timeFrom, timeTo, hasOverlap]);
 
-    useEffect(() => {
-        console.log("updated", datetimeFrom, datetimeTo);
-    }, [datetimeFrom, datetimeTo]);
-
-    const exceedsBookableRange =
-        notEmpty(date) &&
-        smallerThan(addDates(createDateNow(), duration.days(14)), date);
+    const exceedsBookableRange = appState.reservationValidation.some(
+        (v) => v.type === "exceedsBookableRange"
+    );
     return (
         <>
             <style jsx>{``}</style>

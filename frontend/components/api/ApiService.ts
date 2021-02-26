@@ -1,22 +1,45 @@
-import Profile, { ProfileUpdate, assertProfile } from "../../src/model/api/Profile";
+import Profile, {
+    ProfileUpdate,
+    assertProfile,
+} from "../../src/model/api/Profile";
 import * as config from "../../config";
 import { NextPageContext } from "next";
 import Location from "../../src/model/api/Location";
 import { ServerResponse } from "http";
-import Checkin, { CheckinOrigin, LastCheckin } from "../../src/model/api/Checkin";
-import validate from "../../src/model/api/Profile.validator";
+import Checkin, {
+    CheckinOrigin,
+    LastCheckin,
+} from "../../src/model/api/Checkin";
+import validateProfile from "../../src/model/api/Profile.validator";
+import validateReservation from "../../src/model/api/Reservation.validator";
+import validateResource from "../../src/model/api/Resource.validator";
+
 import Reservation from "../../src/model/api/Reservation";
+import Resource from "../../src/model/api/Resource";
+import { notEmpty } from "../../src/util/TypeUtil";
 
 export type ApiResponse<T> =
     | {
-          detail: string;
+          readonly detail: string;
+          readonly results: undefined;
+          readonly count: undefined;
       }
-    | T;
+    | (T & {
+          readonly detail: undefined;
+          readonly count: undefined;
+          readonly results: undefined;
+      })
+    | {
+          readonly results: T;
+          readonly count: number;
+          readonly detail: undefined;
+      };
 
 export type Response<ResultType extends Record<string, any> = {}> = {
     status: number;
     data?: ResultType;
     error?: string;
+    dataCount?: number;
 };
 
 export type RequestParameters = Record<string, string | undefined>;
@@ -34,9 +57,9 @@ const toQueryString = (params?: RequestParameters) => {
     if (!params) return "";
     return Object.entries(params).reduce((prev, [key, value], index) => {
         const pre = index === 0 ? "?" : "&";
-        return `${prev}${pre}${value ? `${key}=${value}` : key}`
+        return `${prev}${pre}${notEmpty(value) ? `${key}=${value}` : key}`;
     }, "");
-}
+};
 
 export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     endpoint: string,
@@ -44,7 +67,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     responseTypeGuard?: (p: any) => ResultType
 ): Promise<Response<ResultType>> => {
     const { headers, requestParameters, ...otherRequestData } = requestData;
-    const stringifiedRequestParameters = toQueryString(requestParameters)
+    const stringifiedRequestParameters = toQueryString(requestParameters);
     const url = `${config.apiUrl}/${endpoint}${stringifiedRequestParameters}`;
     const forceLocaleHeader = config.forceLocale
         ? { "Accept-Language": config.forceLocale }
@@ -59,19 +82,19 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         ...otherRequestData,
     })
         .then(async (response) => ({
-            data: ((await response?.json?.()) as unknown) as
+            result: ((await response?.json?.()) as unknown) as
                 | ApiResponse<ResultType>
                 | undefined,
             status: response.status,
         }))
-        .then(({ data, status }) => {
-            if (data === undefined)
+        .then(({ result, status }) => {
+            if (result === undefined)
                 throw {
                     status: config.httpStatuses.unprocessable,
                     error: "Response could not be serialized",
                 };
             if (status >= 400) {
-                if (!data.detail)
+                if (!result.detail)
                     throw {
                         status: status,
                         error:
@@ -79,27 +102,26 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                     };
                 throw {
                     status: status,
-                    error: data.detail,
+                    error: result.detail,
                 };
             }
 
-            return { data, status };
-        })
-        .then(({ data: typedData, status }) => {
-            // @ts-ignore
-            if (!!responseTypeGuard) {
-                console.debug(`Check Model for endpoint "${endpoint}"`)
-                responseTypeGuard(typedData);
+            if (notEmpty(result.count) && notEmpty(result.results)) {
+                return {
+                    data: result.results,
+                    status,
+                    dataCount: result.count,
+                };
             }
-            return {
-                typedData,
-                status,
-            };
+            return { data: result, status };
         })
-        .then(({ typedData, status }) => ({
-            status: status,
-            data: typedData as ResultType,
-        }))
+        .then((result) => {
+            if (!!responseTypeGuard) {
+                console.debug(`Check Model for endpoint "${endpoint}"`);
+                responseTypeGuard(result.data);
+            }
+            return result
+        })
         .catch((error) => {
             console.error(error);
             if (error.error !== undefined) return error;
@@ -122,12 +144,12 @@ export const updateProfileRequest = async (
 
 export const getCheckinsRequest = async (
     options?: RequestOptions<{
-        active?: undefined
+        active?: undefined;
     }>
 ) => {
     return await apiRequest<LastCheckin[]>("checkin/", {
         method: "GET",
-        ...options
+        ...options,
     });
 };
 
@@ -159,8 +181,7 @@ export const getLocationRequest = async (
     });
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
-    await apiRequest<Profile>("profile/me/", { headers }, validate);
-
+    await apiRequest<Profile>("profile/me/", { headers }, validateProfile);
 
 export const getCheckinRequest = async (
     checkinId: string,
@@ -170,4 +191,24 @@ export const getCheckinRequest = async (
 export const getReservationRequest = async (
     reservationId: string,
     options?: RequestOptions
-) => await apiRequest<Reservation>(`reservation/${reservationId}/`, { ...options }, validate);
+) =>
+    await apiRequest<Reservation>(
+        `reservation/${reservationId}/`,
+        { ...options },
+        validateReservation
+    );
+
+export const getResourceRequest = async (
+    resourceId: string,
+    options?: RequestOptions
+) =>
+    await apiRequest<Resource>(
+        `space/${resourceId}/`,
+        { ...options },
+        validateResource
+    );
+
+export const getResourcesRequest = async (options?: RequestOptions) =>
+    await apiRequest<Resource[]>(`space/`, { ...options }, (resources) =>
+        resources.map((r: any) => validateResource(r))
+    );
