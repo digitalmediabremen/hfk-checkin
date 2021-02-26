@@ -10,4 +10,5 @@ export default interface Resource {
     readonly unit: Unit | null;
     readonly access_restricted: boolean;
     readonly access_allowed_to_current_user: boolean;
+    readonly capacity: number | null;
 }

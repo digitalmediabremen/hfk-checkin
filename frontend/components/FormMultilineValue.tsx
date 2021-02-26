@@ -1,9 +1,9 @@
 import classNames from "classnames";
-import React, { Fragment } from "react";
+import React, { Fragment, ReactNode } from "react";
 import EllipseText from "./common/EllipseText";
 
 interface FormMultilineValueProps {
-    value?: string | string[];
+    value?: ReactNode | ReactNode[];
 }
 
 const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
@@ -34,8 +34,8 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
                         })}
                     >
                         <b>{firstValue}</b>
-                        {otherValues.map((value) => (
-                            <Fragment key={value}>
+                        {otherValues.map((value, index) => (
+                            <Fragment key={index}>
                                 <br />
                                 {value}
                             </Fragment>

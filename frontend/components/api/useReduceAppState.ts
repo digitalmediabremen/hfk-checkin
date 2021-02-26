@@ -97,7 +97,6 @@ const useReduceAppState = () =>
                     highlightCheckinById: undefined,
                 };
             case "updateReservation":
-                console.log("reservation mutation:", action.reservation);
                 return {
                     ...previousState,
                     reservation: action.reservation,

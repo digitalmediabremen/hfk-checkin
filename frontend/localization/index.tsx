@@ -2,7 +2,7 @@ import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { createContext, SFC, useContext } from "react";
+import { createContext, SFC, useCallback, useContext } from "react";
 import { appUrls, defaultLocale, production, baseLocale, forceLocale } from "../config";
 import translation from "./translation";
 import { config } from "process";
@@ -47,7 +47,7 @@ type PatternInput = string | number;
 export const useTranslation = (inModule: TranslationModules = "common") => {
     let { locale } = useContext(localeContext);
     if (![baseLocale, ...Object.keys(translation)].includes(locale)) locale = defaultLocale;
-    const t = (
+    const t = useCallback((
         s: string,
         data?: Record<string, PatternInput>,
         alternativeId?: string
@@ -74,7 +74,7 @@ export const useTranslation = (inModule: TranslationModules = "common") => {
             console.error(`No translation for ${translationId} provided`);
 
         return translatedString || translationId;
-    };
+    },[]);
     return { locale, t };
 };
 

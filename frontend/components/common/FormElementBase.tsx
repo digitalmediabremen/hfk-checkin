@@ -3,7 +3,7 @@ import React from "react";
 import theme from "../../styles/theme";
 
 export interface FormElementBaseProps {
-    button?: true;
+    componentType?: "button" | "li" | "div";
     primary?: boolean;
     noBottomSpacing?: true;
     bottomSpacing?: number;
@@ -13,10 +13,13 @@ export interface FormElementBaseProps {
     className?: string;
     narrow?: boolean;
     disabled?: boolean;
+    noPadding?: boolean;
+    zIndex?: number;
+    maxHeight?: string;
 }
 
 const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
-    button,
+    componentType,
     noBottomSpacing,
     bottomSpacing,
     extendedWidth,
@@ -27,8 +30,11 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     narrow,
     className,
     disabled,
+    noPadding,
+    maxHeight,
+    zIndex,
 }) => {
-    const ComponentType = button ? "button" : "div";
+    const ComponentType = componentType || "div";
     const outline = !noOutline;
     const interactable = !!onClick;
 
@@ -40,6 +46,8 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
         <>
             <style jsx>{`
                 .form-element-base {
+                    z-index: ${zIndex || 1};
+                    position: relative;
                     overflow: hidden;
                     border: none;
                     display: flex;
@@ -93,14 +101,23 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                 .form-element-base.outline {
                     border-radius: ${theme.borderRadius}px;
                     border: 2px solid ${theme.primaryColor};
+                }
+
+                .form-element-base.padding {
                     padding: ${theme.spacing(0.5)}px ${theme.spacing(1) + 2}px;
                 }
 
                 .form-element-base.outline.disabled {
                     border-color: ${theme.disabledColor};
-å                }
+                }
 
                 .form-element-base:not(.outline) {
+                }
+
+                .form-element-base.scroll {
+                    align-items: flex-start;
+                    overflow: auto;
+                    max-height: ${maxHeight || "none"};
                 }
             `}</style>
             <ComponentType
@@ -109,8 +126,10 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                 className={classNames("form-element-base", className, {
                     outline,
                     primary,
-                    interactable: !disabled,
-                    disabled: disabled
+                    interactable: !disabled && onClick,
+                    disabled: disabled,
+                    padding: !noPadding,
+                    scroll: !!maxHeight,
                 })}
             >
                 {children}
