@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Delete } from "react-feather";
+import { ArrowRight, Delete, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservation";
@@ -79,7 +79,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                         goForward("add-person", `${index}`)
                     }
                     extendedWidth
-                    icon={<Delete strokeWidth={2} />}
+                    icon={<X strokeWidth={2} />}
                     onIconClick={() => {
                         const c = window.confirm(
                             `${t("Delete")} "${profile.first_name} ${
