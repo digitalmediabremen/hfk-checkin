@@ -107,6 +107,11 @@ class AbstractReservableModel(models.Model):
         logger.error("%s: No reservation delegates found." % self)
         return []
 
+    def get_user_confirmation_delegates(self):
+        if self.unit:
+            return self.unit.user_confirmation_delegates.all()
+        raise ValueError("Resource has no Unit to get user_confirmation_delegates from.")
+
 
 class AbstractAccessRestrictedModel(models.Model):
     """

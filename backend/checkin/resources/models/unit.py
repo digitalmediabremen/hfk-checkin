@@ -56,6 +56,9 @@ class Unit(ModifiableModel, UUIDModelMixin):
                                  default=_get_default_timezone, choices=_get_timezone_choices())
     reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
                                                    blank=False, related_name='%(app_label)s_%(class)s_reservation_delegated')
+    user_confirmation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("User confirmation delegates"),
+                                                   blank=True,
+                                                   related_name='%(app_label)s_%(class)s_user_confirmation_delegated')
 
 #    objects = UnitQuerySet.as_manager()
 

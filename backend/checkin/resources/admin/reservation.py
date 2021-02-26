@@ -8,7 +8,9 @@ from ..models import Attendance, Reservation
 from django.contrib import messages
 import warnings
 from django.core.exceptions import ValidationError
-
+from django import forms
+from post_office.models import Email
+from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,46 @@ class AttendanceInline(admin.TabularInline):
     model = Attendance
     readonly_fields = ('modified_at','modified_by')
     extra = 0
+
+
+class RelatedEmailInline(admin.TabularInline):
+    model = Reservation.related_emails.through
+    extra = 0
+    fields = ('message_id_link', 'subject', 'to')
+    readonly_fields = fields
+    classes = ['collapse']
+
+    def message_id(self, instance):
+        return instance.email.message_id
+    #message_id.short_description = 'clow name'
+
+    def subject(self, instance):
+        return instance.email.subject
+
+    def to(self, instance):
+        return instance.email.to
+
+    def message_id_link(self, instance):
+        url = reverse("admin:%s_%s_change" % (instance.email._meta.app_label, instance.email._meta.module_name),
+                      args=(instance.email.pk,))
+        return '<a href="%s">%s</a>' % (url, instance.email.message_id)
+    message_id_link.allow_tags = True
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+class ReservationAdminForm(forms.ModelForm):
+    status_message = forms.Textarea()
+    class Meta:
+        model = Reservation
+        fields = ('__all__')
 
 
 class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin,
@@ -32,7 +74,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     autocomplete_fields = ('user', 'resource')
     readonly_fields = ('uuid','approver','number_of_attendees')
     extra_readonly_fields_edit = ('agreed_to_phone_contact','organizer_is_attending','type')
-    inlines = [AttendanceInline]
+    inlines = [AttendanceInline, RelatedEmailInline]
+    form = ReservationAdminForm
 
     fieldsets = (
         (None, {
@@ -105,6 +148,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             self._original_state = Reservation.CREATED
 
         # process state change and catch all warnings as messages
+        # FIXME improve warnings and notifications in general. Make DRY.
         with warnings.catch_warnings(record=True) as warns:
             obj.process_state_change(self._original_state, obj.state, request.user)
             for w in warns:
@@ -113,6 +157,13 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         messages.add_message(request, messages.INFO, _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
         # actually save obj
         super().save_model(request, obj, form, change)
+
+    def save_related(self, request, form, formsets, change):
+        # FIXME improve warnings and notifications in general. Make DRY.
+        with warnings.catch_warnings(record=True) as warns:
+            super().save_related(request, form, formsets, change)
+            for w in warns:
+                messages.add_message(request, messages.INFO, str(w.message))
 
     # def save_formset(self, request, form, formset, change):
     #     #super(ReservationAdmin, self).save_model(request, obj, form, change)

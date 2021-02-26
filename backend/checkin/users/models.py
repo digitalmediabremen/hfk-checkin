@@ -154,14 +154,21 @@ class Profile(models.Model):
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
+    is_external = models.BooleanField(_("External"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
     # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.get_full_name()
+        return self.get_display_name()
         # return _("Person mit Profil-ID %i") % (self.id, )
+
+    def get_display_name(self):
+        if self.is_external:
+            return _("%s (External)") % self.get_full_name()
+        else:
+            return self.get_full_name()
 
     def get_full_name(self):
         return _("%s %s") % (self.first_name, self.last_name)

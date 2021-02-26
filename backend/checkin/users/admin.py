@@ -178,14 +178,14 @@ class ProfileAdmin(SimpleHistoryAdmin):
     # TODO: default query set nur nicht Verifiziert
     # TODO: default query set nur neue Nutzer
 
-    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','user','created_at')
+    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','is_external','user','created_at')
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
     list_filter = ('updated_at','created_at','verified')
     search_fields = ['first_name', 'last_name','phone','email']
     # TODO add user back in to readonly_fields
-    readonly_fields = ('created_at', 'updated_at')#,'user')
+    readonly_fields = ('created_at', 'updated_at','user')
 
     def get_list_display(self, request):
         phone = 'phone' if request.user.has_perm('tracking.can_view_full_phone_number') else 'phone_obfuscated'

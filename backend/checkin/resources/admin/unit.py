@@ -20,7 +20,7 @@ class UnitAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, FixedGuarde
         (_('Reservation policy'), {
             # 'classes': ('collapse',),
             'description': _("These parameters will apply to resources assigned to this unit. They will only apply if the resource does not define its own parameters."),
-            'fields': ('reservation_delegates',)
+            'fields': ('reservation_delegates','user_confirmation_delegates')
                     # 'reservable',  'reservation_info', #'need_manual_confirmation',
                     #    'min_period', 'max_period', 'slot_size', 'max_reservations_per_user',
                     #    'reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
@@ -29,7 +29,7 @@ class UnitAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, FixedGuarde
         }),
     )
     # readonly_fields = ('uuid',)
-    autocomplete_fields = ('reservation_delegates',)
+    autocomplete_fields = ('reservation_delegates','user_confirmation_delegates')
     list_display = ('name', 'slug', 'modified_at')
     #list_filter = ('reservable',)
     ordering = ('name',)

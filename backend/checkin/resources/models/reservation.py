@@ -17,6 +17,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from psycopg2.extras import DateTimeTZRange
 import warnings
+from django.db.models.signals import m2m_changed, post_save, post_delete
 
 #from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
 from checkin.notifications.models import NotificationEmailTemplate
@@ -169,7 +170,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     # attendance related fields
     # TODO
     # attendees
-    attendees = models.ManyToManyField(PROFILE_MODEL, through='Attendance', verbose_name=_("Attendees"),
+    attendees = models.ManyToManyField(PROFILE_MODEL, through='resources.Attendance', verbose_name=_("Attendees"),
                                        related_name='reservations_attending', blank=True)
     number_of_extra_attendees = models.PositiveSmallIntegerField(_("Number of extra attendees"), blank=True, default=0,
         help_text=_("Extra attendees are added to the attendess that are explicitly identified, when building total attendee number for capacity calculation."))
@@ -322,6 +323,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             # FIXME generate status messages (set_state_verbose) here? or in reservation logic? ... multilang?
             notified_users = self.send_reservation_requested_mail()
             notified_officials = self.send_reservation_requested_mail_to_officials()
+            # notified_external_user_officials = self.send_external_user_requested_mail_to_officials()
+            # notify external user confirmation official via Signal m2m_changed attendees_changed
             self.set_state_verbose(_("Reservation was just requested and is now forwarded to %s." % self.resource.get_reservation_delegates_display()))
         elif new_state == Reservation.CONFIRMED:
             self.set_state_verbose(_("Reservation was just confirmed by %s." % user))
@@ -546,7 +549,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         return result
 
 
-    def get_notification_context(self, language_code, user=None, notification_type=None):
+    def get_notification_context(self, language_code, user=None, notification_type=None, extra_context={}):
 
         if not user:
             user = self.user
@@ -568,6 +571,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 'reserver_name': reserver_name,
                 'reserver_email_address': reserver_email_address,
             }
+            context = {**context, **extra_context}
             directly_included_fields = (
                 # 'number_of_participants',
                 # 'host_name',
@@ -628,7 +632,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         return context
 
-    def send_reservation_mail(self, notification_type, user=None, attachments=None):
+    def send_reservation_mail(self, notification_type, user=None, attachments=None, extra_context={}):
         """
         Stuff common to all reservation related mails.
 
@@ -653,7 +657,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             user = self.user
 
         language = user.get_preferred_language() if user else DEFAULT_LANG
-        context = self.get_notification_context(language, notification_type=notification_type)
+        context = self.get_notification_context(language, notification_type=notification_type, extra_context=extra_context)
 
         logger.debug("Sending notification to %s" % str(email_address))
 
@@ -679,6 +683,19 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
         for user in notify_users:
             return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user)
+
+    def send_external_user_requested_mail_to_officials(self, external_attendee):
+        notify_users = self.resource.get_user_confirmation_delegates()
+        logger.debug('notify_users external user for %s: %s' % (self, notify_users))
+        if len(notify_users) > 100:
+            raise Exception("Refusing to notify more than 100 users (%s)" % self)
+        elif len(notify_users) < 1:
+            raise ValueError("Can not notify user confirmation delegate because no delegate was set.")
+        for user in notify_users:
+            return self.send_reservation_mail(NotificationType.RESERVATION_EXTERNAL_USER_REQUESTED_OFFICIAL, user=user, extra_context={
+                'external_attendee': external_attendee
+            })
+        return None
 
     def send_reservation_denied_mail(self):
         return self.send_reservation_mail(NotificationType.RESERVATION_DENIED)
@@ -733,6 +750,26 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
     # def send_access_code_created_mail(self):
     #     self.send_reservation_mail(NotificationType.RESERVATION_ACCESS_CODE_CREATED)
+
+    # @staticmethod
+    # def attendees_pre_added_receiver(sender, instance, created, **kwargs):
+    #     attendance = instance
+    #     if created:
+    #         attendance.reservation.send_external_user_requested_mail_to_officials()
+    #     else:
+    #         logger.debug("Attendance already existeded. No mail sent.")
+
+    @staticmethod
+    def attendees_post_save_receiver(sender, instance, created, **kwargs):
+        from .attendance import AttendanceStates
+        logger.debug("attendees_saved_receiver triggered")
+        attendance = instance
+        if attendance.state == AttendanceStates.REQUESTED and attendance.previous_state != AttendanceStates.REQUESTED:
+            attendance.reservation.send_external_user_requested_mail_to_officials(external_attendee=attendance.user)
+        else:
+            logger.debug("Attendance already existed. No mail sent.")
+
+post_save.connect(Reservation.attendees_post_save_receiver, sender=Reservation.attendees.through)
 
 
 # class ReservationMetadataField(models.Model):

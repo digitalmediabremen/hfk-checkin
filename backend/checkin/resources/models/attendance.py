@@ -8,16 +8,18 @@ import uuid
 from .reservation import Reservation, PROFILE_MODEL
 from .base import ModifiableModel, UUIDModelMixin
 
-class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
 
-    class AttendanceStatus(models.TextChoices):
-        REQUESTED = 'requested', _('needs approval')
-        CONFIRMED = 'confirmed', 'approved'
-        DENIED = 'denied', 'denied'
+class AttendanceStates(models.TextChoices):
+    REQUESTED = 'requested', _('needs approval')
+    CONFIRMED = 'confirmed', 'approved'
+    DENIED = 'denied', 'denied'
+
+
+class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
 
     reservation = models.ForeignKey(Reservation, verbose_name=_("Reservation"), on_delete=models.CASCADE)
     user = models.ForeignKey(PROFILE_MODEL, verbose_name=_("Person"), on_delete=models.PROTECT)
-    state = models.CharField(choices=AttendanceStatus.choices, verbose_name=_("State"), blank=True, null=True, max_length=25)
+    state = models.CharField(choices=AttendanceStates.choices, verbose_name=_("State"), blank=True, null=True, max_length=25)
     comment = models.CharField(_("Comment"), blank=True, null=True, max_length=255)
 
     class Meta:
@@ -27,14 +29,30 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
     def __str__(self):
         return "%s %s @ %s" % (self._meta.verbose_name, self.user, self.reservation)
 
+    def __init__(self, *args, **kwargs):
+        super(Attendance, self).__init__(*args, **kwargs)
+        self.previous_state = self.state
+
     @property
     def is_external_user(self):
-        return self.state == Attendance.AttendanceStatus.REQUESTED or False
+        return self.state == AttendanceStates.REQUESTED or False
 
     def get_display_name(self):
         if self.is_external_user:
             return _("%(profile_display_name)s (External)" % {'profile_display_name': self.user.get_full_name()})
         return self.user.get_full_name()
+
+    def save(self, *args, **kwargs):
+        """
+        Set state of new Attendace to REQUESTED if user is_external is True.
+        Or set to REQUESTED if no states has been set yet.
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        if self.user.is_external and (self._state.adding or not self.state):
+            self.state = AttendanceStates.REQUESTED
+        super().save(*args, **kwargs)
 
 
 # class AttendantInReservation(models.Model):
