@@ -1,6 +1,7 @@
 import { NextPage } from "next";
 import dynamic from "next/dynamic";
 import React from "react";
+import { AlertCircle } from "react-feather";
 import { ConstructorDeclaration } from "ts-morph";
 import { useProfile } from "../components/api/ApiHooks";
 import needsProfile from "../components/api/needsProfile";
@@ -25,6 +26,7 @@ import useReservationState, {
     useReservation,
     useReservationArrayState,
 } from "../src/hooks/useReservation";
+import useValidation from "../src/hooks/useValidation";
 import NewReservation from "../src/model/api/NewReservation";
 import Profile from "../src/model/api/Profile";
 import {
@@ -58,14 +60,17 @@ const DynamicAddExternalPersonSubpage = createDynamicPage(
 
 const DynamicResourceListSubpage = createDynamicPage(
     () => import("../components/getin/subpages/ResourceListSubPage")
+);
+
+const DynamicSetPurposeSubPage =  createDynamicPage(
+    () => import("../components/getin/subpages/SetPurposeSubPage")
 )
 
 const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
     if (!start || !end) return undefined;
     const overlap = smallerThan(
-        createTime(end.getHours(), end.getMinutes()),        
-        createTime(start.getHours(), start.getMinutes()),
-
+        createTime(end.getHours(), end.getMinutes()),
+        createTime(start.getHours(), start.getMinutes())
     );
     return [
         getFormattedDate(start, "de") || "",
@@ -78,12 +83,16 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
     const { subPageProps, handlerProps, direction, activeSubPage } = useSubPage(
         requestSubpages
     );
+    const { hasError } = useValidation();
+
+    const ValidationIcon = <AlertCircle />;
 
     const {
         attendees,
         number_of_extra_attendees: extraAttendees,
         start,
         end,
+        resource,
     } = useReservation();
 
     return (
@@ -108,9 +117,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                         title={t("Personen hinzufügen")}
                         {...subPageProps("personen")}
                     >
-                        {() => (
-                            <DynamicSetPersonSubpage />
-                        )}
+                        {() => <DynamicSetPersonSubpage />}
                     </SubPage>
                     <SubPage
                         title={t("Externe hinzufügen")}
@@ -122,7 +129,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                         title={t("Grund angeben")}
                         {...subPageProps("grund")}
                     >
-                        {() => <DynamicSetTimeSubpage />}
+                        {() => <DynamicSetPurposeSubPage />}
                     </SubPage>
                     <SubPage
                         title={t("Nachricht")}
@@ -144,9 +151,17 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
             <div>
                 <FormElement
                     {...handlerProps("raum")}
-                    value={["erste Zeile", "zweite Zeile"]}
-                    label={t("Raum")}
+                    value={
+                        resource
+                            ? [resource.name, resource.display_numbers || ""]
+                            : undefined
+                    }
+                    label={t("Raum auswählen")}
+                    shortLabel={t("Raum")}
                     arrow
+                    icon={
+                        hasError("missingResourcePermissions") && ValidationIcon
+                    }
                     extendedWidth
                 />
                 <FormElement
@@ -155,6 +170,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                     value={presentTimeLabel(start, end)}
                     shortLabel={t("Zeit")}
                     arrow
+                    icon={hasError("exceedsBookableRange") && ValidationIcon}
                     extendedWidth
                 />
                 <FormElement
@@ -180,6 +196,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                     label={t("Buchungsgrund")}
                     shortLabel={t("Grund")}
                     arrow
+                    icon={hasError("needsExceptionReason") && ValidationIcon}
                     extendedWidth
                 />
                 <FormElement
@@ -197,7 +214,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                     value={false}
                     label={t(
                         "Bitte ruft mich bei Rückfragen zu dieser Buchung unter {phone} zurück.",
-                        { phone: profile.phone }
+                        { phone: profile.phone! }
                     )}
                     bottomSpacing={3}
                 />

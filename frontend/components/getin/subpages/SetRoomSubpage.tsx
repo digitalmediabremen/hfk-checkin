@@ -1,20 +1,23 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, X } from "react-feather";
+import { ArrowRight, Key, X } from "react-feather";
 import SmoothCollapse from "react-smooth-collapse";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservation";
 import useResource from "../../../src/hooks/useResource";
 import useResources from "../../../src/hooks/useResources";
+import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
 import { empty, notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
+import Fade from "../../common/Fade";
 import FormElement from "../../common/FormElement";
 import FormElementBase from "../../common/FormElementBase";
 import FormInput from "../../common/FormInput";
 import List from "../../common/List";
 import Loading, { LoadingInline } from "../../common/Loading";
 import NewButton from "../../common/NewButton";
+import Notice from "../../common/Notice";
 import ResourceListItem from "../../common/ResourceListItem";
 
 interface SetRoomSubpageProps {}
@@ -27,27 +30,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const [selectedResource, setSelectedResource] = useReservationState(
         "resource"
     );
-
-    // useEffect(() => {
-    //     if (!selectedResource) {
-    //         setSelectedResource(undefined);
-    //         return;
-    //     }
-    //     const withinSearch = queryResourceRequest.result?.find(
-    //         (r) => r.uuid === selectedResource?.uuid
-    //     );
-    //     if (notEmpty(withinSearch)) {
-    //         setSelectedResource(withinSearch);
-    //         setLoading(false);
-    //     } else {
-    //         if (notEmpty(selectedResourceRequest.result)) {
-    //             setSelectedResource(selectedResourceRequest.result);
-    //             setLoading(false);
-    //         } else {
-    //             selectedResourceRequest.request(selectedResourceId);
-    //         }
-    //     }
-    // }, [selectedResource, selectedResourceRequest.result]);
+    const { hasError } = useValidation();
 
     const load = useCallback((searchValue: string) => {
         return queryResourceRequest.requestResources(
@@ -157,9 +140,23 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                 noOutline
                 iconRight={<ArrowRight strokeWidth={1} />}
                 onClick={() => goForward("resource-list")}
+                bottomSpacing={4}
             >
                 {t("Raumübersicht öffnen")}
             </NewButton>
+
+            <Fade in={hasError("missingResourcePermissions")}>
+                <Notice
+                    error
+                    title={t("Der Raum {roomNumber} ist zugangsbeschränkt.", {
+                        roomNumber: selectedResource?.display_name || "",
+                    })}
+                >
+                    {t(
+                        "Wenn du trotzdem auf „Absenden“ klickst, geht deine Anfrage zur Bearbeitung an „[Person / RT / CO]“. Hinterlasse ihr/ihm am besten eine Notiz und erkläre, warum du in den Raum nutzen möchtest."
+                    )}
+                </Notice>
+            </Fade>
         </>
     );
 };

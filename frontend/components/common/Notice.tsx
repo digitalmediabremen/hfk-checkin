@@ -25,7 +25,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 }
 
                 h3 {
-                    font-size: 1em;
+                    font-size: 1rem;
                     margin: 0;
                     padding: 0;
                     margin-bottom: ${theme.spacing(1)}px;

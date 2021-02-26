@@ -21,7 +21,7 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
                 }
 
                 .form-value {
-                    line-height: 1em;
+                    line-height: 1.3em;
                     display: inline;
                     width: 100%;
                 }

@@ -49,7 +49,7 @@ const HelpTitle: React.FunctionComponent = ({ children }) => {
                             1
                         ) + 2}px;
                     font-weight: "bold";
-                    font-size: 1em;
+                    font-size: 1rem;
                     color: ${theme.primaryColor};
                 }
 

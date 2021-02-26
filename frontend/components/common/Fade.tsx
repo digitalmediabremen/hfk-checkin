@@ -14,14 +14,14 @@ const defaultStyle = {
 };
 
 const transitionStyles: Partial<Record<TransitionStatus, {}>> = {
-    entering: { opacity: 1 },
+    entering: { opacity: 0 },
     entered: { opacity: 1 },
     exiting: { opacity: 0 },
     exited: { opacity: 0 },
 };
 
 const Fade: React.FunctionComponent<FadeProps> = ({ in: inProp, children }) => (
-    <Transition in={inProp} timeout={duration} unmountOnExit>
+    <Transition in={inProp} timeout={duration} unmountOnExit >
         {(state) => (
             <div
                 style={{

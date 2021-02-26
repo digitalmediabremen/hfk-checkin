@@ -80,6 +80,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const formik = useFormik<ProfileUpdate>({
         initialValues: {
             ...user,
+            email: ""
         },
         validate: (user) => validate(user, validationErrors),
         enableReinitialize: true,
@@ -137,7 +138,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                             formik.setFieldValue("phone", phone)
                         }
                         onBlur={formik.handleBlur}
-                        value={formik.values.phone}
+                        value={formik.values.phone || ""}
                         focus={!isUserCreation}
                         error={
                             formik.touched.phone && formik.errors.phone

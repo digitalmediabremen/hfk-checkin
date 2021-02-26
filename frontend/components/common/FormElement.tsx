@@ -26,10 +26,12 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
     value,
     ...formElementBaseProps
 }) => {
-    const handleIconClick = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    const handleIconClick = (
+        event: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    ) => {
         event.stopPropagation();
         onIconClick?.();
-    }
+    };
     return (
         <>
             <style jsx>{`
@@ -73,18 +75,20 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                         extendedWidth={!value}
                     />
                 )}
-                {value && (
-                    <FormMultilineValue value={value} />
-                )}
+                {value && <FormMultilineValue value={value} />}
                 {(arrow || icon) && (
                     <span
                         className={classNames("push-right", {
                             "icon-interactable": !!onIconClick,
                         })}
-                        onClick={handleIconClick}
+                        {...(!!onIconClick
+                            ? { onClick: handleIconClick }
+                            : undefined)}
                     >
                         {icon && icon}
-                        {arrow && <ArrowRight size="24" strokeWidth={1} />}
+                        {!icon && arrow && (
+                            <ArrowRight size="24" strokeWidth={1} />
+                        )}
                     </span>
                 )}
             </FormElementBase>

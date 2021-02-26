@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { ArrowRight } from "react-feather";
 import SmoothCollapse from "react-smooth-collapse";
+import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservation";
+import useValidation from "../../../src/hooks/useValidation";
 import {
     addDates,
     addDateTime,
@@ -16,17 +19,21 @@ import {
     timeFromDateOrNow,
 } from "../../../src/util/DateTimeUtil";
 import { empty, notEmpty } from "../../../src/util/TypeUtil";
+import useSubPage from "../../api/useSubPage";
 import { useAppState } from "../../common/AppStateProvider";
 import Fade from "../../common/Fade";
 import FormDateInput from "../../common/FormDateInput";
 import FormElement from "../../common/FormElement";
 import FormTimeInput from "../../common/FormTimeInput";
+import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 
 interface SetTimeSubpageProps {}
 
 const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const { appState, dispatch } = useAppState();
+
+    const { hasError } = useValidation();
 
     const { reservation } = appState;
     const { start: datetimeFrom, end: datetimeTo } = reservation || {};
@@ -41,6 +48,8 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         timeFromDateOrNow(datetimeTo)
     );
     const { t } = useTranslation();
+
+    const { goForward } = useSubPage(requestSubpages);
 
     const hasOverlap =
         notEmpty(timeFrom) && notEmpty(timeTo) && smallerThan(timeTo, timeFrom);
@@ -66,9 +75,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         })();
     }, [date, timeFrom, timeTo, hasOverlap]);
 
-    const exceedsBookableRange = appState.reservationValidation.some(
-        (v) => v.type === "exceedsBookableRange"
-    );
+    const exceedsBookableRange = hasError("exceedsBookableRange");
     return (
         <>
             <style jsx>{``}</style>
@@ -97,9 +104,10 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                 extendedWidth
             />
 
-            <SmoothCollapse expanded={exceedsBookableRange}>
+            <Fade in={exceedsBookableRange}>
                 <Notice
                     error
+                    bottomSpacing={2}
                     title={t(
                         "Räume können nur mit einer Vorlaufzeit von max. 14 Tagen gebucht werden."
                     )}
@@ -107,20 +115,13 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     {t(
                         "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an."
                     )}
+                    <br />
+                    <br />
+                    <NewButton noOutline iconRight={<ArrowRight />} onClick={() => goForward("grund")}>
+                        {t("Ausnahmeregelung")}
+                    </NewButton>
                 </Notice>
-                <FormElement
-                    // {...handlerProps("grund")}
-                    value={[
-                        "erste Zeile die auch sehr lang ist und nervt.",
-                        "zweite Zeile",
-                        "dritte Zeile",
-                    ]}
-                    label={t("Buchungsgrund")}
-                    shortLabel={t("Grund")}
-                    arrow
-                    // extendedWidth
-                />
-            </SmoothCollapse>
+            </Fade>
             <Fade in={!exceedsBookableRange}>
                 <Notice>
                     Bitte berücksichtige bei deiner Anfrage eine

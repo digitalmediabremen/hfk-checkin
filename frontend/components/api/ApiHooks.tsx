@@ -193,7 +193,6 @@ export const useUpdateProfileFromAppStateAndUpdate = (
     const { profile: profileFromAppState } = appState;
 
     useEffect(() => {
-        console.log("run update");
         if (!appState.disableNextUpdate) {
             getProfile();
         } else {
