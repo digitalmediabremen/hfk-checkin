@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, serializers, generics, mixins, viewsets
+from .models import Profile
 
 # from resources.models.utils import build_ical_feed_url
 # from resources.models import Unit
@@ -13,6 +14,16 @@ def register_view(klass, name, base_name=None):
     if base_name is not None:
         entry['base_name'] = base_name
     all_views.append(entry)
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    display_name = serializers.ReadOnlyField(source='get_display_name')
+
+    class Meta:
+        fields = [
+            'first_name', 'last_name', 'display_name'
+        ]
+        model = Profile
 
 
 class UserSerializer(serializers.ModelSerializer):

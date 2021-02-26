@@ -5,10 +5,18 @@ from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 import uuid
 from .utils import generate_id
+from post_office.models import Email
 
 from checkin.users.models import Profile, User
-USER_MODEL = 'users.Profile'
+PROFILE_MODEL = 'users.Profile'
 AUTH_USER_MODEL = 'users.User'
+
+
+class EmailRelatedMixin(models.Model):
+    related_emails = models.ManyToManyField(Email, verbose_name=_('Related sent E-Mails'))
+    class Meta:
+        abstract = True
+
 
 class UUIDModelMixin(models.Model):
     uuid = models.UUIDField(verbose_name='UUID', primary_key=True, default=uuid.uuid4, editable=False)

@@ -24,9 +24,9 @@ from checkin.notifications.types import NotificationType
 from checkin.resources.signals import (
     reservation_modified, reservation_confirmed, reservation_cancelled
 )
-from .base import ModifiableModel, UUIDModelMixin
+from .base import ModifiableModel, UUIDModelMixin, EmailRelatedMixin
 from .resource import generate_access_code, validate_access_code
-from .resource import Resource, USER_MODEL
+from .resource import Resource, PROFILE_MODEL
 from .utils import (
     get_dt, save_dt, is_valid_time_slot, humanize_duration, send_template_mail,
     DEFAULT_LANG, localize_datetime, format_dt_range, build_reservations_ical_file
@@ -113,7 +113,7 @@ class ReservationQuerySet(models.QuerySet):
     #     return self.filter(Q(user=user) | Q(resource__in=allowed_resources))
 
 
-class Reservation(ModifiableModel, UUIDModelMixin):
+class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     CREATED = 'created'
     CANCELLED = 'cancelled'
     CONFIRMED = 'confirmed'
@@ -169,8 +169,8 @@ class Reservation(ModifiableModel, UUIDModelMixin):
     # attendance related fields
     # TODO
     # attendees
-    attendees = models.ManyToManyField(USER_MODEL, through='Attendance', verbose_name=_("Attendees"),
-                                        related_name='reservations_attending', blank=True)
+    attendees = models.ManyToManyField(PROFILE_MODEL, through='Attendance', verbose_name=_("Attendees"),
+                                       related_name='reservations_attending', blank=True)
     number_of_extra_attendees = models.PositiveSmallIntegerField(_("Number of extra attendees"), blank=True, default=0,
         help_text=_("Extra attendees are added to the attendess that are explicitly identified, when building total attendee number for capacity calculation."))
 
@@ -196,8 +196,8 @@ class Reservation(ModifiableModel, UUIDModelMixin):
     objects = ReservationQuerySet.as_manager()
 
     class Meta:
-        verbose_name = _("Reservation")
-        verbose_name_plural = _("Reservations")
+        verbose_name = _("Space")
+        verbose_name_plural = _("Spaces")
         ordering = ('begin','end')
 
     def __str__(self):
@@ -663,6 +663,8 @@ class Reservation(ModifiableModel, UUIDModelMixin):
             context,
             attachments,
         )
+
+        self.related_emails.add(email)
 
         return email.to
 

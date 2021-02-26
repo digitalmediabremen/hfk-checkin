@@ -24,13 +24,14 @@ from rest_framework.exceptions import NotAcceptable, ValidationError
 from rest_framework.settings import api_settings as drf_settings
 
 #from munigeo import api as munigeo_api
-from checkin.users.api import UserSerializer
+from checkin.users.api import UserSerializer, ProfileSerializer
 from .resource import ResourceSerializer, ResourceListViewSet
 
 from ..models import (
     Reservation, Resource, RESERVATION_EXTRA_FIELDS
     # ReservationMetadataSet, ReservationCancelReasonCategory, ReservationCancelReason
     )
+from ..models.attendance import Attendance
 #from resources.pagination import ReservationPagination
 #from resources.models.utils import generate_reservation_xlsx
 from ..models.utils import get_object_or_none
@@ -77,6 +78,16 @@ except Exception:
 #         fields = ('id', 'display_name', 'email')
 #
 
+class AttendanceSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
+    is_external = serializers.BooleanField(read_only=True, source='is_external_user')
+
+    class Meta:
+        model = Attendance
+        fields = ('first_name', 'last_name', 'display_name', 'state', 'is_external')
+
 
 class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, ModifiableModelSerializerMixin):
     #uuid = serializers.ReadOnlyField()
@@ -93,7 +104,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     state = serializers.ReadOnlyField()
     state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
     need_manual_confirmation = serializers.ReadOnlyField()
-    # attendees = AttendanceSerializer()
+    attendees = AttendanceSerializer(many=True, source='attendance_set')
     # comment or reason or usage
     number_of_attendees = serializers.IntegerField(read_only=True)
     number_of_extra_attendees = serializers.IntegerField(initial=0)
@@ -109,8 +120,9 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     class Meta:
         model = Reservation
         fields = [
-            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'comments', 'is_own', 'state', 'state_verbose', 'need_manual_confirmation',
-            'number_of_attendees', 'number_of_extra_attendees', #'cancel_reason'
+            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'comments',
+            'is_own', 'state', 'state_verbose', 'need_manual_confirmation',
+            'attendees', 'number_of_attendees', 'number_of_extra_attendees', #'cancel_reason'
         ] + list(RESERVATION_EXTRA_FIELDS) + list(ModifiableModelSerializerMixin.Meta.fields)
         read_only_fields = list(RESERVATION_EXTRA_FIELDS)
 
