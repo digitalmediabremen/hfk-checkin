@@ -31,7 +31,7 @@ export default function useReservationState<
     const setHandler = useCallback((
         value: NewReservationBlueprint[ReservationFieldType]
     ) => {
-        console.log(`reservation mutation: [${field}]: ${value}`);
+        console.log(`reservation mutation: [${field}]:`, value);
         dispatch({
             type: "updateReservation",
             reservation: {

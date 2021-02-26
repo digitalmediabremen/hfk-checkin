@@ -20,8 +20,8 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
     const { t } = useTranslation();
     const r = useResources(true);
     const [itemCount, setItemCount] = useState(0);
-    const [selectedResourceId, setSelectedResourceId] = useReservationState(
-        "resource_uuid"
+    const [selectedResource, setSelectedResource] = useReservationState(
+        "resource"
     );
     const height = (use100vh() || 500) - theme.topBarHeight;
     const [loaded, setLoaded] = useState(false);
@@ -34,12 +34,12 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
         })()
     }, []);
 
-    const handleResourceSelect = useCallback((resourceId: string) => {
+    const handleResourceSelect = useCallback((resource: Resource) => {
         const handle = (selected?: boolean) => {
             if (selected) {
-                setSelectedResourceId(resourceId);
+                setSelectedResource(resource);
             } else {
-                setSelectedResourceId(undefined);
+                setSelectedResource(undefined);
             }
         };
 
@@ -47,7 +47,7 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
     }, []);
 
     const isSelected = (resourceId: string) =>
-        resourceId === selectedResourceId;
+        resourceId === selectedResource?.uuid;
 
     // update has next page
     useEffect(() => {
@@ -78,7 +78,7 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
                     <ResourceListItem
                         selected={isSelected(item.uuid)}
                         resource={item}
-                        onSelect={handleResourceSelect(item.uuid)}
+                        onSelect={handleResourceSelect(item)}
                         last={last}
                         showMeta
                     />

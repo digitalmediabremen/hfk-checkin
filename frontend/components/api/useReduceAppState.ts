@@ -99,7 +99,10 @@ const useReduceAppState = () =>
             case "updateReservation":
                 return {
                     ...previousState,
-                    reservation: action.reservation,
+                    reservation: {
+                        ...action.reservation,
+                        resource_uuid: action.reservation?.resource?.uuid
+                    },
                     reservationValidation: validateReservation(
                         action.reservation || {}
                     ), 

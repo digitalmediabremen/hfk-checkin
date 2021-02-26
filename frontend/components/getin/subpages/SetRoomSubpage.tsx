@@ -24,33 +24,30 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const { t } = useTranslation();
     const queryResourceRequest = useResources(false);
     const { goForward } = useSubPage(requestSubpages);
-    const [selectedResourceId, setSelectedResourceId] = useReservationState(
-        "resource_uuid"
+    const [selectedResource, setSelectedResource] = useReservationState(
+        "resource"
     );
-    const selectedResourceRequest = useResource();
-    const [selectedResource, setSelectedResource] = useState<Resource>();
-    const [loading, setLoading] = useState(!!selectedResourceId);
 
-    useEffect(() => {
-        if (!selectedResourceId) {
-            setSelectedResource(undefined);
-            return;
-        }
-        const withinSearch = queryResourceRequest.result?.find(
-            (r) => r.uuid === selectedResourceId
-        );
-        if (notEmpty(withinSearch)) {
-            setSelectedResource(withinSearch);
-            setLoading(false);
-        } else {
-            if (notEmpty(selectedResourceRequest.result)) {
-                setSelectedResource(selectedResourceRequest.result);
-                setLoading(false);
-            } else {
-                selectedResourceRequest.request(selectedResourceId);
-            }
-        }
-    }, [selectedResourceId, selectedResourceRequest.result]);
+    // useEffect(() => {
+    //     if (!selectedResource) {
+    //         setSelectedResource(undefined);
+    //         return;
+    //     }
+    //     const withinSearch = queryResourceRequest.result?.find(
+    //         (r) => r.uuid === selectedResource?.uuid
+    //     );
+    //     if (notEmpty(withinSearch)) {
+    //         setSelectedResource(withinSearch);
+    //         setLoading(false);
+    //     } else {
+    //         if (notEmpty(selectedResourceRequest.result)) {
+    //             setSelectedResource(selectedResourceRequest.result);
+    //             setLoading(false);
+    //         } else {
+    //             selectedResourceRequest.request(selectedResourceId);
+    //         }
+    //     }
+    // }, [selectedResource, selectedResourceRequest.result]);
 
     const load = useCallback((searchValue: string) => {
         return queryResourceRequest.requestResources(
@@ -72,12 +69,12 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         };
     }, [searchValue]);
 
-    const handleResourceSelect = useCallback((resourceId: string) => {
+    const handleResourceSelect = useCallback((resource: Resource) => {
         const handle = (selected?: boolean) => {
             if (selected) {
-                setSelectedResourceId(resourceId);
+                setSelectedResource(resource);
             } else {
-                setSelectedResourceId(undefined);
+                setSelectedResource(undefined);
             }
         };
 
@@ -89,7 +86,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const noResults = queryResourceRequest.state === "success" && !hasResults;
     const showDropdown = hasResults || noResults;
     return (
-        <Loading loading={loading}>
+        <>
             <style jsx>{``}</style>
             {selectedResource ? (
                 <FormElement
@@ -99,7 +96,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         selectedResource.display_numbers || "",
                     ]}
                     icon={<X />}
-                    onIconClick={() => setSelectedResourceId(undefined)}
+                    onIconClick={() => setSelectedResource(undefined)}
                 />
             ) : (
                 <>
@@ -139,7 +136,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                                             1
                                                     }
                                                     onSelect={handleResourceSelect(
-                                                        r.uuid
+                                                        r
                                                     )}
                                                 />
                                             )
@@ -147,10 +144,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     </>
                                 )}
                                 {!hasResults && "loading" && (
-                                    <FormElementBase
-                                        noOutline
-                                        noBottomSpacing
-                                    >
+                                    <FormElementBase noOutline noBottomSpacing>
                                         {t("Keine Ergebnisse")}
                                     </FormElementBase>
                                 )}
@@ -166,7 +160,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
             >
                 {t("Raumübersicht öffnen")}
             </NewButton>
-        </Loading>
+        </>
     );
 };
 
