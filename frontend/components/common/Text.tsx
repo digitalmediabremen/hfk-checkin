@@ -13,7 +13,7 @@ const Text: React.FunctionComponent<TextProps> = ({children, paragraph, emphasis
         <style jsx>{`
             color: ${emphasis ? "black" : theme.primaryColor};
             display: inline-block;
-            line-height: 1.4em;
+            line-height: 1.4rem;
             
             p {
                 margin: 0;

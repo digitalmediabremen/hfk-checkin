@@ -66,7 +66,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                     color: ${theme.secondaryColor};
                     border: none;
                     padding: ${theme.spacing(2)}px ${theme.spacing(1)}px};
-                    font-size: 1.0em;
+                    font-size: 1.0rem;
                     font-weight: bold;
                     width: 100%;
                     transition: transform .05s;
@@ -74,17 +74,17 @@ export const Button: SFC<ButtonProps> = (props) => {
                 }
 
                 .button > span {
-                    font-size: 1.0em;
+                    font-size: 1.0rem;
                     font-weight: bold;
                     position: relative;
                     width: auto;
-                    ${hasIcon ? "margin: 0 1.9em;" : ""}
+                    ${hasIcon ? "margin: 0 1.9rem;" : ""}
                 }
 
                 .back-icon {
                     position: absolute;
-                    left: -1.7em;
-                    line-height: 1.0em;
+                    left: -1.7rem;
+                    line-height: 1.0rem;
                     width: 0;
                 }
 

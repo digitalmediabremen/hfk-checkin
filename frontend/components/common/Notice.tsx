@@ -41,7 +41,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 }
 
                 .error .text {
-                    margin-top: 0.2em;
+                    margin-top: 0.2rem;
                     font-style: normal;
                 }
             `}</style>

@@ -41,7 +41,7 @@ export default function validateReservation(
             }
             if (
                 reservation.purpose === "OTHER" &&
-                !reservation.purpose_text
+                !reservation.comment
             ) {
                 v.push({
                     type: "needsExceptionReason",

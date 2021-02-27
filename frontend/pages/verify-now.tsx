@@ -23,7 +23,7 @@ const ProfileCenterBig = ({ profile }: { profile: Profile }) => {
                         color: ${theme.primaryColor};
                         text-align: center;
                         margin: ${theme.spacing(1)}px;
-                        font-size: 1.5em;
+                        font-size: 1.5rem;
                     }
 
                     div {

@@ -221,11 +221,11 @@ const LastCheckinListItem = ({
                 }
 
                 .room-number {
-                    width: 4.5em;
+                    width: 4.5rem;
                     display: inline-block;
                     flex-shrink: 0;
                     flex-grow: 0.5;
-                    flex-basis: 3.5em;
+                    flex-basis: 3.5rem;
                 }
 
                 .room-name {

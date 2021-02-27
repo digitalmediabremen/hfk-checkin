@@ -16,7 +16,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
     const { t } = useTranslation();
     const { hasError } = useValidation();
     const [purpose, setPurpose] = useReservationState("purpose");
-    const [purposeText, setPurposeText] = useReservationState("purpose_text");
+    const [purposeText, setPurposeText] = useReservationState("comment");
     const purposeLabel = useReservationPurposeText();
     const handlePurposeTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setPurposeText(event.target.value)
