@@ -4,32 +4,39 @@ from django.utils.translation import ugettext_lazy as _
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from .mixins import PopulateCreatedAndModifiedMixin, CommonExcludeMixin
 from .other import FixedGuardedModelAdminMixin
+from .permission_inlines import (
+    ReservationDelegatesForUnitUserPermissionInline,
+    UserConfirmationDelegatesForUnitUserPermissionInline,
+)
+
 
 logger = logging.getLogger(__name__)
 
+
 class UnitAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, FixedGuardedModelAdminMixin, TranslationAdmin):
     inlines = [
-#        UnitIdentifierInline,
         # PeriodInline,
+        ReservationDelegatesForUnitUserPermissionInline,
+        UserConfirmationDelegatesForUnitUserPermissionInline,
     ]
 
     fieldsets = (
         (None, {
             'fields': ('name', 'slug', 'description','time_zone')
         }),
-        (_('Reservation policy'), {
-            # 'classes': ('collapse',),
-            'description': _("These parameters will apply to resources assigned to this unit. They will only apply if the resource does not define its own parameters."),
-            'fields': ('reservation_delegates','user_confirmation_delegates')
-                    # 'reservable',  'reservation_info', #'need_manual_confirmation',
-                    #    'min_period', 'max_period', 'slot_size', 'max_reservations_per_user',
-                    #    'reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
-                    #    'reservable_max_days_in_advance', 'reservable_min_days_in_advance',
-                    #    'external_reservation_url'),
-        }),
+        # (_('Reservation policy'), {
+        #     # 'classes': ('collapse',),
+        #     'description': _("These parameters will apply to resources assigned to this unit. They will only apply if the resource does not define its own parameters."),
+        #     'fields': ('reservation_delegates','user_confirmation_delegates')
+        #             # 'reservable',  'reservation_info', #'need_manual_confirmation',
+        #             #    'min_period', 'max_period', 'slot_size', 'max_reservations_per_user',
+        #             #    'reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
+        #             #    'reservable_max_days_in_advance', 'reservable_min_days_in_advance',
+        #             #    'external_reservation_url'),
+        # }),
     )
     # readonly_fields = ('uuid',)
-    autocomplete_fields = ('reservation_delegates','user_confirmation_delegates')
+    #autocomplete_fields = ('reservation_delegates','user_confirmation_delegates')
     list_display = ('name', 'slug', 'modified_at')
     #list_filter = ('reservable',)
     ordering = ('name',)

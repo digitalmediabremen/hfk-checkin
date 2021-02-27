@@ -197,8 +197,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     objects = ReservationQuerySet.as_manager()
 
     class Meta:
-        verbose_name = _("Space")
-        verbose_name_plural = _("Spaces")
+        verbose_name = _("Reservation")
+        verbose_name_plural = _("Reservations")
         ordering = ('begin','end')
 
     def __str__(self):

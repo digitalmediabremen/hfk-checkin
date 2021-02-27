@@ -40,9 +40,10 @@ from .utils import create_datetime_days_from_now, get_translated, get_translated
 #from .equipment import Equipment
 from .unit import Unit
 #from .availability import get_opening_hours
-from .permissions import RESOURCE_GROUP_PERMISSIONS#, UNIT_ROLE_PERMISSIONS
+from .permissions import RESOURCE_GROUP_PERMISSIONS, RESOURCE_PERMISSIONS
 #from ..enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
 from .mixins import AbstractReservableModel, AbstractAccessRestrictedModel
+from .permissions import NoSuperuserObjectPermissionChecker
 
 # TODO remove UNIT_ROLE_PERMISSIONS
 UNIT_ROLE_PERMISSIONS = {}
@@ -233,9 +234,10 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     objects = ResourceQuerySet.as_manager()
 
     class Meta:
-        verbose_name = _("Room")
-        verbose_name_plural = _("Rooms")
+        verbose_name = _("Space")
+        verbose_name_plural = _("Spaces")
         ordering = ('unit', 'name',)
+        permissions = RESOURCE_PERMISSIONS
 
     def __str__(self):
         return self.display_name
@@ -596,43 +598,31 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             return False
         return self.unit.is_viewer(user)
 
-    def _has_perm(self, user, perm, allow_admin=True):
+    def _has_perm(self, user, perm, allow_admin=False):
         if not is_authenticated_user(user):
             return False
 
-        if (self.is_admin(user) and allow_admin) or user.is_superuser:
-            return True
+        # if (self.is_admin(user) and allow_admin) or user.is_superuser:
+        #     return True
 
-        return self._has_role_perm(user, perm) or self._has_explicit_perm(user, perm, allow_admin)
+        return self._has_explicit_perm(user, perm, allow_admin)
 
     def _has_explicit_perm(self, user, perm, allow_admin=True):
         if hasattr(self, '_permission_checker'):
             checker = self._permission_checker
         else:
-            checker = ObjectPermissionChecker(user)
+            checker = NoSuperuserObjectPermissionChecker(user)
 
-        # Permissions can be given per-unit
-        if checker.has_perm('unit:%s' % perm, self.unit):
+        # Permissions can be given by resource
+        if checker.has_perm('resource:%s' % perm, self):
             return True
-        # ... or through Resource Groups
-        resource_group_perms = [checker.has_perm('group:%s' % perm, rg) for rg in self.groups.all()]
-        return any(resource_group_perms)
-
-    def _has_role_perm(self, user, perm):
-        allowed_roles = UNIT_ROLE_PERMISSIONS.get(perm)
-        is_allowed = False
-
-        if (UnitAuthorizationLevel.admin in allowed_roles
-            or UnitGroupAuthorizationLevel.admin in allowed_roles) and not is_allowed:
-            is_allowed = self.is_admin(user)
-
-        if UnitAuthorizationLevel.manager in allowed_roles and not is_allowed:
-            is_allowed = self.is_manager(user)
-
-        if UnitAuthorizationLevel.viewer in allowed_roles and not is_allowed:
-            is_allowed = self.is_viewer(user)
-
-        return is_allowed
+        # Permissions can be given per-unit
+        # if checker.has_perm('unit:%s' % perm, self.unit):
+        #     return True
+        # # ... or through Resource Groups
+        # resource_group_perms = [checker.has_perm('group:%s' % perm, rg) for rg in self.groups.all()]
+        # return any(resource_group_perms)
+        return False
 
     def get_users_with_perm(self, perm):
         # TODO
@@ -642,8 +632,14 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             users |= {u for u in get_users_with_perms(rg) if u.has_perm('group:%s' % perm, rg)}
         return users
 
+    def has_permanent_access(self, user):
+        return not self.access_restricted or self._has_perm(user, 'has_permanent_access')
+
+    def can_modify_access(self, user):
+        return self._has_perm(user, 'can_modify_access')
+
     def can_make_reservations(self, user):
-        return self.reservable or self._has_perm(user, 'can_make_reservations')
+        return self.reservable and self._has_perm(user, 'can_make_reservations')
 
     def can_modify_reservations(self, user):
         return self._has_perm(user, 'can_modify_reservations')

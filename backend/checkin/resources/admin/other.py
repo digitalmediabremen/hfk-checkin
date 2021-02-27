@@ -51,7 +51,7 @@ class CustomUserManage(forms.Form):
     user = EmailAndUsernameChoiceField(
         queryset=get_user_model().objects.filter(
             #Q(auth_token__isnull=False) | Q(is_staff=True)
-            Q(is_staff=True)
+            # Q(is_staff=True)
         ).distinct().order_by('email')
     )
 
@@ -61,11 +61,11 @@ class CustomGroupManage(forms.Form):
 
 
 class FixedGuardedModelAdminMixin(guardian_admin.GuardedModelAdminMixin):
-    # def get_obj_perms_user_select_form(self, request):
-    #     return CustomUserManage
-    #
-    # def get_obj_perms_group_select_form(self, request):
-    #     return CustomGroupManage
+    def get_obj_perms_user_select_form(self, request):
+        return CustomUserManage
+
+    def get_obj_perms_group_select_form(self, request):
+        return CustomGroupManage
 
     # fix editing an object with quoted chars in pk
     def obj_perms_manage_user_view(self, request, object_pk, user_id):

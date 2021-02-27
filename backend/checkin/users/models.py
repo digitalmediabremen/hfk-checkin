@@ -80,22 +80,22 @@ class User(AbstractUser):
                                           choices=settings.LANGUAGES)
     # favorite_resources = models.ManyToManyField(Resource, blank=True, verbose_name=_('Favorite resources'),
     #                                             related_name='favorited_by')
-
-    # Duplicate the is staff field from the abstract base class to here
-    # so that we can override the verbose name and help text.
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=False,
-        help_text=_(
-            "Designates whether the user can log into "
-            "Django Admin or Respa Admin sites."))
-
-    is_general_admin = models.BooleanField(
-        default=False, verbose_name=_("general administrator status"),
-        help_text=_(
-            "Designates whether the user is a General Administrator "
-            "with special permissions to many objects within Respa. "
-            "This is almost as powerful as superuser."))
+    #
+    # # Duplicate the is staff field from the abstract base class to here
+    # # so that we can override the verbose name and help text.
+    # is_staff = models.BooleanField(
+    #     _("staff status"),
+    #     default=False,
+    #     help_text=_(
+    #         "Designates whether the user can log into "
+    #         "Django Admin or Respa Admin sites."))
+    #
+    # is_general_admin = models.BooleanField(
+    #     default=False, verbose_name=_("general administrator status"),
+    #     help_text=_(
+    #         "Designates whether the user is a General Administrator "
+    #         "with special permissions to many objects within Respa. "
+    #         "This is almost as powerful as superuser."))
 
     class Meta(AbstractUser.Meta):
         ordering = ('id',)
@@ -210,3 +210,22 @@ def create_profile(sender, instance, created, **kwargs):
     profile.email = instance.email
     profile.verified = True
     profile.save()
+
+
+from guardian.models import UserObjectPermissionAbstract, GroupObjectPermissionAbstract
+
+
+class TimeEnabledAbstract(models.Model):
+    created_at = models.DateTimeField(verbose_name=_('Time of creation'), auto_now_add=True, editable=False)
+    modified_at = models.DateTimeField(verbose_name=_('Time of modification'), auto_now=True, editable=False)
+
+    class Meta:
+        abstract = True
+
+
+class TimeEnabledUserObjectPermission(TimeEnabledAbstract, UserObjectPermissionAbstract):
+    pass
+
+
+class TimeEnabledGroupObjectPermission(TimeEnabledAbstract, GroupObjectPermissionAbstract):
+    pass

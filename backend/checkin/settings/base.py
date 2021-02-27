@@ -127,6 +127,9 @@ AUTH_USER_MODEL = "users.User"
 # LOGIN_REDIRECT_URL = "users:redirect"
 # # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 # LOGIN_URL = "account_login"
+# Custom model for django-guardian
+GUARDIAN_USER_OBJ_PERMS_MODEL = 'users.TimeEnabledUserObjectPermission'
+GUARDIAN_GROUP_OBJ_PERMS_MODEL = 'users.TimeEnabledGroupObjectPermission'
 
 # PASSWORDS
 # ------------------------------------------------------------------------------

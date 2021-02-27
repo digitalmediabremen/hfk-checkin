@@ -54,17 +54,17 @@ class Unit(ModifiableModel, UUIDModelMixin):
     description = models.TextField(verbose_name=_('Description'), null=True, blank=True)
     time_zone = models.CharField(verbose_name=_('Time zone'), max_length=50,
                                  default=_get_default_timezone, choices=_get_timezone_choices())
-    reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
-                                                   blank=False, related_name='%(app_label)s_%(class)s_reservation_delegated')
-    user_confirmation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("User confirmation delegates"),
-                                                   blank=True,
-                                                   related_name='%(app_label)s_%(class)s_user_confirmation_delegated')
+    # reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
+    #                                                blank=False, related_name='%(app_label)s_%(class)s_reservation_delegated')
+    # user_confirmation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("User confirmation delegates"),
+    #                                                blank=True,
+    #                                                related_name='%(app_label)s_%(class)s_user_confirmation_delegated')
 
 #    objects = UnitQuerySet.as_manager()
 
     class Meta:
-        verbose_name = _("unit")
-        verbose_name_plural = _("units")
+        verbose_name = _("Building")
+        verbose_name_plural = _("Buildings")
         permissions = UNIT_PERMISSIONS
         ordering = ('name',)
 

@@ -3,11 +3,18 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
+from .other import FixedGuardedModelAdminMixin
+from django.urls import reverse, path
 
 logger = logging.getLogger(__name__)
 
 from .mixins import PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ModifiableModelAdminMixin
 from .other import ResourceGroupInline #, PeriodInline
+from .permission_inlines import (
+    AccessAllowedToResourceUserPermissionInline,
+    AccessDelegatesForResourceUserPermissionInline,
+    ReservationDelegatesForResourceUserPermissionInline,
+)
 
 
 class ResourceTypeAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, TranslationAdmin):
@@ -15,13 +22,17 @@ class ResourceTypeAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Tra
     pass
 
 
-class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, DynamicArrayMixin, ModifiableModelAdminMixin, TranslationAdmin):
+class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, DynamicArrayMixin, ModifiableModelAdminMixin,
+                       FixedGuardedModelAdminMixin, admin.ModelAdmin):
     inlines = [
         # PeriodInline,
         # ResourceEquipmentInline,
         # ResourceGroupInline,
         # RoomAccessPolicyInline
         # TODO
+        AccessDelegatesForResourceUserPermissionInline,
+        ReservationDelegatesForResourceUserPermissionInline,
+        AccessAllowedToResourceUserPermissionInline,
     ]
 
     fieldsets = (
@@ -34,7 +45,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Reservation'), {
             #'classes': ('collapse',),
-            'fields': ('reservable', 'reservation_delegates','reservation_info',#'need_manual_confirmation',
+            'fields': ('reservable', 'reservation_info',#'need_manual_confirmation', 'reservation_delegates',
                        'min_period','max_period','slot_size','max_reservations_per_user',
                        'reservation_requested_notification_extra','reservation_confirmed_notification_extra',
                        'reservable_max_days_in_advance','reservable_min_days_in_advance',
@@ -42,7 +53,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Access'), {
             # 'classes': ('collapse',),
-            'fields': ('access_restricted', 'access_delegates', 'access_allowed_to'),
+            'fields': ('access_restricted',)#, 'access_delegates', 'access_allowed_to'),
         }),
         (_('Changes'), {
             # 'classes': ('collapse',),
@@ -50,7 +61,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
     )
     #readonly_fields = ('uuid',)
-    autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
+    #autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
     list_display = ('display_numbers', 'name', 'get_unit_slug', 'people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
     list_filter = ('unit', 'reservable')#,'need_manual_confirmation') # 'public',
@@ -70,4 +81,19 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         form.instance.update_opening_hours()
+
+    # def get_urls(self):
+    #     # try: FIXME
+    #     from .resource_access import AccessToResourceAdmin, AccessToResource
+    #     urls = super().get_urls()
+    #     info = self.model._meta.app_label, self.model._meta.model_name
+    #     access_resource_model_admin = AccessToResourceAdmin(AccessToResource, self.admin_site)
+    #     myurls = [
+    #         path('<object_pk>/access/',
+    #              view=self.admin_site.admin_view(
+    #                  access_resource_model_admin.change_view),
+    #              name='%s_%s_access' % info),
+    #     ]
+    #     urls = myurls + urls
+    #     return urls
 

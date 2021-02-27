@@ -1,0 +1,17 @@
+{% extends "admin/change_form_object_tools.html" %}
+{% load i18n admin_urls guardian_tags %}
+
+{% block object-tools-items %}
+{% get_obj_perms request.user for original as "resource_perms" %}
+{% if "resource:can_modify_access" in resource_perms %}
+    <li>
+    {% url 'admin:resources_resourceaccess_change' original.pk|admin_urlquote as url %}
+    <a href="{% add_preserved_filters url is_popup to_field %}" class="accesspermissionlink">
+      {% blocktrans with cl.opts.verbose_name as name %}Access Permissions{% endblocktrans %}
+    </a>
+    </li>
+{% endif %}
+{% if has_change_permission %}
+    {{ block.super }}
+{% endif %}
+{% endblock %}

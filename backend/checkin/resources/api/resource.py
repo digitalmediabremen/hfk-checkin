@@ -189,9 +189,9 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
 
     def get_access_allowed_to_current_user(self, obj):
         request = self.context.get('request', None)
-        if not request:
+        if not request or not request.user:
             return False
-        return obj.can_make_reservations(request.user)
+        return obj.has_permanent_access(request.user)
 
 
     # def get_max_price_per_hour(self, obj):

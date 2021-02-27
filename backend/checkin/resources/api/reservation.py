@@ -6,7 +6,7 @@ import arrow
 import django_filters
 from arrow.parser import ParserError
 from .. import settings
-from guardian.core import ObjectPermissionChecker
+from ..models.permissions import NoSuperuserObjectPermissionChecker
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import (
@@ -608,7 +608,7 @@ class ReservationCacheMixin:
         units = set()
         resource_groups = set()
         resources = set()
-        checker = ObjectPermissionChecker(self.request.user)
+        checker = NoSuperuserObjectPermissionChecker(self.request.user)
 
         for rv in self._page:
             resources.add(rv.resource)

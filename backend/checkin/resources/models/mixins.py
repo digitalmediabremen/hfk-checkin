@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 from .base import AUTH_USER_MODEL
 import logging
+from guardian.shortcuts import get_users_with_perms
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +21,9 @@ class AbstractReservableModel(models.Model):
     PARENT = None # will be loaded in __init__
 
     reservable = models.BooleanField(_("Buchbar"), default=True)
-    reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
-                                                   blank=True,
-                                                   related_name='%(app_label)s_%(class)s_reservation_delegated')
+    # reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
+    #                                                blank=True,
+    #                                                related_name='%(app_label)s_%(class)s_reservation_delegated')
     #_need_manual_confirmation = models.BooleanField(verbose_name=_('Need manual confirmation'), default=False, blank=True)
     #usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
     #capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Einschränkungen / Kapazität"), blank=True, null=True)
@@ -96,20 +97,19 @@ class AbstractReservableModel(models.Model):
         Returns list of Users delegated to manage reservations on this resource.
         If resource has none, it will use reservation_delegates of Unit.
 
-        FIXME could use Resource.can_approve_reservations or is_manager instead!
         :return:
         """
-        if self.reservation_delegates.exists():
-            return self.reservation_delegates.all()
-        else:
-            if self.unit:
-                return self.unit.reservation_delegates.all()
+        users = []
+        users += get_users_with_perms(self, only_with_perms_in=['resource:can_modify_reservations'])
+        if self.unit:
+            users += get_users_with_perms(self.unit, only_with_perms_in=['unit:can_modify_reservations'])
         logger.error("%s: No reservation delegates found." % self)
-        return []
+        return users
 
     def get_user_confirmation_delegates(self):
         if self.unit:
-            return self.unit.user_confirmation_delegates.all()
+            delegates = get_users_with_perms(self.unit, only_with_perms_in=['unit:can_confirm_users'])
+            return delegates
         raise ValueError("Resource has no Unit to get user_confirmation_delegates from.")
 
 
@@ -117,13 +117,12 @@ class AbstractAccessRestrictedModel(models.Model):
     """
 
     """
-    # FIXME could be handled with django-guardian instead
     access_restricted = models.BooleanField(_("Access restricted"), blank=True, default=False)
-    access_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Access delegates"), blank=True,
-                                              related_name='%(app_label)s_%(class)s_access_delegated')
-    access_allowed_to = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Access allowed to"), blank=True,
-                                              related_name='%(app_label)s_%(class)s_access_allowed')
-    # TODO was: through='RoomAccessPolicy',
+    # now handeled with guardian object permissions:
+    # access_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Access delegates"), blank=True,
+    #                                           related_name='%(app_label)s_%(class)s_access_delegated')
+    # access_allowed_to = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Access allowed to"), blank=True,
+    #                                           related_name='%(app_label)s_%(class)s_access_allowed')
 
     class Meta:
         abstract = True

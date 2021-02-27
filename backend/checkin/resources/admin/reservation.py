@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django import forms
 from post_office.models import Email
 from django.urls import reverse
+from .other import FixedGuardedModelAdminMixin
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,6 @@ class RelatedEmailInline(admin.TabularInline):
 
     def message_id(self, instance):
         return instance.email.message_id
-    #message_id.short_description = 'clow name'
 
     def subject(self, instance):
         return instance.email.subject
@@ -62,8 +62,7 @@ class ReservationAdminForm(forms.ModelForm):
         fields = ('__all__')
 
 
-class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin,
-                       admin.ModelAdmin):
+class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin, admin.ModelAdmin):
     #extra_readonly_fields_on_update = ('access_code',)
     list_display = ('short_uuid', 'user','resource','begin','end','state','modified_at')
     list_filter = ('type','resource','resource__unit','state',
