@@ -135,7 +135,7 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
+    "root": {"level": getenv("DJANGO_LOGGING_ROOT_LEVEL", default="INFO"), "handlers": ["console"]},
     "loggers": {
         "django.request": {
             "handlers": ["mail_admins"],
