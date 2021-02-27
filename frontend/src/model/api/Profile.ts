@@ -7,12 +7,15 @@ interface Profile {
     first_name: string;
     last_name: string;
     phone: string | null;
+    /**
+     * @TJS-format email
+     */
     email: string;
     readonly verified: boolean;
     readonly last_checkins: Array<LastCheckin>;
 }
 
-export type SimpleProfile = Omit<Profile, "last_checkins">
+export type SimpleProfile = Omit<Profile, "last_checkins">;
 
 export const assertProfile = (p: any): asserts p is Profile => {
     if (

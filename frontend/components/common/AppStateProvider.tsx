@@ -21,18 +21,18 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
         console.log("persist localstorage");
         localStorage.setItem(
             "reservation",
-            JSON.stringify(appState.reservation)
+            JSON.stringify(appState.reservationRequest)
         );
     };
 
     const update = useDelayedCallback(() => persist(), 1000);
     useEffect(() => {
-        if (notEmpty(appState.reservation)) {
-            if (appState.reservation) {
+        if (notEmpty(appState.reservationRequest)) {
+            if (appState.reservationRequest) {
                 update();
             }
         }
-    }, [appState.reservation]);
+    }, [appState.reservationRequest]);
 
     useEffect(() => {
         console.log("read appstate from localstorage");

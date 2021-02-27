@@ -43,6 +43,10 @@ export const appUrls = {
         "/checkout/[checkinId]",
         `/checkout/${checkinId}`,
     ],
+    reservation: (reservationId: string): [string, string] => [
+        "/request/[reservationId]",
+        `/request/${reservationId}`,
+    ],
     requestSubpage: buildSubPageUrl,
     introduction: "/intro",
     privacy: "/privacy",

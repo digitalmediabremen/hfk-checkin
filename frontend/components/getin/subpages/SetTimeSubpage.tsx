@@ -35,8 +35,8 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
 
     const { hasError } = useValidation();
 
-    const { reservation } = appState;
-    const { start: datetimeFrom, end: datetimeTo } = reservation || {};
+    const { reservationRequest: reservation } = appState;
+    const { begin: datetimeFrom, end: datetimeTo } = reservation || {};
 
     const [date, setDate] = useState<Date | undefined>(
         createDate(datetimeFrom?.getTime())
@@ -67,7 +67,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     type: "updateReservation",
                     reservation: {
                         ...reservation,
-                        start: _datetimeFrom,
+                        begin: _datetimeFrom,
                         end: _datetimeTo,
                     },
                 });
