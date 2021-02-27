@@ -62,6 +62,10 @@ class ReservationTimingWarning(ReservationWarning):
     pass
 
 
+class ReservationPermissionWarning(ReservationWarning):
+    pass
+
+
 class ReservationQuerySet(models.QuerySet):
 
     @staticmethod
@@ -464,8 +468,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if not user.is_verified:
             raise ValidationError(gettext("Organizer (%s) is not verified. Please verify before making reservations." % user))
 
-        if not self.resource.can_make_reservations(user):
-            raise ValidationError(gettext("Organizer (%s) is not to make reservations on this resource." % user))
+        if self.resource.access_restricted and not self.resource.can_make_reservations(user):
+            warnings.warn(gettext("Organizer (%s) is not to make reservations on this resource." % user), ReservationPermissionWarning)
 
         user_is_admin = user and self.resource.is_admin(user)
 
@@ -517,11 +521,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 warnings.warn(gettext("The resource's capacity is already exhausted for some of the period"), ReservationCapacityWarning)
 
         #if not user_is_admin:
-        if (self.end - self.begin) < self.resource.min_period:
+        if self.resource.min_period and (self.end - self.begin) < self.resource.min_period:
             warnings.warn(gettext("The minimum reservation length is %(min_period)s") %
                                   {'min_period': humanize_duration(self.resource.min_period)}, ReservationTimingWarning)
         #else:
-        if not (self.end - self.begin) % self.resource.slot_size == datetime.timedelta(0):
+        if self.resource.slot_size and not (self.end - self.begin) % self.resource.slot_size == datetime.timedelta(0):
             warnings.warn(gettext("The reservation duration must fit the slot size of %(slot_size)s or multiples of it") %
                                   {'slot_size': humanize_duration(self.resource.slot_size)}, ReservationTimingWarning)
 
