@@ -44,7 +44,7 @@ const DynamicSetCommentSubpage = createDynamicPage(
 );
 
 const SubpageList: React.FunctionComponent<SubpageListProps> = ({
-
+    
 }) => {
     const { subPageProps } = useSubPage(requestSubpages);
     const { t } = useTranslation();

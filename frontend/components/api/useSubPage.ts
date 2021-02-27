@@ -45,9 +45,8 @@ const useSubPage = <SubPagesMap extends SubPagesMapType>(
                 setDirection("left");
                 setActiveSubPage(nextSubPage || returnToSubPage);
             },
-            key: subpage
         }),
-        [activeSubPage]
+        []
     );
 
     const goForward = (subpage: SubPagesType, param?: string) => {
