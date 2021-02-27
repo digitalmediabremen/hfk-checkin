@@ -32,9 +32,11 @@ class ReservationDelegatesForUnitUserPermissionInline(SingleUserPermissionInline
     model_for_permissions = Unit
     verbose_name = _("Unit reservation delegate")
     verbose_name_plural = _("Unit reservation delegates")
+    min_num = 1
 
 class UserConfirmationDelegatesForUnitUserPermissionInline(SingleUserPermissionInline):
     permission_codenames = ['unit:can_confirm_users']
     model_for_permissions = Unit
     verbose_name = _("(External) user confirmation delegate")
     verbose_name_plural = _("(External) user confirmation delegates")
+    min_num = 1
