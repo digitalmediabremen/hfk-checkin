@@ -4,7 +4,7 @@ import SmoothCollapse from "react-smooth-collapse";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
-import useReservationState from "../../../src/hooks/useReservation";
+import useReservationState from "../../../src/hooks/useReservationState";
 import useResource from "../../../src/hooks/useResource";
 import useResources from "../../../src/hooks/useResources";
 import useValidation from "../../../src/hooks/useValidation";

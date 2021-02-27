@@ -25,7 +25,7 @@ const DigitInputElement = React.forwardRef<
                     position: relative;
                     width: 1rem;
                     height: 1.4rem;
-                    line-height: 1.35rem;
+                    line-height: 1.35em;
                     font-size: 1rem;
                 }
                 input {

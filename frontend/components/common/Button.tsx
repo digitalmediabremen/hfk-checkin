@@ -84,7 +84,7 @@ export const Button: SFC<ButtonProps> = (props) => {
                 .back-icon {
                     position: absolute;
                     left: -1.7rem;
-                    line-height: 1.0rem;
+                    line-height: 1.0em;
                     width: 0;
                 }
 

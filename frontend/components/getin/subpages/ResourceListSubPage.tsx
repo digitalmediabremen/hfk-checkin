@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { use100vh } from "react-div-100vh";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
-import useReservationState from "../../../src/hooks/useReservation";
+import useReservationState from "../../../src/hooks/useReservationState";
 import useResources from "../../../src/hooks/useResources";
 import Resource from "../../../src/model/api/Resource";
 import { empty } from "../../../src/util/TypeUtil";
