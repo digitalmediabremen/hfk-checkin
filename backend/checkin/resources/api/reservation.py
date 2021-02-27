@@ -101,7 +101,6 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     organizer = UserSerializer(source='user', read_only=True)
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
-    state = serializers.ReadOnlyField()
     state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
     need_manual_confirmation = serializers.ReadOnlyField()
     attendees = AttendanceSerializer(many=True, source='attendance_set', required=False)
@@ -120,7 +119,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     class Meta:
         model = Reservation
         fields = [
-            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'comments', 'purpose',
+            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'message', 'purpose',
             'is_own', 'state', 'state_verbose', 'need_manual_confirmation',
             'attendees', 'number_of_attendees', 'number_of_extra_attendees', #'cancel_reason'
         ] + list(RESERVATION_EXTRA_FIELDS) + list(ModifiableModelSerializerMixin.Meta.fields)
@@ -327,7 +326,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
                 'created_at': instance.created_at
             })
 
-        if not resource.can_access_reservation_comments(user):
+        if 'comments' in data and not resource.can_access_reservation_comments(user):
             del data['comments']
 
         if not resource.can_view_reservation_user(user):

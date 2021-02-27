@@ -632,14 +632,14 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             users |= {u for u in get_users_with_perms(rg) if u.has_perm('group:%s' % perm, rg)}
         return users
 
-    def has_permanent_access(self, user):
+    def has_access(self, user):
         return not self.access_restricted or self._has_perm(user, 'has_permanent_access')
 
     def can_modify_access(self, user):
         return self._has_perm(user, 'can_modify_access')
 
     def can_make_reservations(self, user):
-        return self.reservable and self._has_perm(user, 'can_make_reservations')
+        return self.reservable and self.has_access(user)
 
     def can_modify_reservations(self, user):
         return self._has_perm(user, 'can_modify_reservations')

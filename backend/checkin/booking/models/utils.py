@@ -169,7 +169,7 @@ def generate_reservation_xlsx(reservations):
         if 'user' in reservation:
             worksheet.write(row, 5, reservation['user'])
         if 'comments' in reservation:
-            worksheet.write(row, 6, reservation['comments'])
+            worksheet.write(row, 6, reservation['message'])
         worksheet.write(row, 7, reservation['staff_event'])
         for i, field in enumerate(RESERVATION_EXTRA_FIELDS, 8):
             if field in reservation:

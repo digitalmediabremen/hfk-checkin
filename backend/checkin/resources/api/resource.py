@@ -191,7 +191,7 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
         request = self.context.get('request', None)
         if not request or not request.user:
             return False
-        return obj.has_permanent_access(request.user)
+        return obj.has_access(request.user)
 
 
     # def get_max_price_per_hour(self, obj):

@@ -18,6 +18,8 @@ def custom_exception_handler(exc, context):
             customized_response['detail'] = _('Bad request')
         else:
             customized_response['detail'] = _('An error occurred')
+        # add original exception for debugging
+        customized_response['exception'] = str(exc)
         # add validation errors (or similar) to errors
         customized_response['errors'] = []
 

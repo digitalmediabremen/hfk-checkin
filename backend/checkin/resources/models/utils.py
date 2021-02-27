@@ -164,7 +164,7 @@ def send_template_mail(recipients, template, context, attachments=None, priority
 #       * end: end time datetime
 #       * staff_event: is staff event bool
 #       * user: user email str (optional)
-#       * comments: comments str (optional)
+#       * message: message str (optional)
 #       * all of RESERVATION_EXTRA_FIELDS are optional as well
 #
 #     :rtype: bytes
@@ -203,8 +203,8 @@ def send_template_mail(recipients, template, context, attachments=None, priority
 #         worksheet.write(row, 4, localtime(reservation['created_at']).replace(tzinfo=None), date_format)
 #         if 'user' in reservation:
 #             worksheet.write(row, 5, reservation['user'])
-#         if 'comments' in reservation:
-#             worksheet.write(row, 6, reservation['comments'])
+#         if 'message' in reservation:
+#             worksheet.write(row, 6, reservation['message'])
 #         worksheet.write(row, 7, reservation['staff_event'])
 #         for i, field in enumerate(RESERVATION_EXTRA_FIELDS, 8):
 #             if field in reservation:
