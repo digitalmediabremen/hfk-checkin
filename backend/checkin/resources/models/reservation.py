@@ -145,6 +145,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                                            blank=True, db_index=True, editable=False)
     comments = models.TextField(null=True, blank=True, verbose_name=_('Comments'))
     # reason or usage
+    purpose = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Purpose'))
     user = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('Organizer'), null=True,
                                            blank=True, db_index=True, on_delete=models.PROTECT)
     state = models.CharField(max_length=32, choices=STATE_CHOICES, verbose_name=_('State'), default=CREATED)

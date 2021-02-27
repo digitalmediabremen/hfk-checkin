@@ -120,7 +120,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     class Meta:
         model = Reservation
         fields = [
-            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'comments',
+            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'comments', 'purpose',
             'is_own', 'state', 'state_verbose', 'need_manual_confirmation',
             'attendees', 'number_of_attendees', 'number_of_extra_attendees', #'cancel_reason'
         ] + list(RESERVATION_EXTRA_FIELDS) + list(ModifiableModelSerializerMixin.Meta.fields)
