@@ -18,7 +18,7 @@ const theme = {
     secondaryColor: "rgba(255, 255, 255, 1)",
     disabledColor: "rgba(102,102,102,1)",
     footerHeight: unit * 7,
-    topBarHeight: unit * 8
+    topBarHeight: unit * 8,
 }
 
 export default theme;

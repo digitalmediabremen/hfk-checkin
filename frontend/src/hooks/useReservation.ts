@@ -80,7 +80,7 @@ export const useReservationArrayState = <
     const handleAddValue = (value: ExtractTypeFromArray<NewReservationBlueprint[ReservatonFieldType]>, index: number) => {
         if (empty(value)) return;
         arrayValue[index] = value;
-        console.log('arr',arrayValue)
+        console.debug('arr',arrayValue)
 
         setArrayValue(arrayValue);
     };

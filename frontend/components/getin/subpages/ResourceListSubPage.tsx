@@ -31,7 +31,7 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
         (async () => {
             await r.requestResources(undefined, 0, 20);
             setLoaded(true);
-        })()
+    })()
     }, []);
 
     const handleResourceSelect = useCallback((resource: Resource) => {

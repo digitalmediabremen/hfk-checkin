@@ -3,6 +3,7 @@ import NewReservation from "./NewReservation";
 import Resource from "./Resource";
 
 type NewReservationBlueprint = Partial<NewReservation> & {
-    resource?: Resource
-}
+    resource?: Resource;
+    purpose_text?: string;
+};
 export default NewReservationBlueprint;

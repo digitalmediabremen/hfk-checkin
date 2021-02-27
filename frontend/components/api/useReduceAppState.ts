@@ -4,6 +4,8 @@ import { AppAction, AppState } from "../../src/model/AppState";
 import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { assertNever, empty } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/model/validateReservation";
+import "json.date-extensions";
+import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
 
 export const initialAppState: AppState = {
     initialized: false,
@@ -25,24 +27,20 @@ const useReduceAppState = () =>
                 try {
                     // todo: fix
                     // parse ones without dates
-                    const check = JSON.parse(
-                        localStorage.getItem("reservation") || ""
-                    ) as unknown;
+                    const lsi = localStorage.getItem("reservation") || "";
+                    const check = JSON.parse(lsi) as unknown;
                     const reservation = validate(check);
-                    const reservationWithDates = {
-                        ...reservation,
-                        start: new Date(
-                            (reservation.start as unknown) as string
-                        ),
-                        end: new Date((reservation.end as unknown) as string),
-                    };
+                    // @ts-ignore
+                    const parseAgainWithDates = (JSON.parseWithDate(
+                        lsi
+                    ) as unknown) as NewReservationBlueprint;
 
                     // now convert dates
                     return {
                         ...previousState,
-                        reservation: reservationWithDates,
+                        reservation: parseAgainWithDates,
                         reservationValidation: validateReservation(
-                            reservationWithDates
+                            parseAgainWithDates
                         ),
                     };
                 } catch (e) {
@@ -101,11 +99,11 @@ const useReduceAppState = () =>
                     ...previousState,
                     reservation: {
                         ...action.reservation,
-                        resource_uuid: action.reservation?.resource?.uuid
+                        resource_uuid: action.reservation?.resource?.uuid,
                     },
                     reservationValidation: validateReservation(
                         action.reservation || {}
-                    ), 
+                    ),
                 };
             case "subPageTransitionDirection":
                 const { direction } = action;
