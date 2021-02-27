@@ -17,6 +17,7 @@ import validateResource from "../../src/model/api/Resource.validator";
 import Reservation from "../../src/model/api/Reservation";
 import Resource from "../../src/model/api/Resource";
 import { notEmpty } from "../../src/util/TypeUtil";
+import NewReservation from "../../src/model/api/NewReservation";
 
 export type ApiResponse<T> =
     | {
@@ -120,7 +121,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                 console.debug(`Check Model for endpoint "${endpoint}"`);
                 responseTypeGuard(result.data);
             }
-            return result
+            return result;
         })
         .catch((error) => {
             console.error(error);
@@ -195,6 +196,16 @@ export const getReservationRequest = async (
     await apiRequest<Reservation>(
         `reservation/${reservationId}/`,
         { ...options },
+        validateReservation
+    );
+
+export const updateReservationRequest = async (
+    reservation: NewReservation,
+    options?: RequestOptions
+) =>
+    await apiRequest<Reservation>(
+        `reservation/`,
+        { ...options, method: "POST", body: JSON.stringify(reservation) },
         validateReservation
     );
 

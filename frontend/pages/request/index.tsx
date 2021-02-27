@@ -1,29 +1,30 @@
 import { NextPage } from "next";
 import React from "react";
 import { AlertCircle } from "react-feather";
-import needsProfile from "../components/api/needsProfile";
-import showIf from "../components/api/showIf";
-import useSubPage from "../components/api/useSubPage";
-import FormCheckbox from "../components/common/FormCheckbox";
-import FormElement from "../components/common/FormElement";
-import Layout from "../components/common/Layout";
-import NewButton from "../components/common/NewButton";
-import SubpageCollection from "../components/getin/subpages/SubpageCollection";
-import { requestSubpages } from "../config";
-import features from "../features";
-import { useTranslation } from "../localization";
+import needsProfile from "../../components/api/needsProfile";
+import showIf from "../../components/api/showIf";
+import useSubPage from "../../components/api/useSubPage";
+import FormCheckbox from "../../components/common/FormCheckbox";
+import FormElement from "../../components/common/FormElement";
+import Layout from "../../components/common/Layout";
+import NewButton from "../../components/common/NewButton";
+import SubpageCollection from "../../components/getin/subpages/SubpageCollection";
+import { requestSubpages } from "../../config";
+import features from "../../features";
+import { useTranslation } from "../../localization";
 import useReservationState, {
     useReservation,
-} from "../src/hooks/useReservationState";
-import useReservationPurposeText from "../src/hooks/useReservationPurposeMessage";
-import useValidation from "../src/hooks/useValidation";
-import Profile from "../src/model/api/Profile";
+} from "../../src/hooks/useReservationState";
+import useReservationPurposeText from "../../src/hooks/useReservationPurposeMessage";
+import useValidation from "../../src/hooks/useValidation";
+import Profile from "../../src/model/api/Profile";
 import {
     createTime,
     fromTime,
     getFormattedDate,
     smallerThan,
-} from "../src/util/DateTimeUtil";
+} from "../../src/util/DateTimeUtil";
+import useSubmitReservation from "../../src/hooks/useSubmitReservation";
 
 const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
     if (!start || !end) return undefined;
@@ -51,12 +52,14 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
     const {
         attendees,
         number_of_extra_attendees: extraAttendees,
-        start,
+        begin: start,
         end,
         resource,
         purpose,
         comment,
     } = useReservation();
+
+    const submit = useSubmitReservation();
 
     const purposeLabel = useReservationPurposeText();
 
@@ -80,7 +83,11 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 label={t("Raum auswählen")}
                 shortLabel={t("Raum")}
                 arrow
-                icon={hasError("missingResourcePermissions") && ValidationIcon}
+                icon={
+                    hasError("missingResourcePermissions") &&
+                    hasError("needsExceptionReason") &&
+                    ValidationIcon
+                }
                 extendedWidth
             />
             <FormElement
@@ -141,7 +148,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 )}
                 bottomSpacing={3}
             />
-            <NewButton primary onClick={() => {}}>
+            <NewButton primary onClick={submit}>
                 {t("Anfragen")}
             </NewButton>
         </Layout>

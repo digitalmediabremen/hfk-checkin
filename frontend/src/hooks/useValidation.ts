@@ -4,7 +4,6 @@ import { ValidationType } from "../model/validateReservation";
 
 export default function useValidation() {
     const { appState } = useAppState();
-    appState.reservationValidation;
 
     const has = useCallback(
         (type: ValidationType) =>
@@ -23,6 +22,6 @@ export default function useValidation() {
     return {
         hasError: has,
         getErrors: get,
-        hasErrors: appState.reservationValidation.length > 0
+        hasErrors: appState.reservationValidation.some(r => r.level === "error")
     }
 }

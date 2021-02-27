@@ -19,15 +19,15 @@ type ConditionalReturnType<RF, WF, ApiDataType> = readonly [
 
 export function useReservation() {
     const { appState } = useAppState();
-    return appState.reservation || {};
+    return appState.reservationRequest || {};
 }
 
 export default function useReservationState<
     ReservationFieldType extends keyof NewReservationBlueprint
 >(field: ReservationFieldType) {
     const { appState, dispatch } = useAppState();
-    const reservation = appState.reservation;
-    const value = appState.reservation?.[field];
+    const reservation = appState.reservationRequest;
+    const value = appState.reservationRequest?.[field];
     const setHandler = useCallback((
         value: NewReservationBlueprint[ReservationFieldType]
     ) => {
@@ -39,7 +39,7 @@ export default function useReservationState<
                 [field]: value,
             },
         });
-    }, []);
+    }, [reservation]);
 
     return [value, setHandler] as const;
 }

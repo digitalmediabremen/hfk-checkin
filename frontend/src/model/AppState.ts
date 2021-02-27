@@ -14,7 +14,7 @@ export interface AppState {
     disableNextUpdate: boolean;
     highlightCheckinById?: number, // id
     initialized: boolean;
-    reservation?: NewReservationBlueprint;
+    reservationRequest?: NewReservationBlueprint;
     reservationValidation: ReservationValidation;
     reservationTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;

@@ -38,7 +38,7 @@ const useReduceAppState = () =>
                     // now convert dates
                     return {
                         ...previousState,
-                        reservation: parseAgainWithDates,
+                        reservationRequest: parseAgainWithDates,
                         reservationValidation: validateReservation(
                             parseAgainWithDates
                         ),
@@ -95,9 +95,10 @@ const useReduceAppState = () =>
                     highlightCheckinById: undefined,
                 };
             case "updateReservation":
+                console.log("updated", action.reservation)
                 return {
                     ...previousState,
-                    reservation: {
+                    reservationRequest: {
                         ...action.reservation,
                         resource_uuid: action.reservation?.resource?.uuid,
                     },

@@ -23,7 +23,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     selected,
     onSelect,
     last,
-    showMeta
+    showMeta,
 }) => {
     const { t } = useTranslation();
     const handleSelect = () => {
@@ -32,81 +32,81 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
 
     return (
         <>
+            <style jsx>{`
+                li {
+                    margin: 0;
+                    padding: 0;
+                }
 
-                <style jsx>{`
-                    li {
-                        margin: 0;
-                        padding: 0;
-                    }
+                .icon {
+                    flex: 0 0 ${theme.spacing(5)}px;
+                }
 
-                    .icon {
-                        flex: 0 0 ${theme.spacing(5)}px;
-                    }
+                .icon.right {
+                    flex: 0 0 ${theme.spacing(4)}px;
+                    text-align: right;
+                    margin-right: ${-theme.spacing(0)}px;
+                    color: ${theme.disabledColor};
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
+                }
 
-                    .icon.right {
-                        flex: 0 0 ${theme.spacing(4)}px;
-                        text-align: right;
-                        margin-right: ${-theme.spacing(0)}px;
-                        color: ${theme.disabledColor};
-                        display: flex;
-                        flex-direction: column;
-                        align-items: flex-end;
-                    }
+                .capacity {
+                    text-transform: uppercase;
+                    font-size: 0.75rem;
+                    font-weight: normal;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                }
 
-                    .capacity {
-                        text-transform: uppercase;
-                        font-size: 0.75rem;
-                        font-weight: normal;
-                        display: flex;
-                        align-items: center;
-                        justify-content: flex-end;
-                    }
+                .capacity :global(svg) {
+                    margin-left: ${theme.spacing(0.5)}px;
+                }
 
-                    .capacity :global(svg) {
-                        margin-left: ${theme.spacing(0.5)}px;
-                    }
-
-                    .icon.left {
-                        text-align: left;
-                        margin-left: ${-theme.spacing(0)}px;
-                    }
-                    .text {
-                        flex: 1;
-                    }
-                `}</style>
-                <FormElementBase
-                    noOutline
-                    noBottomSpacing
-                    onClick={handleSelect}
-                    componentType="li"
-                >
-                    {notEmpty(selected) && (
-                        <span className="icon left">
-                            {selected ? (
-                                <CheckCircle strokeWidth={2} />
-                            ) : (
-                                <Circle strokeWidth={2} />
-                            )}
-                        </span>
-                    )}
-                    <FormMultilineValue
-                        value={[resource.name, resource.display_numbers || ""]}
-                    />
-                    {showMeta && (
-                        <span className="icon right">
-                            {resource.access_restricted && (
-                                <span>
-                                    <Key strokeWidth={1} />
-                                </span>
-                            )}
-
+                .icon.left {
+                    text-align: left;
+                    margin-left: ${-theme.spacing(0)}px;
+                }
+                .text {
+                    flex: 1;
+                }
+            `}</style>
+            <FormElementBase
+                noOutline
+                noBottomSpacing
+                onClick={handleSelect}
+                componentType="li"
+            >
+                {notEmpty(selected) && (
+                    <span className="icon left">
+                        {selected ? (
+                            <CheckCircle strokeWidth={2} />
+                        ) : (
+                            <Circle strokeWidth={2} />
+                        )}
+                    </span>
+                )}
+                <FormMultilineValue
+                    value={[resource.name, resource.display_numbers || ""]}
+                />
+                {showMeta && (
+                    <span className="icon right">
+                        {resource.access_restricted && (
+                            <span>
+                                <Key strokeWidth={1} />
+                            </span>
+                        )}
+                        {resource.capacity && (
                             <span className="capacity">
-                                {resource.capacity || 10}{" "}
+                                {resource.capacity}{" "}
                                 <User width={12} height={12} />
                             </span>
-                        </span>
-                    )}
-                </FormElementBase>
+                        )}
+                    </span>
+                )}
+            </FormElementBase>
             {!last && <Divider noSpacing />}
         </>
     );
@@ -120,7 +120,9 @@ export const LoadingListItem: React.FunctionComponent<{}> = () => {
                     height: 100%;
                 }
             `}</style>
-            <div><LoadingInline loading={true} /></div>
+            <div>
+                <LoadingInline loading={true} />
+            </div>
         </>
     );
 };

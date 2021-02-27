@@ -156,15 +156,17 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                 </Notice>
             </Fade>
 
-            <Notice>
-                Gib die Raumnummer oder Raumbezeichnung des Raumes an, den du
-                anfragen möchtest. Die Raumübersicht kann dir bei der Auswahl
-                helfen. Hier findest du die Raumnummer und -bezeichnung, sowie
-                die Raumgröße und die max. zulässige Personenzahl während der
-                Covid-19 Maßnahmen. Wenn du mehrere Räume zur gleichen Zeit
-                anfragen möchtest, kommst du nach Absenden deiner Anfrage mit
-                einem Klick wieder hierhin.
-            </Notice>
+            {!hasError("missingResourcePermissions") && (
+                <Notice>
+                    Gib die Raumnummer oder Raumbezeichnung des Raumes an, den
+                    du anfragen möchtest. Die Raumübersicht kann dir bei der
+                    Auswahl helfen. Hier findest du die Raumnummer und
+                    -bezeichnung, sowie die Raumgröße und die max. zulässige
+                    Personenzahl während der Covid-19 Maßnahmen. Wenn du mehrere
+                    Räume zur gleichen Zeit anfragen möchtest, kommst du nach
+                    Absenden deiner Anfrage mit einem Klick wieder hierhin.
+                </Notice>
+            )}
         </>
     );
 };
