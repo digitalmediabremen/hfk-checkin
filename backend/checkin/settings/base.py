@@ -302,13 +302,16 @@ LOGGING = {
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "checkin.utils.CSRFExemptSessionAuthentication",
+        "checkin.api_auth.CSRFExemptSessionAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "EXCEPTION_HANDLER": "checkin.api_exception_handler.custom_exception_handler",
 }
+handler500 = 'rest_framework.exceptions.server_error'
+handler400 = 'rest_framework.exceptions.bad_request'
 
 # values you got from step 2 from your Mirosoft app
 MICROSOFT_AUTH_CLIENT_ID = '94b11d1a-f375-46aa-9b1f-e9da0de19114'
