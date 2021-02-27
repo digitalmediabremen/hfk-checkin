@@ -27,7 +27,7 @@ const Title: React.FunctionComponent<TitleProps> = ({ children, bold, subtext })
                 }
 
                 h2 {
-                    font-size: 1.25em;
+                    font-size: 1.25rem;
                     font-weight: normal;
                     margin: 0 0 ${theme.spacing(3)}px 0;
                 }

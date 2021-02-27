@@ -32,7 +32,7 @@ const SubPageHeader = ({
             }
             .title {
                 display: inline-block;
-                font-size: 1.25em;
+                font-size: 1.25rem;
                 font-weight: bold;
                 color: ${theme.primaryColor};
                 max-width: 100%;

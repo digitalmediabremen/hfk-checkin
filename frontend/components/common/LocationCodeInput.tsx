@@ -23,9 +23,9 @@ const DigitInputElement = React.forwardRef<
             <style jsx>{`
                 label {
                     position: relative;
-                    width: 1em;
-                    height: 1.4em;
-                    line-height: 1.35em;
+                    width: 1rem;
+                    height: 1.4rem;
+                    line-height: 1.35rem;
                     font-size: 1rem;
                 }
                 input {
@@ -61,10 +61,10 @@ const DigitInputElement = React.forwardRef<
                     border-left: 2px solid black;
                     position: absolute;
                     width: 100%;
-                    top: 0.2em;
+                    top: 0.2rem;
                     right: 0;
-                    bottom: 0.15em;
-                    left: 0.2em;
+                    bottom: 0.15rem;
+                    left: 0.2rem;
                 }
 
                 div.digit {
@@ -145,7 +145,7 @@ const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
                 @media screen and (min-width: 500px) {
                     div {
                         font-size: 7rem;
-                        // margin-left: -.15em;
+                        // margin-left: -.15rem;
                     }
                 }
             `}</style>

@@ -55,7 +55,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
         end,
         resource,
         purpose,
-        purpose_text,
+        comment,
     } = useReservation();
 
     const purposeLabel = useReservationPurposeText();
@@ -111,14 +111,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
             />
             <FormElement
                 {...handlerProps("grund")}
-                value={
-                    purpose
-                        ? [
-                              purposeLabel(purpose),
-                              (purpose === "OTHER" && purpose_text) || "",
-                          ]
-                        : undefined
-                }
+                value={purpose ? [purposeLabel(purpose)] : undefined}
                 label={t("Buchungsgrund")}
                 shortLabel={t("Grund")}
                 arrow
@@ -127,7 +120,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
             />
             <FormElement
                 {...handlerProps("nachricht")}
-                value={["erste Zeile", "zweite Zeile"]}
+                value={comment}
                 label={t("Nachricht")}
                 shortLabel={t("Nach.")}
                 bottomSpacing={1}

@@ -55,7 +55,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
 
                     .capacity {
                         text-transform: uppercase;
-                        font-size: 0.75em;
+                        font-size: 0.75rem;
                         font-weight: normal;
                         display: flex;
                         align-items: center;

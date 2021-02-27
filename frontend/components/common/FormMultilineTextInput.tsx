@@ -17,6 +17,7 @@ const { styles, className } = css.resolve`
         resize: none;
         border: none;
         outline: none;
+        margin: ${theme.spacing(.5)}px 0;
     }
 
     textarea::placeholder {

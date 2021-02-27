@@ -119,7 +119,7 @@ export const LoadingInline = ({
                     span {
                         display: inline-block;
                         position: relative;
-                        padding: 0px 1.25em;
+                        padding: 0px 1.25rem;
                         transform: scale(0.7);
                     }
                 `}</style>

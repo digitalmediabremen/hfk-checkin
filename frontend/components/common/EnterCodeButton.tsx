@@ -25,13 +25,13 @@ const EnterCodeButton: React.FunctionComponent<EnterCodeButtonProps> = (
                     user-select: none;
                 }
                 .icon {
-                    font-size: 1.5em;
+                    font-size: 1.5rem;
                     margin-left: auto;
                     font-weight: bold;
-                    width: 1.7em;
-                    height: 1.7em;
+                    width: 1.7rem;
+                    height: 1.7rem;
                     flex-shrink: 0;
-                    line-height: 1.5em;
+                    line-height: 1.5rem;
                     text-align: center;
                     border-radius: ${theme.borderRadius}px;
                     border: 2px solid ${theme.primaryColor};

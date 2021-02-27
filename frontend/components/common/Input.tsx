@@ -51,7 +51,7 @@ export const Input: SFC<InputProps> = (props) => {
                     border-radius: ${theme.borderRadius}px;
                     border: 2px solid gray;
                     padding: ${theme.spacing(2)}px ${theme.spacing(1)}px;
-                    font-size: 1.25em;
+                    font-size: 1.25rem;
                     font-weight: bold;
                     width: 100%;
                     box-shadow: none;

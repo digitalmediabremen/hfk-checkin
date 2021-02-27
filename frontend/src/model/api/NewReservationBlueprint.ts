@@ -4,6 +4,5 @@ import Resource from "./Resource";
 
 type NewReservationBlueprint = Partial<NewReservation> & {
     resource?: Resource;
-    purpose_text?: string;
 };
 export default NewReservationBlueprint;

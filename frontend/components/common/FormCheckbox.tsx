@@ -34,13 +34,13 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
 
                 .label {
                     font-weight: bold;
-                    line-height: 1.3em;
+                    line-height: 1.3rem;
                 }
 
                 .label.small {
                     font-weight: bold;
-                    font-size: 0.75em;
-                    line-height: 1.3em;
+                    font-size: 0.75rem;
+                    line-height: 1.3rem;
                 }
             `}</style>
             <FormElementBase

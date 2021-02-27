@@ -26,7 +26,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
                         /* safari date fix */
                         -webkit-appearance: textfield;
                         -moz-appearance: textfield;
-                        min-height: 1.2em;
+                        min-height: 1.2rem;
                         // opacity: 0;
                     }
                 

@@ -76,7 +76,7 @@ const FormTextInput = forwardRef<HTMLInputElement, FormTextInputProps>(
                 .error-message {
                     margin-bottom: ${theme.spacing(bottomErrorSpacing || 1)}px;
                     color: ${theme.primaryColor};
-                    font-size: 0.75em;
+                    font-size: 0.75rem;
                     font-weight: bold;
                     padding-left: ${theme.spacing(1.5)};
                 }
