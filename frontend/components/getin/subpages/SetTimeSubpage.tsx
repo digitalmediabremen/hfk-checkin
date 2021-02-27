@@ -3,7 +3,7 @@ import { ArrowRight } from "react-feather";
 import SmoothCollapse from "react-smooth-collapse";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
-import useReservationState from "../../../src/hooks/useReservation";
+import useReservationState from "../../../src/hooks/useReservationState";
 import useValidation from "../../../src/hooks/useValidation";
 import {
     addDates,

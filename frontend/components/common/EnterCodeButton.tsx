@@ -31,7 +31,7 @@ const EnterCodeButton: React.FunctionComponent<EnterCodeButtonProps> = (
                     width: 1.7rem;
                     height: 1.7rem;
                     flex-shrink: 0;
-                    line-height: 1.5rem;
+                    line-height: 1.5em;
                     text-align: center;
                     border-radius: ${theme.borderRadius}px;
                     border: 2px solid ${theme.primaryColor};

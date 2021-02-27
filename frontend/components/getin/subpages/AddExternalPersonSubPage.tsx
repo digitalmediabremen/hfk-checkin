@@ -5,7 +5,7 @@ import { useTranslation } from "../../../localization";
 import {
     useReservationArrayState,
     useSubpageQuery,
-} from "../../../src/hooks/useReservation";
+} from "../../../src/hooks/useReservationState";
 import { SimpleProfile } from "../../../src/model/api/Profile";
 import { Writable } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";

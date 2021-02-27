@@ -22,6 +22,7 @@ export default function useValidation() {
 
     return {
         hasError: has,
-        getErrors: get
+        getErrors: get,
+        hasErrors: appState.reservationValidation.length > 0
     }
 }

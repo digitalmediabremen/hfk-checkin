@@ -22,7 +22,7 @@ const FormElementLabel: React.FunctionComponent<FormElementLabelProps> = ({
                 .form-label {
                     min-width: 0;
                     font-size: 0.75rem;
-                    line-height: 0.75rem;
+                    line-height: 1em;
                     text-transform: Uppercase;
                     color: ${theme.disabledColor};
 

@@ -15,6 +15,8 @@ export interface FormElementProps extends FormElementBaseProps {
     icon?: ReactNode;
     onIconClick?: () => void;
     value?: string | string[];
+    maxRows?: number;
+    isText?: boolean
 }
 
 const FormElement: React.FunctionComponent<FormElementProps> = ({
@@ -24,6 +26,8 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
     icon,
     onIconClick,
     value,
+    maxRows,
+    isText,
     ...formElementBaseProps
 }) => {
     const handleIconClick = (
@@ -75,7 +79,9 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                         extendedWidth={!value}
                     />
                 )}
-                {value && <FormMultilineValue value={value} />}
+                {value && (
+                    <FormMultilineValue maxRows={maxRows} text={isText} value={value} />
+                )}
                 {(arrow || icon) && (
                     <span
                         className={classNames("push-right", {

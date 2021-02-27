@@ -14,7 +14,7 @@ import features from "../features";
 import { useTranslation } from "../localization";
 import useReservationState, {
     useReservation,
-} from "../src/hooks/useReservation";
+} from "../src/hooks/useReservationState";
 import useReservationPurposeText from "../src/hooks/useReservationPurposeMessage";
 import useValidation from "../src/hooks/useValidation";
 import Profile from "../src/model/api/Profile";
@@ -117,6 +117,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 arrow
                 icon={hasError("needsExceptionReason") && ValidationIcon}
                 extendedWidth
+                maxRows={2}
             />
             <FormElement
                 {...handlerProps("nachricht")}
@@ -125,6 +126,8 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 shortLabel={t("Nach.")}
                 bottomSpacing={1}
                 arrow
+                maxRows={3}
+                isText
                 extendedWidth
             />
             <FormCheckbox

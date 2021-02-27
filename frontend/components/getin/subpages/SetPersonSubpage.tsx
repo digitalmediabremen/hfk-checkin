@@ -2,7 +2,7 @@ import React from "react";
 import { ArrowRight, Delete, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
-import useReservationState from "../../../src/hooks/useReservation";
+import useReservationState from "../../../src/hooks/useReservationState";
 import useSubPage from "../../api/useSubPage";
 import Divider from "../../common/Divider";
 import FormAmountInput from "../../common/FormAmountInput";

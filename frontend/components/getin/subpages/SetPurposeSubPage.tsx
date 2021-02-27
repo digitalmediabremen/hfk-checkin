@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
-import useReservationState from "../../../src/hooks/useReservation";
+import useReservationState from "../../../src/hooks/useReservationState";
 import useReservationPurposeText from "../../../src/hooks/useReservationPurposeMessage";
 import useValidation from "../../../src/hooks/useValidation";
 import theme from "../../../styles/theme";

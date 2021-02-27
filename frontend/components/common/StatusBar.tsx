@@ -76,7 +76,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
                 }
 
                 .profile {
-                    line-height: 1.3rem;
+                    line-height: 1.3em;
                 }
 
                 .status.bar {

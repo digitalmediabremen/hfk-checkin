@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "../../../localization";
-import useReservationState from "../../../src/hooks/useReservation";
+import useReservationState from "../../../src/hooks/useReservationState";
 import FormMultilineTextInput from "../../common/FormMultilineTextInput";
 
 interface SetCommentSubpageProps {}
