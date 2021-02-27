@@ -33,10 +33,21 @@ export default function validateReservation(
                 type: "exceedsBookableRange",
                 message: "",
             });
-            v.push({
-                type: "needsExceptionReason",
-                message: "Ein Ausnahmegrund muss angegeben werden.",
-            });
+            if (!reservation.purpose) {
+                v.push({
+                    type: "needsExceptionReason",
+                    message: "Ein Ausnahmegrund muss angegeben werden.",
+                });
+            }
+            if (
+                reservation.purpose === "OTHER" &&
+                !reservation.purpose_text
+            ) {
+                v.push({
+                    type: "needsExceptionReason",
+                    message: "Ein Ausnahmegrund muss angegeben werden.",
+                });
+            }
         }
     }
 

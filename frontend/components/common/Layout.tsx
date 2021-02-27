@@ -36,7 +36,7 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
                     // start
 
                     .page-animation > :global(.page-wrapper) {
-                        transition: transform 300ms;
+                        transition: transform 1000ms;
                         will-change: transform, z-index;
                     }
 
@@ -102,7 +102,7 @@ const PageAnimation: FunctionComponent<PageAnimationProps> = ({
             <TransitionGroup className={direction} component="div" appear>
                 <CSSTransition
                     key={activeSubPage || "home"}
-                    timeout={300}
+                    timeout={1000}
                     mountOnEnter={true}
                     unmountOnExit={true}
                 >

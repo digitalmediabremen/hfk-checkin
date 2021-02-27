@@ -5,14 +5,13 @@ interface Resource {}
 
 enum ReservationStatus {
     REQUESTED = "requested",
-};
-
-enum ReservationReason {
-    WORKSHOP_USAGE,
-    EXAM,
-    COUNCIL_MEETING,
-    OTHER,
 }
+
+export type ReservationPurpose =
+    | "WORKSHOP_USAGE"
+    | "EXAM"
+    | "COUNCIL_MEETING"
+    | "OTHER";
 
 export default interface Reservation {
     readonly uuid: string;
@@ -27,7 +26,7 @@ export default interface Reservation {
     total_number_of_attendees: number;
     number_of_extra_attendees: number;
     comment: string;
-    reason: ReservationReason;
+    purpose: ReservationPurpose;
     agreed_to_phone_contact: boolean;
     // organizer_not_attending (deprecated?)
     exclusive_resource_usage: boolean;

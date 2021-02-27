@@ -75,7 +75,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         })();
     }, [date, timeFrom, timeTo, hasOverlap]);
 
-    const exceedsBookableRange = hasError("exceedsBookableRange");
+    const exceedsBookableRange = hasError("exceedsBookableRange") && hasError("needsExceptionReason");
     return (
         <>
             <style jsx>{``}</style>

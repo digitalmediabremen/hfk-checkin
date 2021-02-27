@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useContext, useEffect } from "react";
+import useDelayedCallback from "../../src/hooks/useDelayedCallback";
 import { AppAction, AppState } from "../../src/model/AppState";
 import { notEmpty } from "../../src/util/TypeUtil";
 import useReduceAppState, { initialAppState } from "../api/useReduceAppState";
@@ -15,12 +16,21 @@ const { Provider } = appStateContext;
 
 export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();
+
+    const persist = () => {
+        console.log("persist localstorage");
+        localStorage.setItem(
+            "reservation",
+            JSON.stringify(appState.reservation)
+        );
+    };
+
+    const update = useDelayedCallback(() => persist(), 1000);
     useEffect(() => {
         if (notEmpty(appState.reservation)) {
-            localStorage.setItem(
-                "reservation",
-                JSON.stringify(appState.reservation)
-            );
+            if (appState.reservation) {
+                update();
+            }
         }
     }, [appState.reservation]);
 

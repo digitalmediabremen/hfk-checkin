@@ -6,7 +6,7 @@ interface FadeProps {
     in: boolean
 }
 
-const duration = 200;
+const duration = 100;
 
 const defaultStyle = {
     transition: `opacity ${duration}ms ease-in-out`,
