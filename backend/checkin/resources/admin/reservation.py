@@ -71,7 +71,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                    ('modified_at', DateTimeRangeFilter),)
     search_fields = ('uuid','user__first_name', 'user__last_name', 'user__username', 'user__email')
     autocomplete_fields = ('user', 'resource')
-    readonly_fields = ('uuid','approver','number_of_attendees')
+    readonly_fields = ('uuid','approver','number_of_attendees','get_reservation_info')
     extra_readonly_fields_edit = ('agreed_to_phone_contact','organizer_is_attending','type')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
@@ -81,7 +81,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             'fields': ('resource', 'user',  'begin', 'end', 'uuid')# 'short_uuid')
         }),
         (_('State'), {
-            'fields': ('state', 'approver'),
+            'fields': ('state', 'approver','get_reservation_info'),
         }),
         (_('Details'), {
             'classes': ('collapse',),
@@ -99,6 +99,12 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             return self.readonly_fields + self.extra_readonly_fields_edit
         else:  # This is an addition
             return self.readonly_fields
+
+    def get_reservation_info(self, obj):
+        if obj and obj.resource:
+            return obj.resource.reservation_info
+        return self.get_empty_value_display()
+    get_reservation_info.short_description = _("Reservation info")
 
     _original_state = None
 
