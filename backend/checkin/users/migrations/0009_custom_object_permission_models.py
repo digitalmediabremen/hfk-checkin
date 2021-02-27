@@ -9,7 +9,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
-        ('auth', '0012_auto_20210225_2148'),
         ('users', '0008_add_is_external'),
     ]
 
