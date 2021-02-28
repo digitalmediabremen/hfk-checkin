@@ -17,7 +17,7 @@ import ResourceListItem, {
 interface ResourceListSubPageProps {}
 
 const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = ({}) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("request-resource-list");
     const r = useResources(true);
     const [itemCount, setItemCount] = useState(0);
     const [selectedResource, setSelectedResource] = useReservationState(

@@ -28,7 +28,7 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
     label,
     ...formElementBaseProps
 }) => {
-    const { t, locale } = useTranslation();
+    const { locale } = useTranslation();
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {

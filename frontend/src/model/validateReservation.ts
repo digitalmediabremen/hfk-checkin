@@ -1,4 +1,3 @@
-import { useTranslation } from "../../localization";
 import {
     addDates,
     createDateNow,
@@ -11,9 +10,10 @@ export type ValidationType =
     | "normal"
     | "exceedsBookableRange"
     | "needsExceptionReason"
-    | "missingResourcePermissions";
+    | "missingResourcePermissions"
+    | "missingFields";
 
-export type ValidationLevel = "notice" | "error"
+export type ValidationLevel = "notice" | "error";
 export interface ValidationObject {
     type: ValidationType;
     level: ValidationLevel;
@@ -44,10 +44,7 @@ export default function validateReservation(
                     message: "Ein Ausnahmegrund muss angegeben werden.",
                 });
             }
-            if (
-                reservation.purpose === "OTHER" &&
-                !reservation.comment
-            ) {
+            if (reservation.purpose === "OTHER" && !reservation.message) {
                 v.push({
                     level: "error",
                     type: "needsExceptionReason",
@@ -65,6 +62,21 @@ export default function validateReservation(
                 message: "Ein Ausnahmegrund muss angegeben werden.",
             });
         }
+    }
+
+    if (!reservation.resource_uuid) {
+        v.push({
+            level: "error",
+            type: "missingFields",
+            message: "Du musst noch den Raum auswählen.",
+        });
+    }
+    if (!reservation.begin || !reservation.end) {
+        v.push({
+            level: "error",
+            type: "missingFields",
+            message: "Du musst noch eine Zeit angeben.",
+        });
     }
     return v;
 }

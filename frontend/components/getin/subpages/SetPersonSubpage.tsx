@@ -26,7 +26,7 @@ const remove_item = function (arr: Array<any>, value: unknown) {
 };
 
 const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("request-attendees");
 
     const [_amount, _setAmount] = useReservationState(
         "number_of_extra_attendees"
@@ -76,7 +76,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                         `Tel: ${profile.phone}`,
                     ]}
                     onClick={() =>
-                        goForward("add-person", `${index}`)
+                        goForward("attendee-set", `${index}`)
                     }
                     extendedWidth
                     icon={<X strokeWidth={2} />}
@@ -94,7 +94,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 noOutline={amountAttendees > 0}
                 extendedWidth={amountAttendees === 0}
                 onClick={() =>
-                    goForward("add-person", `${attendees?.length || 0}`)
+                    goForward("attendee-set", `${attendees?.length || 0}`)
                 }
                 iconRight={<ArrowRight strokeWidth={1} />}
                 bottomSpacing={3}

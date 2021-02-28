@@ -14,12 +14,6 @@ export type ReservationPurpose =
     | "OTHER";
 
 export default interface Reservation {
-    readonly uuid: string;
-    readonly resource: Resource[];
-    resource_uuid: string;
-    attendees?: SimpleProfile[];
-    readonly organizer: SimpleProfile;
-    readonly status: ReservationStatus;
     /**
      * @TJS-format date-time
      */
@@ -28,13 +22,21 @@ export default interface Reservation {
      * @TJS-format date-time
      */
     end: Date;
-    readonly total_number_of_attendees: number;
+    resource_uuid: string;
+
+
+    attendees?: Writable<SimpleProfile>[];
     number_of_extra_attendees?: number;
-    comment?: string;
+    message?: string;
     purpose?: ReservationPurpose;
-    agreed_to_phone_contact: boolean;
-    // organizer_not_attending (deprecated?)
+    agreed_to_phone_contact?: boolean;
     exclusive_resource_usage?: boolean;
+
+    readonly uuid: string;
+    readonly resource: Resource;
+    readonly organizer: SimpleProfile;
+    readonly state: ReservationStatus;
+    readonly number_of_attendees: number;
     /**
      * @TJS-format date-time
      */
@@ -43,5 +45,4 @@ export default interface Reservation {
      * @TJS-format date-time
      */
     readonly updated_at: Date;
-    readonly is_deleted: boolean;
 }

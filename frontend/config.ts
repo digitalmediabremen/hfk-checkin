@@ -47,19 +47,19 @@ export const appUrls = {
         "/request/[reservationId]",
         `/request/${reservationId}`,
     ],
-    requestSubpage: buildSubPageUrl,
+    request: buildSubPageUrl,
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
 } as const;
 
 export const requestSubpages = {
-    zeit: {},
-    raum: {},
-    personen: {},
-    "add-person": {},
-    grund: {},
-    nachricht: {},
+    "time": {},
+    "resource": {},
+    "attendees": {},
+    "attendee-set": {},
+    "purpose": {},
+    "message": {},
     "resource-list": {}
 } as const;
 

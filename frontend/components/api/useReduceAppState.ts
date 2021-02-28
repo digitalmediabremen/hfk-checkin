@@ -95,15 +95,15 @@ const useReduceAppState = () =>
                     highlightCheckinById: undefined,
                 };
             case "updateReservation":
-                console.log("updated", action.reservation)
+                const newk = {
+                    ...action.reservation,
+                    resource_uuid: action.reservation?.resource?.uuid,
+                };
                 return {
                     ...previousState,
-                    reservationRequest: {
-                        ...action.reservation,
-                        resource_uuid: action.reservation?.resource?.uuid,
-                    },
+                    reservationRequest: newk,
                     reservationValidation: validateReservation(
-                        action.reservation || {}
+                        newk || {}
                     ),
                 };
             case "subPageTransitionDirection":

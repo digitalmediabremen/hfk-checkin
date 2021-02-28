@@ -3,7 +3,14 @@ import { IncomingHttpHeaders } from "http";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { createContext, SFC, useCallback, useContext } from "react";
-import { appUrls, defaultLocale, production, baseLocale, forceLocale } from "../config";
+import {
+    appUrls,
+    defaultLocale,
+    production,
+    baseLocale,
+    forceLocale,
+    requestSubpages,
+} from "../config";
 import translation from "./translation";
 import { config } from "process";
 
@@ -12,7 +19,12 @@ export type Translation = Record<
     Partial<Record<TranslationModules, Record<string, string>>>
 >;
 
-export type TranslationModules = Partial<keyof typeof appUrls> | "common";
+export type ConvertRequestPageNames<T extends string> = `request-${T}`;
+
+export type TranslationModules =
+    | Partial<keyof typeof appUrls>
+    | "common"
+    | Partial<ConvertRequestPageNames<keyof typeof requestSubpages>>;
 
 export const localeContext = createContext<{ locale: string }>({
     locale: defaultLocale,
@@ -46,35 +58,39 @@ type PatternInput = string | number;
 
 export const useTranslation = (inModule: TranslationModules = "common") => {
     let { locale } = useContext(localeContext);
-    if (![baseLocale, ...Object.keys(translation)].includes(locale)) locale = defaultLocale;
-    const t = useCallback((
-        s: string,
-        data?: Record<string, PatternInput>,
-        alternativeId?: string
-    ): string => {
-        const id = alternativeId || s;
-        const replace = (string?: string) =>
-            string?.replace(
-                /{([A-Za-z]+)}/g,
-                (string: string, match: string) =>
-                    `${
-                        !!data && data[match] !== undefined
-                            ? data[match]
-                            : string
-                    }`
-            );
-        if (locale === baseLocale) return replace(s)!;
-        const translatedString =
-            replace(translation[locale]?.[inModule]?.[id]) ||
-            replace(translation[locale]?.["common"]?.[id]);
-        const translationId = `${locale}.${inModule}.["${id}"]${
-            alternativeId ? ` to "${s}"` : ""
-        }`;
-        if (production && translatedString === undefined)
-            console.error(`No translation for ${translationId} provided`);
+    if (![baseLocale, ...Object.keys(translation)].includes(locale))
+        locale = defaultLocale;
+    const t = useCallback(
+        (
+            s: string,
+            data?: Record<string, PatternInput>,
+            alternativeId?: string
+        ): string => {
+            const id = alternativeId || s;
+            const replace = (string?: string) =>
+                string?.replace(
+                    /{([A-Za-z]+)}/g,
+                    (string: string, match: string) =>
+                        `${
+                            !!data && data[match] !== undefined
+                                ? data[match]
+                                : string
+                        }`
+                );
+            if (locale === baseLocale) return replace(s)!;
+            const translatedString =
+                replace(translation[locale]?.[inModule]?.[id]) ||
+                replace(translation[locale]?.["common"]?.[id]);
+            const translationId = `${locale}.${inModule}.["${id}"]${
+                alternativeId ? ` to "${s}"` : ""
+            }`;
+            if (production && translatedString === undefined)
+                console.error(`No translation for ${translationId} provided`);
 
-        return translatedString || translationId;
-    },[]);
+            return translatedString || translationId;
+        },
+        []
+    );
     return { locale, t };
 };
 

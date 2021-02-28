@@ -47,7 +47,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const [timeTo, setTimeTo] = useState<Time | undefined>(
         timeFromDateOrNow(datetimeTo)
     );
-    const { t } = useTranslation();
+    const { t } = useTranslation("time");
 
     const { goForward } = useSubPage(requestSubpages);
 
@@ -117,7 +117,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     )}
                     <br />
                     <br />
-                    <NewButton noOutline iconRight={<ArrowRight />} onClick={() => goForward("grund")}>
+                    <NewButton noOutline iconRight={<ArrowRight />} onClick={() => goForward("purpose")}>
                         {t("Ausnahmeregelung")}
                     </NewButton>
                 </Notice>
