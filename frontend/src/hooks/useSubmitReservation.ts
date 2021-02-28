@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useApi } from "../../components/api/ApiHooks";
 import { updateReservationRequest } from "../../components/api/ApiService";
+import { useAppState } from "../../components/common/AppStateProvider";
 import { appUrls } from "../../config";
 import NewReservation from "../model/api/NewReservation";
 import validate from "../model/api/NewReservation.validator";
@@ -13,8 +14,9 @@ import useValidation from "./useValidation";
 
 export default function useSubmitReservation() {
     const api = useApi<Reservation>();
-    const reservation = useReservation();
+    const { reservation, validateModel } = useReservation();
     const { allErrors, hasErrors } = useValidation();
+    const { appState, dispatch } = useAppState();
     const { setError } = useStatus();
     const router = useRouter();
 
@@ -25,9 +27,15 @@ export default function useSubmitReservation() {
         if (api.state === "success") {
             const reservationObject = api.result;
             const { identifier } = reservationObject;
+            const validReservation = validateModel();
+            dispatch({
+                type: "reservationSuccessful",
+                reservation: reservationObject,
+                reservationRequestTemplate: validReservation,
+            });
             router.push(...appUrls.reservation(identifier));
         }
-    }, [api.state]);
+    }, [api.state, appState, reservation]);
 
     const submit = () => {
         if (hasErrors) {
@@ -35,20 +43,8 @@ export default function useSubmitReservation() {
             setError(allErrors);
             return;
         }
-        try {
-            // unset resource
-            // we dont want to submit it
-            const data: NewReservationBlueprint = {
-                ...reservation,
-                resource: undefined,
-            };
-            const reservationDateStrings = JSON.parse(JSON.stringify(data));
-            const out = validate(reservationDateStrings);
-            submitReservationRequest(out);
-        } catch (e) {
-            console.error("Not a valid NewReservation model");
-            console.trace(e);
-        }
+        const validReservation = validateModel();
+        submitReservationRequest(validReservation);
     };
 
     return submit;

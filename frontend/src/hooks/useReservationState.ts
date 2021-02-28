@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
 import { ArrayLiteralExpression } from "ts-morph";
 import { useAppState } from "../../components/common/AppStateProvider";
+import validate from "../model/api/NewReservation.validator";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import Reservation from "../model/api/Reservation";
 import { empty, notEmpty } from "../util/TypeUtil";
@@ -19,7 +20,24 @@ type ConditionalReturnType<RF, WF, ApiDataType> = readonly [
 
 export function useReservation() {
     const { appState } = useAppState();
-    return appState.reservationRequest || {};
+    const reservation = appState.reservationRequest || {}
+
+    const _validate = () => {
+        try {
+            // unset resource
+            // we dont want to submit it
+            const data: NewReservationBlueprint = {
+                ...reservation,
+                resource: undefined,
+            };
+            const reservationDateStrings = JSON.parse(JSON.stringify(data));
+            return validate(reservationDateStrings);
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    return { reservation, validateModel: _validate};
 }
 
 export default function useReservationState<
@@ -28,18 +46,19 @@ export default function useReservationState<
     const { appState, dispatch } = useAppState();
     const reservation = appState.reservationRequest;
     const value = appState.reservationRequest?.[field];
-    const setHandler = useCallback((
-        value: NewReservationBlueprint[ReservationFieldType]
-    ) => {
-        console.log(`reservation mutation: [${field}]:`, value);
-        dispatch({
-            type: "updateReservation",
-            reservation: {
-                ...reservation,
-                [field]: value,
-            },
-        });
-    }, [reservation]);
+    const setHandler = useCallback(
+        (value: NewReservationBlueprint[ReservationFieldType]) => {
+            console.log(`reservation mutation: [${field}]:`, value);
+            dispatch({
+                type: "updateReservation",
+                reservation: {
+                    ...reservation,
+                    [field]: value,
+                },
+            });
+        },
+        [reservation]
+    );
 
     return [value, setHandler] as const;
 }
@@ -52,13 +71,12 @@ type test = keyof ArrayOnly<NewReservationBlueprint>;
 
 export const useSubpageQuery = <
     ReservationFieldType extends keyof NewReservationBlueprint
->(
-) => {
+>() => {
     const router = useRouter();
     const q = Object.values(router.query)?.[0];
     const qq = Array.isArray(q) ? q[0] : q;
 
-    const i = (notEmpty(qq) && qq !== "") ? parseInt(qq) : undefined;
+    const i = notEmpty(qq) && qq !== "" ? parseInt(qq) : undefined;
     const [index, setIndex] = useState(i || 0);
     useEffect(() => {
         if (notEmpty(i)) setIndex(i);
@@ -66,8 +84,9 @@ export const useSubpageQuery = <
     return index;
 };
 
-type ExtractTypeFromArray<ArrayType extends Array<unknown> | undefined> = ArrayType extends Array<infer T> ? T : never;
-
+type ExtractTypeFromArray<
+    ArrayType extends Array<unknown> | undefined
+> = ArrayType extends Array<infer T> ? T : never;
 
 export const useReservationArrayState = <
     ReservatonFieldType extends keyof ArrayOnly<NewReservationBlueprint>
@@ -76,20 +95,24 @@ export const useReservationArrayState = <
 ) => {
     const [_arrayValue, setArrayValue] = useReservationState(key);
     const arrayValue = notEmpty(_arrayValue) ? _arrayValue : [];
-    
-    const handleAddValue = (value: ExtractTypeFromArray<NewReservationBlueprint[ReservatonFieldType]>, index: number) => {
+
+    const handleAddValue = (
+        value: ExtractTypeFromArray<
+            NewReservationBlueprint[ReservatonFieldType]
+        >,
+        index: number
+    ) => {
         if (empty(value)) return;
         arrayValue[index] = value;
-        console.debug('arr',arrayValue)
+        console.debug("arr", arrayValue);
 
         setArrayValue(arrayValue);
     };
 
-
     const handleRemoveValue = (index: number) => {
         if (index > -1) {
             arrayValue.splice(index, 1);
-          }
+        }
         setArrayValue(arrayValue);
     };
 

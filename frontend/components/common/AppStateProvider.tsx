@@ -1,8 +1,12 @@
 import React, { FunctionComponent, useContext, useEffect } from "react";
 import useDelayedCallback from "../../src/hooks/useDelayedCallback";
+import useLocalStorage from "../../src/hooks/useLocalStorage";
+import useSafe from "../../src/hooks/useLocalStorage";
+import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { AppAction, AppState } from "../../src/model/AppState";
 import { notEmpty } from "../../src/util/TypeUtil";
 import useReduceAppState, { initialAppState } from "../api/useReduceAppState";
+import useSubPage from "../api/useSubPage";
 
 const appStateContext = React.createContext<{
     appState: AppState;
@@ -17,30 +21,21 @@ const { Provider } = appStateContext;
 export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();
 
-    const persist = () => {
-        console.log("persist localstorage");
-        localStorage.setItem(
-            "reservation",
-            JSON.stringify(appState.reservationRequest)
-        );
-    };
+    useLocalStorage(
+        "rr",
+        appState.reservationRequest,
+        validate,
+        (r) =>
+            dispatch({
+                type: "updateReservation",
+                reservation: r,
+            })
+    );
 
-    const update = useDelayedCallback(() => persist(), 1000);
-    useEffect(() => {
-        if (notEmpty(appState.reservationRequest)) {
-            if (appState.reservationRequest) {
-                update();
-            }
-        }
-    }, [appState.reservationRequest]);
-
-    useEffect(() => {
-        console.log("read appstate from localstorage");
-
-        dispatch({
-            type: "readReservationFromLocalStorage",
-        });
-    }, []);
+    useLocalStorage(
+        "rrt",
+        appState.reservationRequestTemplate,
+    );
 
     return <Provider value={{ appState, dispatch }}>{children}</Provider>;
 };

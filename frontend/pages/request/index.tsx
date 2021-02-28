@@ -49,6 +49,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
 
     const ValidationIcon = <AlertCircle />;
 
+    const { reservation } = useReservation();
     const {
         attendees,
         number_of_extra_attendees: extraAttendees,
@@ -57,7 +58,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
         resource,
         purpose,
         message: comment,
-    } = useReservation();
+    } = reservation;
 
     const submit = useSubmitReservation();
 
@@ -117,8 +118,9 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                             (Extern)
                         </>
                     )) || []),
-                    (extraAttendees || 0) !== 0 &&
-                        <>+{extraAttendees || 0} weitere</>,
+                    (extraAttendees || 0) !== 0 && (
+                        <>+{extraAttendees || 0} weitere</>
+                    ),
                 ]}
                 label={t("Teilnehmer")}
                 shortLabel={t("Pers.")}
