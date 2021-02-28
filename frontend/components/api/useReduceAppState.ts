@@ -4,8 +4,8 @@ import { AppAction, AppState } from "../../src/model/AppState";
 import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { assertNever, empty } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/model/validateReservation";
-import "json.date-extensions";
 import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
+import ReservationPage from "../../pages/request/[reservationId]";
 
 export const initialAppState: AppState = {
     initialized: false,
@@ -102,9 +102,14 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     reservationRequest: newk,
-                    reservationValidation: validateReservation(
-                        newk || {}
-                    ),
+                    reservationValidation: validateReservation(newk || {}),
+                };
+            case "reservationSuccessful":
+                return {
+                    ...previousState,
+                    reservation: action.reservation,
+                    reservationRequestTemplate:
+                        action.reservationRequestTemplate,
                 };
             case "subPageTransitionDirection":
                 const { direction } = action;

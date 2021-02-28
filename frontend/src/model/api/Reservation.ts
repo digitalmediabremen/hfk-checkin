@@ -26,7 +26,7 @@ export default interface Reservation {
     end: Date;
     resource_uuid: string;
 
-    attendees: Attendance[];
+    attendees: Attendance[] | undefined;
     number_of_extra_attendees?: number;
     message?: string | null;
     purpose?: ReservationPurpose | null;
