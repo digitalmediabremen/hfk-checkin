@@ -1,4 +1,4 @@
-import Profile from "../../src/model/api/Profile";
+import MyProfile from "../../src/model/api/MyProfile";
 import React, { useEffect, Component } from "react";
 import { useRouter } from "next/router";
 import { appUrls } from "../../config";
@@ -10,7 +10,7 @@ import Loading from "../common/Loading";
 import Layout from "../common/Page";
 
 interface NeedsProfileProps {
-    profile: Profile;
+    profile: MyProfile;
     profileUpdating: boolean;
 }
 

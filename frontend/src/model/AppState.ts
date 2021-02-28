@@ -1,21 +1,28 @@
 import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
-import Profile from "./api/Profile";
+import MyProfile from "./api/MyProfile";
 import { ReservationValidation } from "./validateReservation";
+import Reservation from "./api/Reservation";
 
 export type TransitionDirection = "left" | "right";
 
 export interface AppState {
+    initialized: boolean;
     status?: {
         message: string;
         isError: boolean;
     };
-    profile?: Profile;
+    myProfile?: MyProfile;
     disableNextUpdate: boolean;
     highlightCheckinById?: number, // id
-    initialized: boolean;
+    // reservation object returned from api on successful request
+    reservation: Reservation;
+    // template object from hich forms retrieve and write data.
     reservationRequest?: NewReservationBlueprint;
+    // validation object, updated on every 
+    // change of reserverationRequest object
     reservationValidation: ReservationValidation;
+    // template object from which a new request can be based on
     reservationTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;
 }
@@ -28,7 +35,7 @@ export type AppAction = {
     } | undefined
 } | {
     type: "profile";
-    profile: Profile | undefined;
+    profile: MyProfile | undefined;
     disableNextUpdate?: boolean;
 } | {
     type: "enableNextUpdate"

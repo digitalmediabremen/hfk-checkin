@@ -4,7 +4,7 @@ import React, { ReactNode } from "react";
 import { CSSTransition } from "react-transition-group";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
-import Profile from "../../src/model/api/Profile";
+import MyProfile from "../../src/model/api/MyProfile";
 import theme from "../../styles/theme";
 import { useAppState } from "./AppStateProvider";
 import EllipseText from "./EllipseText";
@@ -16,7 +16,7 @@ interface StatusBarProps {
 const StatusBar: React.FunctionComponent<StatusBarProps> = (props) => {
     const { action } = props;
     const { appState, dispatch } = useAppState();
-    const { profile, initialized } = appState;
+    const { myProfile: profile, initialized } = appState;
     const { status } = appState;
     const [states, setStates] = React.useState<
         Array<{ message: string; isError: boolean; id?: number }>

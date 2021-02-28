@@ -24,8 +24,8 @@ export default function useSubmitReservation() {
     useEffect(() => {
         if (api.state === "success") {
             const reservationObject = api.result;
-            const { uuid } = reservationObject;
-            router.push(...appUrls.reservation(uuid));
+            const { identifier } = reservationObject;
+            router.push(...appUrls.reservation(identifier));
         }
     }, [api.state]);
 

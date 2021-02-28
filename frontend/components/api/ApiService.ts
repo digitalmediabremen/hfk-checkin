@@ -1,7 +1,6 @@
-import Profile, {
+import MyProfile, {
     ProfileUpdate,
-    assertProfile,
-} from "../../src/model/api/Profile";
+} from "../../src/model/api/MyProfile";
 import * as config from "../../config";
 import { NextPageContext } from "next";
 import Location from "../../src/model/api/Location";
@@ -137,7 +136,7 @@ export const updateProfileRequest = async (
     profile: ProfileUpdate,
     headers?: HeadersInit
 ) =>
-    await apiRequest<Profile>("profile/me/save/", {
+    await apiRequest<MyProfile>("profile/me/save/", {
         method: "POST",
         body: JSON.stringify(profile),
         headers,
@@ -182,7 +181,7 @@ export const getLocationRequest = async (
     });
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
-    await apiRequest<Profile>("profile/me/", { headers }, validateProfile);
+    await apiRequest<MyProfile>("profile/me/", { headers }, validateProfile);
 
 export const getCheckinRequest = async (
     checkinId: string,

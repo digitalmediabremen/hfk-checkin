@@ -42,12 +42,12 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         createDate(datetimeFrom?.getTime())
     );
     const [timeFrom, setTimeFrom] = useState<Time | undefined>(
-        timeFromDateOrNow(datetimeFrom)
+        createTime(10,0)
     );
     const [timeTo, setTimeTo] = useState<Time | undefined>(
-        timeFromDateOrNow(datetimeTo)
+        createTime(14,0)
     );
-    const { t } = useTranslation("time");
+    const { t } = useTranslation("request-time");
 
     const { goForward } = useSubPage(requestSubpages);
 

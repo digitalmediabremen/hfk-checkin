@@ -79,8 +79,8 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                 <FormElement
                     bottomSpacing={2}
                     value={[
-                        selectedResource.name,
                         selectedResource.display_numbers || "",
+                        <b>{selectedResource.name}</b>,
                     ]}
                     icon={<X />}
                     onIconClick={handleDeselectResource}

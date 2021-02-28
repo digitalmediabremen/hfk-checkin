@@ -1,5 +1,6 @@
-import { DeepWritable } from "../../util/TypeUtil";
+import { DeepRemoveNull, DeepWritable } from "../../util/TypeUtil";
 import Reservation from "./Reservation";
 
-type NewReservation = DeepWritable<Reservation>;
+type NewReservation = DeepRemoveNull<DeepWritable<Reservation>>;
 export default NewReservation;
+// ToDo: remove null

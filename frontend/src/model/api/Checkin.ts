@@ -1,4 +1,4 @@
-import Profile from "./Profile";
+import MyProfile from "./MyProfile";
 import Location from "./Location";
 
 export type LastCheckin = Omit<Checkin, "profile">;
@@ -7,7 +7,7 @@ export default interface Checkin {
     id: number;
     time_entered: string;
     time_left: string | null;
-    profile: Profile;
+    profile: MyProfile;
     location: Location;
     is_active: boolean;
 }

@@ -12,10 +12,10 @@ import Layout from "../components/common/Page";
 import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
-import Profile, { ProfileUpdate } from "../src/model/api/Profile";
+import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
 
 interface EditProfileProps {
-    profile?: Profile;
+    profile?: MyProfile;
 }
 
 type Error<T> = {
@@ -41,7 +41,7 @@ const validate = (user: ProfileUpdate, t: { required: string }) => {
 
 const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const { appState, dispatch } = useAppState();
-    const { profile: initialProfile } = appState;
+    const { myProfile: initialProfile } = appState;
 
     const user = initialProfile || {
         first_name: "",

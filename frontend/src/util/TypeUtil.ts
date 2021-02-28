@@ -64,4 +64,14 @@ export type DeepWritable<T> = Writable<
     }
 >;
 
+export type RemoveNull<T> = Exclude<T, null>;
+
+export type DeepRemoveNull<T> = {
+    [P in keyof T]: RemoveNull<T[P] extends Array<infer I>
+        ? Array<DeepRemoveNull<I>>
+        : T[P] extends Record<string, unknown>
+        ? DeepRemoveNull<T[P]>
+        : T[P]>;
+};
+
 export type Writable<T extends {}> = Pick<T, WritableKeys<T>>;

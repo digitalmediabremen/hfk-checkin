@@ -2,7 +2,7 @@ import Link from "next/link";
 import React, { SFC } from "react";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
-import Profile from "../../src/model/api/Profile";
+import MyProfile from "../../src/model/api/MyProfile";
 import theme from "../../styles/theme";
 import StatusBar from "./StatusBar";
 import { useUpdateProfileFromAppStateAndUpdate } from "../api/ApiHooks";
@@ -10,7 +10,7 @@ import EnterCodeButton from "./EnterCodeButton";
 import features from "../../features";
 
 interface AppWrapperProps {
-    profileFromServer?: Profile;
+    profileFromServer?: MyProfile;
 }
 
 const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {

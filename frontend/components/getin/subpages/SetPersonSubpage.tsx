@@ -72,12 +72,15 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 <FormElement
                     key={index}
                     value={[
-                        `${profile.first_name} ${profile.last_name} (Extern)`,
+                        <>
+                            <b>
+                                {profile.first_name} {profile.last_name}
+                            </b>{" "}
+                            (Extern)
+                        </>,
                         `Tel: ${profile.phone}`,
                     ]}
-                    onClick={() =>
-                        goForward("attendee-set", `${index}`)
-                    }
+                    onClick={() => goForward("attendee-set", `${index}`)}
                     extendedWidth
                     icon={<X strokeWidth={2} />}
                     onIconClick={() => {

@@ -14,7 +14,7 @@ export interface FormElementProps extends FormElementBaseProps {
     arrow?: true;
     icon?: ReactNode;
     onIconClick?: () => void;
-    value?: string | string[];
+    value?: ReactNode | ReactNode[];
     maxRows?: number;
     isText?: boolean
 }
