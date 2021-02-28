@@ -1,3 +1,6 @@
+import { TypeFormatFlags } from "ts-morph";
+import Reservation from "../model/api/Reservation";
+
 export function empty<TValue>(
     value: TValue | null | undefined
 ): value is null | undefined {
@@ -46,6 +49,16 @@ type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
     ? A
     : B;
 
+export type NonNullableWritableKeys<K> = WritableKeys<NonNullable<K>>;
+
+type CopyOptional<ForKeys extends string | number | symbol, O> = {
+    [K in keyof O]: K extends ForKeys
+        ? K extends keyof O
+            ? O[K]
+            : never
+        : never;
+};
+
 export type WritableKeys<T> = {
     [P in keyof T]-?: IfEquals<
         { [Q in P]: T[P] },
@@ -54,11 +67,23 @@ export type WritableKeys<T> = {
     >;
 }[keyof T];
 
+type Without<T, V, WithNevers = {
+  [K in keyof T]: Exclude<T[K], undefined> extends V ? never 
+  : (T[K] extends Record<string, unknown> ? Without<T[K], V> : T[K])
+}> = Pick<WithNevers, {
+  [K in keyof WithNevers]: WithNevers[K] extends never ? never : K
+}[keyof WithNevers]>
+
+export type Writable<T extends {} | undefined> = Without<CopyOptional<
+    WritableKeys<NonNullable<T>>,
+    NonNullable<T>
+>, never>;
+
 export type DeepWritable<T> = Writable<
     {
-        [P in keyof T]: T[P] extends Array<infer I>
+        [P in keyof T]: T[P] extends Array<infer I> | undefined
             ? Array<DeepWritable<I>>
-            : T[P] extends Record<string, unknown>
+            : T[P] extends Record<string, unknown> | undefined
             ? DeepWritable<T[P]>
             : T[P];
     }
@@ -67,11 +92,11 @@ export type DeepWritable<T> = Writable<
 export type RemoveNull<T> = Exclude<T, null>;
 
 export type DeepRemoveNull<T> = {
-    [P in keyof T]: RemoveNull<T[P] extends Array<infer I>
-        ? Array<DeepRemoveNull<I>>
-        : T[P] extends Record<string, unknown>
-        ? DeepRemoveNull<T[P]>
-        : T[P]>;
+    [P in keyof T]: RemoveNull<
+        T[P] extends Array<infer I>
+            ? Array<DeepRemoveNull<I>>
+            : T[P] extends Record<string, unknown>
+            ? DeepRemoveNull<T[P]>
+            : T[P]
+    >;
 };
-
-export type Writable<T extends {}> = Pick<T, WritableKeys<T>>;
