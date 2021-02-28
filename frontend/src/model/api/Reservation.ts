@@ -1,11 +1,13 @@
-import { notEmpty, Writable, WritableKeys } from "../../util/TypeUtil";
-import Profile, { SimpleProfile } from "./Profile";
+import { Attendance, BaseProfile } from "./MyProfile";
 
 interface Resource {}
 
-enum ReservationStatus {
-    REQUESTED = "requested",
-}
+type ReservationState =
+    | "created"
+    | "cancelled"
+    | "confirmed"
+    | "denied"
+    | "requested";
 
 export type ReservationPurpose =
     | "WORKSHOP_USAGE"
@@ -24,25 +26,28 @@ export default interface Reservation {
     end: Date;
     resource_uuid: string;
 
-
-    attendees?: Writable<SimpleProfile>[];
+    attendees: Attendance[];
     number_of_extra_attendees?: number;
-    message?: string;
-    purpose?: ReservationPurpose;
+    message?: string | null;
+    purpose?: ReservationPurpose | null;
     agreed_to_phone_contact?: boolean;
     exclusive_resource_usage?: boolean;
 
     readonly uuid: string;
+    readonly identifier: string;
     readonly resource: Resource;
-    readonly organizer: SimpleProfile;
-    readonly state: ReservationStatus;
+    // readonly organizer: BaseProfile;
+    readonly state: ReservationState;
+    readonly is_own: boolean;
     readonly number_of_attendees: number;
+    readonly has_priority: boolean;
+    readonly need_manual_confirmation: boolean;
     /**
      * @TJS-format date-time
      */
     readonly created_at: Date;
-    /**
-     * @TJS-format date-time
-     */
-    readonly updated_at: Date;
+    // /**
+    //  * @TJS-format date-time
+    //  */
+    // readonly updated_at: Date;
 }

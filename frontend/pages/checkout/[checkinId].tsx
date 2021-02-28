@@ -11,11 +11,11 @@ import Title from "../../components/common/Title";
 import useParam from "../../src/hooks/useParam";
 import features from "../../features";
 import { LastCheckin } from "../../src/model/api/Checkin";
-import Profile from "../../src/model/api/Profile";
+import MyProfile from "../../src/model/api/MyProfile";
 import { CheckinComponent } from "../checkin/[locationCode]";
 
 interface CheckoutPageProps {
-    profile: Profile;
+    profile: MyProfile;
 }
 
 const CheckoutPage: React.FunctionComponent<CheckoutPageProps> = ({

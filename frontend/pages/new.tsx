@@ -24,12 +24,12 @@ const NewProfilePage: NextPage = () => {
     const { appState } = useAppState();
 
     useEffect(() => {
-        if (appState.profile) router.replace(config.appUrls.enterCode);
-    }, [appState.profile]);
+        if (appState.myProfile) router.replace(config.appUrls.enterCode);
+    }, [appState.myProfile]);
 
     const { t, locale } = useTranslation("createProfile");
 
-    if (appState.profile || !appState.initialized) return null;
+    if (appState.myProfile || !appState.initialized) return null;
 
     return (
         <Layout>

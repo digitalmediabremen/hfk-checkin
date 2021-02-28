@@ -71,7 +71,7 @@ const SubpageList: React.FunctionComponent<SubpageListProps> = ({
             <SubPage title={t("Grund angeben")} {...subPageProps("purpose")}>
                 {() => <DynamicSetPurposeSubPage />}
             </SubPage>
-            <SubPage title={t("message")} {...subPageProps("message")}>
+            <SubPage title={t("Nachricht")} {...subPageProps("message")}>
                 {() => <DynamicSetCommentSubpage />}
             </SubPage>
             <SubPage

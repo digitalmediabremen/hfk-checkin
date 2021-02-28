@@ -63,7 +63,7 @@ const useReduceAppState = () =>
                     return {
                         ...previousState,
                         initialized: true,
-                        profile: action.profile,
+                        myProfile: action.profile,
                     };
                 }
                 return {

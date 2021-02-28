@@ -7,17 +7,17 @@ type FormMultilineValueProps = {
     value: ReactNode;
     maxRows?: number;
     text?: boolean;
-}
+};
 
 const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
     value,
     maxRows,
-    text
+    text,
 }) => {
-    const [firstValue, ...otherValues] = !Array.isArray(value)
-        ? [value]
-        : value;
+    const arrayValue = !Array.isArray(value) ? [value] : value;
+    const [firstValue, ...otherValues] = arrayValue;
     const multiline = otherValues.length > 0;
+    const valuesAreNodes = arrayValue.some((v) => typeof v !== "string");
     return (
         <>
             <style jsx>{`
@@ -36,9 +36,6 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
                 .form-value.text {
                     font-style: italic;
                 }
-                .form-value.text > span {
-                    font-weight: normal;
-                }
 
                 .form-value {
                     line-height: 1.25em;
@@ -46,8 +43,11 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
                     width: 100%;
                 }
 
-                .form-value > span {
+                .form-value > .bold {
                     font-weight: bold;
+                }
+                .form-value.text > .bold {
+                    font-weight: normal;
                 }
             `}</style>
             <EllipseText>
@@ -56,10 +56,14 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
                         className={classNames("form-value", ellipsed, {
                             multiline,
                             "max-rows": !!maxRows,
-                            "text": text
+                            text: text,
                         })}
                     >
-                        <span>{firstValue}</span>
+                        {valuesAreNodes ? (
+                            <>{firstValue}</>
+                        ) : (
+                            <span className="bold">{firstValue}</span>
+                        )}
                         {otherValues.map((value, index) => (
                             <Fragment key={index}>
                                 <br />

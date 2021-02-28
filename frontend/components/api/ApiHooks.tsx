@@ -3,7 +3,7 @@ import { usePageVisibility } from "react-page-visibility";
 import { httpStatuses } from "../../config";
 import Checkin, { LastCheckin } from "../../src/model/api/Checkin";
 import Location from "../../src/model/api/Location";
-import Profile, { ProfileUpdate } from "../../src/model/api/Profile";
+import MyProfile, { ProfileUpdate } from "../../src/model/api/MyProfile";
 import { empty, notEmpty } from "../../src/util/TypeUtil";
 import { useAppState } from "../common/AppStateProvider";
 import {
@@ -190,7 +190,7 @@ export const useUpdateProfileFromAppStateAndUpdate = (
         additionalData,
     } = useProfile(updateOnPageActivation);
     const { appState, dispatch } = useAppState();
-    const { profile: profileFromAppState } = appState;
+    const { myProfile: profileFromAppState } = appState;
 
     useEffect(() => {
         if (!appState.disableNextUpdate) {
@@ -220,7 +220,7 @@ export const useUpdateProfileFromAppStateAndUpdate = (
 };
 
 export const useUpdateProfile = () => {
-    const { request, state, ...other } = useApi<Profile>();
+    const { request, state, ...other } = useApi<MyProfile>();
 
     return {
         updateProfile: (profile: ProfileUpdate) =>
@@ -232,7 +232,7 @@ export const useUpdateProfile = () => {
 };
 
 export const useProfile = (updateOnPageActivation = false) => {
-    const { request, result: profile, state, ...other } = useApi<Profile>({
+    const { request, result: profile, state, ...other } = useApi<MyProfile>({
         onlyLocalErrorReport: true,
     });
 

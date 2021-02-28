@@ -9,7 +9,7 @@ import Subtitle from "../components/common/Subtitle";
 import { appUrls } from "../config";
 import theme from "../styles/theme";
 import needsProfile from "../components/api/needsProfile";
-import Profile from "../src/model/api/Profile";
+import MyProfile from "../src/model/api/MyProfile";
 import { useTranslation } from "../localization";
 import { DotPulse, LoadingInline } from "../components/common/Loading";
 import showIf from "../components/api/showIf";
@@ -17,7 +17,7 @@ import features from "../features";
 import Layout from "../components/common/Page";
 
 interface ProfilePageProps {
-    profile: Profile;
+    profile: MyProfile;
     profileUpdating: boolean;
 }
 

@@ -88,7 +88,10 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                     </span>
                 )}
                 <FormMultilineValue
-                    value={[resource.name, resource.display_numbers || ""]}
+                    value={[
+                        resource.display_numbers || "",
+                        <b>{resource.name}</b>,
+                    ]}
                 />
                 {showMeta && (
                     <span className="icon right">

@@ -22,7 +22,7 @@ import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import { LastCheckin } from "../../src/model/api/Checkin";
-import Profile from "../../src/model/api/Profile";
+import MyProfile from "../../src/model/api/MyProfile";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: LastCheckin;
@@ -127,7 +127,7 @@ export const CheckinComponent: React.FunctionComponent<{
 };
 
 interface CheckinProps {
-    profile: Profile;
+    profile: MyProfile;
 }
 
 const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {

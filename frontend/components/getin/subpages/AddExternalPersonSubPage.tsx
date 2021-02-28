@@ -6,7 +6,7 @@ import {
     useReservationArrayState,
     useSubpageQuery,
 } from "../../../src/hooks/useReservationState";
-import { SimpleProfile } from "../../../src/model/api/Profile";
+import { AttendanceUpdate } from "../../../src/model/api/MyProfile";
 import { Writable } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
 import { useAppState } from "../../common/AppStateProvider";
@@ -23,9 +23,11 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
     // const [person, setPerson, setPersonField] = useAddExternalPersonState();z
     // useValidation
 
+    const {appState} = useAppState()
+
     const { goBack } = useSubPage(requestSubpages);
     const { errors, handleSubmit, control } = useForm<
-        Writable<SimpleProfile>
+        Writable<AttendanceUpdate>
     >({
         mode: "onTouched",
         defaultValues: attendees[index] || {
@@ -38,7 +40,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
 
     const controllerProps = useCallback(
         (
-            name: keyof Writable<SimpleProfile>,
+            name: keyof Writable<AttendanceUpdate>,
             translatedName: string,
             rules?: {}
         ) => ({
@@ -57,7 +59,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
         [errors, control]
     );
 
-    const handleAddAttendee = (value: Writable<SimpleProfile>) => {
+    const handleAddAttendee = (value: Writable<AttendanceUpdate>) => {
         // Todo: validate person
         addAttendee(value, index);
         goBack("attendees");

@@ -17,7 +17,7 @@ import useReservationState, {
 } from "../../src/hooks/useReservationState";
 import useReservationPurposeText from "../../src/hooks/useReservationPurposeMessage";
 import useValidation from "../../src/hooks/useValidation";
-import Profile from "../../src/model/api/Profile";
+import MyProfile from "../../src/model/api/MyProfile";
 import {
     createTime,
     fromTime,
@@ -34,13 +34,13 @@ const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
     );
     return [
         getFormattedDate(start, "de") || "",
-        `${fromTime(start)} — ${fromTime(end)} ${overlap ? "+1 Tag" : ""}`,
+        `${fromTime(start)} — ${fromTime(end)} ${overlap ? "(+1 Tag)" : ""}`,
     ];
 };
 
 const Subpages = <SubpageCollection />;
 
-const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
+const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const { t } = useTranslation();
     const { handlerProps, direction, activeSubPage } = useSubPage(
         requestSubpages
@@ -77,7 +77,10 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 {...handlerProps("resource")}
                 value={
                     resource
-                        ? [resource.name, resource.display_numbers || ""]
+                        ? [
+                              resource.display_numbers || "",
+                              <b>{resource.name}</b>,
+                          ]
                         : undefined
                 }
                 label={t("Raum auswählen")}
@@ -94,7 +97,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 {...handlerProps("time")}
                 label={t("Zeitangaben tätigen")}
                 value={presentTimeLabel(start, end)}
-                shortLabel={t("time")}
+                shortLabel={t("Zeit")}
                 arrow
                 icon={
                     hasError("exceedsBookableRange") &&
@@ -106,12 +109,18 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("attendees")}
                 value={[
-                    ...(attendees?.map(
-                        (a) => `${a.first_name} ${a.last_name} (Extern)`
-                    ) || []),
-                    `+${(extraAttendees || 0) + 1} weitere`,
+                    ...(attendees?.map((a) => (
+                        <>
+                            <b>
+                                {a.first_name} {a.last_name}
+                            </b>{" "}
+                            (Extern)
+                        </>
+                    )) || []),
+                    (extraAttendees || 0) !== 0 &&
+                        <>+{extraAttendees || 0} weitere</>,
                 ]}
-                label={t("attendees")}
+                label={t("Teilnehmer")}
                 shortLabel={t("Pers.")}
                 arrow
                 extendedWidth
@@ -120,7 +129,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 {...handlerProps("purpose")}
                 value={purpose ? [purposeLabel(purpose)] : undefined}
                 label={t("Buchungsgrund")}
-                shortLabel={t("purpose")}
+                shortLabel={t("Grund")}
                 arrow
                 icon={hasError("needsExceptionReason") && ValidationIcon}
                 extendedWidth
@@ -129,7 +138,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("message")}
                 value={comment}
-                label={t("message")}
+                label={t("Nachricht")}
                 shortLabel={t("Nach.")}
                 bottomSpacing={1}
                 arrow
