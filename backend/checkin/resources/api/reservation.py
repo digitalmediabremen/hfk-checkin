@@ -79,14 +79,30 @@ except Exception:
 #
 
 class AttendanceSerializer(serializers.ModelSerializer):
+    profile_id = serializers.ReadOnlyField(source='user.id', read_only=True)
+    display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
+    is_external = serializers.BooleanField(source='is_external_user', read_only=True)
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
-    display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
-    is_external = serializers.BooleanField(read_only=True, source='is_external_user')
+    phone = serializers.CharField(source='user.phone', write_only=True)
+    email = serializers.EmailField(source='user.email', write_only=True)
 
     class Meta:
         model = Attendance
-        fields = ('first_name', 'last_name', 'display_name', 'state', 'is_external')
+        fields = ('uuid','profile_id','first_name', 'last_name', 'display_name', 'phone','email','state', 'is_external')
+
+    def validate(self, data):
+        # profile_data = data.pop('user')
+        # profile_data = ProfileSerializer.validate(profile_data)
+        # data['user'] = profile_data
+        return data
+
+    def create(self, validated_data):
+        # create Profile (attr: user) first, pass user instance to super().create(data)
+        user_data = validated_data.pop('user')
+        user_instance = ProfileSerializer().create(validated_data=user_data)
+        validated_data['user'] = user_instance
+        return super().create(validated_data=validated_data)
 
 
 class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, ModifiableModelSerializerMixin):
@@ -98,7 +114,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     end = NullableDateTimeField()
     #organizer = EmailField(source='user.email', read_only=True) # or depending on permission
     # TODO do all users have permission to show / see organizers?!
-    organizer = UserSerializer(source='user', read_only=True)
+    organizer = ProfileSerializer(source='user', read_only=True)
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
     state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
@@ -114,6 +130,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     #user_permissions = serializers.SerializerMethodField()
     #cancel_reason = ReservationCancelReasonSerializer(required=False)
 
+    # TODO Patch?
     patchable_fields = ['state']#, 'cancel_reason']
 
     class Meta:
@@ -163,6 +180,14 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
                 self.fields[field_name].required = True
 
         self.context.update({'resource': resource})
+
+    def create(self, validated_data):
+        attendances_data = validated_data.pop('attendance_set')
+        reservation = super().create(validated_data)
+        for attendance_data in attendances_data:
+            attendance_data['reservation'] = reservation
+            AttendanceSerializer().create(validated_data=attendance_data)
+        return reservation
 
     def get_extra_fields(self, includes, context):
         from .resource import ResourceInlineSerializer
@@ -255,6 +280,13 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             if access_code_enabled and reservation and data['access_code'] != reservation.access_code:
                 raise ValidationError(dict(access_code=_('This field cannot be changed')))
 
+        data
+
+        # remove attendances for Reservation validation
+        # Reservation.attendees.set() or add() must be called explicitly and can not validate form **data
+        # TODO validate attendances ?
+        attendance_set_data = data.pop('attendance_set')
+
         with transaction.atomic():
 
             # Mark begin of a critical section. Subsequent calls with this same resource will block here until the first
@@ -288,6 +320,9 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
                     for key, value in exc.error_dict.items():
                         error_dict[key] = [error.message for error in value]
                     raise ValidationError(error_dict)
+
+            # TODO
+            data['attendance_set'] = attendance_set_data
             return data
 
     def to_internal_value(self, data):
@@ -614,7 +649,8 @@ class ReservationCacheMixin:
             rv.resource._permission_checker = checker
 
         for res in resources:
-            units.add(res.unit)
+            if res.unit:
+                units.add(res.unit)
             for g in res.groups.all():
                 resource_groups.add(g)
 

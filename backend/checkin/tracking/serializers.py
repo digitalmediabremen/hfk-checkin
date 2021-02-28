@@ -43,9 +43,10 @@ class SimpleCheckinSerializer(serializers.ModelSerializer):
 
 class BaseProfileSerializer(serializers.ModelSerializer):
     id = ReadOnlyField()
+    display_name = ReadOnlyField(source='get_display_name')
     class Meta:
         model = Profile
-        fields = ['id','first_name', 'last_name', 'phone', 'email']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email']
 
 
 class ProfileSerializer(BaseProfileSerializer):
@@ -56,7 +57,7 @@ class ProfileSerializer(BaseProfileSerializer):
 
     class Meta:
         model = Profile
-        fields = ['id','first_name', 'last_name', 'phone', 'email', 'student_number', 'verified', 'complete', 'last_checkins']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'student_number', 'verified', 'complete', 'last_checkins']
 
     def validate_phone(self, value):
         return value.strip()

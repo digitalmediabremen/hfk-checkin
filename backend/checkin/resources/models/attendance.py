@@ -11,8 +11,8 @@ from .base import ModifiableModel, UUIDModelMixin
 
 class AttendanceStates(models.TextChoices):
     REQUESTED = 'requested', _('needs approval')
-    CONFIRMED = 'confirmed', 'approved'
-    DENIED = 'denied', 'denied'
+    CONFIRMED = 'confirmed', _('approved')
+    DENIED = 'denied', _('denied')
 
 
 class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
