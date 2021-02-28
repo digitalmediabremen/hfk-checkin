@@ -22,7 +22,7 @@ const useSubPage = <SubPagesMap extends SubPagesMapType>(
     const direction = appState.subPageTransitionDirection;
 
     const setActiveSubPage = useCallback((subPage?: SubPagesType, param?: string) => {
-        const url = appUrls.requestSubpage(subPage as string, param);
+        const url = appUrls.request(subPage as string, param);
         router.push(url, url, {
             shallow: true,
         });

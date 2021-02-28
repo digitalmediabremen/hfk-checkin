@@ -60,7 +60,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
     const handleAddAttendee = (value: Writable<SimpleProfile>) => {
         // Todo: validate person
         addAttendee(value, index);
-        goBack("personen");
+        goBack("attendees");
     };
 
     return (

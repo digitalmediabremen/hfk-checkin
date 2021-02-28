@@ -25,7 +25,6 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     last,
     showMeta,
 }) => {
-    const { t } = useTranslation();
     const handleSelect = () => {
         onSelect?.(!selected);
     };

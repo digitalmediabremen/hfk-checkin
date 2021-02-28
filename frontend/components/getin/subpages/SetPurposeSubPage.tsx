@@ -13,10 +13,10 @@ import Notice from "../../common/Notice";
 interface SetPurposeSubPageProps {}
 
 const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("request-purpose");
     const { hasError } = useValidation();
     const [purpose, setPurpose] = useReservationState("purpose");
-    const [purposeText, setPurposeText] = useReservationState("comment");
+    const [purposeText, setPurposeText] = useReservationState("message");
     const purposeLabel = useReservationPurposeText();
     const handlePurposeTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setPurposeText(event.target.value)

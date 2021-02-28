@@ -25,13 +25,19 @@ interface SetRoomSubpageProps {}
 
 const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const [searchValue, setSearchValue] = useState("");
-    const { t } = useTranslation();
+    const { t } = useTranslation("request-resource");
     const queryResourceRequest = useResources(false);
     const { goForward } = useSubPage(requestSubpages);
     const [selectedResource, setSelectedResource] = useReservationState(
         "resource"
     );
     const { hasError } = useValidation();
+
+    const handleDeselectResource = () => {
+        setSelectedResource(undefined);
+        queryResourceRequest.reset();
+        setSearchValue("");
+    }
 
     const load = useCallback((searchValue: string) => {
         return queryResourceRequest.requestResources(
@@ -77,7 +83,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         selectedResource.display_numbers || "",
                     ]}
                     icon={<X />}
-                    onIconClick={() => setSelectedResource(undefined)}
+                    onIconClick={handleDeselectResource}
                 />
             ) : (
                 <>

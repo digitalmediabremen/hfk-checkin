@@ -21,7 +21,8 @@ export default function useValidation() {
 
     return {
         hasError: has,
-        getErrors: get,
+        getError: get,
+        allErrors: appState.reservationValidation.filter(r => r.level === "error").map(r => r.message).join(","),
         hasErrors: appState.reservationValidation.some(r => r.level === "error")
     }
 }

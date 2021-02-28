@@ -6,11 +6,11 @@ import FormMultilineTextInput from "../../common/FormMultilineTextInput";
 interface SetCommentSubpageProps {}
 
 const SetCommentSubpage: React.FunctionComponent<SetCommentSubpageProps> = ({}) => {
-    const [comment, setComment] = useReservationState("comment");
-    const { t } = useTranslation();
+    const [message, setMessage] = useReservationState("message");
+    const { t } = useTranslation("request-message");
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setComment(event.target.value);
+        setMessage(event.target.value);
     };
 
     return (
@@ -18,7 +18,7 @@ const SetCommentSubpage: React.FunctionComponent<SetCommentSubpageProps> = ({}) 
             <style jsx>{``}</style>
             <FormMultilineTextInput
                 textareaProps={{
-                    value: comment,
+                    value: message,
                     onChange: handleChange,
                     minRows: 7,
                     placeholder: t(

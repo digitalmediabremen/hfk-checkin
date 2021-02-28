@@ -4,7 +4,7 @@ import { assertDateString } from "../util/DateTimeUtil";
 import { assertNever } from "../util/TypeUtil";
 
 export default function useReservationPurposeText() {
-    const { t } = useTranslation();
+    const { t } = useTranslation("request-purpose");
 
     return (key?: ReservationPurpose) => {
         if (key === undefined) 

@@ -47,37 +47,37 @@ const SubpageList: React.FunctionComponent<SubpageListProps> = ({
     
 }) => {
     const { subPageProps } = useSubPage(requestSubpages);
-    const { t } = useTranslation();
+    const { t } = useTranslation("request");
     return (
         <Fragment>
-            <SubPage title={t("Zeit festlegen")} {...subPageProps("zeit")}>
+            <SubPage title={t("Zeit festlegen")} {...subPageProps("time")}>
                 {() => <DynamicSetTimeSubpage />}
             </SubPage>
-            <SubPage title={t("Raum auswählen")} {...subPageProps("raum")}>
+            <SubPage title={t("Raum auswählen")} {...subPageProps("resource")}>
                 {() => <DynamicSetRoomSubpage />}
             </SubPage>
             <SubPage
                 title={t("Personen hinzufügen")}
-                {...subPageProps("personen")}
+                {...subPageProps("attendees")}
             >
                 {() => <DynamicSetPersonSubpage />}
             </SubPage>
             <SubPage
                 title={t("Externe hinzufügen")}
-                {...subPageProps("add-person", "personen")}
+                {...subPageProps("attendee-set", "attendees")}
             >
                 {() => <DynamicAddExternalPersonSubpage />}
             </SubPage>
-            <SubPage title={t("Grund angeben")} {...subPageProps("grund")}>
+            <SubPage title={t("Grund angeben")} {...subPageProps("purpose")}>
                 {() => <DynamicSetPurposeSubPage />}
             </SubPage>
-            <SubPage title={t("Nachricht")} {...subPageProps("nachricht")}>
+            <SubPage title={t("message")} {...subPageProps("message")}>
                 {() => <DynamicSetCommentSubpage />}
             </SubPage>
             <SubPage
                 noContentMargin
                 title={t("Raumliste")}
-                {...subPageProps("resource-list", "raum")}
+                {...subPageProps("resource-list", "resource")}
             >
                 {() => <DynamicResourceListSubpage />}
             </SubPage>

@@ -56,7 +56,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
         end,
         resource,
         purpose,
-        comment,
+        message: comment,
     } = useReservation();
 
     const submit = useSubmitReservation();
@@ -74,7 +74,7 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
             subPages={Subpages}
         >
             <FormElement
-                {...handlerProps("raum")}
+                {...handlerProps("resource")}
                 value={
                     resource
                         ? [resource.name, resource.display_numbers || ""]
@@ -91,10 +91,10 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 extendedWidth
             />
             <FormElement
-                {...handlerProps("zeit")}
+                {...handlerProps("time")}
                 label={t("Zeitangaben tätigen")}
                 value={presentTimeLabel(start, end)}
-                shortLabel={t("Zeit")}
+                shortLabel={t("time")}
                 arrow
                 icon={
                     hasError("exceedsBookableRange") &&
@@ -104,32 +104,32 @@ const RequestRoomPage: NextPage<{ profile: Profile }> = ({ profile }) => {
                 extendedWidth
             />
             <FormElement
-                {...handlerProps("personen")}
+                {...handlerProps("attendees")}
                 value={[
                     ...(attendees?.map(
                         (a) => `${a.first_name} ${a.last_name} (Extern)`
                     ) || []),
                     `+${(extraAttendees || 0) + 1} weitere`,
                 ]}
-                label={t("Personen")}
+                label={t("attendees")}
                 shortLabel={t("Pers.")}
                 arrow
                 extendedWidth
             />
             <FormElement
-                {...handlerProps("grund")}
+                {...handlerProps("purpose")}
                 value={purpose ? [purposeLabel(purpose)] : undefined}
                 label={t("Buchungsgrund")}
-                shortLabel={t("Grund")}
+                shortLabel={t("purpose")}
                 arrow
                 icon={hasError("needsExceptionReason") && ValidationIcon}
                 extendedWidth
                 maxRows={2}
             />
             <FormElement
-                {...handlerProps("nachricht")}
+                {...handlerProps("message")}
                 value={comment}
-                label={t("Nachricht")}
+                label={t("message")}
                 shortLabel={t("Nach.")}
                 bottomSpacing={1}
                 arrow
