@@ -14,6 +14,9 @@ from django.core.exceptions import (
 )
 from django.db.models import Q
 from django.db import transaction
+from django.core.exceptions import MultipleObjectsReturned
+from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, serializers, filters, exceptions, permissions
@@ -771,6 +774,27 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         if request.accepted_renderer.format == 'xlsx':
             response['Content-Disposition'] = 'attachment; filename={}-{}.xlsx'.format(_('reservation'), kwargs['pk'])
         return response
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+        # Perform the lookup filtering.
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        assert lookup_url_kwarg in self.kwargs, (
+            'Expected view %s to be called with a URL keyword argument '
+            'named "%s". Fix your URL conf, or set the `.lookup_field` '
+            'attribute on the view correctly.' %
+            (self.__class__.__name__, lookup_url_kwarg)
+        )
+        filter_kwargs = {self.lookup_field + '__startswith': self.kwargs[lookup_url_kwarg]}
+        try:
+            obj = get_object_or_404(queryset, **filter_kwargs)
+        except MultipleObjectsReturned:
+            raise Http404
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
 
 
 # class ReservationCancelReasonCategoryViewSet(viewsets.ReadOnlyModelViewSet):
