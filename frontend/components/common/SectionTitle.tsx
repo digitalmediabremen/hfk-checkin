@@ -3,13 +3,14 @@ import React from "react";
 import theme from "../../styles/theme";
 
 interface SectionTitleProps {
-    children: string;
     center?: boolean;
+    noMarginBottom?: boolean;
 }
 
 const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
     children,
     center,
+    noMarginBottom,
 }) => {
     return (
         <>
@@ -20,15 +21,25 @@ const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
                     text-transform: uppercase;
                     color: ${theme.disabledColor};
                     font-size: 0.75rem;
-                    margin-bottom: ${theme.spacing(2)}px;
                     font-weight: normal;
+                }
+
+                h3.margin-bottom {
+                    margin-bottom: ${theme.spacing(2)}px;
                 }
 
                 h3.center {
                     text-align: center;
                 }
             `}</style>
-            <h3 className={classNames({ center })}>{children}</h3>
+            <h3
+                className={classNames({
+                    center,
+                    "margin-bottom": !noMarginBottom,
+                })}
+            >
+                {children}
+            </h3>
         </>
     );
 };

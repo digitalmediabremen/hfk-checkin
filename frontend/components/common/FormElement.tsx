@@ -11,19 +11,21 @@ import FormElementLabel from "./FormElementLabel";
 export interface FormElementProps extends FormElementBaseProps {
     label?: string;
     shortLabel?: string;
+    labelIcon?: ReactNode;
     arrow?: true;
-    icon?: ReactNode;
+    actionIcon?: ReactNode;
     onIconClick?: () => void;
     value?: ReactNode | ReactNode[];
     maxRows?: number;
-    isText?: boolean
+    isText?: boolean;
 }
 
 const FormElement: React.FunctionComponent<FormElementProps> = ({
     label,
     shortLabel,
+    labelIcon,
     arrow,
-    icon,
+    actionIcon,
     onIconClick,
     value,
     maxRows,
@@ -70,6 +72,10 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                 .icon-interactable:hover {
                     cursor: pointer;
                 }
+
+                .label-icon {
+                    padding-right: ${theme.spacing(1)}px;
+                }
             `}</style>
             <FormElementBase {...formElementBaseProps}>
                 {label && (
@@ -79,10 +85,15 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                         extendedWidth={!value}
                     />
                 )}
+                {!label && labelIcon && <span className="label-icon">{labelIcon}</span>}
                 {value && (
-                    <FormMultilineValue maxRows={maxRows} text={isText} value={value} />
+                    <FormMultilineValue
+                        maxRows={maxRows}
+                        text={isText}
+                        value={value}
+                    />
                 )}
-                {(arrow || icon) && (
+                {(arrow || actionIcon) && (
                     <span
                         className={classNames("push-right", {
                             "icon-interactable": !!onIconClick,
@@ -91,8 +102,8 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                             ? { onClick: handleIconClick }
                             : undefined)}
                     >
-                        {icon && icon}
-                        {!icon && arrow && (
+                        {actionIcon && actionIcon}
+                        {!actionIcon && arrow && (
                             <ArrowRight size="24" strokeWidth={1} />
                         )}
                     </span>

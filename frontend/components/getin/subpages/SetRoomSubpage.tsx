@@ -12,6 +12,7 @@ import Resource from "../../../src/model/api/Resource";
 import { empty, notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
 import Fade from "../../common/Fade";
+import FormCheckbox from "../../common/FormCheckbox";
 import FormElement from "../../common/FormElement";
 import FormElementBase from "../../common/FormElementBase";
 import FormInput from "../../common/FormInput";
@@ -30,6 +31,9 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const { goForward } = useSubPage(requestSubpages);
     const [selectedResource, setSelectedResource] = useReservationState(
         "resource"
+    );
+    const [checked, setChecked] = useReservationState(
+        "exclusive_resource_usage"
     );
     const { hasError } = useValidation();
 
@@ -82,7 +86,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         selectedResource.display_numbers || "",
                         <b>{selectedResource.name}</b>,
                     ]}
-                    icon={<X />}
+                    actionIcon={<X />}
                     onIconClick={handleDeselectResource}
                 />
             ) : (
@@ -148,6 +152,13 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
             >
                 {t("Raumübersicht öffnen")}
             </NewButton>
+
+            <FormCheckbox
+                value={checked || false}
+                label={t("Ich beanspruche den ganzen Raum")}
+                onChange={setChecked}
+                bottomSpacing={2}
+            />
 
             <Fade in={hasError("missingResourcePermissions")}>
                 <Notice

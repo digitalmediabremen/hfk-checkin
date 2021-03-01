@@ -1,6 +1,8 @@
-import { Component, ErrorInfo } from "react";
+import React, { Component, ErrorInfo } from "react";
 import Title from "./Title";
 import theme from "../../styles/theme";
+import Layout from "./Layout";
+import Error from "../../pages/Error";
 
 export default class ErrorBoundary extends Component<
     {},
@@ -26,26 +28,12 @@ export default class ErrorBoundary extends Component<
             console.error(this.state.error);
             // You can render any custom fallback UI
             return (
-                <div>
-                    <style jsx>{`
-                        div {
-                            margin: ${theme.spacing(3)}px;
-                        }
-
-                        a {
-                            text-decoration: underline;
-                        }
-
-                        pre {
-                            color: ${theme.primaryColor};
-                        }
-                    `}</style>
-
-                    <Title subtext={<>Contact <a href="mailto:checkin@hfk-bremen.de">checkin@hfk-bremen.de</a> if the problem persists.</>}>Something went wrong.</Title>
-                    <pre>
-                        {this.state.error.toString?.() || this.state.error}
-                    </pre>
-                </div>
+                <Error
+                    error={
+                        this.state.error.toString?.() ||
+                        this.state.error.message
+                    }
+                />
             );
         }
 

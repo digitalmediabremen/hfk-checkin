@@ -64,7 +64,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     _datetimeTo = addDateTime(_datetimeTo, duration.days(1));
                 }
                 dispatch({
-                    type: "updateReservation",
+                    type: "updateReservationRequest",
                     reservation: {
                         ...reservation,
                         begin: _datetimeFrom,

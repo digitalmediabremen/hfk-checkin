@@ -63,6 +63,7 @@ export interface AdditionalResponseData {
     statusCode: number;
     notVerified: boolean;
     notAuthorized: boolean;
+    notFound: boolean;
     dataCount?: number;
 }
 
@@ -147,6 +148,7 @@ export const useApi = <RT, Paginate extends boolean = false>(
             statusCode: status,
             notAuthorized: status === httpStatuses.notAuthorized,
             notVerified: status === httpStatuses.notVerified,
+            notFound: status === httpStatuses.notFound,
             dataCount,
         });
         if (error && status <= 500) {

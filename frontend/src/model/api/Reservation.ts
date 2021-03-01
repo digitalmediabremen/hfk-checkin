@@ -1,8 +1,7 @@
 import { Attendance, BaseProfile } from "./MyProfile";
+import Resource from "./Resource";
 
-interface Resource {}
-
-type ReservationState =
+export type ReservationState =
     | "created"
     | "cancelled"
     | "confirmed"
@@ -26,7 +25,7 @@ export default interface Reservation {
     end: Date;
     resource_uuid: string;
 
-    attendees: Attendance[] | undefined;
+    attendees?: Attendance[];
     number_of_extra_attendees?: number;
     message?: string | null;
     purpose?: ReservationPurpose | null;

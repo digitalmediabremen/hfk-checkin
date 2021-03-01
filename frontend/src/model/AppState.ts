@@ -17,6 +17,7 @@ export interface AppState {
     highlightCheckinById?: number; // id
     // reservation object returned from api on successful request
     reservation?: Reservation;
+    showReservationSuccessful?: boolean;
     // template object from hich forms retrieve and write data.
     reservationRequest?: NewReservationBlueprint;
     // validation object, updated on every
@@ -57,16 +58,24 @@ export type AppAction =
           type: "highlightedCheckinWasDisplayed";
       }
     | {
-          type: "readReservationFromLocalStorage";
+          type: "updateReservationRequest";
+          reservation: NewReservationBlueprint | undefined;
       }
     | {
-          type: "updateReservation";
-          reservation: NewReservationBlueprint | undefined;
+          type: "updateReservationRequestTemplate";
+          reservation: NewReservation | undefined;
       }
     | {
           type: "reservationSuccessful";
           reservationRequestTemplate: NewReservation;
-          reservation: Reservation
+          reservation: Reservation;
+      }
+    | {
+          type: "hideReservationSuccessful";
+      }
+    | {
+          type: "updateReservation";
+          reservation: Reservation;
       }
     | {
           type: "subPageTransitionDirection";

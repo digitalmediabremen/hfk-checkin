@@ -16,6 +16,7 @@ export interface FormElementBaseProps {
     noPadding?: boolean;
     zIndex?: number;
     maxHeight?: string;
+    dotted?: boolean;
 }
 
 const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
@@ -33,6 +34,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     noPadding,
     maxHeight,
     zIndex,
+    dotted
 }) => {
     const ComponentType = componentType || "div";
     const outline = !noOutline;
@@ -94,6 +96,10 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     touch-action: manipulation;
                 }
 
+                .form-element-base.outline.dotted {
+                    border-style: dotted
+                }
+
                 .form-element-base.interactable:active {
                     transform: scale(0.98);
                 }
@@ -125,6 +131,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                 onClick={onClick}
                 className={classNames("form-element-base", className, {
                     outline,
+                    dotted,
                     primary,
                     interactable: !disabled && onClick,
                     disabled: disabled,

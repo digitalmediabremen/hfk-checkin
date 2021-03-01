@@ -34,7 +34,7 @@ const { styles, className } = css.resolve`
     // start
 
     .page-animation > :global(.page-wrapper) {
-        transition: transform 300ms;
+        transition: transform 1000ms;
         will-change: transform, z-index;
     }
 
@@ -115,7 +115,7 @@ const PageTransition: FunctionComponent<PageAnimationProps> = ({
             <TransitionGroup className={direction} component="div" appear>
                 <CSSTransition
                     key={childKey}
-                    timeout={300}
+                    timeout={1000}
                     mountOnEnter={true}
                     unmountOnExit={true}
                 >

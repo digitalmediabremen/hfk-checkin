@@ -1,5 +1,7 @@
 import { TypeFormatFlags } from "ts-morph";
 import Reservation from "../model/api/Reservation";
+import Resource from "../model/api/Resource";
+import Unit from "../model/api/Unit";
 
 export function empty<TValue>(
     value: TValue | null | undefined
@@ -33,8 +35,8 @@ type tm = {
     string: string;
 };
 
-export function assertNever(t: never, errorMessage: string): never {
-    throw new Error(errorMessage);
+export function assertNever(t: never, errorMessage?: string): never {
+    throw new Error(errorMessage || `exhaustion check failed. "${t}" is not covered.`);
 }
 
 export type DeepPartial<T> = {
@@ -48,8 +50,6 @@ type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends <
 >() => T extends Y ? 1 : 2
     ? A
     : B;
-
-export type NonNullableWritableKeys<K> = WritableKeys<NonNullable<K>>;
 
 type CopyOptional<ForKeys extends string | number | symbol, O> = {
     [K in keyof O]: K extends ForKeys
@@ -67,17 +67,27 @@ export type WritableKeys<T> = {
     >;
 }[keyof T];
 
-type Without<T, V, WithNevers = {
-  [K in keyof T]: Exclude<T[K], undefined> extends V ? never 
-  : (T[K] extends Record<string, unknown> ? Without<T[K], V> : T[K])
-}> = Pick<WithNevers, {
-  [K in keyof WithNevers]: WithNevers[K] extends never ? never : K
-}[keyof WithNevers]>
+type Without<
+    T,
+    V,
+    WithNevers = {
+        [K in keyof T]: Exclude<T[K], undefined> extends V
+            ? never
+            : T[K] extends Record<string, unknown>
+            ? Without<T[K], V>
+            : T[K];
+    }
+> = Pick<
+    WithNevers,
+    {
+        [K in keyof WithNevers]: WithNevers[K] extends never ? never : K;
+    }[keyof WithNevers]
+>;
 
-export type Writable<T extends {} | undefined> = Without<CopyOptional<
-    WritableKeys<NonNullable<T>>,
-    NonNullable<T>
->, never>;
+export type Writable<T extends {} | undefined> = Without<
+    CopyOptional<WritableKeys<NonNullable<T>>, NonNullable<T>>,
+    never
+>;
 
 export type DeepWritable<T> = Writable<
     {

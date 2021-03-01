@@ -9,7 +9,7 @@ import { SetPersonSubpageProps } from "./SetPersonSubpage";
 
 interface SubpageListProps {}
 
-const createDynamicPage = <T extends {}>(func: () => any) =>
+export const createDynamicPage = <T extends {}>(func: () => any) =>
     (dynamic(func, {
         loading: () => <LoadingScreen key="loading" />,
         ssr: false,
