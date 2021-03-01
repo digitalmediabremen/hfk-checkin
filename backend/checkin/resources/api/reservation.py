@@ -785,7 +785,7 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
             'attribute on the view correctly.' %
             (self.__class__.__name__, lookup_url_kwarg)
         )
-        filter_kwargs = {self.lookup_field + '__startswith': self.kwargs[lookup_url_kwarg]}
+        filter_kwargs = {self.lookup_field + '__istartswith': self.kwargs[lookup_url_kwarg]}
         try:
             obj = get_object_or_404(queryset, **filter_kwargs)
         except MultipleObjectsReturned:
