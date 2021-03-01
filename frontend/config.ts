@@ -1,3 +1,4 @@
+import { buildSubPageUrl, UseSubPageConfig } from "./components/api/useSubPage";
 import { getHomeUrl } from "./features";
 import { notEmpty } from "./src/util/TypeUtil";
 
@@ -13,18 +14,12 @@ export const apiUrl = `${uri}/api`;
 export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
 
 export const httpStatuses = {
+    notFound: 404,
     notAuthorized: 403,
     notVerified: 401,
     alreadyCheckedIn: 202,
     unprocessable: 500,
 } as const;
-
-function buildSubPageUrl(subPage?: string, param?: string) {
-    let url = "/request";
-    if (subPage) url = `${url}?${subPage}`;
-    if (notEmpty(param)) url = `${url}=${param}`;
-    return url;
-}
 
 export const appUrls = {
     home: getHomeUrl(),
@@ -44,23 +39,26 @@ export const appUrls = {
         `/checkout/${checkinId}`,
     ],
     reservation: (reservationId: string): [string, string] => [
-        "/request/[reservationId]",
-        `/request/${reservationId}`,
+        "/reservation/[reservationId]",
+        `/reservation/${reservationId}`,
     ],
-    request: buildSubPageUrl,
+    request: (subPageId?: string, param?: string) => buildSubPageUrl("/request", subPageId, param),
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
 } as const;
 
 export const requestSubpages = {
-    "time": {},
-    "resource": {},
-    "attendees": {},
-    "attendee-set": {},
-    "purpose": {},
-    "message": {},
-    "resource-list": {}
+    urlProvider: appUrls.request,
+    subpages: {
+        time: {},
+        resource: {},
+        attendees: {},
+        "attendee-set": {},
+        purpose: {},
+        message: {},
+        "resource-list": {},
+    },
 } as const;
 
 export const production = process.env.NODE_ENV === "production";

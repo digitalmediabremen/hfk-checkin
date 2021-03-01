@@ -1,22 +1,18 @@
-import MyProfile, {
-    ProfileUpdate,
-} from "../../src/model/api/MyProfile";
+import "json.date-extensions";
 import * as config from "../../config";
-import { NextPageContext } from "next";
-import Location from "../../src/model/api/Location";
-import { ServerResponse } from "http";
 import Checkin, {
     CheckinOrigin,
     LastCheckin,
 } from "../../src/model/api/Checkin";
-import validateProfile from "../../src/model/api/Profile.validator";
-import validateReservation from "../../src/model/api/Reservation.validator";
-import validateResource from "../../src/model/api/Resource.validator";
-
-import Reservation from "../../src/model/api/Reservation";
-import Resource from "../../src/model/api/Resource";
-import { notEmpty } from "../../src/util/TypeUtil";
+import Location from "../../src/model/api/Location";
+import MyProfile, { ProfileUpdate } from "../../src/model/api/MyProfile";
 import NewReservation from "../../src/model/api/NewReservation";
+import validateProfile from "../../src/model/api/Profile.validator";
+import Reservation from "../../src/model/api/Reservation";
+import validateReservation from "../../src/model/api/Reservation.validator";
+import Resource from "../../src/model/api/Resource";
+import validateResource from "../../src/model/api/Resource.validator";
+import { notEmpty } from "../../src/util/TypeUtil";
 
 export type ApiResponse<T> =
     | {
@@ -61,6 +57,11 @@ const toQueryString = (params?: RequestParameters) => {
     }, "");
 };
 
+const parseJson = <T>(item: string) => {
+    // @ts-ignore
+    return JSON.parseWithDate(item);
+};
+
 export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     endpoint: string,
     requestData: RequestBody,
@@ -82,7 +83,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         ...otherRequestData,
     })
         .then(async (response) => ({
-            result: ((await response?.json?.()) as unknown) as
+            result: (parseJson(await response.text()) as unknown) as
                 | ApiResponse<ResultType>
                 | undefined,
             status: response.status,
@@ -118,7 +119,10 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         .then((result) => {
             if (!!responseTypeGuard) {
                 console.debug(`Check Model for endpoint "${endpoint}"`);
-                responseTypeGuard(result.data);
+                const dateWithDateStrings = JSON.parse(
+                    JSON.stringify(result.data)
+                );
+                responseTypeGuard(dateWithDateStrings);
             }
             return result;
         })

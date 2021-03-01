@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../components/common/Page";
+import Layout from "../components/common/Layout";
 import Title from "../components/common/Title";
 import { useTranslation } from "../localization";
 

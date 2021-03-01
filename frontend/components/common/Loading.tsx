@@ -121,6 +121,8 @@ export const LoadingInline = ({
                         position: relative;
                         padding: 0px 1.25rem;
                         transform: scale(0.7);
+                        text-align: left;
+                        margin-left: -10px;
                     }
                 `}</style>
                 <span>

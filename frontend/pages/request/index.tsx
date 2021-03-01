@@ -13,7 +13,7 @@ import { requestSubpages } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import useReservationState, {
-    useReservation,
+    useReservationRequest,
 } from "../../src/hooks/useReservationState";
 import useReservationPurposeText from "../../src/hooks/useReservationPurposeMessage";
 import useValidation from "../../src/hooks/useValidation";
@@ -25,16 +25,14 @@ import {
     smallerThan,
 } from "../../src/util/DateTimeUtil";
 import useSubmitReservation from "../../src/hooks/useSubmitReservation";
+import { DotPulse, LoadingInline } from "../../components/common/Loading";
+import { timeSpan } from "../../src/util/TimeFormatUtil";
 
 const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
     if (!start || !end) return undefined;
-    const overlap = smallerThan(
-        createTime(end.getHours(), end.getMinutes()),
-        createTime(start.getHours(), start.getMinutes())
-    );
     return [
         getFormattedDate(start, "de") || "",
-        `${fromTime(start)} — ${fromTime(end)} ${overlap ? "(+1 Tag)" : ""}`,
+        timeSpan(start, end),
     ];
 };
 
@@ -49,7 +47,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
 
     const ValidationIcon = <AlertCircle />;
 
-    const { reservation } = useReservation();
+    const { reservation } = useReservationRequest();
     const {
         attendees,
         number_of_extra_attendees: extraAttendees,
@@ -60,13 +58,15 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
         message: comment,
     } = reservation;
 
-    const submit = useSubmitReservation();
+    const { submit, loading } = useSubmitReservation();
 
     const purposeLabel = useReservationPurposeText();
 
     const [phoneCallback, setPhoneCallback] = useReservationState(
         "agreed_to_phone_contact"
     );
+
+    const LoadingIcon = <LoadingInline invertColor loading={loading} />
 
     return (
         <Layout
@@ -87,7 +87,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 label={t("Raum auswählen")}
                 shortLabel={t("Raum")}
                 arrow
-                icon={
+                actionIcon={
                     hasError("missingResourcePermissions") &&
                     hasError("needsExceptionReason") &&
                     ValidationIcon
@@ -100,7 +100,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 value={presentTimeLabel(start, end)}
                 shortLabel={t("Zeit")}
                 arrow
-                icon={
+                actionIcon={
                     hasError("exceedsBookableRange") &&
                     hasError("needsExceptionReason") &&
                     ValidationIcon
@@ -133,7 +133,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 label={t("Buchungsgrund")}
                 shortLabel={t("Grund")}
                 arrow
-                icon={hasError("needsExceptionReason") && ValidationIcon}
+                actionIcon={hasError("needsExceptionReason") && ValidationIcon}
                 extendedWidth
                 maxRows={2}
             />
@@ -159,7 +159,11 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 )}
                 bottomSpacing={3}
             />
-            <NewButton primary onClick={submit}>
+            <NewButton
+                primary
+                onClick={submit}
+                iconRight={LoadingIcon}
+            >
                 {t("Anfragen")}
             </NewButton>
         </Layout>

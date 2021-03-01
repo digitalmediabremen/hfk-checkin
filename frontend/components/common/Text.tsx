@@ -4,16 +4,18 @@ import theme from "../../styles/theme";
 interface TextProps {
     paragraph?: true;
     emphasis?: true;
+    bottomSpacing?: number
 }
 
-const Text: React.FunctionComponent<TextProps> = ({children, paragraph, emphasis}) => {
+const Text: React.FunctionComponent<TextProps> = ({children, paragraph, emphasis, bottomSpacing}) => {
     const Element = paragraph ? "p" : "span";
     
     return <>
         <style jsx>{`
             color: ${emphasis ? "black" : theme.primaryColor};
             display: inline-block;
-            line-height: 1.4em;
+            line-height: 1.25em;
+            margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
             
             p {
                 margin: 0;

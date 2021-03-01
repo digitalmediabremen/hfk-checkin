@@ -18,7 +18,7 @@ export default function useLocalStorage<T extends Object>(
 
     useEffect(() => {
         updateFirstRender();
-        load();
+        load(object);
     }, []);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ export default function useLocalStorage<T extends Object>(
         persist();
     }, [object, firstRender]);
 
-    const load = () => {
+    const load = useCallback((object: T | undefined) => {
         try {
             // todo: fix
             // parse ones without dates
@@ -50,7 +50,7 @@ export default function useLocalStorage<T extends Object>(
             // delete invalid reservation item
             localStorage.removeItem(key);
         }
-    };
+    }, []);
 
     const persistImmediate = useCallback(() => {
         console.log(`saved "${key}" to local-storage`);

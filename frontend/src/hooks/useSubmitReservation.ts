@@ -5,16 +5,14 @@ import { updateReservationRequest } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { appUrls } from "../../config";
 import NewReservation from "../model/api/NewReservation";
-import validate from "../model/api/NewReservation.validator";
-import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import Reservation from "../model/api/Reservation";
-import { useReservation } from "./useReservationState";
+import { useReservationRequest } from "./useReservationState";
 import useStatus from "./useStatus";
 import useValidation from "./useValidation";
 
 export default function useSubmitReservation() {
     const api = useApi<Reservation>();
-    const { reservation, validateModel } = useReservation();
+    const { reservation, validateModel } = useReservationRequest();
     const { allErrors, hasErrors } = useValidation();
     const { appState, dispatch } = useAppState();
     const { setError } = useStatus();
@@ -47,5 +45,8 @@ export default function useSubmitReservation() {
         submitReservationRequest(validReservation);
     };
 
-    return submit;
+    return {
+        submit,
+        loading: api.state === "loading"
+    }
 }

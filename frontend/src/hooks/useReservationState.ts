@@ -2,10 +2,12 @@ import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
 import { ArrayLiteralExpression } from "ts-morph";
 import { useAppState } from "../../components/common/AppStateProvider";
+import NewReservation from "../model/api/NewReservation";
 import validate from "../model/api/NewReservation.validator";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import Reservation from "../model/api/Reservation";
 import { empty, notEmpty } from "../util/TypeUtil";
+import useParam from "./useParam";
 
 type ModifierFunction<I, O> = (value: I) => O;
 
@@ -18,30 +20,34 @@ type ConditionalReturnType<RF, WF, ApiDataType> = readonly [
 
 // type IfOrElse<Cond, Thi, Tha> = Cond extends undefined
 
-export function useReservation() {
+export function useReservationRequest() {
     const { appState } = useAppState();
-    const reservation = appState.reservationRequest || {}
+    const reservationFromAppstate = appState.reservationRequest || {};
 
     const _validate = () => {
         try {
             // unset resource
             // we dont want to submit it
             const data: NewReservationBlueprint = {
-                ...reservation,
+                ...reservationFromAppstate,
                 resource: undefined,
             };
             const reservationDateStrings = JSON.parse(JSON.stringify(data));
-            return validate(reservationDateStrings);
+            validate(reservationDateStrings);
+            return data as NewReservation;
         } catch (e) {
             throw e;
         }
-    }
+    };
 
-    return { reservation, validateModel: _validate};
+    return { reservation: reservationFromAppstate, validateModel: _validate };
 }
 
 export default function useReservationState<
-    ReservationFieldType extends keyof NewReservationBlueprint
+    ReservationFieldType extends Exclude<
+        keyof NewReservationBlueprint,
+        undefined
+    >
 >(field: ReservationFieldType) {
     const { appState, dispatch } = useAppState();
     const reservation = appState.reservationRequest;
@@ -50,7 +56,7 @@ export default function useReservationState<
         (value: NewReservationBlueprint[ReservationFieldType]) => {
             console.log(`reservation mutation: [${field}]:`, value);
             dispatch({
-                type: "updateReservation",
+                type: "updateReservationRequest",
                 reservation: {
                     ...reservation,
                     [field]: value,

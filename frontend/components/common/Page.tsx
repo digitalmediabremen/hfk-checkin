@@ -42,11 +42,14 @@ const Page: React.FunctionComponent<PageProps> = ({
         <>
             <style jsx>{`
                 .page {
-                    // min-height: ${height}px;
+                    min-height: ${height! - theme.topBarHeight}px;
+                    position: relative;
                     // height: 100%;
                     margin: 0 auto;
                     display: block;
-                    overflow: unset;
+                    overflow: visible;
+                    // fix adjecant margin top error
+                    border-top: 1px solid transparent;
                 }
                 .page-wrapper {
                     position: absolute;

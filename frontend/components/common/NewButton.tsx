@@ -65,6 +65,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
 
                 .icon {
                     flex: 0 0 ${theme.spacing(4)}px;
+                    width: ${theme.spacing(4)}px;
                 }
 
                 .icon.right {

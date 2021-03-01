@@ -5,7 +5,7 @@ import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { assertNever, empty } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/model/validateReservation";
 import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
-import ReservationPage from "../../pages/request/[reservationId]";
+import ReservationPage from "../../pages/reservation/[reservationId]";
 
 export const initialAppState: AppState = {
     initialized: false,
@@ -17,42 +17,6 @@ export const initialAppState: AppState = {
 const useReduceAppState = () =>
     useReducer<Reducer<AppState, AppAction>>((previousState, action) => {
         switch (action.type) {
-            case "readReservationFromLocalStorage":
-                const storageItem = localStorage.getItem("reservation");
-                if (empty(storageItem))
-                    return {
-                        ...previousState,
-                    };
-
-                try {
-                    // todo: fix
-                    // parse ones without dates
-                    const lsi = localStorage.getItem("reservation") || "";
-                    const check = JSON.parse(lsi) as unknown;
-                    const reservation = validate(check);
-                    // @ts-ignore
-                    const parseAgainWithDates = (JSON.parseWithDate(
-                        lsi
-                    ) as unknown) as NewReservationBlueprint;
-
-                    // now convert dates
-                    return {
-                        ...previousState,
-                        reservationRequest: parseAgainWithDates,
-                        reservationValidation: validateReservation(
-                            parseAgainWithDates
-                        ),
-                    };
-                } catch (e) {
-                    console.error(e);
-                    // delete invalid reservation item
-                    localStorage.removeItem("reservation");
-                    return {
-                        ...previousState,
-                    };
-                }
-            // assertReservation(maybeReservation);
-
             case "status":
                 return {
                     ...previousState,
@@ -94,7 +58,7 @@ const useReduceAppState = () =>
                     ...previousState,
                     highlightCheckinById: undefined,
                 };
-            case "updateReservation":
+            case "updateReservationRequest":
                 const newk = {
                     ...action.reservation,
                     resource_uuid: action.reservation?.resource?.uuid,
@@ -104,12 +68,28 @@ const useReduceAppState = () =>
                     reservationRequest: newk,
                     reservationValidation: validateReservation(newk || {}),
                 };
+            case "updateReservationRequestTemplate":
+                return {
+                    ...previousState,
+                    reservationRequestTemplate: action.reservation,
+                };
             case "reservationSuccessful":
                 return {
                     ...previousState,
+                    showReservationSuccessful: true,
                     reservation: action.reservation,
                     reservationRequestTemplate:
                         action.reservationRequestTemplate,
+                };
+            case "updateReservation":
+                return {
+                    ...previousState,
+                    reservation: action.reservation,
+                };
+            case "hideReservationSuccessful":
+                return {
+                    ...previousState,
+                    showReservationSuccessful: false,
                 };
             case "subPageTransitionDirection":
                 const { direction } = action;

@@ -38,10 +38,6 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
         _setAmount(value - 1);
     };
 
-    const [checked, setChecked] = useReservationState(
-        "exclusive_resource_usage"
-    );
-
     const { goForward } = useSubPage(requestSubpages);
 
     return (
@@ -60,12 +56,6 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                     "Gib die Anzahl der Studierenden an, die an dieser Buchung teilnehmen."
                 )}
             </Notice>
-            <FormCheckbox
-                value={checked || false}
-                label={t("Ich beanspruche den ganzen Raum")}
-                onChange={setChecked}
-                noBottomSpacing
-            />
             <Divider />
             <SectionTitle>{t("HfK externe Person anmelden")}</SectionTitle>
             {attendees?.map((profile, index) => (
@@ -82,7 +72,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                     ]}
                     onClick={() => goForward("attendee-set", `${index}`)}
                     extendedWidth
-                    icon={<X strokeWidth={2} />}
+                    actionIcon={<X strokeWidth={2} />}
                     onIconClick={() => {
                         const c = window.confirm(
                             `${t("Delete")} "${profile.first_name} ${

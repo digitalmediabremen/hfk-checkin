@@ -3,6 +3,8 @@ import useDelayedCallback from "../../src/hooks/useDelayedCallback";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
 import useSafe from "../../src/hooks/useLocalStorage";
 import validate from "../../src/model/api/NewReservationBlueprint.validator";
+import validateRequestTemplate from "../../src/model/api/NewReservation.validator";
+
 import { AppAction, AppState } from "../../src/model/AppState";
 import { notEmpty } from "../../src/util/TypeUtil";
 import useReduceAppState, { initialAppState } from "../api/useReduceAppState";
@@ -27,7 +29,7 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
         validate,
         (r) =>
             dispatch({
-                type: "updateReservation",
+                type: "updateReservationRequest",
                 reservation: r,
             })
     );
@@ -35,6 +37,12 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     useLocalStorage(
         "rrt",
         appState.reservationRequestTemplate,
+        validateRequestTemplate,
+        (r) =>
+            dispatch({
+                type: "updateReservationRequestTemplate",
+                reservation: r,
+            })
     );
 
     return <Provider value={{ appState, dispatch }}>{children}</Provider>;

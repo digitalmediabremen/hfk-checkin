@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef } from "react";
+import TimeInput from "react-time-input-polyfill";
 import TimeInputPolyfill from "react-time-input-polyfill";
 import css from "styled-jsx/css";
 import { useTranslation } from "../../localization";
@@ -59,7 +60,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
     ...formElementBaseProps
 }) => {
     const inputTimeString = value ? fromTime(value) : "";
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     const handleChange = (timeString: string) => {
         if (timeString === "") return onChange?.(undefined);

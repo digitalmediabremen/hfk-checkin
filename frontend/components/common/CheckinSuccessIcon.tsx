@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Airplay, Check, Clock, Circle, CheckCircle } from "react-feather";
 import theme from "../../styles/theme";
 
 interface CheckinSucessIconProps {}
@@ -19,13 +20,21 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                     margin-bottom: ${theme.spacing(4)}px;
                     transform: scale(0.9);
                     opacity: 0;
-                    animation: appear 0.1s 0.4s linear forwards;
+                    animation: appear .3s 1s linear forwards;
+                    color: ${theme.primaryColor};
                 }
 
-                #checkmark {
-                    stroke-dasharray: 1000;
-                    stroke-dashoffset: 1000;
-                    animation: dash 1.5s 0.5s linear forwards;
+                .icon > :global(svg > polyline), .icon > :global(svg > path) {
+                    stroke-dasharray: 100;
+                    stroke-dashoffset: -100;
+                    animation: dash 1s 0.5s linear forwards;
+                }
+
+                .center {
+                }
+
+                .center > :global(svg) {
+
                 }
 
                 @keyframes dash {
@@ -50,31 +59,17 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink"
             >
-                <g transform="translate(-59.000000, -125.000000)" fill="#fff">
-                    <g
-                        id="icon"
-                        transform="translate(62.000000, 128.000000)"
-                        strokeWidth="4"
-                        stroke="#D81830"
-                    >
-                        <circle
-                            strokeWidth="2"
-                            vectorEffect="non-scaling-stroke"
-                            id="circle"
-                            cx="96"
-                            cy="96"
-                            r="96"
-                        ></circle>
-                        <polyline
+                    <Clock width="100%" height="100%" strokeWidth=".5" />
+                        {/* <Airplay width="70%" height="70%" strokeWidth="1" vectorEffect="non-scaling-stroke" x="15%" y="15%" /> */}
+                        {/* <polyline
                             strokeWidth="4"
                             vectorEffect="non-scaling-stroke"
                             id="checkmark"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             points="56 97.0130902 83.9869098 125 139.98691 69"
-                        ></polyline>
-                    </g>
-                </g>
+                        ></polyline> */}
+                    
             </svg>
         </>
     );
