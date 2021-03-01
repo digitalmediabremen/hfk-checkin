@@ -41,6 +41,10 @@ const needsProfile = <P extends object>(
         if (!initialized) return;
 
         if (additionalData?.notAuthorized) {
+            dispatch({
+                type: "profile",
+                undefined,
+            });
             router.replace(appUrls.createProfile);
         } else if (profile && !profile.phone) {
             router.replace(appUrls.setprofile);
