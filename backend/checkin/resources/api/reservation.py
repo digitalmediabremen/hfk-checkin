@@ -182,7 +182,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         self.context.update({'resource': resource})
 
     def create(self, validated_data):
-        attendances_data = validated_data.pop('attendance_set')
+        attendances_data = validated_data.pop('attendance_set', [])
         reservation = super().create(validated_data)
         for attendance_data in attendances_data:
             attendance_data['reservation'] = reservation
@@ -285,7 +285,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         # remove attendances for Reservation validation
         # Reservation.attendees.set() or add() must be called explicitly and can not validate form **data
         # TODO validate attendances ?
-        attendance_set_data = data.pop('attendance_set')
+        attendance_set_data = data.pop('attendance_set', [])
 
         with transaction.atomic():
 
