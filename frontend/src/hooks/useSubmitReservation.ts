@@ -12,10 +12,9 @@ import useValidation from "./useValidation";
 
 export default function useSubmitReservation() {
     const api = useApi<Reservation>();
-    const { reservation, convertModel: validateModel } = useReservationRequest();
-    const { allErrors, hasErrors } = useValidation();
-    const { appState, dispatch } = useAppState();
-    const { setError } = useStatus();
+    const { convertModel: validateModel } = useReservationRequest();
+    const { userValidate } = useValidation();
+    const { dispatch } = useAppState();
     const router = useRouter();
 
     const submitReservationRequest = (r: NewReservation) =>
@@ -33,6 +32,7 @@ export default function useSubmitReservation() {
                 reservation: reservationObject,
                 reservationRequestTemplate: validReservationRequest,
             });
+            console.log("set to null")
             dispatch({
                 type: "updateReservationRequest",
                 reservation: undefined,
@@ -41,15 +41,11 @@ export default function useSubmitReservation() {
         []
     );
 
-    useEffect(() => {}, [api.state]);
-
     const submit = () => {
-        if (hasErrors) {
-            console.error("hasErrors");
-            setError(allErrors);
-            return;
-        }
         const validReservation = validateModel();
+        const isValid = userValidate();
+        if (!isValid) return;
+        
         (async () => {
             const result = await submitReservationRequest(validReservation);
             if (!result) return;

@@ -1,9 +1,19 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useAppState } from "../../components/common/AppStateProvider";
-import { ValidationType } from "../model/validateReservation";
+import { ValidationType } from "../util/ValidationUtil";
+import useStatus from "./useStatus";
 
 export default function useValidation() {
     const { appState } = useAppState();
+    const { setError } = useStatus();
+
+    const allErrors = appState.reservationValidation
+        .filter((r) => r.level === "error")
+        .map((r) => r.message)
+        .join(",");
+    const hasErrors = appState.reservationValidation.some(
+        (r) => r.level === "error"
+    );
 
     const has = useCallback(
         (type: ValidationType) =>
@@ -19,10 +29,21 @@ export default function useValidation() {
         [appState]
     );
 
+    // show errors to the user
+    const userValidate = () => {
+        if (hasErrors) {
+            setError(allErrors);
+            return false;
+        }
+
+        return true;
+    };
+
     return {
         hasError: has,
         getError: get,
-        allErrors: appState.reservationValidation.filter(r => r.level === "error").map(r => r.message).join(","),
-        hasErrors: appState.reservationValidation.some(r => r.level === "error")
-    }
+        allErrors,
+        hasErrors,
+        userValidate,
+    };
 }

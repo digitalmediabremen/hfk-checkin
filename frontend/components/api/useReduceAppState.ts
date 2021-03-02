@@ -3,7 +3,7 @@ import { Reducer, useCallback, useReducer } from "react";
 import { AppAction, AppState } from "../../src/model/AppState";
 import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { assertNever, empty } from "../../src/util/TypeUtil";
-import validateReservation from "../../src/model/validateReservation";
+import validateReservation from "../../src/util/ValidationUtil";
 import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
 import ReservationPage from "../../pages/reservation/[reservationId]";
 

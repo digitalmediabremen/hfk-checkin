@@ -98,7 +98,7 @@ export function additionalFilledReservationRequestFieldsString(
     return `sowie ${labels}`;
 }
 
-const insertIf = <Type extends any>(arr: Array<Type>, bool: boolean) =>
+export const insertIf = <Type extends any>(arr: Array<Type>, bool: boolean) =>
     bool ? arr : ([] as Array<Type>);
 
 export function newReservationRequestFromTemplate(
@@ -122,6 +122,8 @@ export function newReservationRequestFromTemplate(
     const newReservationRequest: NewReservationBlueprint = Object.fromEntries(
         selectedFields.map((fieldName) => [fieldName, reservation[fieldName]])
     );
+
+    console.log("new", newReservationRequest);
 
     return newReservationRequest;
 }

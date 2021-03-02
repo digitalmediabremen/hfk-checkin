@@ -8,12 +8,8 @@ import Unit from "../model/api/Unit";
 export default function useUnits() {
     const { request, ...other } = useApi<Unit[], false>();
 
-    useEffect(() => {
-        request(() => getUnitsRequest());
-    }, []);
-
     return {
-        requestResources: () => request(() => getUnitsRequest()),
+        requestUnits: () => request(() => getUnitsRequest()),
         ...other,
     };
 }
