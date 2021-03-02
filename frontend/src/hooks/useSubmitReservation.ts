@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useApi } from "../../components/api/ApiHooks";
 import { updateReservationRequest } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
@@ -21,19 +21,27 @@ export default function useSubmitReservation() {
     const submitReservationRequest = (r: NewReservation) =>
         api.request(() => updateReservationRequest(r));
 
-    useEffect(() => {
-        if (api.state === "success") {
-            const reservationObject = api.result;
+    const onSuccess = useCallback(
+        async (
+            reservationObject: Reservation,
+            validReservationRequest: NewReservation
+        ) => {
             const { identifier } = reservationObject;
-            const validReservation = validateModel();
+            await router.push(...appUrls.reservation(identifier));
             dispatch({
                 type: "reservationSuccessful",
                 reservation: reservationObject,
-                reservationRequestTemplate: validReservation,
+                reservationRequestTemplate: validReservationRequest,
             });
-            router.push(...appUrls.reservation(identifier));
-        }
-    }, [api.state, appState, reservation]);
+            dispatch({
+                type: "updateReservationRequest",
+                reservation: undefined,
+            });
+        },
+        []
+    );
+
+    useEffect(() => {}, [api.state]);
 
     const submit = () => {
         if (hasErrors) {
@@ -42,11 +50,15 @@ export default function useSubmitReservation() {
             return;
         }
         const validReservation = validateModel();
-        submitReservationRequest(validReservation);
+        (async () => {
+            const result = await submitReservationRequest(validReservation);
+            if (!result) return;
+            onSuccess(result, validReservation);
+        })();
     };
 
     return {
         submit,
-        loading: api.state === "loading"
-    }
+        loading: api.state === "loading",
+    };
 }

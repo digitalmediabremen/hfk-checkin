@@ -12,7 +12,11 @@ export type UseSubPageConfig = {
     urlProvider: (subpageName?: string, param?: string) => string;
 };
 
-export function buildSubPageUrl(base: string, subPage?: string, param?: string) {
+export function buildSubPageUrl(
+    base: string,
+    subPage?: string,
+    param?: string
+) {
     let url = base;
     if (notEmpty(subPage)) url = `${url}?${subPage}`;
     if (notEmpty(param)) url = `${url}=${param}`;
@@ -26,11 +30,13 @@ const useSubPage = <SubPagesMap extends Record<string, {}>>({
     const router = useRouter();
     const activeSubPage = Object.keys(router.query)[0];
     const { appState, dispatch } = useAppState();
+    const oldActiveSubPage = useRef("");
     const direction = appState.subPageTransitionDirection;
 
     const setActiveSubPage = useCallback(
         (subPage?: SubPagesType, param?: string) => {
             const url = urlProvider(subPage as string | undefined, param);
+            oldActiveSubPage.current = activeSubPage;
             router.push(url, url, {
                 shallow: true,
             });
@@ -48,7 +54,8 @@ const useSubPage = <SubPagesMap extends Record<string, {}>>({
     const subPageProps = useCallback(
         (subpage: SubPagesType, returnToSubPage?: SubPagesType) => {
             return {
-                active: subpage === activeSubPage,
+                active:
+                    subpage === activeSubPage,
                 onBack: (nextSubPage?: SubPagesType) => {
                     setDirection("left");
                     setActiveSubPage(nextSubPage || returnToSubPage);

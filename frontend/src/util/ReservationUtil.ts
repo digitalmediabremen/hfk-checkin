@@ -1,8 +1,6 @@
-import { assert } from "console";
 import { CheckCircle, Clock, MinusCircle, XCircle } from "react-feather";
-import { getCompletion } from "yargs";
 import NewReservation from "../model/api/NewReservation";
-import validate from "../model/api/NewReservationBlueprint.validator";
+import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import { ReservationState } from "../model/api/Reservation";
 import { assertNever } from "./TypeUtil";
 
@@ -51,7 +49,7 @@ const requestFieldLabelMap: MapToStringRecord<NewReservation> = {
     end: "Ende",
     message: "Nachricht",
     number_of_extra_attendees: "Weitere Teilnehmer",
-    purpose: "Grund"
+    purpose: "Grund",
 };
 
 export function additionalFilledReservationRequestFields(
@@ -93,7 +91,37 @@ export function additionalFilledReservationRequestFieldsString(
     res: NewReservation
 ) {
     const fields = additionalFilledReservationRequestFields(res);
-    const labels = fields.map(r => requestFieldLabelMap[r]).join(", ")
+    const labels = fields.map((r) => requestFieldLabelMap[r]).join(", ");
+
+    if (!labels) return "";
 
     return `sowie ${labels}`;
+}
+
+const insertIf = <Type extends any>(arr: Array<Type>, bool: boolean) =>
+    bool ? arr : ([] as Array<Type>);
+
+export function newReservationRequestFromTemplate(
+    reservation: NewReservation,
+    withTime: boolean,
+    withResource: boolean,
+    withAdditionalFields: boolean
+) {
+    const additionalFields = additionalFilledReservationRequestFields(
+        reservation
+    );
+    const resourceFields = resourceReservationRequestFields(reservation);
+    const timeFields = timeReservationRequestFields(reservation);
+
+    const selectedFields = [
+        ...insertIf(additionalFields, withAdditionalFields),
+        ...insertIf(resourceFields, withResource),
+        ...insertIf(timeFields, withTime),
+    ] as const;
+
+    const newReservationRequest: NewReservationBlueprint = Object.fromEntries(
+        selectedFields.map((fieldName) => [fieldName, reservation[fieldName]])
+    );
+
+    return newReservationRequest;
 }
