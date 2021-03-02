@@ -1,5 +1,5 @@
 import * as stringsim from "string-similarity";
-import { Node, Project } from "ts-morph";
+import { CallExpression, Node, Project } from "ts-morph";
 import yargs from "yargs";
 import colors from "colors";
 import * as ts from "typescript";
@@ -22,17 +22,55 @@ function reapplyDots(text: string) {
 
 function createDefinitionSet() {
     const f = project.getSourceFile("./localization/index.tsx");
-    const useTFunc = f?.getVariableDeclaration("useTranslation");
-    const tFuncRefs = useTFunc?.findReferencesAsNodes();
+    const useTFunc = f?.getVariableDeclarationOrThrow("useTranslation");
+    const _tFunc = f?.getFunctionOrThrow("_t");
+    const tFunc = useTFunc
+        ?.getDescendantsOfKind(ts.SyntaxKind.ShorthandPropertyAssignment)
+        .pop();
+    const tFuncRefs = tFunc?.findReferencesAsNodes();
+    const _tFuncRefs = _tFunc?.findReferencesAsNodes();
+
+    // console.log(tFuncRefs?.[0]);
     const tDefinitionSet = new Set<string>();
-    tFuncRefs?.map((p) => {
+
+    const relevantSourceFiles = new Set(
+        [...(tFuncRefs || []), ...(_tFuncRefs || [])]?.map((p) =>
+            p.getSourceFile()
+        )
+    );
+
+    relevantSourceFiles.forEach((file) => {
         let currentModule: string | undefined = undefined;
-        const r = p.getSourceFile().forEachDescendant((node, traversal) => {
-            const k = node.getKind();
-            // console.log("search file: ", )
-            // console.log(node.getText())
-            if (Node.isCallExpression(node)) {
+
+        const processTCall = (node: CallExpression<ts.CallExpression>) => {
+            const args = node.getArguments();
+            const tString = strip((args[2] || args[0]).getText());
+            // console.log(node.getArguments().map((a) => a.getText()));
+            tDefinitionSet.add(`${currentModule}.${saveDots(tString)}`);
+        };
+
+        const process_TCall = (node: CallExpression<ts.CallExpression>) => {
+            const args = node.getArguments();
+            const locale = strip(args[0].getText());
+            const inModule = strip(args[1].getText());
+            const tString = strip((args[4] || args[2]).getText());
+            tDefinitionSet.add(`${inModule}.${saveDots(tString)}`);
+        }
+
+        const processLater: CallExpression<ts.CallExpression>[] = [];
+
+        file.getDescendantsOfKind(ts.SyntaxKind.CallExpression)
+            .filter(
+                (n) =>
+                    n.getText().startsWith("useTranslation(") ||
+                    n.getText().startsWith("t(") ||
+                    n.getText().startsWith("_t(")
+            )
+            .forEach((node) => {
+                // console.log("search file: ", )
+                // console.log(node.getText())
                 const n = node.getText();
+
                 if (n.startsWith("useTranslation(")) {
                     const module = strip(
                         node.getArguments()?.[0]?.getText() || "common"
@@ -42,21 +80,29 @@ function createDefinitionSet() {
                 }
                 if (n.startsWith("t(")) {
                     if (currentModule === undefined) {
-                        throw `t() cannot be called without module context in ${p
-                            .getSourceFile()
-                            .getBaseName()}.
-                    \n make sure you never pass the t( function as an argument`;
+                        console.log(node.getText());
+                        processLater.push(node);
                     }
-                    const args = node.getArguments();
-                    const tString = strip((args[2] || args[0]).getText());
-                    // console.log(node.getArguments().map((a) => a.getText()));
-                    tDefinitionSet.add(`${currentModule}.${saveDots(tString)}`);
-                    traversal.skip();
+                    processTCall(node);
                 }
-            }
 
-            return undefined;
-        });
+                if (n.startsWith("_t(")) {
+                    process_TCall(node);
+                }
+            });
+
+        if (!currentModule && processLater.length > 0) {
+            throw "There a t() calls where a module context cannot be found.";
+            //     throw `t() cannot be called without module context in ${p
+            //         .getSourceFile()
+            //         .getBaseName()}.
+            // \nmake sure you never pass the t() function as an argument
+            // \n"${node.getText()}"`;
+        }
+
+        for (const node of processLater) {
+            processTCall(node);
+        }
     });
     return tDefinitionSet;
 }
@@ -173,7 +219,9 @@ function createNewTranslation(
             }
         });
         tDefinitionCopy.forEach((t) =>
-            consoleOutputObject.unmatchedDefinitions.push(`"${locale}.${t}"`)
+            consoleOutputObject.unmatchedDefinitions.push(
+                `"${locale}.${reapplyDots(t)}"`
+            )
         );
     });
 
@@ -208,24 +256,29 @@ function consoleNewFile(o: TranslationConsoleOutput) {
     console.log();
 }
 
-
 function consoleStatus(o: TranslationConsoleOutput) {
     _consoleHeader();
     if (o.unmatchedDefinitions.length > 0) {
-        console.log(colors.red(`${o.unmatchedDefinitions.length} unmatched definitions: `));
+        console.log(
+            colors.red(
+                `${o.unmatchedDefinitions.length} unmatched definitions: `
+            )
+        );
         o.unmatchedDefinitions.forEach((s) => console.log(s));
         console.log();
         return;
     }
 
     if (o.matchedDefinitions.length > 0) {
-        console.log(colors.red(`${o.matchedDefinitions.length} changed definitions: `));
+        console.log(
+            colors.red(`${o.matchedDefinitions.length} changed definitions: `)
+        );
         o.matchedDefinitions.forEach((s) => console.log(s));
         console.log();
         return;
     }
 
-    console.log(colors.green("All translations ok."))
+    console.log(colors.green("All translations ok."));
 }
 
 function createConsoleOutputObject(): TranslationConsoleOutput {
@@ -233,7 +286,7 @@ function createConsoleOutputObject(): TranslationConsoleOutput {
         unmatchedDefinitions: [],
         unresolvedTranslations: [],
         matchedDefinitions: [],
-        output: ""
+        output: "",
     };
 }
 
@@ -255,7 +308,11 @@ const newTranslationFile = createNewTranslation(
 
 if (options.quiet) {
     consoleStatus(coo);
-    if (coo.unmatchedDefinitions.length > 0 || coo.matchedDefinitions.length > 0) process.exit(1);
+    if (
+        coo.unmatchedDefinitions.length > 0 ||
+        coo.matchedDefinitions.length > 0
+    )
+        process.exit(1);
 } else {
     consoleNewFile(coo);
 }

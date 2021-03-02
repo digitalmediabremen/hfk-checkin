@@ -5,6 +5,7 @@ import {
     smallerThan,
 } from "./DateTimeUtil";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
+import { TranslationFunction, _t } from "../../localization";
 
 export type ValidationType =
     | "normal"
@@ -22,8 +23,10 @@ export interface ValidationObject {
 
 export type ReservationValidation = Array<ValidationObject>;
 
+// @translation-module: hallo
 export default function validateReservation(
-    reservation: NewReservationBlueprint
+    reservation: NewReservationBlueprint,
+    locale: string
 ) {
     const v: ReservationValidation = [];
     if (reservation.begin && reservation.end) {
@@ -41,14 +44,14 @@ export default function validateReservation(
                 v.push({
                     level: "error",
                     type: "needsExceptionReason",
-                    message: "Ein Ausnahmegrund muss angegeben werden.",
+                    message: _t(locale, "request", "Ein Ausnahmegrund muss angegeben werden."),
                 });
             }
             if (reservation.purpose === "OTHER" && !reservation.message) {
                 v.push({
                     level: "error",
                     type: "needsExceptionReason",
-                    message: "Ein Ausnahmegrund muss angegeben werden.",
+                    message: _t(locale, "request", "Ein Ausnahmegrund muss angegeben werden."),
                 });
             }
         }
