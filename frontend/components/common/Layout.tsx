@@ -13,7 +13,6 @@ import css from "styled-jsx/css";
 import { isClient } from "../../config";
 import features from "../../features";
 import { TransitionDirection } from "../../src/model/AppState";
-import { useAppState } from "./AppStateProvider";
 import EnterCodeButton from "./EnterCodeButton";
 import Footer from "./Footer";
 import Page from "./Page";
@@ -105,7 +104,7 @@ const PageTransition: FunctionComponent<PageAnimationProps> = ({
         if (ref.current) {
             ref.current.style.height = `${height}px`;
         }
-    }, [height])
+    }, [height]);
 
     if (!show) return <>{children}</>;
 
@@ -141,9 +140,6 @@ const Layout: FunctionComponent<LayoutProps> = ({
     subPages,
     direction,
 }) => {
-    useEffect(() => {
-        console.log("active subpage now :", activeSubPage);
-    }, [activeSubPage]);
     return (
         <PageTransition
             show={subPages !== undefined}

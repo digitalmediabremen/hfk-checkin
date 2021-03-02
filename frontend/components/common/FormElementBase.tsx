@@ -12,11 +12,13 @@ export interface FormElementBaseProps {
     noOutline?: boolean;
     className?: string;
     narrow?: boolean;
+    superNarrow?: boolean;
     disabled?: boolean;
     noPadding?: boolean;
     zIndex?: number;
     maxHeight?: string;
     dotted?: boolean;
+    adaptiveWidth?: boolean;
 }
 
 const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
@@ -29,12 +31,14 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     noOutline,
     primary,
     narrow,
+    superNarrow,
     className,
     disabled,
     noPadding,
     maxHeight,
     zIndex,
-    dotted
+    dotted,
+    adaptiveWidth,
 }) => {
     const ComponentType = componentType || "div";
     const outline = !noOutline;
@@ -67,11 +71,17 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
 
                     padding: 0;
 
-                    min-height: ${theme.spacing(narrow ? 5 : 7)}px;
+                    min-height: ${theme.spacing(
+                        superNarrow ? 4 : narrow ? 5 : 7
+                    )}px;
                     color: ${theme.primaryColor};
                     background-color: ${theme.secondaryColor};
 
                     user-select: none;
+                }
+
+                .form-element-base.adaptive-width {
+                    width: fit-content;
                 }
 
                 .form-element-base.disabled {
@@ -97,7 +107,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                 }
 
                 .form-element-base.outline.dotted {
-                    border-style: dotted
+                    border-style: dotted;
                 }
 
                 .form-element-base.interactable:active {
@@ -137,6 +147,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     disabled: disabled,
                     padding: !noPadding,
                     scroll: !!maxHeight,
+                    "adaptive-width": adaptiveWidth,
                 })}
             >
                 {children}

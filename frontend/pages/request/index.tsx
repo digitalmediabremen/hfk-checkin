@@ -27,6 +27,7 @@ import {
 import useSubmitReservation from "../../src/hooks/useSubmitReservation";
 import { DotPulse, LoadingInline } from "../../components/common/Loading";
 import { timeSpan } from "../../src/util/TimeFormatUtil";
+import useLocalStorage from "../../src/hooks/useLocalStorage";
 
 const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
     if (!start || !end) return undefined;
@@ -65,6 +66,9 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const [phoneCallback, setPhoneCallback] = useReservationState(
         "agreed_to_phone_contact"
     );
+    useLocalStorage("atpc", phoneCallback, undefined, (set) => {
+        setPhoneCallback(set);
+    });
 
     const LoadingIcon = <LoadingInline invertColor loading={loading} />
 

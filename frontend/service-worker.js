@@ -167,7 +167,41 @@ registerRoute(
             }),
             new ExpirationPlugin({
                 maxEntries: 50,
-                purgeOnQuotaError: !0,
+                purgeOnQuotaError: true,
+            }),
+        ],
+    })
+)
+
+// cache resource requests
+registerRoute(
+    ({ request }) => request.url.match(/api\/space\//i) !== null,
+    new StaleWhileRevalidate({
+        cacheName: "api-cached",
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxEntries: 200,
+                purgeOnQuotaError: true,
+            }),
+        ],
+    })
+)
+
+// cache unit requests
+registerRoute(
+    ({ request }) => request.url.match(/api\/building\//i) !== null,
+    new StaleWhileRevalidate({
+        cacheName: "api-cached",
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxEntries: 10,
+                purgeOnQuotaError: true,
             }),
         ],
     })

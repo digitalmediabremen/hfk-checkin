@@ -33,7 +33,6 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
         reservationSuccess,
     } = useReservation(id);
 
-    console.log("reservation after done", reservation)
     const { t } = useTranslation();
 
     const { direction, activeSubPage, subPageProps, handlerProps } = useSubPage(

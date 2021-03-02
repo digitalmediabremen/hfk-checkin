@@ -30,6 +30,8 @@ export function useReservationRequest() {
             const data: NewReservationBlueprint = {
                 ...reservationFromAppstate,
                 resource: undefined,
+                selectedUnitId: undefined,
+                units: undefined
             };
             const reservationDateStrings = JSON.parse(JSON.stringify(data));
             validate(reservationDateStrings);
@@ -39,7 +41,7 @@ export function useReservationRequest() {
         }
     };
 
-    return { reservation: reservationFromAppstate, validateModel: _validate };
+    return { reservation: reservationFromAppstate, convertModel: _validate };
 }
 
 export default function useReservationState<
@@ -52,20 +54,21 @@ export default function useReservationState<
     const reservation = appState.reservationRequest;
     const value = appState.reservationRequest?.[field];
     const setHandler = useCallback(
-        (value: NewReservationBlueprint[ReservationFieldType]) => {
-            console.log(`reservation mutation: [${field}]:`, value);
+        (newValue: NewReservationBlueprint[ReservationFieldType]) => {
+            if (value === newValue) return;
+            console.log(`reservation mutation: [${field}]:`, newValue);
             dispatch({
                 type: "updateReservationRequest",
                 reservation: {
                     ...reservation,
-                    [field]: value,
+                    [field]: newValue,
                 },
             });
         },
         [reservation]
     );
 
-    return [value, setHandler] as const;
+    return [value, setHandler, reservation] as const;
 }
 
 type ArrayOnly<T> = {
