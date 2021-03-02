@@ -6,12 +6,14 @@ import { assertNever, empty } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/util/ValidationUtil";
 import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
 import ReservationPage from "../../pages/reservation/[reservationId]";
+import { defaultLocale } from "../../config";
 
 export const initialAppState: AppState = {
     initialized: false,
     disableNextUpdate: false,
     subPageTransitionDirection: "right",
     reservationValidation: [],
+    currentLocale: "en",
 };
 
 const useReduceAppState = () =>
@@ -64,7 +66,10 @@ const useReduceAppState = () =>
                     return {
                         ...previousState,
                         reservationRequest: undefined,
-                        reservationValidation: validateReservation({}),
+                        reservationValidation: validateReservation(
+                            {},
+                            previousState.currentLocale
+                        ),
                     };
                 }
 
@@ -86,7 +91,8 @@ const useReduceAppState = () =>
                     ...previousState,
                     reservationRequest: withUpdatedComputeds,
                     reservationValidation: validateReservation(
-                        withUpdatedComputeds
+                        withUpdatedComputeds,
+                        previousState.currentLocale
                     ),
                 };
                 console.log("updated reservation state", withUpdatedValidation);
@@ -122,6 +128,15 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     subPageTransitionDirection: direction,
+                };
+            case "updateLocale":
+                return {
+                    ...previousState,
+                    currentLocale: action.locale,
+                    reservationValidation: validateReservation(
+                        previousState.reservationRequest || {},
+                        action.locale
+                    ),
                 };
             default:
                 assertNever(action, `Unhandled state change "${action!.type}"`);
