@@ -5,6 +5,7 @@ import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useResources from "../../../src/hooks/useResources";
+import useStatus from "../../../src/hooks/useStatus";
 import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
@@ -28,6 +29,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const { t } = useTranslation("request-resource");
     const queryResourceRequest = useResources(false);
     const unitsApi = useUnits();
+    const { setError } = useStatus();
     const { goForward } = useSubPage(requestSubpages);
     const [selectedResource, setSelectedResource] = useReservationState(
         "resource"
@@ -47,9 +49,8 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const { hasError } = useValidation();
 
-
     useEffect(() => {
-        const timer = window.setTimeout(() =>  inputRef.current?.focus(), 300);
+        const timer = window.setTimeout(() => inputRef.current?.focus(), 300);
         return () => window.clearTimeout(timer);
     }, []);
 
@@ -63,12 +64,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         setUnits(unitsApi.result);
     }, [unitsApi.state]);
 
-
     const resetInputField = () => {
         setSelectedResource(undefined);
         queryResourceRequest.reset();
         setSearchValue("");
-        const timer = window.setTimeout(() =>  inputRef.current?.focus(), 10);
+        const timer = window.setTimeout(() => inputRef.current?.focus(), 10);
         return () => window.clearInterval(timer);
     };
 
@@ -78,6 +78,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
     const handleSetUnit = (unitId: string) => {
         setSelectedUnitId(unitId);
+        setError("test");
         resetInputField();
     };
 

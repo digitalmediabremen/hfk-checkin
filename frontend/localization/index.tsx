@@ -2,7 +2,7 @@ import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { createContext, SFC, useCallback, useContext } from "react";
+import { createContext, SFC, useCallback, useContext, useEffect } from "react";
 import {
     appUrls,
     defaultLocale,
@@ -13,6 +13,7 @@ import {
 } from "../config";
 import translation from "./translation";
 import { config } from "process";
+import { useAppState } from "../components/common/AppStateProvider";
 
 export type Translation = Record<
     string,
@@ -23,7 +24,9 @@ export type ConvertRequestPageNames<T extends string> = `request-${T}`;
 export type TranslationModules =
     | Partial<keyof typeof appUrls>
     | "common"
-    | Partial<ConvertRequestPageNames<keyof typeof requestSubpages["subpages"]>>;
+    | Partial<
+          ConvertRequestPageNames<keyof typeof requestSubpages["subpages"]>
+      >;
 
 export const localeContext = createContext<{ locale: string }>({
     locale: defaultLocale,
@@ -50,44 +53,63 @@ export const LocaleProvider: SFC<{ locale: string }> = ({
     locale,
     children,
 }) => {
+    const {dispatch} = useAppState();
+    useEffect(() => {
+        dispatch({type: "updateLocale", locale});
+    }, [locale]); 
     return <Provider value={{ locale }}>{children}</Provider>;
 };
 
 type PatternInput = string | number;
 
+export type TFunction = (
+    s: string,
+    data?: Record<string, PatternInput>,
+    alternativeId?: string
+) => string;
+
+export type TranslationFunction = (
+    locale: string,
+    inModule: TranslationModules,
+    s: string,
+    data?: Record<string, PatternInput>,
+    alternativeId?: string
+) => string;
+
+export function _t(
+    locale: string,
+    inModule: TranslationModules,
+    s: string,
+    data?: Record<string, PatternInput>,
+    alternativeId?: string
+) {
+    const id = alternativeId || s;
+    const replace = (string?: string) =>
+        string?.replace(
+            /{([A-Za-z]+)}/g,
+            (string: string, match: string) =>
+                `${!!data && data[match] !== undefined ? data[match] : string}`
+        );
+    if (locale === baseLocale) return replace(s)!;
+    const translatedString =
+        replace(translation[locale]?.[inModule]?.[id]) ||
+        replace(translation[locale]?.["common"]?.[id]);
+    const translationId = `${locale}.${inModule}.["${id}"]${
+        alternativeId ? ` to "${s}"` : ""
+    }`;
+    if (production && translatedString === undefined)
+        console.error(`No translation for ${translationId} provided`);
+
+    return translatedString || translationId;
+}
+
 export const useTranslation = (inModule: TranslationModules = "common") => {
     let { locale } = useContext(localeContext);
     if (![baseLocale, ...Object.keys(translation)].includes(locale))
         locale = defaultLocale;
-    const t = useCallback(
-        (
-            s: string,
-            data?: Record<string, PatternInput>,
-            alternativeId?: string
-        ): string => {
-            const id = alternativeId || s;
-            const replace = (string?: string) =>
-                string?.replace(
-                    /{([A-Za-z]+)}/g,
-                    (string: string, match: string) =>
-                        `${
-                            !!data && data[match] !== undefined
-                                ? data[match]
-                                : string
-                        }`
-                );
-            if (locale === baseLocale) return replace(s)!;
-            const translatedString =
-                replace(translation[locale]?.[inModule]?.[id]) ||
-                replace(translation[locale]?.["common"]?.[id]);
-            const translationId = `${locale}.${inModule}.["${id}"]${
-                alternativeId ? ` to "${s}"` : ""
-            }`;
-            if (production && translatedString === undefined)
-                console.error(`No translation for ${translationId} provided`);
-
-            return translatedString || translationId;
-        },
+    const t: TFunction = useCallback(
+        (s, data?, alternativeId?) =>
+            _t(locale, inModule, s, data, alternativeId),
         []
     );
     return { locale, t };

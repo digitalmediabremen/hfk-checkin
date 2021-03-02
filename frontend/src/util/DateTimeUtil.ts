@@ -73,6 +73,11 @@ export const createTimeNow = (): Time => {
     return d;
 };
 
+export const createTimeFromDate = (v: Date): Time => {
+    const d = createTime(v.getHours(), v.getMinutes());
+    return d;
+};
+
 export const timeFromDateOrNow = (d?: Date) : Time => {
     if (empty(d)) return createTimeNow();
     return createTime(d?.getHours(), d?.getMinutes());

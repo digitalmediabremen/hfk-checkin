@@ -21,16 +21,19 @@ export type ApiResponse<T> =
           readonly detail: string;
           readonly results: undefined;
           readonly count: undefined;
+          readonly errors: string[]
       }
     | (T & {
           readonly detail: undefined;
           readonly count: undefined;
           readonly results: undefined;
+          readonly errors: undefined;
       })
     | {
           readonly results: T;
           readonly count: number;
           readonly detail: undefined;
+          readonly errors: undefined;
       };
 
 export type Response<ResultType extends Record<string, any> = {}> = {
