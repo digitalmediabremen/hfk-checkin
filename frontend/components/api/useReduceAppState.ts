@@ -59,15 +59,38 @@ const useReduceAppState = () =>
                     highlightCheckinById: undefined,
                 };
             case "updateReservationRequest":
-                const newk = {
+                if (action.reservation === undefined) {
+                    console.log("reset reservation state");
+                    return {
+                        ...previousState,
+                        reservationRequest: undefined,
+                        reservationValidation: validateReservation({}),
+                    };
+                }
+
+                const newReservationState = {
+                    ...previousState.reservationRequest,
                     ...action.reservation,
-                    resource_uuid: action.reservation?.resource?.uuid,
                 };
-                return {
+                const selectedUnitId =
+                    newReservationState.selectedUnitId ||
+                    newReservationState.resource?.unit?.uuid;
+                const resource_uuid = newReservationState.resource?.uuid;
+
+                const withUpdatedComputeds = {
+                    ...newReservationState,
+                    resource_uuid,
+                    selectedUnitId,
+                };
+                const withUpdatedValidation = {
                     ...previousState,
-                    reservationRequest: newk,
-                    reservationValidation: validateReservation(newk || {}),
+                    reservationRequest: withUpdatedComputeds,
+                    reservationValidation: validateReservation(
+                        withUpdatedComputeds
+                    ),
                 };
+                console.log("updated reservation state", withUpdatedValidation);
+                return withUpdatedValidation;
             case "updateReservationRequestTemplate":
                 return {
                     ...previousState,
@@ -77,9 +100,12 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     showReservationSuccessful: true,
-                    reservation: action.reservation,
-                    reservationRequestTemplate:
-                        action.reservationRequestTemplate,
+                    reservation: {
+                        ...action.reservation,
+                    },
+                    reservationRequestTemplate: {
+                        ...action.reservationRequestTemplate,
+                    },
                 };
             case "updateReservation":
                 return {
