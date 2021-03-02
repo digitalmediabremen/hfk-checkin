@@ -23,6 +23,10 @@ const DynamicAdditionalRequestSubPage = createDynamicPage(
     () => import("../../components/getin/subpages/AdditionalRequestSubPage")
 );
 
+function test(t: any) {
+    return t("adfs")
+}
+
 const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const [id] = useParam("reservationId");
 
@@ -44,6 +48,8 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
             } as const,
         }
     );
+
+    test(t);
 
     if (!id) return null;
 

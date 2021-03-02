@@ -62,7 +62,7 @@ export default function validateReservation(
             v.push({
                 level: "notice",
                 type: "missingResourcePermissions",
-                message: "Ein Ausnahmegrund muss angegeben werden.",
+                message: _t(locale, "request", "Ein Ausnahmegrund muss angegeben werden."),
             });
         }
     }
@@ -71,14 +71,14 @@ export default function validateReservation(
         v.push({
             level: "error",
             type: "missingFields",
-            message: "Du musst noch den Raum auswählen.",
+            message: _t(locale, "request", "Du musst noch den Raum auswählen."),
         });
     }
     if (!reservation.begin || !reservation.end) {
         v.push({
             level: "error",
             type: "missingFields",
-            message: "Du musst noch eine Zeit angeben.",
+            message: _t(locale, "request", "Du musst noch eine Zeit angeben."),
         });
     }
     return v;

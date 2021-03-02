@@ -42,10 +42,11 @@ export default function useSubmitReservation() {
     );
 
     const submit = () => {
-        const validReservation = validateModel();
         const isValid = userValidate();
         if (!isValid) return;
-        
+
+        const validReservation = validateModel();
+
         (async () => {
             const result = await submitReservationRequest(validReservation);
             if (!result) return;

@@ -26,6 +26,7 @@ export interface AppState {
     // template object from which a new request can be based on
     reservationRequestTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;
+    currentLocale: string;
 }
 
 export type AppAction =
@@ -80,4 +81,8 @@ export type AppAction =
     | {
           type: "subPageTransitionDirection";
           direction: TransitionDirection;
+      }
+    | {
+          type: "updateLocale";
+          locale: string;
       };
