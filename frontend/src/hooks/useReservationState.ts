@@ -23,7 +23,6 @@ type ConditionalReturnType<RF, WF, ApiDataType> = readonly [
 export function useReservationRequest() {
     const { appState } = useAppState();
     const reservationFromAppstate = appState.reservationRequest || {};
-
     const _validate = () => {
         try {
             // unset resource

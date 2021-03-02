@@ -96,8 +96,9 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         zIndex={2}
                     >
                         <FormInput
+                            autoFocus
                             value={searchValue}
-                            placeholder="Raum einfügen"
+                            placeholder={t("Raum auswählen")}
                             onChange={(e) => setSearchValue(e.target.value)}
                         />
 
@@ -153,25 +154,26 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                 {t("Raumübersicht öffnen")}
             </NewButton>
 
-            <FormCheckbox
-                value={checked || false}
-                label={t("Ich beanspruche den ganzen Raum")}
-                onChange={setChecked}
-                bottomSpacing={2}
-            />
-
             <Fade in={hasError("missingResourcePermissions")}>
                 <Notice
                     error
                     title={t("Der Raum {roomNumber} ist zugangsbeschränkt.", {
                         roomNumber: selectedResource?.display_name || "",
                     })}
+                    bottomSpacing={4}
                 >
                     {t(
                         "Wenn du trotzdem auf „Absenden“ klickst, geht deine Anfrage zur Bearbeitung an „[Person / RT / CO]“. Hinterlasse ihr/ihm am besten eine Notiz und erkläre, warum du in den Raum nutzen möchtest."
                     )}
                 </Notice>
             </Fade>
+
+            <FormCheckbox
+                value={checked || false}
+                label={t("Ich beanspruche den ganzen Raum")}
+                onChange={setChecked}
+                bottomSpacing={2}
+            />
 
             {!hasError("missingResourcePermissions") && (
                 <Notice>

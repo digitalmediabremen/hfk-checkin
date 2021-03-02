@@ -29,8 +29,8 @@ export type UseApiReturnType<RT, HasPagination extends boolean = false> = {
               request: () => Promise<Response<RT>>,
               offset?: number,
               limit?: number
-          ) => Promise<void>
-        : (request: () => Promise<Response<RT>>) => Promise<void>;
+          ) => Promise<RT | undefined>
+        : (request: () => Promise<Response<RT>>) => Promise<RT | undefined>;
     reset: () => void;
 } & (
     | {
@@ -165,7 +165,11 @@ export const useApi = <RT, Paginate extends boolean = false>(
                 });
             }
         }
-        if (data) setResult(data, offset, limit);
+        if (data) { 
+            setResult(data, offset, limit)
+            return data;
+        };
+        return undefined;
     };
 
     return {

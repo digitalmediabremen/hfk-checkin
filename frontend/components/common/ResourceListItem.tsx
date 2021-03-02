@@ -93,21 +93,23 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                         <b>{resource.name}</b>,
                     ]}
                 />
-                {showMeta && (
-                    <span className="icon right">
-                        {resource.access_restricted && (
-                            <span>
-                                <Key strokeWidth={1} />
-                            </span>
-                        )}
-                        {resource.capacity && (
-                            <span className="capacity">
-                                {resource.capacity}{" "}
-                                <User width={12} height={12} />
-                            </span>
-                        )}
-                    </span>
-                )}
+
+                <span className="icon right">
+                    {resource.access_restricted && (
+                        <span>
+                            {resource.access_allowed_to_current_user ? (
+                                <Unlock strokeWidth={1} />
+                            ) : (
+                                <Lock strokeWidth={1} />
+                            )}
+                        </span>
+                    )}
+                    {resource.capacity && showMeta && (
+                        <span className="capacity">
+                            {resource.capacity} <User width={12} height={12} />
+                        </span>
+                    )}
+                </span>
             </FormElementBase>
             {!last && <Divider noSpacing />}
         </>

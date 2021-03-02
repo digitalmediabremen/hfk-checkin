@@ -62,6 +62,9 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                         <SubPage
                             title={t("Weitere Anfrage")}
                             {...subPageProps("additional")}
+                            // todo: hack callback state is not updated
+                            // use state directly and not via subpageprops
+                            active={"additional" === activeSubPage}
                         >
                             {() => <DynamicAdditionalRequestSubPage />}
                         </SubPage>
