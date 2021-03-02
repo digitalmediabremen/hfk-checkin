@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "react-feather";
 import SmoothCollapse from "react-smooth-collapse";
 import { requestSubpages } from "../../../config";
@@ -11,6 +11,7 @@ import {
     createDate,
     createDateNow,
     createTime,
+    createTimeFromDate,
     createTimeNow,
     duration,
     mergeDateAndTime,
@@ -31,51 +32,43 @@ import Notice from "../../common/Notice";
 interface SetTimeSubpageProps {}
 
 const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
-    const { appState, dispatch } = useAppState();
-
     const { hasError } = useValidation();
+    const { t } = useTranslation("request-time");
+    const { goForward } = useSubPage(requestSubpages);
+    const firstRender = useRef(true);
 
-    const { reservationRequest: reservation } = appState;
-    const { begin: datetimeFrom, end: datetimeTo } = reservation || {};
-
-    const [date, setDate] = useState<Date | undefined>(
-        createDate(datetimeFrom?.getTime())
-    );
+    const [begin, setBegin] = useReservationState("begin");
+    const [end, setEnd] = useReservationState("end");
+    const [date, setDate] = useState<Date | undefined>(begin);
     const [timeFrom, setTimeFrom] = useState<Time | undefined>(
-        createTime(10,0)
+        begin ? createTimeFromDate(begin) : undefined
     );
     const [timeTo, setTimeTo] = useState<Time | undefined>(
-        createTime(14,0)
+        end ? createTimeFromDate(end) : undefined
     );
-    const { t } = useTranslation("request-time");
-
-    const { goForward } = useSubPage(requestSubpages);
-
     const hasOverlap =
         notEmpty(timeFrom) && notEmpty(timeTo) && smallerThan(timeTo, timeFrom);
+    const exceedsBookableRange =
+        hasError("exceedsBookableRange") && hasError("needsExceptionReason");
+
+    // update date values
+    useEffect(() => {
+        if (firstRender.current) return;
+        if (notEmpty(date) && notEmpty(timeFrom) && notEmpty(timeTo)) {
+            const from = mergeDateAndTime(date, timeFrom);
+            let to = mergeDateAndTime(date, timeTo);
+            if (hasOverlap) {
+                to = addDateTime(to, duration.days(1));
+            }
+            setBegin(from);
+            setEnd(to);
+        }
+    }, [date, timeFrom, timeTo, hasOverlap, firstRender]);
 
     useEffect(() => {
-        if (empty(date)) return;
-        (async () => {
-            if (notEmpty(timeFrom) && notEmpty(timeTo)) {
-                const _datetimeFrom = mergeDateAndTime(date, timeFrom);
-                let _datetimeTo = mergeDateAndTime(date, timeTo);
-                if (hasOverlap) {
-                    _datetimeTo = addDateTime(_datetimeTo, duration.days(1));
-                }
-                dispatch({
-                    type: "updateReservationRequest",
-                    reservation: {
-                        ...reservation,
-                        begin: _datetimeFrom,
-                        end: _datetimeTo,
-                    },
-                });
-            }
-        })();
-    }, [date, timeFrom, timeTo, hasOverlap]);
+        firstRender.current = false;
+    }, [])
 
-    const exceedsBookableRange = hasError("exceedsBookableRange") && hasError("needsExceptionReason");
     return (
         <>
             <style jsx>{``}</style>
@@ -117,7 +110,11 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     )}
                     <br />
                     <br />
-                    <NewButton noOutline iconRight={<ArrowRight />} onClick={() => goForward("purpose")}>
+                    <NewButton
+                        noOutline
+                        iconRight={<ArrowRight />}
+                        onClick={() => goForward("purpose")}
+                    >
                         {t("Ausnahmeregelung")}
                     </NewButton>
                 </Notice>
