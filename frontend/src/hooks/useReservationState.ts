@@ -60,12 +60,11 @@ export default function useReservationState<
             dispatch({
                 type: "updateReservationRequest",
                 reservation: {
-                    ...reservation,
                     [field]: newValue,
                 },
             });
         },
-        [reservation]
+        [value]
     );
 
     return [value, setHandler, reservation] as const;

@@ -3,8 +3,8 @@ import {
     createDateNow,
     duration,
     smallerThan,
-} from "../util/DateTimeUtil";
-import NewReservationBlueprint from "./api/NewReservationBlueprint";
+} from "./DateTimeUtil";
+import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 
 export type ValidationType =
     | "normal"

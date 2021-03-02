@@ -57,7 +57,7 @@ const NewRequestFromTemplate: React.FunctionComponent<{
                     withAdditionalFields
                 ),
                 // add resource retrieved from the api
-                resource,
+                ...(withResource ? { resource } : undefined),
             };
 
             onSubmit(newReservationRequest);
@@ -72,7 +72,7 @@ const NewRequestFromTemplate: React.FunctionComponent<{
                     onClick={() =>
                         handleNewRequestFromTemplate(false, true, false)
                     }
-                    bottomSpacing={hasAdditionalFields ? 1: 4}
+                    bottomSpacing={hasAdditionalFields ? 1 : 4}
                 />
                 {hasAdditionalFields && (
                     <FormElement
@@ -137,6 +137,7 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
     const handleNewReservationRequest = (
         reservation?: NewReservationBlueprint
     ) => {
+        console.log("sdfsd");
         dispatch({
             type: "updateReservationRequest",
             reservation,

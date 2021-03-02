@@ -2,7 +2,7 @@ import MyProfile from "./api/MyProfile";
 import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
 import Reservation from "./api/Reservation";
-import { ReservationValidation } from "./validateReservation";
+import { ReservationValidation } from "../util/ValidationUtil";
 
 export type TransitionDirection = "left" | "right";
 
