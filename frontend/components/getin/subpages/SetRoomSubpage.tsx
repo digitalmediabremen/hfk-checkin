@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
@@ -40,37 +40,60 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         "exclusive_resource_usage"
     );
 
+    const hasResults =
+        queryResourceRequest.result && queryResourceRequest.result.length > 0;
+    const noResults = queryResourceRequest.state === "success" && !hasResults;
+    const showDropdown = hasResults || noResults;
+    const inputRef = useRef<HTMLInputElement>(null);
+    const { hasError } = useValidation();
+
+
+    useEffect(() => {
+        const timer = window.setTimeout(() =>  inputRef.current?.focus(), 300);
+        return () => window.clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
+        if (units) return;
+        unitsApi.requestUnits();
+    }, [units]);
+
     useEffect(() => {
         if (unitsApi.state !== "success") return;
         setUnits(unitsApi.result);
     }, [unitsApi.state]);
 
-    useEffect(() => {
-        reset();
-    }, [selectedUnitId]);
 
-    const { hasError } = useValidation();
-
-    const reset = () => {
+    const resetInputField = () => {
         setSelectedResource(undefined);
         queryResourceRequest.reset();
         setSearchValue("");
+        const timer = window.setTimeout(() =>  inputRef.current?.focus(), 10);
+        return () => window.clearInterval(timer);
     };
 
     const handleDeselectResource = () => {
-        reset();
+        resetInputField();
     };
 
-    const load = useCallback((searchValue: string) => {
-        if (!selectedUnitId) return;
+    const handleSetUnit = (unitId: string) => {
+        setSelectedUnitId(unitId);
+        resetInputField();
+    };
 
-        return queryResourceRequest.requestResources(
-            selectedUnitId,
-            searchValue,
-            undefined,
-            20
-        );
-    }, []);
+    const load = useCallback(
+        (newSearchValue: string) => {
+            if (!selectedUnitId) return;
+
+            return queryResourceRequest.requestResources(
+                selectedUnitId,
+                newSearchValue,
+                undefined,
+                20
+            );
+        },
+        [selectedUnitId]
+    );
 
     const update = useDelayedCallback(() => load(searchValue), 300);
     useEffect(() => {
@@ -81,29 +104,28 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         }
     }, [searchValue]);
 
-    const handleResourceSelect = useCallback((resource: Resource) => {
-        const handle = (selected?: boolean) => {
-            if (selected) {
-                setSelectedResource(resource);
-            } else {
-                setSelectedResource(undefined);
-            }
-        };
+    const handleResourceSelect = useCallback(
+        (resource: Resource) => {
+            const handle = (selected?: boolean) => {
+                if (selected) {
+                    setSelectedResource(resource);
+                } else {
+                    setSelectedResource(undefined);
+                }
+            };
 
-        return handle;
-    }, [setSelectedResource]);
+            return handle;
+        },
+        [setSelectedResource]
+    );
 
-    const hasResults =
-        queryResourceRequest.result && queryResourceRequest.result.length > 0;
-    const noResults = queryResourceRequest.state === "success" && !hasResults;
-    const showDropdown = hasResults || noResults;
     return (
         <>
-            <SectionTitle>Gebäude auswählen</SectionTitle>
+            <SectionTitle>{t("Gebäude auswählen")}</SectionTitle>
             {units?.map((unit, index) => (
                 <FormElement
                     primary={unit.uuid === selectedUnitId}
-                    onClick={() => setSelectedUnitId(unit.uuid)}
+                    onClick={() => handleSetUnit(unit.uuid)}
                     superNarrow
                     value={unit.name}
                     adaptiveWidth
@@ -131,7 +153,8 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                 zIndex={2}
                             >
                                 <FormInput
-                                    autoFocus
+                                    // autoFocus
+                                    ref={inputRef}
                                     value={searchValue}
                                     placeholder={t("Raum auswählen")}
                                     onChange={(e) =>

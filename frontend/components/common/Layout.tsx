@@ -10,7 +10,7 @@ import React, {
 import { use100vh } from "react-div-100vh";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import css from "styled-jsx/css";
-import { isClient } from "../../config";
+import { isClient, pageTransitionDuration } from "../../config";
 import features from "../../features";
 import { TransitionDirection } from "../../src/model/AppState";
 import EnterCodeButton from "./EnterCodeButton";
@@ -33,7 +33,7 @@ const { styles, className } = css.resolve`
     // start
 
     .page-animation > :global(.page-wrapper) {
-        transition: transform 300ms;
+        transition: transform ${pageTransitionDuration}ms;
         will-change: transform, z-index;
     }
 
@@ -114,7 +114,7 @@ const PageTransition: FunctionComponent<PageAnimationProps> = ({
             <TransitionGroup className={direction} component="div" appear>
                 <CSSTransition
                     key={childKey}
-                    timeout={300}
+                    timeout={pageTransitionDuration}
                     mountOnEnter={true}
                     unmountOnExit={true}
                 >

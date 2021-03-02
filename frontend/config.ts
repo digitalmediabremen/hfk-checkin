@@ -61,6 +61,8 @@ export const requestSubpages = {
     },
 } as const;
 
+export const pageTransitionDuration = 300;
+
 export const production = process.env.NODE_ENV === "production";
 export const isClient = typeof window === "object";
 export const isServer = typeof window === "undefined";
