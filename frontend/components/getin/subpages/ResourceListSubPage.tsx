@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { use100vh } from "react-div-100vh";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
-import useReservationState from "../../../src/hooks/useReservationState";
+import useParam from "../../../src/hooks/useParam";
+import useReservationState, { useSubpageQuery } from "../../../src/hooks/useReservationState";
 import useResources from "../../../src/hooks/useResources";
 import Resource from "../../../src/model/api/Resource";
 import { empty } from "../../../src/util/TypeUtil";
@@ -23,13 +24,14 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
     const [selectedResource, setSelectedResource] = useReservationState(
         "resource"
     );
+    const resourceId = useParam("resource-list")[0] || "";
     const height = (use100vh() || 500) - theme.topBarHeight;
     const [loaded, setLoaded] = useState(false);
 
     // load initial resources
     useEffect(() => {
         (async () => {
-            await r.requestResources(undefined, 0, 20);
+            await r.requestResources(resourceId, undefined, 0, 20);
             setLoaded(true);
     })()
     }, []);
@@ -59,10 +61,11 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
     }, [r.state]);
 
     const loadMore = async (from: number, to: number) => {
-        await r.requestResources(undefined, from, to - from + 1);
+        await r.requestResources(resourceId, undefined, from, to - from + 1);
         return null;
     };
 
+    if (!resourceId) return null;
     return (
         <Loading loading={!loaded}>
             <style jsx>{``}</style>

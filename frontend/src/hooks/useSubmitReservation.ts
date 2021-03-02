@@ -12,7 +12,7 @@ import useValidation from "./useValidation";
 
 export default function useSubmitReservation() {
     const api = useApi<Reservation>();
-    const { reservation, validateModel } = useReservationRequest();
+    const { reservation, convertModel: validateModel } = useReservationRequest();
     const { allErrors, hasErrors } = useValidation();
     const { appState, dispatch } = useAppState();
     const { setError } = useStatus();

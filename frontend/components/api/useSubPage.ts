@@ -1,11 +1,8 @@
 import { useRouter } from "next/router";
-import { useState, useCallback, ReactNode, useEffect, useRef } from "react";
-import { appUrls } from "../../config";
+import { useCallback, useRef } from "react";
 import { TransitionDirection } from "../../src/model/AppState";
 import { notEmpty } from "../../src/util/TypeUtil";
 import { useAppState } from "../common/AppStateProvider";
-import { LayoutProps } from "../common/Layout";
-import { SubPageProps } from "../common/SubPage";
 
 export type UseSubPageConfig = {
     readonly subpages: Record<string, {}>;
@@ -30,13 +27,11 @@ const useSubPage = <SubPagesMap extends Record<string, {}>>({
     const router = useRouter();
     const activeSubPage = Object.keys(router.query)[0];
     const { appState, dispatch } = useAppState();
-    const oldActiveSubPage = useRef("");
     const direction = appState.subPageTransitionDirection;
 
     const setActiveSubPage = useCallback(
         (subPage?: SubPagesType, param?: string) => {
             const url = urlProvider(subPage as string | undefined, param);
-            oldActiveSubPage.current = activeSubPage;
             router.push(url, url, {
                 shallow: true,
             });

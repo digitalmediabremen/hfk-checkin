@@ -32,11 +32,11 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 }
 
                 .icon {
-                    flex: 0 0 ${theme.spacing(4)}px;
+                    flex: 0 0 ${theme.spacing(5)}px;
                     line-height: 0px;
                 }
 
-                .text{
+                .text {
                     font-style: italic;
                 }
 

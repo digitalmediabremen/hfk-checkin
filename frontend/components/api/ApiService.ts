@@ -12,6 +12,8 @@ import Reservation from "../../src/model/api/Reservation";
 import validateReservation from "../../src/model/api/Reservation.validator";
 import Resource from "../../src/model/api/Resource";
 import validateResource from "../../src/model/api/Resource.validator";
+import validateUnit from "../../src/model/api/Unit.validator";
+import Unit from "../../src/model/api/Unit";
 import { notEmpty } from "../../src/util/TypeUtil";
 
 export type ApiResponse<T> =
@@ -225,4 +227,9 @@ export const getResourceRequest = async (
 export const getResourcesRequest = async (options?: RequestOptions) =>
     await apiRequest<Resource[]>(`space/`, { ...options }, (resources) =>
         resources.map((r: any) => validateResource(r))
+    );
+
+export const getUnitsRequest = async (options?: RequestOptions) =>
+    await apiRequest<Unit[]>(`building/`, { ...options }, (units) =>
+        units.map((r: any) => validateUnit(r))
     );

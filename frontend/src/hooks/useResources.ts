@@ -8,6 +8,7 @@ export default function useResources<P extends boolean>(paginate: P) {
     });
     return {
         requestResources: (
+            unitId: string,
             search?: string,
             offset?: number,
             limit?: number
@@ -16,6 +17,7 @@ export default function useResources<P extends boolean>(paginate: P) {
                 () =>
                     getResourcesRequest({
                         requestParameters: {
+                            unit: unitId,
                             search,
                             offset,
                             limit,

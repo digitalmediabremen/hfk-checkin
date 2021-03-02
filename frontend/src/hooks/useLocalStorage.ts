@@ -43,7 +43,7 @@ export default function useLocalStorage<T extends Object>(
             const parseAgainWithDates = (JSON.parseWithDate(
                 item
             ) as unknown) as T;
-            console.log(`loaded "${key}" to local-storage`);
+            console.debug(`loaded "${key}" to local-storage`);
             onLoad?.(parseAgainWithDates);
         } catch (e) {
             console.error(e);
@@ -53,7 +53,7 @@ export default function useLocalStorage<T extends Object>(
     }, []);
 
     const persistImmediate = useCallback(() => {
-        console.log(`saved "${key}" to local-storage`);
+        console.debug(`saved "${key}" to local-storage`);
         localStorage.setItem(key, JSON.stringify(object));
     }, [key, object]);
     const persist = useDelayedCallback(() => persistImmediate(), 1000);
