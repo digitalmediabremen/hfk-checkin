@@ -37,6 +37,7 @@ export default interface Reservation {
     readonly resource: Resource;
     // readonly organizer: BaseProfile;
     readonly state: ReservationState;
+    readonly state_verbose: string;
     readonly is_own: boolean;
     readonly number_of_attendees: number;
     readonly has_priority: boolean;

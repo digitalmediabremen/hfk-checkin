@@ -3,21 +3,17 @@ import React, {
     FunctionComponent,
     ReactElement,
     ReactNode,
-    useEffect,
     useLayoutEffect,
-    useRef,
+    useRef
 } from "react";
 import { use100vh } from "react-div-100vh";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import css from "styled-jsx/css";
 import { isClient, pageTransitionDuration } from "../../config";
-import features from "../../features";
 import { TransitionDirection } from "../../src/model/AppState";
-import EnterCodeButton from "./EnterCodeButton";
 import Footer from "./Footer";
 import Page from "./Page";
 import ProfileBar from "./ProfileBar";
-import StatusBar from "./StatusBar";
 import TopBar from "./TopBar";
 
 interface PageAnimationProps {

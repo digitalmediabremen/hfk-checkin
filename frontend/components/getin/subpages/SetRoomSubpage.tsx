@@ -42,10 +42,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         "exclusive_resource_usage"
     );
 
-    const hasResults =
-        queryResourceRequest.result && queryResourceRequest.result.length > 0;
-    const noResults = queryResourceRequest.state === "success" && !hasResults;
-    const showDropdown = hasResults || noResults;
+    const noResults =
+        queryResourceRequest.result && queryResourceRequest.result.length === 0;
+    const loading = queryResourceRequest.state === "loading";
+    const showDropdown =
+        !!queryResourceRequest.result && searchValue.length >= 2;
     const inputRef = useRef<HTMLInputElement>(null);
     const { hasError } = useValidation();
 
@@ -78,7 +79,6 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
     const handleSetUnit = (unitId: string) => {
         setSelectedUnitId(unitId);
-        setError(`test${Math.random()} Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur\n\nquibusdam excepturi ipsam doloribus architecto sed tempore quia ducimus deserunt reprehenderit temporibus similique minima quam tempora quae eligendi, sunt deleniti. Qui?`);
         resetInputField();
     };
 
@@ -164,11 +164,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     }
                                 />
 
-                                <LoadingInline
-                                    loading={
-                                        !showDropdown && searchValue.length >= 2
-                                    }
-                                />
+                                <LoadingInline loading={loading} />
                             </FormElementBase>
                             {showDropdown && (
                                 <FormElementBase
@@ -178,7 +174,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     bottomSpacing={2}
                                 >
                                     <List>
-                                        {hasResults && (
+                                        {!noResults && (
                                             <>
                                                 {queryResourceRequest.result?.map(
                                                     (r, index) => (
@@ -199,7 +195,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                                 )}
                                             </>
                                         )}
-                                        {!hasResults && "loading" && (
+                                        {noResults && (
                                             <FormElementBase
                                                 noOutline
                                                 noBottomSpacing

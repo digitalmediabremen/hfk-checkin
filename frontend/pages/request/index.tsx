@@ -167,6 +167,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 primary
                 onClick={submit}
                 iconRight={LoadingIcon}
+                disabled={loading}
             >
                 {t("Anfragen")}
             </NewButton>

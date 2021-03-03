@@ -20,7 +20,6 @@ const ProfileBar: React.FunctionComponent<ProfileBarProps> = () => {
     if (!profile) return <NotLoggedInBar />;
     return (
         <>
-            <style jsx>{``}</style>
             <EllipseText>
                 {(ellipsed) => (
                     <Link href={appUrls.home}>
