@@ -56,13 +56,13 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
     }, [status]);
 
     const h = theme.topBarHeight;
-    const duration = 400;
+    const duration = 300;
 
     return (
         <>
             <style jsx>{`
                 .status-bar {
-                    height: ${h}px;
+                    height: ${theme.topBarHeight - theme.offsetTopBar}px;
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
                     overflow: visible;
@@ -72,6 +72,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     left: 0;
                     right: 0;
                     background: #fff;
+                    margin-top: 16px;
                 }
 
                 .animation {
@@ -79,7 +80,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     position: absolute;
                     display: block;
                     width: 100vw;
-                    height: ${h}px;
+                    height: ${theme.topBarHeight - theme.offsetTopBar}px;
                     top: 0;
                     left: 0;
                     z-index: 3000;

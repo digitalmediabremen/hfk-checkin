@@ -12,7 +12,7 @@ const Bar: React.FunctionComponent<{ extendedWidth?: boolean }> = ({
                     padding: ${theme.spacing(1)}px ${theme.spacing(3)}px;
                     display: flex;
                     align-items: center;
-                    min-height: ${theme.spacing(8)}px;
+                    min-height: 100%;
                 }
 
                 .bar.extendedWidth {
