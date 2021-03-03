@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run translate -- --quiet && npm run gen && next build",
+    "test-build": "next build",
     "start": "next start -p $PORT",
     "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.tsx -",
     "gen": "run-for-every-file --src 'src/model/api/' --file '*.ts' --not-file '*.validator.ts'  --run 'typescript-json-validator {{src-file}} && sed -i \"\" \"/^export [{]/d\" src/model/api/{{file-name}}.validator.ts'"

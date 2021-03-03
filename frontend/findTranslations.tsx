@@ -39,6 +39,9 @@ function createDefinitionSet() {
         )
     );
 
+    // remove definition file
+    relevantSourceFiles.delete(useTFunc!.getSourceFile())
+
     relevantSourceFiles.forEach((file) => {
         let currentModule: string | undefined = undefined;
 

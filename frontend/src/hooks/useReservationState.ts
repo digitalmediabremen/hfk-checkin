@@ -1,13 +1,11 @@
 import { useRouter } from "next/router";
-import { useState, useEffect, useCallback } from "react";
-import { ArrayLiteralExpression } from "ts-morph";
+import { useCallback, useEffect, useState } from "react";
+import { ArrayTypeNode } from "ts-morph";
 import { useAppState } from "../../components/common/AppStateProvider";
 import NewReservation from "../model/api/NewReservation";
 import validate from "../model/api/NewReservation.validator";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
-import Reservation from "../model/api/Reservation";
 import { empty, notEmpty } from "../util/TypeUtil";
-import useParam from "./useParam";
 
 type ModifierFunction<I, O> = (value: I) => O;
 
@@ -31,7 +29,7 @@ export function useReservationRequest() {
                 ...reservationFromAppstate,
                 resource: undefined,
                 selectedUnitId: undefined,
-                units: undefined
+                units: undefined,
             };
             const reservationDateStrings = JSON.parse(JSON.stringify(data));
             validate(reservationDateStrings);
@@ -92,7 +90,7 @@ export const useSubpageQuery = <
 };
 
 type ExtractTypeFromArray<
-    ArrayType extends Array<unknown> | undefined
+    ArrayType extends Array<unknown>
 > = ArrayType extends Array<infer T> ? T : never;
 
 export const useReservationArrayState = <
@@ -101,15 +99,20 @@ export const useReservationArrayState = <
     key: ReservatonFieldType
 ) => {
     const [_arrayValue, setArrayValue] = useReservationState(key);
-    const arrayValue = notEmpty(_arrayValue) ? _arrayValue : [];
+    const arrayValue = (notEmpty(_arrayValue)
+        ? _arrayValue
+        : []) as NonNullable<NewReservationBlueprint[ReservatonFieldType]>;
+
+    type c = typeof arrayValue;
 
     const handleAddValue = (
         value: ExtractTypeFromArray<
-            NewReservationBlueprint[ReservatonFieldType]
+            NonNullable<NewReservationBlueprint[ReservatonFieldType]>
         >,
         index: number
     ) => {
         if (empty(value)) return;
+
         arrayValue[index] = value;
         console.debug("arr", arrayValue);
 
@@ -117,6 +120,7 @@ export const useReservationArrayState = <
     };
 
     const handleRemoveValue = (index: number) => {
+        if (!arrayValue) return;
         if (index > -1) {
             arrayValue.splice(index, 1);
         }
