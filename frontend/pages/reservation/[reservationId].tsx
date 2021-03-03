@@ -23,19 +23,12 @@ const DynamicAdditionalRequestSubPage = createDynamicPage(
     () => import("../../components/getin/subpages/AdditionalRequestSubPage")
 );
 
-function test(t: any) {
-    return t("adfs")
-}
-
 const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const [id] = useParam("reservationId");
 
-    const {
-        reservation,
-        notFound,
-        error,
-        reservationSuccess,
-    } = useReservation(id);
+    const { reservation, notFound, error, reservationSuccess } = useReservation(
+        id
+    );
 
     const { t } = useTranslation();
 
@@ -48,9 +41,6 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
             } as const,
         }
     );
-
-    test(t);
-
     if (!id) return null;
 
     if (notFound) return <Page404 />;
@@ -78,17 +68,18 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
             >
                 {(reservationSuccess || true) && (
                     <>
-                        <CheckinSucessIcon />
-                        <Subtitle>
-                            {t("Deine Anfrage ist eingegangen.")}
-                        </Subtitle>
+                        <>
+                            <CheckinSucessIcon />
+                            <Subtitle>
+                                {t("Deine Anfrage ist eingegangen.")}
+                            </Subtitle>
+                        </>
+                        <Text paragraph>
+                            {reservation?.state_verbose}
+                        </Text>
                     </>
                 )}
-                <Text paragraph>
-                    {t(
-                        "Deine Anfrage wird in Kürze von den Raumverantwortlichen bearbeitet. Du erhälst eine Antwort als E-Mail."
-                    )}
-                </Text>
+
                 {reservation && (
                     <>
                         <Reservation
@@ -111,18 +102,18 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                     </>
                 )}
                 {(reservationSuccess || true) && (
-                        <>
-                            <AlignContent align="bottom" offsetBottomPadding>
-                                <NewButton
-                                    extendedWidth
-                                    noBottomSpacing
-                                    {...handlerProps("additional")}
-                                >
-                                    {t("weitere Anfrage")}
-                                </NewButton>
-                            </AlignContent>
-                        </>
-                    )}
+                    <>
+                        <AlignContent align="bottom" offsetBottomPadding>
+                            <NewButton
+                                extendedWidth
+                                noBottomSpacing
+                                {...handlerProps("additional")}
+                            >
+                                {t("weitere Anfrage")}
+                            </NewButton>
+                        </AlignContent>
+                    </>
+                )}
             </Layout>
         </Loading>
     );

@@ -60,9 +60,9 @@ export default function validateReservation(
     if (reservation.resource) {
         if (!reservation.resource.access_allowed_to_current_user) {
             v.push({
-                level: "notice",
+                level: "error",
                 type: "missingResourcePermissions",
-                message: _t(locale, "request", "Ein Ausnahmegrund muss angegeben werden."),
+                message: _t(locale, "request", `Du hast keine Berichtigung den Raum "{resource}" zu buchen.`, {resource: reservation.resource.name}),
             });
         }
     }

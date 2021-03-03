@@ -140,6 +140,10 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
         console.log("sdfsd");
         dispatch({
             type: "updateReservationRequest",
+            reservation: undefined,
+        });
+        dispatch({
+            type: "updateReservationRequest",
             reservation,
         });
         router.push(appUrls.request());

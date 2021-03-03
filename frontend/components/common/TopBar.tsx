@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import { isEmptyArray, swap } from "formik";
 import React, { ReactNode, useEffect, useState } from "react";
 import { AlertCircle } from "react-feather";
@@ -9,6 +10,7 @@ import {
 } from "react-transition-group";
 import useStatus from "../../src/hooks/useStatus";
 import theme from "../../styles/theme";
+import Bar from "./Bar";
 
 interface TopBarProps {
     actionProvider?: () => ReactNode;
@@ -44,7 +46,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     ...status,
                     id: Math.random(),
                 });
-                // clear current status
+                // clear
                 empty();
             },
             currentStatus ? 500 : 0
@@ -52,10 +54,6 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
 
         return () => clearInterval(timer);
     }, [status]);
-
-    useEffect(() => {
-
-    }, [currentStatus]);
 
     const h = theme.topBarHeight;
     const duration = 400;
@@ -74,13 +72,6 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     left: 0;
                     right: 0;
                     background: #fff;
-                }
-
-                .bar {
-                    padding: ${theme.spacing(1)}px ${theme.spacing(1.5) + 1}px;
-                    display: flex;
-                    align-items: center;
-                    min-height: ${theme.spacing(8)}px;
                 }
 
                 .animation {
@@ -170,16 +161,15 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     position: absolute;
                     top: 0;
                     left: 0;
-                    height: 100%;
+                    height: 0;
                     width: 100%;
                 }
             `}</style>
             <header className="status-bar">
-                <div className="bar">
+                <Bar>
                     {children}
                     {actionProvider?.()}
-                </div>
-
+                </Bar>
                 <TransitionGroup className="status-wrapper">
                     {currentStatus && (
                         <CSSTransition
@@ -193,7 +183,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                                     className="animation"
                                     onClick={() => remove()}
                                 >
-                                    <div className="bar">
+                                    <Bar extendedWidth>
                                         <div className="status error">
                                             {currentStatus.isError && (
                                                 <span className="icon">
@@ -204,7 +194,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                                                 {currentStatus.message}
                                             </span>
                                         </div>
-                                    </div>
+                                    </Bar>
                                     {/* {JSON.stringify(transitionStyles[state])} */}
                                 </div>
                             )}

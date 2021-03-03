@@ -20,6 +20,8 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                         align-items: center;
                         padding: 0 ${theme.spacing(3)}px;
                         color: ${theme.primaryColor};
+                        position: relative;
+                        z-index: 2;
                     }
 
                     .footer a {

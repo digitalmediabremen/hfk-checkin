@@ -18,14 +18,8 @@ const SubPageHeader = ({
                 line-height: 0;
                 align-items: center;
                 justify-content: center;
-                padding: 0 ${theme.spacing(6)}px;
-                box-sizing: border-box;
-                overflow: hidden;
                 position: relative;
                 width: 100%;
-                top: 0;
-                left: 0;
-                right: 0;
                 z-index: 2000;
             }
             .title {
@@ -39,7 +33,7 @@ const SubPageHeader = ({
             .back {
                 line-height: 0;
                 position: absolute;
-                left: ${theme.spacing(2)}px;
+                left: ${theme.spacing(0)}px;
                 color: ${theme.primaryColor};
                 transform: translateY(1px);
             }
@@ -48,7 +42,6 @@ const SubPageHeader = ({
             <span className="back">
                 <ArrowLeft strokeWidth={1} />
             </span>
-
             <h1 className="title">{title}</h1>
         </div>
     </>
