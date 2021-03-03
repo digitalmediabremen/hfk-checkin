@@ -23,9 +23,19 @@ def custom_exception_handler(exc, context):
         # add validation errors (or similar) to errors
         customized_response['errors'] = []
 
+        i = 0
+        error_summary = ""
         for key, value in response.data.items():
             error = {key: value}
             customized_response['errors'].append(error)
+            error_summary += "%i. %s" % (i+1, str(value))
+            i += 1
+
+        if i == 1:
+            customized_response['detail'] = error_summary
+
+        if i > 1:
+            customized_response['detail'] = _('Multiple errors:') + " " + error_summary
 
         response.data = customized_response
 
