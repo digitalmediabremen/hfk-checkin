@@ -32,3 +32,4 @@ module.exports = features;
 module.exports.getPrimaryColor = getPrimaryColor;
 module.exports.getHomeUrl = getHomeUrl;
 module.exports.getManifestUrl = getManifestUrl;
+module.exports.envToBoolean = envToBoolean;

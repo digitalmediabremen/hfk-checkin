@@ -1,6 +1,7 @@
 import { buildSubPageUrl, UseSubPageConfig } from "./components/api/useSubPage";
 import { getHomeUrl } from "./features";
 import { notEmpty } from "./src/util/TypeUtil";
+import { envToBoolean } from "./features";
 
 const presentOrThrow = (envvar: string | undefined) => {
     if (!envvar) throw "env variable not set";
@@ -12,6 +13,7 @@ const uri = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
 export const authRedirectUrl = `${uri}/login/redirect`;
 export const apiUrl = `${uri}/api`;
 export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
+export const bookingDisabled = envToBoolean(process.env.BOOKING_DISABLED);
 
 export const httpStatuses = {
     notFound: 404,
@@ -71,3 +73,4 @@ export const isServer = typeof window === "undefined";
 export const defaultLocale = "en" as const;
 export const baseLocale = "de" as const;
 export const forceLocale: string | undefined = "de";
+
