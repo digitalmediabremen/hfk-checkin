@@ -1,5 +1,5 @@
 import React from "react";
-import useSubPage, { buildSubPageUrl } from "../../components/api/useSubPage";
+import useSubPage from "../../components/api/useSubPage";
 import AlignContent from "../../components/common/AlignContent";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import Layout from "../../components/common/Layout";
@@ -10,7 +10,7 @@ import SubPage from "../../components/common/SubPage";
 import Subtitle from "../../components/common/Subtitle";
 import Text from "../../components/common/Text";
 import { createDynamicPage } from "../../components/getin/subpages/SubpageCollection";
-import { appUrls } from "../../config";
+import { appUrls, buildSubPageUrl } from "../../config";
 import { useTranslation } from "../../localization";
 import useParam from "../../src/hooks/useParam";
 import useReservation from "../../src/hooks/useReservation";
@@ -46,7 +46,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     if (notFound) return <Page404 />;
     if (error) return <Error error={error} />;
 
-    return (
+    return ( 
         <Loading loading={!reservation}>
             <style jsx>{``}</style>
             <Layout

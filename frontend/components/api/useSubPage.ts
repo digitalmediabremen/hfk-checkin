@@ -9,17 +9,6 @@ export type UseSubPageConfig = {
     urlProvider: (subpageName?: string, param?: string) => string;
 };
 
-export function buildSubPageUrl(
-    base: string,
-    subPage?: string,
-    param?: string
-) {
-    let url = base;
-    if (notEmpty(subPage)) url = `${url}?${subPage}`;
-    if (notEmpty(param)) url = `${url}=${param}`;
-    return url;
-}
-
 const useSubPage = <SubPagesMap extends Record<string, {}>>({
     urlProvider,
 }: UseSubPageConfig) => {

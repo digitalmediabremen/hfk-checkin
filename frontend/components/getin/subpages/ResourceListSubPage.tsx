@@ -1,24 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { use100vh } from "react-div-100vh";
-import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useParam from "../../../src/hooks/useParam";
-import useReservationState, { useSubpageQuery } from "../../../src/hooks/useReservationState";
+import useReservationState from "../../../src/hooks/useReservationState";
 import useResources from "../../../src/hooks/useResources";
 import Resource from "../../../src/model/api/Resource";
 import { empty } from "../../../src/util/TypeUtil";
 import theme from "../../../styles/theme";
-import useSubPage from "../../api/useSubPage";
 import LazyList from "../../common/LazyList";
-import Loading, { LoadingInline } from "../../common/Loading";
+import Loading from "../../common/Loading";
 import ResourceListItem, {
-    LoadingListItem,
+    LoadingListItem
 } from "../../common/ResourceListItem";
 
 interface ResourceListSubPageProps {}
 
 const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = ({}) => {
-    const { t } = useTranslation("request-resource-list");
     const r = useResources(true);
     const [itemCount, setItemCount] = useState(0);
     const [selectedResource, setSelectedResource] = useReservationState(

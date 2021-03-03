@@ -5,14 +5,14 @@ import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import { useRouter } from "next/router";
 import { appUrls } from "../config";
-import { useTranslation } from "../localization";
+import Layout from "../components/common/Layout";
 
 interface IntroPageProps {}
 
 const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
-    const router  = useRouter();
+    const router = useRouter();
     return (
-        <>
+        <Layout>
             <FormGroup>
                 <Title>Willkommen</Title>
                 <Text paragraph>
@@ -22,7 +22,7 @@ const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
             <Button outline onClick={() => router.push(appUrls.createProfile)}>
                 Los gehts
             </Button>
-        </>
+        </Layout>
     );
 };
 

@@ -9,7 +9,7 @@ import "../styles/globals.css";
 import ErrorBoundary from "../components/common/ErrorBoundary";
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
-    const { error, status, locale, profile, ...props } = pageProps;
+    const { error, status, profile, ...props } = pageProps;
 
     return (
         <>
@@ -22,7 +22,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
             </Head>
             <ErrorBoundary>
                 <AppStateProvider>
-                    <LocaleProvider locale={locale || getInitialLocale()}>
+                    <LocaleProvider locale={getInitialLocale()}>
                         <ErrorDispatcher status={status} error={error}>
                             <AppWrapper>
                                 <Component error={error} {...props} />

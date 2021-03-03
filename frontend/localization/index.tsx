@@ -12,7 +12,6 @@ import {
     requestSubpages,
 } from "../config";
 import translation from "./translation";
-import { config } from "process";
 import { useAppState } from "../components/common/AppStateProvider";
 
 export type Translation = Record<
@@ -49,14 +48,14 @@ const { Provider } = localeContext;
 
 export const LocaleConsumer = localeContext.Consumer;
 
-export const LocaleProvider: SFC<{ locale: string }> = ({
+export const LocaleProvider: React.FunctionComponent<{ locale: string }> = ({
     locale,
     children,
 }) => {
-    const {dispatch} = useAppState();
+    const { dispatch } = useAppState();
     useEffect(() => {
-        dispatch({type: "updateLocale", locale});
-    }, [locale]); 
+        dispatch({ type: "updateLocale", locale });
+    }, [locale]);
     return <Provider value={{ locale }}>{children}</Provider>;
 };
 
@@ -114,44 +113,5 @@ export const useTranslation = (inModule: TranslationModules = "common") => {
     );
     return { locale, t };
 };
-
-export const withLocaleProp = (
-    func: (
-        context: GetServerSidePropsContext<ParsedUrlQuery>
-    ) => Promise<GetServerSidePropsResult<{ [key: string]: any }>>
-) => {
-    return async function withLocalPropHandler(
-        context: GetServerSidePropsContext
-    ) {
-        return {
-            props: {
-                locale: getInitialLocale(context.req.headers),
-                // @ts-ignore
-                ...(await func(context)).props,
-            },
-        };
-    };
-};
-
-// export const withTranslation = <P extends {}>(
-//     WrappedComponent: React.ComponentType<P>
-// ) => {
-//     const Comp2: NextPage<{ locale: string }> = ({ locale, ...props }) => {
-//         return (
-//             <LocaleProvider locale={locale}>
-//                 <WrappedComponent {...(props as P)} />
-//             </LocaleProvider>
-//         );
-//     };
-
-//     Comp2.getInitialProps = async (context) => {
-//         const locale = getInitialLocale(context.req?.headers);
-//         return {
-//             locale,
-//         };
-//     };
-
-//     return Comp2;
-// };
 
 export default translation;
