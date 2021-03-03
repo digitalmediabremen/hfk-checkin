@@ -187,6 +187,15 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
     access_allowed_to_current_user = serializers.SerializerMethodField()
     capacity = serializers.IntegerField(required=False, source='people_capacity')
 
+    class Meta:
+        model = Resource
+        fields = ('url','uuid','name','alternative_names','numbers','display_name','display_numbers','unit','type',
+                  'floor_number','floor_name','area','description','capacity', 'min_period', 'max_period', 'slot_size', 'max_reservations_per_user',
+                  'reservable_max_days_in_advance', 'reservable_min_days_in_advance', 'external_reservation_url',
+                  'access_restricted','access_allowed_to_current_user') + tuple(ModifiableModelSerializerMixin.Meta.fields)
+        # exclude = ('reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
+        #            'access_code_type', 'reservation_metadata_set')
+
 
     def get_access_allowed_to_current_user(self, obj):
         request = self.context.get('request', None)
@@ -379,14 +388,6 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
 
         rv_ser_list = ReservationSerializer(rv_list, many=True, context=self.context).data
         return rv_ser_list
-
-    class Meta:
-        model = Resource
-        fields = ('url','uuid','name','alternative_names','numbers','display_name','display_numbers','unit','type',
-                  'floor_number','floor_name','area','description','capacity',
-                  'access_restricted','access_allowed_to_current_user') + tuple(ModifiableModelSerializerMixin.Meta.fields)
-        # exclude = ('reservation_requested_notification_extra', 'reservation_confirmed_notification_extra',
-        #            'access_code_type', 'reservation_metadata_set')
 
 
 class ResourceDetailsSerializer(ResourceSerializer):
