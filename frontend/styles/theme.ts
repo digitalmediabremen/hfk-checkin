@@ -32,7 +32,8 @@ const theme = {
     secondaryColor: "rgba(255, 255, 255, 1)",
     disabledColor: "rgba(102,102,102,1)",
     footerHeight: unit * 7,
-    topBarHeight: unit * 8,
+    topBarHeight: unit * 10,
+    offsetTopBar: 16,
     boxShadow: function () {
         return `0 0 ${this.spacing(1)}px ${this.shadePrimaryColor(
             0.3
