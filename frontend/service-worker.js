@@ -1,6 +1,7 @@
 import { skipWaiting, clientsClaim } from "workbox-core";
 import { ExpirationPlugin } from "workbox-expiration";
-import { apiUrl } from "./config";
+const features = require("./features");
+
 
 import {
     NetworkOnly,
@@ -35,7 +36,7 @@ precacheAndRoute(WB_MANIFEST);
 
 cleanupOutdatedCaches();
 registerRoute(
-    "/profile",
+    features.getHomeUrl(),
     new StaleWhileRevalidate({
         cacheName: "start-url",
         plugins: [

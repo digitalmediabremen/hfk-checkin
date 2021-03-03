@@ -40,10 +40,10 @@ export type UseApiReturnType<RT, HasPagination extends boolean = false> = {
           additionalData: undefined;
       }
     | {
-          state: "loading" | "loading";
+          state: "loading";
           error: undefined;
           additionalData: undefined;
-          result?: PaginationArrayType<RT, HasPagination>;
+          result: PaginationArrayType<RT, HasPagination> | undefined;
       }
     | {
           state: "error";

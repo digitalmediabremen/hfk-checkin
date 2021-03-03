@@ -1,15 +1,14 @@
-import React, { useCallback, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import React, { useCallback } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import {
     useReservationArrayState,
-    useSubpageQuery,
+    useSubpageQuery
 } from "../../../src/hooks/useReservationState";
 import { AttendanceUpdate } from "../../../src/model/api/MyProfile";
 import { Writable } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
-import { useAppState } from "../../common/AppStateProvider";
 import FormTextInput from "../../common/FormTextInput";
 import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
@@ -23,18 +22,16 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
     // const [person, setPerson, setPersonField] = useAddExternalPersonState();z
     // useValidation
 
-    const {appState} = useAppState()
-
     const { goBack } = useSubPage(requestSubpages);
     const { errors, handleSubmit, control } = useForm<
         Writable<AttendanceUpdate>
     >({
         mode: "onTouched",
-        defaultValues: attendees[index] || {
-            email: "",
-            first_name: "",
-            last_name: "",
-            phone: ""
+        defaultValues: {
+            email: attendees?.[index]?.email || "",
+            first_name: attendees?.[index]?.first_name || "",
+            last_name: attendees?.[index]?.last_name || "",
+            phone: attendees?.[index]?.phone || "",
         },
     });
 
