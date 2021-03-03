@@ -1,4 +1,5 @@
 import React from "react";
+import needsProfile from "../../components/api/needsProfile";
 import useSubPage from "../../components/api/useSubPage";
 import AlignContent from "../../components/common/AlignContent";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
@@ -119,4 +120,4 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     );
 };
 
-export default ReservationPage;
+export default needsProfile(ReservationPage);
