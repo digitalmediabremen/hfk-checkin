@@ -1,12 +1,22 @@
-import { buildSubPageUrl, UseSubPageConfig } from "./components/api/useSubPage";
 import { getHomeUrl } from "./features";
-import { notEmpty } from "./src/util/TypeUtil";
 import { envToBoolean } from "./features";
+import { notEmpty } from "./src/util/TypeUtil";
 
 const presentOrThrow = (envvar: string | undefined) => {
     if (!envvar) throw "env variable not set";
     return envvar;
 };
+
+export function buildSubPageUrl(
+    base: string,
+    subPage?: string,
+    param?: string
+) {
+    let url = base;
+    if (notEmpty(subPage)) url = `${url}?${subPage}`;
+    if (notEmpty(param)) url = `${url}=${param}`;
+    return url;
+}
 
 const uri = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
 

@@ -9,7 +9,6 @@ interface ErrorProps {
 const Error: React.FunctionComponent<ErrorProps> = ({ error }) => {
     return (
         <>
-            <style jsx>{``}</style>
             <Layout>
                 <Title
                     subtext={

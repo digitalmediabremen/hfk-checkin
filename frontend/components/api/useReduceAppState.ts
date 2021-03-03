@@ -1,12 +1,7 @@
-import { assert } from "console";
-import { Reducer, useCallback, useReducer } from "react";
+import { Reducer, useReducer } from "react";
 import { AppAction, AppState } from "../../src/model/AppState";
-import validate from "../../src/model/api/NewReservationBlueprint.validator";
-import { assertNever, empty } from "../../src/util/TypeUtil";
+import { assertNever } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/util/ValidationUtil";
-import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
-import ReservationPage from "../../pages/reservation/[reservationId]";
-import { defaultLocale } from "../../config";
 
 export const initialAppState: AppState = {
     initialized: false,

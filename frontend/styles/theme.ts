@@ -1,5 +1,4 @@
-import features, { getPrimaryColor } from "../features";
-import { AllHTMLAttributes } from "react";
+import { getPrimaryColor } from "../features";
 
 const unit = 8;
 

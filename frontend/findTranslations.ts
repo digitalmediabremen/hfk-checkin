@@ -1,8 +1,7 @@
 import * as stringsim from "string-similarity";
-import { CallExpression, Node, Project } from "ts-morph";
+import { CallExpression, Node, Project, ShorthandPropertyAssignment, SyntaxKind, ts } from "ts-morph";
 import yargs from "yargs";
 import colors from "colors";
-import * as ts from "typescript";
 
 const project = new Project({
     tsConfigFilePath: "./tsconfig.json",
@@ -25,7 +24,7 @@ function createDefinitionSet() {
     const useTFunc = f?.getVariableDeclarationOrThrow("useTranslation");
     const _tFunc = f?.getFunctionOrThrow("_t");
     const tFunc = useTFunc
-        ?.getDescendantsOfKind(ts.SyntaxKind.ShorthandPropertyAssignment)
+        ?.getDescendantsOfKind(SyntaxKind.ShorthandPropertyAssignment)
         .pop();
     const tFuncRefs = tFunc?.findReferencesAsNodes();
     const _tFuncRefs = _tFunc?.findReferencesAsNodes();
