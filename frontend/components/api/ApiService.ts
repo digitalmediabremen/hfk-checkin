@@ -127,7 +127,16 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                 const dateWithDateStrings = JSON.parse(
                     JSON.stringify(result.data)
                 );
+                try {
                 responseTypeGuard(dateWithDateStrings);
+                } catch(e) {
+                    console.error(e);
+                    throw {
+                        status: status,
+                        error:
+                            "Api responded with wrong format.\nReturn object is of wrong type.",
+                    };
+                }
             }
             return result;
         })
