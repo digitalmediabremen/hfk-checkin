@@ -14,6 +14,7 @@ export const initialAppState: AppState = {
     subPageTransitionDirection: "right",
     reservationValidation: [],
     currentLocale: "en",
+    status: undefined
 };
 
 const useReduceAppState = () =>

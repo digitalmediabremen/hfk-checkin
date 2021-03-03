@@ -8,10 +8,10 @@ export type TransitionDirection = "left" | "right";
 
 export interface AppState {
     initialized: boolean;
-    status?: {
+    status: {
         message: string;
         isError: boolean;
-    };
+    } | undefined;
     myProfile?: MyProfile;
     disableNextUpdate: boolean;
     highlightCheckinById?: number; // id
@@ -32,12 +32,10 @@ export interface AppState {
 export type AppAction =
     | {
           type: "status";
-          status:
-              | {
-                    message: string;
-                    isError: boolean;
-                }
-              | undefined;
+          status: {
+              message: string;
+              isError: boolean;
+          } | undefined;
       }
     | {
           type: "profile";

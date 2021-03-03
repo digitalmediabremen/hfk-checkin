@@ -19,6 +19,7 @@ export interface FormElementBaseProps {
     maxHeight?: string;
     dotted?: boolean;
     adaptiveWidth?: boolean;
+    above?: boolean;
 }
 
 const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
@@ -39,6 +40,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     zIndex,
     dotted,
     adaptiveWidth,
+    above
 }) => {
     const ComponentType = componentType || "div";
     const outline = !noOutline;
@@ -135,6 +137,10 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     overflow: auto;
                     max-height: ${maxHeight || "none"};
                 }
+
+                .form-element-base.outline.above {
+                    box-shadow: ${theme.boxShadow()};
+                }
             `}</style>
             <ComponentType
                 disabled={disabled}
@@ -148,6 +154,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     padding: !noPadding,
                     scroll: !!maxHeight,
                     "adaptive-width": adaptiveWidth,
+                    above
                 })}
             >
                 {children}

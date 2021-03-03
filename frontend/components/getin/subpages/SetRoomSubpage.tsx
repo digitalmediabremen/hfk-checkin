@@ -78,7 +78,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
     const handleSetUnit = (unitId: string) => {
         setSelectedUnitId(unitId);
-        setError("test");
+        setError(`test${Math.random()} Lorem, ipsum dolor sit amet consectetur adipisicing elit. Consequuntur\n\nquibusdam excepturi ipsam doloribus architecto sed tempore quia ducimus deserunt reprehenderit temporibus similique minima quam tempora quae eligendi, sunt deleniti. Qui?`);
         resetInputField();
     };
 
@@ -152,6 +152,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             <FormElementBase
                                 bottomSpacing={showDropdown ? -1 : 2}
                                 zIndex={2}
+                                above={showDropdown}
                             >
                                 <FormInput
                                     // autoFocus
