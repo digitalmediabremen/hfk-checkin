@@ -7,7 +7,7 @@ import Checkin, {
 import Location from "../../src/model/api/Location";
 import MyProfile, { ProfileUpdate } from "../../src/model/api/MyProfile";
 import NewReservation from "../../src/model/api/NewReservation";
-import validateProfile from "../../src/model/api/Profile.validator";
+import validateProfile from "../../src/model/api/MyProfile.validator";
 import Reservation from "../../src/model/api/Reservation";
 import validateReservation from "../../src/model/api/Reservation.validator";
 import Resource from "../../src/model/api/Resource";
