@@ -7,7 +7,7 @@ from .models import Profile
 
 
 all_views = []
-
+User = get_user_model()
 
 def register_view(klass, name, base_name=None):
     entry = {'class': klass, 'name': name}
@@ -16,18 +16,43 @@ def register_view(klass, name, base_name=None):
     all_views.append(entry)
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+# class BaseProfileSerializer(serializers.ModelSerializer):
+#     id = serializers.ReadOnlyField()
+#     display_name = serializers.ReadOnlyField(source='get_display_name')
+#     class Meta:
+#         model = Profile
+#         fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email']
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    from checkin.resources.api.nested import SimpleReservationSerializer
+    from checkin.tracking.serializers import SimpleCheckinSerializer
+    id = serializers.ReadOnlyField(source='profile.pk')
     display_name = serializers.ReadOnlyField(source='get_display_name')
+    first_name = serializers.CharField(source='profile.first_name')
+    last_name = serializers.CharField(source='profile.last_name')
+    phone = serializers.CharField(source='profile.phone')
+    email = serializers.EmailField(source='profile.email')
+    display_name = serializers.ReadOnlyField(source='get_display_name')
+    #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
+    reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
+    last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
+    verified = serializers.ReadOnlyField(source='profile.verified')
+    complete = serializers.ReadOnlyField(source='profile.complete')
 
     class Meta:
-        fields = [
-            'id','first_name', 'last_name', 'display_name'
-        ]
-        model = Profile
+        model = User
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins', 'reservations']
+
+    def validate_phone(self, value):
+        return value.strip()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    from checkin.resources.api.nested import SimpleReservationSerializer
     display_name = serializers.ReadOnlyField(source='get_display_name')
+    # reservations = serializers.ListField(read_only=True, child=SimpleReservationSerializer(many=True), allow_empty=True, source='reservation_set')
+    reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
     #ical_feed_url = serializers.SerializerMethodField()
     #staff_perms = serializers.SerializerMethodField()
 
@@ -35,7 +60,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'last_login', 'email', 'date_joined',
             'first_name', 'last_name', 'id',
-            'is_staff', 'display_name' #, 'ical_feed_url', 'staff_perms', 'favorite_resources'
+            'is_staff', 'display_name', 'reservations' # 'ical_feed_url', 'staff_perms', 'favorite_resources'
         ]
         model = get_user_model()
 
@@ -79,6 +104,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
     permission_classes = [permissions.IsAuthenticated]
     queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserProfileSerializer
 
-register_view(UserViewSet, 'user')
+register_view(UserViewSet, 'profile')

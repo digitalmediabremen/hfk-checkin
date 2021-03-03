@@ -3,6 +3,8 @@ from .models import *
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
 
+# TODO does not belong here. Move to checkin.users!
+#from checkin.resources.api.reservation import SimpleReservationSerializer
 
 class ActivityProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,7 +52,9 @@ class BaseProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(BaseProfileSerializer):
-    last_checkins = SimpleCheckinSerializer(many=True, read_only=True)
+    # last_checkins = SimpleCheckinSerializer(many=True, read_only=True)
+    #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
+    # reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     verified = ReadOnlyField()
     complete = ReadOnlyField()
     id = ReadOnlyField()
@@ -64,7 +68,7 @@ class ProfileSerializer(BaseProfileSerializer):
 
 
 class CheckinSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True)
+    profile = BaseProfileSerializer(read_only=True)
     location = LocationSerializer(read_only=True)
     id = ReadOnlyField()
 

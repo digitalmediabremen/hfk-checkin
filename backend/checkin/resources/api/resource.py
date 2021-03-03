@@ -16,6 +16,7 @@ from django.urls import reverse
 #from django.contrib.gis.geos import Point
 from django.contrib.auth import get_user_model
 from modeltranslation.manager import append_translated
+from django_filters.rest_framework import DjangoFilterBackend
 
 #from resources.pagination import PurposePagination
 from rest_framework import exceptions, filters, mixins, serializers, viewsets, response, status
@@ -476,209 +477,202 @@ class ParentCharFilter(ParentFilter):
 #         return qs
 
 
-# class ResourceFilterSet(django_filters.FilterSet):
-#     def __init__(self, *args, **kwargs):
-#         self.user = kwargs.pop('user')
-#         super().__init__(*args, **kwargs)
-#
-#     purpose = ParentCharFilter(field_name='purposes__id', lookup_expr='iexact')
-#     type = django_filters.Filter(field_name='type__id', lookup_expr='in', widget=django_filters.widgets.CSVWidget)
-#     people = django_filters.NumberFilter(field_name='people_capacity', lookup_expr='gte')
-#     need_manual_confirmation = django_filters.BooleanFilter(field_name='need_manual_confirmation',
-#                                                             widget=DRFFilterBooleanWidget)
-#     is_favorite = django_filters.BooleanFilter(method='filter_is_favorite', widget=DRFFilterBooleanWidget)
-#     unit = django_filters.CharFilter(field_name='unit__id', lookup_expr='iexact')
-#     resource_group = django_filters.Filter(field_name='groups__identifier', lookup_expr='in',
-#                                            widget=django_filters.widgets.CSVWidget, distinct=True)
-#     equipment = django_filters.Filter(field_name='resource_equipment__equipment__id', lookup_expr='in',
-#                                       widget=django_filters.widgets.CSVWidget, distinct=True)
-#     available_between = django_filters.Filter(method='filter_available_between',
-#                                               widget=django_filters.widgets.CSVWidget)
-#     free_of_charge = django_filters.BooleanFilter(method='filter_free_of_charge',
-#                                                   widget=DRFFilterBooleanWidget)
-#     municipality = django_filters.Filter(field_name='unit__municipality_id', lookup_expr='in',
-#                                          widget=django_filters.widgets.CSVWidget, distinct=True)
-#     order_by = ResourceOrderingFilter(
-#         fields=(
-#             ('name_fi', 'resource_name_fi'),
-#             ('name_en', 'resource_name_en'),
-#             ('name_sv', 'resource_name_sv'),
-#             ('unit__name_fi', 'unit_name_fi'),
-#             ('unit__name_en', 'unit_name_en'),
-#             ('unit__name_sv', 'unit_name_sv'),
-#             ('type__name_fi', 'type_name_fi'),
-#             ('type__name_en', 'type_name_en'),
-#             ('type__name_sv', 'type_name_sv'),
-#             ('people_capacity', 'people_capacity'),
-#             ('accessibility_priority', 'accessibility'),
-#         ),
-#     )
-#
-#     def filter_is_favorite(self, queryset, name, value):
-#         if not self.user.is_authenticated:
-#             if value:
-#                 return queryset.none()
-#             else:
-#                 return queryset
-#
-#         if value:
-#             return queryset.filter(favorited_by=self.user)
-#         else:
-#             return queryset.exclude(favorited_by=self.user)
-#
-#     def filter_free_of_charge(self, queryset, name, value):
-#         qs = Q(min_price__lte=0) | Q(min_price__isnull=True)
-#         if value:
-#             return queryset.filter(qs)
-#         else:
-#             return queryset.exclude(qs)
-#
-#     def _deserialize_datetime(self, value):
-#         try:
-#             return arrow.get(value).datetime
-#         except ParserError:
-#             raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % value)
-#
-#     def filter_available_between(self, queryset, name, value):
-#         if len(value) < 2 or len(value) > 3:
-#             raise exceptions.ParseError('available_between takes two or three comma-separated values.')
-#
-#         available_start = self._deserialize_datetime(value[0])
-#         available_end = self._deserialize_datetime(value[1])
-#
-#         if available_start.date() != available_end.date():
-#             raise exceptions.ParseError('available_between timestamps must be on the same day.')
-#         overlapping_reservations = Reservation.objects.filter(
-#             resource__in=queryset, end__gt=available_start, begin__lt=available_end
-#         ).current()
-#
-#         if len(value) == 2:
-#             return self._filter_available_between_whole_range(
-#                 queryset, overlapping_reservations, available_start, available_end
-#             )
-#         else:
-#             try:
-#                 period = datetime.timedelta(minutes=int(value[2]))
-#             except ValueError:
-#                 raise exceptions.ParseError('available_between period must be an integer.')
-#             return self._filter_available_between_with_period(
-#                 queryset, overlapping_reservations, available_start, available_end, period
-#             )
-#
-#     def _filter_available_between_whole_range(self, queryset, reservations, available_start, available_end):
-#         # exclude resources that have reservation(s) overlapping with the available_between range
-#         queryset = queryset.exclude(reservations__in=reservations)
-#         closed_resource_ids = {
-#             resource.pk
-#             for resource in queryset
-#             if not self._is_resource_open(resource, available_start, available_end)
-#         }
-#
-#         return queryset.exclude(id__in=closed_resource_ids)
-#
-#     @staticmethod
-#     def _is_resource_open(resource, start, end):
-#         opening_hours = resource.get_opening_hours(start, end)
-#         if len(opening_hours) > 1:
-#             # range spans over multiple days, assume resources aren't open all night and skip the resource
-#             return False
-#
-#         hours = next(iter(opening_hours.values()))[0]  # assume there is only one hours obj per day
-#         if not hours['opens'] and not hours['closes']:
-#             return False
-#
-#         start_too_early = hours['opens'] and start < hours['opens']
-#         end_too_late = hours['closes'] and end > hours['closes']
-#         if start_too_early or end_too_late:
-#             return False
-#
-#         return True
-#
-#     def _filter_available_between_with_period(self, queryset, reservations, available_start, available_end, period):
-#         reservations = reservations.order_by('begin').select_related('resource')
-#
-#         reservations_by_resource = collections.defaultdict(list)
-#         for reservation in reservations:
-#             reservations_by_resource[reservation.resource_id].append(reservation)
-#
-#         available_resources = set()
-#
-#         hours_qs = ResourceDailyOpeningHours.objects.filter(
-#             open_between__overlap=(available_start, available_end, '[)'))
-#
-#         # check the resources one by one to determine which ones have open slots
-#         for resource in queryset.prefetch_related(None).prefetch_related(
-#                 Prefetch('opening_hours', queryset=hours_qs, to_attr='prefetched_opening_hours')):
-#             reservations = reservations_by_resource[resource.pk]
-#
-#             if self._is_resource_available(resource, available_start, available_end, reservations, period):
-#                 available_resources.add(resource.pk)
-#
-#         return queryset.filter(id__in=available_resources)
-#
-#     @staticmethod
-#     def _is_resource_available(resource, available_start, available_end, reservations, period):
-#         opening_hours = resource.get_opening_hours(available_start, available_end, resource.prefetched_opening_hours)
-#         hours = next(iter(opening_hours.values()))[0]  # assume there is only one hours obj per day
-#
-#         if not (hours['opens'] or hours['closes']):
-#             return False
-#
-#         current = max(available_start, hours['opens']) if hours['opens'] is not None else available_start
-#         end = min(available_end, hours['closes']) if hours['closes'] is not None else available_end
-#
-#         if current >= end:
-#             # the resource is already closed
-#             return False
-#
-#         if not reservations:
-#             # the resource has no reservations, just check if the period fits in the resource's opening times
-#             if end - current >= period:
-#                 return True
-#             return False
-#
-#         # try to find an open slot between reservations and opening / closing times.
-#         # start from period start time or opening time depending on which one is earlier.
-#         for reservation in reservations:
-#             if reservation.end <= current:
-#                 # this reservation is in the past
-#                 continue
-#             if reservation.begin - current >= period:
-#                 # found an open slot before the reservation currently being examined
-#                 return True
-#             if reservation.end > end:
-#                 # the reservation currently being examined ends after the period or closing time,
-#                 # so no free slots
-#                 return False
-#             # did not find an open slot before the reservation currently being examined,
-#             # proceed to next reservation
-#             current = reservation.end
-#         else:
-#             # all reservations checked and no free slot found, check if there is a free slot after the last
-#             # reservation
-#             if end - reservation.end >= period:
-#                 return True
-#
-#         return False
-#
-#     class Meta:
-#         model = Resource
-#         fields = ['purpose', 'type', 'people', 'need_manual_confirmation', 'is_favorite', 'unit', 'available_between', 'min_price']
-#
-#
-# class ResourceFilterBackend(filters.BaseFilterBackend):
-#     """
-#     Make request user available in the filter set.
-#     """
-#
-#     def filter_queryset(self, request, queryset, view):
-#         accessibility_filtering = request.query_params.get('order_by', None) == 'accessibility'
-#         viewpoint_defined = 'accessibility_viewpoint' in request.query_params
-#         if accessibility_filtering and not viewpoint_defined:
-#             error_message = "'accessibility_viewpoint' must be defined when ordering by accessibility"
-#             raise exceptions.ParseError(error_message)
-#
-#         return ResourceFilterSet(request.query_params, queryset=queryset, user=request.user).qs
+class ResourceFilterSet(django_filters.rest_framework.FilterSet):
+    # def __init__(self, *args, **kwargs):
+    #     self.user = kwargs.pop('user')
+    #     super().__init__(*args, **kwargs)
+
+    # purpose = ParentCharFilter(field_name='purposes__id', lookup_expr='iexact')
+    # type = django_filters.Filter(field_name='type__id', lookup_expr='in', widget=django_filters.widgets.CSVWidget)
+    # people = django_filters.NumberFilter(field_name='people_capacity', lookup_expr='gte')
+    # need_manual_confirmation = django_filters.BooleanFilter(field_name='need_manual_confirmation',
+    #                                                         widget=DRFFilterBooleanWidget)
+    # is_favorite = django_filters.BooleanFilter(method='filter_is_favorite', widget=DRFFilterBooleanWidget)
+    unit = django_filters.CharFilter(field_name='unit__uuid', lookup_expr='iexact')
+    # resource_group = django_filters.Filter(field_name='groups__identifier', lookup_expr='in',
+    #                                        widget=django_filters.widgets.CSVWidget, distinct=True)
+    # equipment = django_filters.Filter(field_name='resource_equipment__equipment__id', lookup_expr='in',
+    #                                   widget=django_filters.widgets.CSVWidget, distinct=True)
+    # available_between = django_filters.Filter(method='filter_available_between',
+    #                                           widget=django_filters.widgets.CSVWidget)
+    # free_of_charge = django_filters.BooleanFilter(method='filter_free_of_charge',
+    #                                               widget=DRFFilterBooleanWidget)
+    # municipality = django_filters.Filter(field_name='unit__municipality_id', lookup_expr='in',
+    #                                      widget=django_filters.widgets.CSVWidget, distinct=True)
+    # order_by = ResourceOrderingFilter(
+    #     fields=(
+    #         ('name_fi', 'resource_name_fi'),
+    #         ('name_en', 'resource_name_en'),
+    #         ('name_sv', 'resource_name_sv'),
+    #         ('unit__name_fi', 'unit_name_fi'),
+    #         ('unit__name_en', 'unit_name_en'),
+    #         ('unit__name_sv', 'unit_name_sv'),
+    #         ('type__name_fi', 'type_name_fi'),
+    #         ('type__name_en', 'type_name_en'),
+    #         ('type__name_sv', 'type_name_sv'),
+    #         ('people_capacity', 'people_capacity'),
+    #         ('accessibility_priority', 'accessibility'),
+    #     ),
+    # )
+
+    # def filter_is_favorite(self, queryset, name, value):
+    #     if not self.user.is_authenticated:
+    #         if value:
+    #             return queryset.none()
+    #         else:
+    #             return queryset
+    #
+    #     if value:
+    #         return queryset.filter(favorited_by=self.user)
+    #     else:
+    #         return queryset.exclude(favorited_by=self.user)
+    #
+    # def filter_free_of_charge(self, queryset, name, value):
+    #     qs = Q(min_price__lte=0) | Q(min_price__isnull=True)
+    #     if value:
+    #         return queryset.filter(qs)
+    #     else:
+    #         return queryset.exclude(qs)
+    #
+    # def _deserialize_datetime(self, value):
+    #     try:
+    #         return arrow.get(value).datetime
+    #     except ParserError:
+    #         raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % value)
+    #
+    # def filter_available_between(self, queryset, name, value):
+    #     if len(value) < 2 or len(value) > 3:
+    #         raise exceptions.ParseError('available_between takes two or three comma-separated values.')
+    #
+    #     available_start = self._deserialize_datetime(value[0])
+    #     available_end = self._deserialize_datetime(value[1])
+    #
+    #     if available_start.date() != available_end.date():
+    #         raise exceptions.ParseError('available_between timestamps must be on the same day.')
+    #     overlapping_reservations = Reservation.objects.filter(
+    #         resource__in=queryset, end__gt=available_start, begin__lt=available_end
+    #     ).current()
+    #
+    #     if len(value) == 2:
+    #         return self._filter_available_between_whole_range(
+    #             queryset, overlapping_reservations, available_start, available_end
+    #         )
+    #     else:
+    #         try:
+    #             period = datetime.timedelta(minutes=int(value[2]))
+    #         except ValueError:
+    #             raise exceptions.ParseError('available_between period must be an integer.')
+    #         return self._filter_available_between_with_period(
+    #             queryset, overlapping_reservations, available_start, available_end, period
+    #         )
+    #
+    # def _filter_available_between_whole_range(self, queryset, reservations, available_start, available_end):
+    #     # exclude resources that have reservation(s) overlapping with the available_between range
+    #     queryset = queryset.exclude(reservations__in=reservations)
+    #     closed_resource_ids = {
+    #         resource.pk
+    #         for resource in queryset
+    #         if not self._is_resource_open(resource, available_start, available_end)
+    #     }
+    #
+    #     return queryset.exclude(id__in=closed_resource_ids)
+    #
+    # @staticmethod
+    # def _is_resource_open(resource, start, end):
+    #     opening_hours = resource.get_opening_hours(start, end)
+    #     if len(opening_hours) > 1:
+    #         # range spans over multiple days, assume resources aren't open all night and skip the resource
+    #         return False
+    #
+    #     hours = next(iter(opening_hours.values()))[0]  # assume there is only one hours obj per day
+    #     if not hours['opens'] and not hours['closes']:
+    #         return False
+    #
+    #     start_too_early = hours['opens'] and start < hours['opens']
+    #     end_too_late = hours['closes'] and end > hours['closes']
+    #     if start_too_early or end_too_late:
+    #         return False
+    #
+    #     return True
+    #
+    # def _filter_available_between_with_period(self, queryset, reservations, available_start, available_end, period):
+    #     reservations = reservations.order_by('begin').select_related('resource')
+    #
+    #     reservations_by_resource = collections.defaultdict(list)
+    #     for reservation in reservations:
+    #         reservations_by_resource[reservation.resource_id].append(reservation)
+    #
+    #     available_resources = set()
+    #
+    #     hours_qs = ResourceDailyOpeningHours.objects.filter(
+    #         open_between__overlap=(available_start, available_end, '[)'))
+    #
+    #     # check the resources one by one to determine which ones have open slots
+    #     for resource in queryset.prefetch_related(None).prefetch_related(
+    #             Prefetch('opening_hours', queryset=hours_qs, to_attr='prefetched_opening_hours')):
+    #         reservations = reservations_by_resource[resource.pk]
+    #
+    #         if self._is_resource_available(resource, available_start, available_end, reservations, period):
+    #             available_resources.add(resource.pk)
+    #
+    #     return queryset.filter(id__in=available_resources)
+    #
+    # @staticmethod
+    # def _is_resource_available(resource, available_start, available_end, reservations, period):
+    #     opening_hours = resource.get_opening_hours(available_start, available_end, resource.prefetched_opening_hours)
+    #     hours = next(iter(opening_hours.values()))[0]  # assume there is only one hours obj per day
+    #
+    #     if not (hours['opens'] or hours['closes']):
+    #         return False
+    #
+    #     current = max(available_start, hours['opens']) if hours['opens'] is not None else available_start
+    #     end = min(available_end, hours['closes']) if hours['closes'] is not None else available_end
+    #
+    #     if current >= end:
+    #         # the resource is already closed
+    #         return False
+    #
+    #     if not reservations:
+    #         # the resource has no reservations, just check if the period fits in the resource's opening times
+    #         if end - current >= period:
+    #             return True
+    #         return False
+    #
+    #     # try to find an open slot between reservations and opening / closing times.
+    #     # start from period start time or opening time depending on which one is earlier.
+    #     for reservation in reservations:
+    #         if reservation.end <= current:
+    #             # this reservation is in the past
+    #             continue
+    #         if reservation.begin - current >= period:
+    #             # found an open slot before the reservation currently being examined
+    #             return True
+    #         if reservation.end > end:
+    #             # the reservation currently being examined ends after the period or closing time,
+    #             # so no free slots
+    #             return False
+    #         # did not find an open slot before the reservation currently being examined,
+    #         # proceed to next reservation
+    #         current = reservation.end
+    #     else:
+    #         # all reservations checked and no free slot found, check if there is a free slot after the last
+    #         # reservation
+    #         if end - reservation.end >= period:
+    #             return True
+    #
+    #     return False
+
+    class Meta:
+        model = Resource
+        fields = ['unit']
+
+
+class ResourceFilterBackend(filters.BaseFilterBackend):
+    """
+    Make request user available in the filter set.
+    """
+    def filter_queryset(self, request, queryset, view):
+        return ResourceFilterSet(request.query_params, queryset=queryset, user=request.user).qs
 
 
 # class LocationFilterBackend(filters.BaseFilterBackend):
@@ -775,10 +769,10 @@ class ResourceCacheMixin:
         # set_list = ReservationMetadataSet.objects.all().prefetch_related('supported_fields', 'required_fields')
         # context['reservation_metadata_set_cache'] = {x.pk: x for x in set_list}
 
-        if self.request:
-            times = parse_query_time_range(self.request.query_params)
-            if times:
-                context['reservations_cache'] = self._preload_reservations(times)
+        # if self.request:
+        #     times = parse_query_time_range(self.request.query_params)
+        #     if times:
+        #         context['reservations_cache'] = self._preload_reservations(times)
         #context['opening_hours_cache'] = self._preload_opening_hours(times)
 
         # context['accessibility_viewpoint_cache'] = AccessibilityViewpoint.objects.all()
@@ -798,7 +792,8 @@ class ResourceListViewSet(mixins.ListModelMixin,
     queryset = queryset.prefetch_related('groups')
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('products')
-    filter_backends = (filters.SearchFilter,) #, ResourceFilterBackend, LocationFilterBackend)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend) #LocationFilterBackend)
+    filterset_class = ResourceFilterSet
 
     search_fields = append_translated(Resource, ('name', 'numbers', 'description', 'unit__name'))
     serializer_class = ResourceSerializer
@@ -900,7 +895,11 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
     # @action(detail=True, methods=['post'])
     # def unfavorite(self, request, pk=None):
     #     return self._set_favorite(request, False)
-#
-#
+
+    # @action(detail=True, methods=['get'])
+    # def calendar(self, request, pk=None):
+    #     Reser
+
+
 register_view(ResourceListViewSet, 'space')
 register_view(ResourceViewSet, 'space')

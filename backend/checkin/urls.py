@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from microsoft_auth.views import to_ms_redirect
 from django.conf import settings
 from django.conf.urls.static import static
@@ -39,7 +39,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
     #from checkin.booking.api import RoomViewSet, BookingRequestViewSet
     checkin_api_router.register(r'location', LocationViewSet)
     checkin_api_router.register(r'checkin', CheckinViewSet, basename='checkin')
-    checkin_api_router.register(r'profile', ProfileViewSet, basename='profile')
+    # checkin_api_router.register(r'profile', ProfileViewSet, basename='profile')
     checkin_api_router.register(r'auth', LogoutViewSet, basename='auth')
     #checkin_api_router.register(r'room', RoomViewSet, basename='room')
     #checkin_api_router.register(r'bookingrequest', BookingRequestViewSet, basename='bookingrequest')

@@ -25,9 +25,9 @@ from rest_framework.fields import BooleanField, IntegerField, EmailField
 from rest_framework import renderers
 from rest_framework.exceptions import NotAcceptable, ValidationError
 from rest_framework.settings import api_settings as drf_settings
+from django.urls import reverse
 
 #from munigeo import api as munigeo_api
-from checkin.users.api import UserSerializer, ProfileSerializer
 from .resource import ResourceSerializer, ResourceListViewSet
 
 from ..models import (
@@ -101,6 +101,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
+        from checkin.users.api import ProfileSerializer
         # create Profile (attr: user) first, pass user instance to super().create(data)
         user_data = validated_data.pop('user')
         user_instance = ProfileSerializer().create(validated_data=user_data)
@@ -109,6 +110,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, ModifiableModelSerializerMixin):
+    from checkin.users.api import UserProfileSerializer
     #uuid = serializers.ReadOnlyField()
     identifier = serializers.ReadOnlyField(source='short_uuid')
     resource = ResourceSerializer(read_only=True)
@@ -117,7 +119,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     end = NullableDateTimeField()
     #organizer = EmailField(source='user.email', read_only=True) # or depending on permission
     # TODO do all users have permission to show / see organizers?!
-    organizer = ProfileSerializer(source='user', read_only=True)
+    organizer = UserProfileSerializer(source='user', read_only=True)
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
     state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
@@ -329,6 +331,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             return data
 
     def to_internal_value(self, data):
+        from checkin.users.api import UserSerializer
         user_data = data.copy().pop('user', None)  # handle user manually
         deserialized_data = super().to_internal_value(data)
 
@@ -367,7 +370,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         if 'comments' in data and not resource.can_access_reservation_comments(user):
             del data['comments']
 
-        if not resource.can_view_reservation_user(user):
+        if 'organizer' in data and not resource.can_view_reservation_user(user):
             del data['organizer']
 
         # if instance.are_extra_fields_visible(user):
@@ -567,7 +570,7 @@ class ReservationFilterSet(django_filters.rest_framework.FilterSet):
                                                         widget=DRFFilterBooleanWidget)
     resource_group = django_filters.Filter(field_name='resource__groups__identifier', lookup_expr='in',
                                            widget=django_filters.widgets.CSVWidget, distinct=True)
-    unit = django_filters.CharFilter(field_name='resource__unit_pk')
+    unit = django_filters.CharFilter(field_name='resource__unit__uuid')
     has_catering_order = django_filters.BooleanFilter(method='filter_has_catering_order', widget=DRFFilterBooleanWidget)
     resource = django_filters.Filter(lookup_expr='in', widget=django_filters.widgets.CSVWidget)
 
