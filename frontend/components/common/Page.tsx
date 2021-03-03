@@ -28,6 +28,7 @@ interface PageProps {
     footer?: ReactNode;
     scroll?: boolean;
     noContentMargin?: boolean;
+    active?: boolean;
 }
 
 const Page: React.FunctionComponent<PageProps> = ({
@@ -36,6 +37,7 @@ const Page: React.FunctionComponent<PageProps> = ({
     footer,
     scroll,
     noContentMargin,
+    active
 }) => {
     const height = use100vh();
     return (

@@ -2,6 +2,7 @@ import * as React from "react";
 import { ArrowLeft } from "react-feather";
 import theme from "../../styles/theme";
 import Page from "./Page";
+import TopBar from "./TopBar";
 
 const SubPageHeader = ({
     title,
@@ -13,9 +14,6 @@ const SubPageHeader = ({
     <>
         <style jsx>{`
             .header {
-                height: ${theme.topBarHeight}px;
-                background: white;
-                border-bottom: 1px solid ${theme.primaryColor};
                 display: flex;
                 line-height: 0;
                 align-items: center;
@@ -71,9 +69,10 @@ const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
         <>
             <style jsx>{``}</style>
             <Page
+                active={true}
                 noContentMargin={noContentMargin}
                 scroll
-                topBar={<SubPageHeader onBack={onBack} title={title} />}
+                topBar={<TopBar><SubPageHeader onBack={onBack} title={title} /></TopBar>}
             >
                 {children()}
             </Page>

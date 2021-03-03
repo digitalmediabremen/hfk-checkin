@@ -16,7 +16,9 @@ import { TransitionDirection } from "../../src/model/AppState";
 import EnterCodeButton from "./EnterCodeButton";
 import Footer from "./Footer";
 import Page from "./Page";
+import ProfileBar from "./ProfileBar";
 import StatusBar from "./StatusBar";
+import TopBar from "./TopBar";
 
 interface PageAnimationProps {
     childKey?: string;
@@ -148,14 +150,12 @@ const Layout: FunctionComponent<LayoutProps> = ({
         >
             <>
                 <Page
+                    active={!activeSubPage}
                     scroll
                     topBar={
-                        <StatusBar
-                            action={() => {
-                                if (!features.checkin) return undefined;
-                                return <EnterCodeButton />;
-                            }}
-                        />
+                        <TopBar>
+                            <ProfileBar />
+                        </TopBar>
                     }
                     footer={<Footer />}
                 >

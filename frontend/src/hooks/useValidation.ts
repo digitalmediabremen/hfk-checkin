@@ -10,7 +10,7 @@ export default function useValidation() {
     const allErrors = appState.reservationValidation
         .filter((r) => r.level === "error")
         .map((r) => r.message)
-        .join(",");
+        .join("\n");
     const hasErrors = appState.reservationValidation.some(
         (r) => r.level === "error"
     );
