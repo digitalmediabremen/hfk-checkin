@@ -7,7 +7,7 @@ import { useUpdateProfileFromAppStateAndUpdate } from "./ApiHooks";
 import { useTranslation } from "../../localization";
 import Title from "../common/Title";
 import Loading from "../common/Loading";
-import Layout from "../common/Page";
+import Layout from "../common/Layout";
 
 interface NeedsProfileProps {
     profile: MyProfile;
