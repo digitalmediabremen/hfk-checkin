@@ -21,7 +21,7 @@ export type ApiResponse<T> =
           readonly detail: string;
           readonly results: undefined;
           readonly count: undefined;
-          readonly errors: string[]
+          readonly errors: string[];
       }
     | (T & {
           readonly detail: undefined;
@@ -128,8 +128,8 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                     JSON.stringify(result.data)
                 );
                 try {
-                responseTypeGuard(dateWithDateStrings);
-                } catch(e) {
+                    responseTypeGuard(dateWithDateStrings);
+                } catch (e) {
                     console.error(e);
                     throw {
                         status: status,
@@ -216,6 +216,13 @@ export const getReservationRequest = async (
         validateReservation
     );
 
+export const getReservationsRequest = async (options?: RequestOptions) =>
+    await apiRequest<Reservation[]>(
+        `reservation/`,
+        { ...options },
+        (reservations) => reservations.map((r: any) => validateReservation(r))
+    );
+    
 export const updateReservationRequest = async (
     reservation: NewReservation,
     options?: RequestOptions

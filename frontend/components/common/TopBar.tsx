@@ -9,7 +9,8 @@ import {
     Transition,
 } from "react-transition-group";
 import useStatus from "../../src/hooks/useStatus";
-import useTheme from "../../src/hooks/useTheme";import Bar from "./Bar";
+import useTheme from "../../src/hooks/useTheme";
+import Bar from "./Bar";
 
 interface TopBarProps {
     actionProvider?: () => ReactNode;
@@ -131,6 +132,11 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     padding-right: 8px;
                 }
 
+                .push-right {
+                    margin-left: auto;
+                    line-height: 0;
+                }
+
                 .animation.enter-active {
                     animation: appear ${duration}ms linear;
                     animation-fill-mode: forwards;
@@ -168,7 +174,9 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
             <header className="status-bar">
                 <Bar>
                     {children}
-                    {actionProvider?.()}
+                    {!!actionProvider ? (
+                        <span className="push-right">{actionProvider()}</span>
+                    ) : undefined}
                 </Bar>
                 <TransitionGroup className="status-wrapper">
                     {currentStatus && (

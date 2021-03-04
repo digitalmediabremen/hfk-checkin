@@ -21,14 +21,14 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
     const [selectedResource, setSelectedResource] = useReservationState(
         "resource"
     );
-    const resourceId = useParam("resource-list")[0] || "";
+    const unitSlug = useParam("resource-list")[0] || "";
     const height = (use100vh() || 500) - theme.topBarHeight();
     const [loaded, setLoaded] = useState(false);
 
     // load initial resources
     useEffect(() => {
         (async () => {
-            await r.requestResources(resourceId, undefined, 0, 20);
+            await r.requestResources(unitSlug, undefined, 0, 20);
             setLoaded(true);
     })()
     }, []);
@@ -58,11 +58,11 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
     }, [r.state]);
 
     const loadMore = async (from: number, to: number) => {
-        await r.requestResources(resourceId, undefined, from, to - from + 1);
+        await r.requestResources(unitSlug, undefined, from, to - from + 1);
         return null;
     };
 
-    if (!resourceId) return null;
+    if (!unitSlug) return null;
     return (
         <Loading loading={!loaded}>
             <style jsx>{``}</style>

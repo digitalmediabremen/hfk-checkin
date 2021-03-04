@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import Link from "next/link";
 import React, {
     FunctionComponent,
     ReactElement,
@@ -7,9 +8,10 @@ import React, {
     useRef,
 } from "react";
 import { use100vh } from "react-div-100vh";
+import { Plus, PlusSquare } from "react-feather";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import css from "styled-jsx/css";
-import { isClient, pageTransitionDuration } from "../../config";
+import { appUrls, isClient, pageTransitionDuration } from "../../config";
 import useTheme from "../../src/hooks/useTheme";
 import { TransitionDirection } from "../../src/model/AppState";
 import Footer from "./Footer";
@@ -155,7 +157,21 @@ const Layout: FunctionComponent<LayoutProps> = ({
                 active={!activeSubPage}
                 scroll
                 topBar={
-                    <TopBar>
+                    <TopBar
+                        actionProvider={() => (
+                            <Link
+                                href={appUrls.requestHref()}
+                                as={appUrls.requestHref()}
+                            >
+                                <a>
+                                    <PlusSquare
+                                        size={40}
+                                        strokeWidth={(2 / 40) * 24}
+                                    />
+                                </a>
+                            </Link>
+                        )}
+                    >
                         <ProfileBar />
                     </TopBar>
                 }

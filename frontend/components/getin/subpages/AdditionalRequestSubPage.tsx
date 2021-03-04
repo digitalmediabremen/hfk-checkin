@@ -18,7 +18,9 @@ import Loading from "../../common/Loading";
 import NewButton from "../../common/NewButton";
 import SectionTitle from "../../common/SectionTitle";
 
-interface AdditionalRequestSubPageProps {}
+export interface AdditionalRequestSubPageProps {
+    reservationTemplate: NewReservation;
+}
 
 const NewRequestFromTemplate: React.FunctionComponent<{
     reservationRequestTemplate: NewReservation;
@@ -146,7 +148,7 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
             type: "updateReservationRequest",
             reservation,
         });
-        router.push(appUrls.request());
+        router.push(appUrls.requestHref());
     };
 
     return (

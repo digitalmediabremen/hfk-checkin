@@ -29,7 +29,6 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const { t } = useTranslation("request-resource");
     const queryResourceRequest = useResources(false);
     const unitsApi = useUnits();
-    const { setError } = useStatus();
     const { goForward } = useSubPage(requestSubpages);
     const [selectedResource, setSelectedResource] = useReservationState(
         "resource"
@@ -125,8 +124,8 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
             <SectionTitle>{t("Gebäude auswählen")}</SectionTitle>
             {units?.map((unit, index) => (
                 <FormElement
-                    primary={unit.uuid === selectedUnitId}
-                    onClick={() => handleSetUnit(unit.uuid)}
+                    primary={unit.slug === selectedUnitId}
+                    onClick={() => handleSetUnit(unit.slug)}
                     superNarrow
                     value={unit.name}
                     adaptiveWidth

@@ -14,7 +14,7 @@ const features = {
 
 function getHomeUrl () {
     if (features.checkin) return "/profile";
-    if (features.getin) return "/request";
+    if (features.getin) return "/reservation";
     return "/";
 };
 

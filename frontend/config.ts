@@ -55,14 +55,14 @@ export const appUrls = {
         `/reservation/${reservationId}`,
     ],
     reservations: "/reservation",
-    request: (subPageId?: string, param?: string) => buildSubPageUrl("/request", subPageId, param),
+    requestHref: (subPageId?: string, param?: string) => buildSubPageUrl("/request", subPageId, param),
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
 } as const;
 
 export const requestSubpages = {
-    urlProvider: appUrls.request,
+    urlProvider: appUrls.requestHref,
     subpages: {
         time: {},
         resource: {},
