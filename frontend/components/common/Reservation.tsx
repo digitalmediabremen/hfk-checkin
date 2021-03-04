@@ -1,16 +1,14 @@
 import React from "react";
-import { Clock } from "react-feather";
 import { useTranslation } from "../../localization";
-import Reservation from "../../src/model/api/Reservation";
+import { MyReservation } from "../../src/model/api/Reservation";
 import { getIcon, getLabel } from "../../src/util/ReservationUtil";
 import * as format from "../../src/util/TimeFormatUtil";
-import { useLocation } from "../api/ApiHooks";
 import FormElement from "./FormElement";
 import { FormElementBaseProps } from "./FormElementBase";
 import Label from "./Label";
 
 interface ReservationProps extends FormElementBaseProps {
-    reservation: Reservation;
+    reservation: MyReservation;
 }
 
 const ReservationComponent: React.FunctionComponent<ReservationProps> = ({

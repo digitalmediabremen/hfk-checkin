@@ -28,6 +28,7 @@ import useSubmitReservation from "../../src/hooks/useSubmitReservation";
 import { DotPulse, LoadingInline } from "../../components/common/Loading";
 import { timeSpan } from "../../src/util/TimeFormatUtil";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
+import SectionTitle from "../../components/common/SectionTitle";
 
 const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
     if (!start || !end) return undefined;
@@ -110,7 +111,11 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                     ValidationIcon
                 }
                 extendedWidth
+                bottomSpacing={2}
             />
+            <SectionTitle center>
+                {t("weitere angaben")}
+            </SectionTitle>
             <FormElement
                 {...handlerProps("attendees")}
                 value={[
@@ -168,6 +173,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 onClick={submit}
                 iconRight={LoadingIcon}
                 disabled={loading}
+                extendedWidth
             >
                 {t("Anfragen")}
             </NewButton>

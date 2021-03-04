@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useContext, useLayoutEffect } from "react";
+import React, { FunctionComponent, useContext, useEffect, useLayoutEffect } from "react";
 import { useMediaLayout } from "use-media";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
 import useTheme from "../../src/hooks/useTheme";
@@ -22,7 +22,7 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
 
     const isWide = useMediaLayout({ minWidth: 500 });
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         console.log("update");
         dispatch({
             type: "updateTheme",

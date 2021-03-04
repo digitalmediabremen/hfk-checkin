@@ -51,3 +51,7 @@ export default interface Reservation {
     //  */
     // readonly updated_at: Date;
 }
+
+export type MyReservation = Pick<Reservation, "uuid" | "begin" | "end" | "state"> & {
+    readonly resource: Pick<Resource, "uuid" | "name" | "display_name" | "display_numbers">
+}

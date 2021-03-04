@@ -47,7 +47,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     if (notFound) return <Page404 />;
     if (error) return <Error error={error} />;
 
-    return ( 
+    return (
         <Loading loading={!reservation}>
             <style jsx>{``}</style>
             <Layout
@@ -67,7 +67,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                     </>
                 }
             >
-                {(reservationSuccess || true) && (
+                {reservationSuccess && (
                     <>
                         <>
                             <CheckinSucessIcon />
@@ -75,9 +75,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                 {t("Deine Anfrage ist eingegangen.")}
                             </Subtitle>
                         </>
-                        <Text paragraph>
-                            {reservation?.state_verbose}
-                        </Text>
+                        <Text paragraph>{reservation?.state_verbose}</Text>
                     </>
                 )}
 
