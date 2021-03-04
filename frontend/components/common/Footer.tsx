@@ -14,8 +14,8 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
             <style jsx>
                 {`
                     .footer {
-                        margin-top: ${-theme.footerHeight}px;
-                        height: ${theme.footerHeight}px;
+                        margin-top: ${-theme.footerHeight()}px;
+                        height: ${theme.footerHeight()}px;
                         display: flexbox;
                         align-items: center;
                         padding: 0 ${theme.spacing(3)}px;

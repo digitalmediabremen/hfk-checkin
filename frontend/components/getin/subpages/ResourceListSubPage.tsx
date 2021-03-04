@@ -22,7 +22,7 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
         "resource"
     );
     const resourceId = useParam("resource-list")[0] || "";
-    const height = (use100vh() || 500) - theme.topBarHeight;
+    const height = (use100vh() || 500) - theme.topBarHeight();
     const [loaded, setLoaded] = useState(false);
 
     // load initial resources
