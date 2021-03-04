@@ -1,4 +1,4 @@
-import React, { SFC, useRef, useEffect } from "react";
+import React, { FunctionComponent, useRef, useEffect } from "react";
 import useDigitInput, { InputAttributes } from "react-digit-input";
 import useTheme from "../../src/hooks/useTheme";
 interface LocationCodeInputProps {
@@ -113,8 +113,9 @@ const DigitInputElement = React.forwardRef<
     );
 });
 
-const LocationCodeInput: SFC<LocationCodeInputProps> = (props) => {
+const LocationCodeInput: FunctionComponent<LocationCodeInputProps> = (props) => {
     const { code, onChange, disabled, onBlur, onFocus } = props;
+    const theme = useTheme();
 
     const handleChange = (code: string) => {
         if (disabled) return;

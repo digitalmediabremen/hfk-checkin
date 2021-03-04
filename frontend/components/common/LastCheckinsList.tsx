@@ -99,7 +99,8 @@ const LastCheckins: React.FunctionComponent<LastCheckinsProps> = ({
     showCheckoutSeperatly,
     extendInteractableWidth,
 }) => {
-    const { t } = useTranslation();
+    const theme = useTheme();
+
     checkins = indexCheckin(checkins);
     checkins = React.useMemo(
         () =>
@@ -201,7 +202,8 @@ const LastCheckinListItem = ({
 }) => {
     const { org_name, org_number, id } = checkin.location;
     const { time_left, time_entered, is_active } = checkin;
-    const { t, locale } = useTranslation();
+    const { t } = useTranslation();    
+    const theme = useTheme();
 
     let displayDate: Date = new Date(time_left || time_entered);
     // checkin is not older than 30 seconds

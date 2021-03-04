@@ -10,7 +10,6 @@ interface HelpSectionProps {
 }
 
 const scrollIntoView = (element: HTMLInputElement) => {
-    const theme = useTheme();
     const headerOffset = 80;
     const elementPosition =
         element.getBoundingClientRect().top + window.scrollY;
@@ -38,6 +37,7 @@ export const useOnlyOneOpen = (
 };
 
 const HelpTitle: React.FunctionComponent = ({ children }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

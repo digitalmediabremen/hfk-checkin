@@ -9,7 +9,10 @@ const SubPageHeader = ({
 }: {
     title: string;
     onBack: (subPage?: string) => void;
-}) => (
+}) => {
+    const theme = useTheme();
+
+    return (
     <>
         <style jsx>{`
             .header {
@@ -44,7 +47,7 @@ const SubPageHeader = ({
             <h1 className="title">{title}</h1>
         </div>
     </>
-);
+)};
 
 export interface SubPageProps {
     title: string;
@@ -55,7 +58,6 @@ export interface SubPageProps {
 }
 
 const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
-    const theme = useTheme();
     const { children, title, onBack, active, noContentMargin } = props;
     if (!active) return null;
     return (

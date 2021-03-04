@@ -2,7 +2,9 @@ import classNames from "classnames";
 import React, { ReactNode } from "react";
 import { use100vh } from "react-div-100vh";
 import useTheme from "../../src/hooks/useTheme";
-export const Content: React.FunctionComponent = ({ children }) => (
+export const Content: React.FunctionComponent = ({ children }) => {
+    const theme = useTheme();
+    return (
     <>
         <style jsx>
             {`
@@ -20,7 +22,7 @@ export const Content: React.FunctionComponent = ({ children }) => (
         </style>
         <div className="content">{children}</div>
     </>
-);
+)};
 
 interface PageProps {
     topBar?: ReactNode;
