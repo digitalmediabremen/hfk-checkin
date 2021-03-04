@@ -28,7 +28,7 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
             type: "updateTheme",
             theme: {
                 fontSize: isWide ? 18 : 16,
-                unit: isWide ? 10 : 8,
+                unit: isWide ? 9 : 8,
                 borderRadius: isWide ? 6 : 5
             },
         });
