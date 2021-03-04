@@ -21,6 +21,7 @@ const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
                     text-transform: uppercase;
                     color: ${theme.disabledColor};
                     font-size: 0.75rem;
+                    line-height: 1.25rem;
                     font-weight: normal;
                 }
 

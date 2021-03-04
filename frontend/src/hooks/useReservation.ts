@@ -13,7 +13,7 @@ export default function useReservation(reservationId?: string) {
     const [useFromAppstate, setUseFromAppstate] = useState(
         !!reservationFromAppstate
     );
-    const { showReservationSuccessful } = appState;å
+    const { showReservationSuccessful } = appState;
     const [reservationSuccess, setReservationSuccess] = useState(false);
 
     useEffect(() => {

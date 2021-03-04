@@ -54,6 +54,7 @@ export const appUrls = {
         "/reservation/[reservationId]",
         `/reservation/${reservationId}`,
     ],
+    reservations: "/reservation",
     request: (subPageId?: string, param?: string) => buildSubPageUrl("/request", subPageId, param),
     introduction: "/intro",
     privacy: "/privacy",
