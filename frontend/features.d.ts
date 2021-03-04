@@ -11,3 +11,5 @@ export function getHomeUrl(): string;
 export function getPrimaryColor(): string;
 export function getManifestUrl(): string;
 export function envToBoolean(value?: string): boolean;
+export function getTitle(): string;
+export function getPrimaryColorHex(): string;

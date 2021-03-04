@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useContext, useEffect, useLayoutEffect } from "react";
-import { useMediaLayout } from "use-media";
+import useMedia from "use-media";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
 import useTheme from "../../src/hooks/useTheme";
 import validateRequestTemplate from "../../src/model/api/NewReservation.validator";
@@ -20,16 +20,17 @@ const { Provider } = appStateContext;
 export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();
 
-    const isWide = useMediaLayout({ minWidth: 500 });
+    const isWide = useMedia({ minWidth: 500 });
+    const isPwa = useMedia({ displayMode: "standalone" })
 
     useEffect(() => {
-        console.log("update");
         dispatch({
             type: "updateTheme",
             theme: {
                 fontSize: isWide ? 18 : 16,
                 unit: isWide ? 9 : 8,
-                borderRadius: isWide ? 6 : 5
+                borderRadius: isWide ? 6 : 5,
+                offsetTopBar: isPwa ? 16 : 0 
             },
         });
     }, [isWide]);

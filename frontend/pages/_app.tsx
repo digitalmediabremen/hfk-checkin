@@ -7,9 +7,9 @@ import ErrorDispatcher from "../components/common/ErrorDispatcher";
 import { getInitialLocale, LocaleProvider } from "../localization";
 import "../styles/globals.css";
 import ErrorBoundary from "../components/common/ErrorBoundary";
+import { getTitle } from "../features";
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
-    const { error, status, profile, ...props } = pageProps;
+const MyApp = ({ Component }: AppProps) => {
 
     return (
         <>
@@ -18,16 +18,14 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
                     name="viewport"
                     content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover"
                 />
-                <title>HfK-Checkin</title>
+                <title>{getTitle()}</title>
             </Head>
             <ErrorBoundary>
                 <AppStateProvider>
                     <LocaleProvider locale={getInitialLocale()}>
-                        <ErrorDispatcher status={status} error={error}>
-                            <AppWrapper>
-                                <Component error={error} {...props} />
-                            </AppWrapper>
-                        </ErrorDispatcher>
+                        <AppWrapper>
+                            <Component />
+                        </AppWrapper>
                     </LocaleProvider>
                 </AppStateProvider>
             </ErrorBoundary>
