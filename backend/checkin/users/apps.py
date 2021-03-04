@@ -33,7 +33,6 @@ class UsersConfig(AppConfig):
 
 def fix_microsoft_auth_user_admin():
     """
-    Will run when Django loads.
     Replaces UserAdmin set by `microsoft_auth`
     FIXME microsoft_auth should not do this in the first place.
     :return:
@@ -44,7 +43,9 @@ def fix_microsoft_auth_user_admin():
         from django.contrib.auth import get_user_model
         User = get_user_model()
 
-        from .admin import UserAdmin
+        from checkin.users.admin import UserAdmin
+
+        logger.info("Removing microsoft_auth hijacked Admin views.")
 
         admin.site.unregister(MicrosoftAccount)
         # register microsoft_account's hijacked UserAdmin

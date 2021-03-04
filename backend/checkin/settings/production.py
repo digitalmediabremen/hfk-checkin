@@ -156,3 +156,7 @@ LOGGING = {
 SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_DOMAIN = getenv("SESSION_COOKIE_DOMAIN", default="checkin.hfk-bremen.de")
 CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS + [getenv("CORS_ALLOWED_ORIGINS", default="checkin.hfk-bremen.de")]
+
+# TODO remove together with microsoft_auth
+# for now we need this. see tracking.users.apps.fix_microsoft_auth_user_admin() for details
+SILENCED_SYSTEM_CHECKS = ["admin.E033"]
