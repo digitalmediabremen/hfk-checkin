@@ -183,7 +183,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                                     className="animation"
                                     onClick={() => remove()}
                                 >
-                                    <Bar extendedWidth>
+                                    <Bar extendedWidth maxWidth>
                                         <div className="status error">
                                             {currentStatus.isError && (
                                                 <span className="icon">
