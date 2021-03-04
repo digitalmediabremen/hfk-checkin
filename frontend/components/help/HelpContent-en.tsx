@@ -185,10 +185,6 @@ const HelpContentEn = () => {
                     <a href="mailto:checkin@hfk-bremen.de">
                         checkin@hfk-bremen.de
                     </a>
-                    <br />
-                    <br />
-                    The application and the new process to enter the building
-                    and individuals are currently run in test mode.
                 </Text>
             </HelpSection>
 

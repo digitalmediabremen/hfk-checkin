@@ -21,7 +21,7 @@ const HelpContentDe = () => {
             </Notice>
             <HelpSection
                 {...openPropsProvider(1)}
-                title="1. Wie funktioniert der Checkin and Checkout?"
+                title="1. Wie funktioniert der Checkin und Checkout?"
             >
                 <Text paragraph>
                     Sobald du dich registriert hast, kannst du selbstständig auf
@@ -174,10 +174,6 @@ const HelpContentDe = () => {
                     <a href="mailto:checkin@hfk-bremen.de">
                         checkin@hfk-bremen.de
                     </a>
-                    <br />
-                    <br />
-                    Die Anwendung und das neue Zugangsverfahren befinden sich
-                    momentan in einem Testbetrieb.
                 </Text>
             </HelpSection>
             <HelpSection
