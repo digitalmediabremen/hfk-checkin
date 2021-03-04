@@ -489,7 +489,8 @@ class ResourceFilterSet(django_filters.rest_framework.FilterSet):
     # need_manual_confirmation = django_filters.BooleanFilter(field_name='need_manual_confirmation',
     #                                                         widget=DRFFilterBooleanWidget)
     # is_favorite = django_filters.BooleanFilter(method='filter_is_favorite', widget=DRFFilterBooleanWidget)
-    unit = django_filters.CharFilter(field_name='unit__uuid', lookup_expr='iexact')
+    unit_uuid = django_filters.CharFilter(field_name='unit__uuid', lookup_expr='iexact')
+    unit_slug = django_filters.CharFilter(field_name='unit__slug', lookup_expr='iexact')
     # resource_group = django_filters.Filter(field_name='groups__identifier', lookup_expr='in',
     #                                        widget=django_filters.widgets.CSVWidget, distinct=True)
     # equipment = django_filters.Filter(field_name='resource_equipment__equipment__id', lookup_expr='in',
@@ -665,7 +666,7 @@ class ResourceFilterSet(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = Resource
-        fields = ['unit']
+        fields = ['unit_slug', 'unit_uuid']
 
 
 class ResourceFilterBackend(filters.BaseFilterBackend):
