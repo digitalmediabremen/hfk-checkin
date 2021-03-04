@@ -4,12 +4,13 @@ import React, {
     ReactElement,
     ReactNode,
     useLayoutEffect,
-    useRef
+    useRef,
 } from "react";
 import { use100vh } from "react-div-100vh";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import css from "styled-jsx/css";
 import { isClient, pageTransitionDuration } from "../../config";
+import useTheme from "../../src/hooks/useTheme";
 import { TransitionDirection } from "../../src/model/AppState";
 import Footer from "./Footer";
 import Page from "./Page";
@@ -138,27 +139,31 @@ const Layout: FunctionComponent<LayoutProps> = ({
     subPages,
     direction,
 }) => {
+    const theme = useTheme();
     return (
         <PageTransition
             show={subPages !== undefined}
             childKey={activeSubPage}
             direction={direction || "left"}
         >
-            <>
-                <Page
-                    active={!activeSubPage}
-                    scroll
-                    topBar={
-                        <TopBar>
-                            <ProfileBar />
-                        </TopBar>
-                    }
-                    footer={<Footer />}
-                >
-                    {children}
-                </Page>
-                {subPages}
-            </>
+            <style jsx>{`
+                :global(html, body) {
+                    font-size: ${theme.fontSize}px;
+                }
+            `}</style>
+            <Page
+                active={!activeSubPage}
+                scroll
+                topBar={
+                    <TopBar>
+                        <ProfileBar />
+                    </TopBar>
+                }
+                footer={<Footer />}
+            >
+                {children}
+            </Page>
+            {subPages}
         </PageTransition>
     );
 };

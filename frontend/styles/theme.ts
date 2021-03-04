@@ -37,9 +37,9 @@ const createTheme = (unit: number = 8, fontSize: number = 16): Theme => ({
         return this.unit * 7;
     },
     topBarHeight: function () {
-        return this.unit * 10;
+        return this.unit * 8 + this.offsetTopBar;
     },
-    offsetTopBar: 16,
+    offsetTopBar: 0,
     boxShadow: function () {
         return `0 0 ${this.spacing(1)}px ${this.shadePrimaryColor(0.3)}`;
     },

@@ -71,7 +71,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     left: 0;
                     right: 0;
                     background: #fff;
-                    margin-top: 16px;
+                    margin-top: ${theme.offsetTopBar}px;
                 }
 
                 .animation {

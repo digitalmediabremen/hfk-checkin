@@ -33,7 +33,8 @@
         "react-transition-group": "^4.4.1",
         "react-window": "^1.8.6",
         "react-window-infinite-loader": "^1.0.7",
-        "smoothscroll-polyfill": "^0.4.4"
+        "smoothscroll-polyfill": "^0.4.4",
+        "use-media": "^1.4.0"
     },
     "devDependencies": {
         "@types/classnames": "^2.2.11",
