@@ -1,11 +1,11 @@
 import * as React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface SubtitleProps {
     center?: true;
 }
 
 const Subtitle: React.FunctionComponent<SubtitleProps> = ({ children, center}) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

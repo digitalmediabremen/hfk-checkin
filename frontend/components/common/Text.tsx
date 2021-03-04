@@ -1,6 +1,5 @@
 import * as React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface TextProps {
     paragraph?: true;
     emphasis?: true;
@@ -8,6 +7,7 @@ interface TextProps {
 }
 
 const Text: React.FunctionComponent<TextProps> = ({children, paragraph, emphasis, bottomSpacing}) => {
+    const theme = useTheme();
     const Element = paragraph ? "p" : "span";
     
     return <>

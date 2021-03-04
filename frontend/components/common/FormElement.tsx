@@ -2,8 +2,7 @@ import classNames from "classnames";
 import React, { Fragment, ReactNode } from "react";
 import { ArrowRight } from "react-feather";
 import { appUrls } from "../../config";
-import theme from "../../styles/theme";
-import FormMultilineValue from "../FormMultilineValue";
+import useTheme from "../../src/hooks/useTheme";import FormMultilineValue from "../FormMultilineValue";
 import EllipseText from "./EllipseText";
 import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import FormElementLabel from "./FormElementLabel";
@@ -32,6 +31,7 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
     isText,
     ...formElementBaseProps
 }) => {
+    const theme = useTheme();
     const handleIconClick = (
         event: React.MouseEvent<HTMLSpanElement, MouseEvent>
     ) => {

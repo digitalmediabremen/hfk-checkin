@@ -9,8 +9,7 @@ import {
     Transition,
 } from "react-transition-group";
 import useStatus from "../../src/hooks/useStatus";
-import theme from "../../styles/theme";
-import Bar from "./Bar";
+import useTheme from "../../src/hooks/useTheme";import Bar from "./Bar";
 
 interface TopBarProps {
     actionProvider?: () => ReactNode;
@@ -20,6 +19,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
     actionProvider,
     children,
 }) => {
+    const theme = useTheme();
     const { status, empty } = useStatus();
     const [currentStatus, setCurrentStatus] = useState<
         | {

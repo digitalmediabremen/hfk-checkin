@@ -7,8 +7,7 @@ import Notice from "../components/common/Notice";
 import AlignContent from "../components/common/AlignContent";
 import Subtitle from "../components/common/Subtitle";
 import { appUrls } from "../config";
-import theme from "../styles/theme";
-import needsProfile from "../components/api/needsProfile";
+import useTheme from "../src/hooks/useTheme";import needsProfile from "../components/api/needsProfile";
 import MyProfile from "../src/model/api/MyProfile";
 import { useTranslation } from "../localization";
 import { DotPulse, LoadingInline } from "../components/common/Loading";
@@ -25,6 +24,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
     profile,
     profileUpdating,
 }) => {
+    const theme = useTheme();
     const router = useRouter();
     const { last_checkins } = profile!;
     const hasCheckins = last_checkins.length > 0;

@@ -1,11 +1,11 @@
 import React, { SFC } from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface FormElementWrapperProps {
     noBottomMargin?: true
 }
 
 const FormElementWrapper: SFC<FormElementWrapperProps> = ({children, noBottomMargin}) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

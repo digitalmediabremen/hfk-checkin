@@ -3,8 +3,7 @@ import TextareaAutosize, {
     TextareaAutosizeProps,
 } from "react-textarea-autosize";
 import css from "styled-jsx/css";
-import theme from "../../styles/theme";
-import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import useTheme from "../../src/hooks/useTheme";import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 
 interface FormMultilineTextInputProps extends FormElementBaseProps {
     textareaProps?: Omit<TextareaAutosizeProps, "ref">;
@@ -30,6 +29,7 @@ const FormMultilineTextInput: React.FunctionComponent<FormMultilineTextInputProp
     textareaProps,
     ...formElementBaseProps
 }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{``}</style>

@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import React, { Fragment, ReactNode } from "react";
-import theme from "../styles/theme";
-import EllipseText from "./common/EllipseText";
+import useTheme from "../src/hooks/useTheme";import EllipseText from "./common/EllipseText";
 
 type FormMultilineValueProps = {
     value: ReactNode;
@@ -14,6 +13,7 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
     maxRows,
     text,
 }) => {
+    const theme = useTheme();
     const arrayValue = !Array.isArray(value) ? [value] : value;
     const [firstValue, ...otherValues] = arrayValue;
     const multiline = otherValues.length > 0;

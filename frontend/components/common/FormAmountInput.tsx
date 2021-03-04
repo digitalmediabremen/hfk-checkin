@@ -1,7 +1,6 @@
 import React from "react";
 import { Plus, Minus } from "react-feather";
-import theme from "../../styles/theme";
-import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import useTheme from "../../src/hooks/useTheme";import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 
 interface FormAmountInputProps extends Omit<FormElementBaseProps, "noOutline"> {
     value: number;
@@ -19,6 +18,7 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
     onChange,
     ...formBaseElementProps
 }) => {
+    const theme = useTheme();
     const calculateValue = (v: number) =>
         Math.min(Math.max(v, minValue || v), maxValue || v);
 

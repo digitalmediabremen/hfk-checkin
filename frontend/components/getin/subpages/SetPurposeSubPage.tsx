@@ -4,8 +4,7 @@ import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useReservationPurposeText from "../../../src/hooks/useReservationPurposeMessage";
 import useValidation from "../../../src/hooks/useValidation";
-import theme from "../../../styles/theme";
-import Fade from "../../common/Fade";
+import useTheme from "../../../src/hooks/useTheme";import Fade from "../../common/Fade";
 import FormCheckbox from "../../common/FormCheckbox";
 import FormMultilineTextInput from "../../common/FormMultilineTextInput";
 import Notice from "../../common/Notice";
@@ -13,6 +12,7 @@ import Notice from "../../common/Notice";
 interface SetPurposeSubPageProps {}
 
 const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) => {
+    const theme = useTheme();
     const { t } = useTranslation("request-purpose");
     const { hasError } = useValidation();
     const [purpose, setPurpose] = useReservationState("purpose");

@@ -10,11 +10,11 @@ import { appUrls } from "../config";
 import Subtitle from "../components/common/Subtitle";
 import { useUpdateProfileFromAppStateAndUpdate } from "../components/api/ApiHooks";
 import MyProfile from "../src/model/api/MyProfile";
-import theme from "../styles/theme";
-
+import useTheme from "../src/hooks/useTheme";
 interface VerifyProfilePageProps {}
 
 const ProfileCenterBig = ({ profile }: { profile: MyProfile }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>

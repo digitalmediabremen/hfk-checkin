@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 import { AlertCircle } from "react-feather";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface NoticeProps {
     error?: true;
     title?: string;
@@ -15,6 +14,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
     error,
     title,
 }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

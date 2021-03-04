@@ -1,6 +1,5 @@
 import * as React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 type AlignOptions = "center" | "bottom";
 
 interface IPushToBottomProps {
@@ -13,6 +12,7 @@ const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     offsetBottomPadding,
     align: _align
 }) => {
+    const theme = useTheme();
     const [offsetTop, setOffsetTop] = React.useState<number>(0);
     const measuredRef = React.useRef<HTMLDivElement>(null);
     const align = _align || "bottom";

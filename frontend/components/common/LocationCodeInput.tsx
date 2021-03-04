@@ -1,7 +1,6 @@
 import React, { SFC, useRef, useEffect } from "react";
 import useDigitInput, { InputAttributes } from "react-digit-input";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface LocationCodeInputProps {
     code: string;
     onChange: (code: string) => void;
@@ -18,6 +17,7 @@ const DigitInputElement = React.forwardRef<
         disabled?: boolean;
     }
 >(({ outline, disabled, ...props }, ref) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

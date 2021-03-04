@@ -1,8 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "../../localization";
 import { LastCheckin } from "../../src/model/api/Checkin";
-import theme from "../../styles/theme";
-import Subtitle from "./Subtitle";
+import useTheme from "../../src/hooks/useTheme";import Subtitle from "./Subtitle";
 import { useAppState } from "./AppStateProvider";
 
 interface LastCheckinsProps {
@@ -15,6 +14,7 @@ interface LastCheckinsProps {
 }
 
 const useForceUpdateAfter = (afterSeconds: number = 30) => {
+    const theme = useTheme();
     const [, setState] = React.useState<{} | undefined>();
     React.useEffect(() => {
         const timer = setTimeout(() => {

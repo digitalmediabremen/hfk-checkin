@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import React, { ReactNode } from "react";
 import { use100vh } from "react-div-100vh";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 export const Content: React.FunctionComponent = ({ children }) => (
     <>
         <style jsx>
@@ -39,6 +38,7 @@ const Page: React.FunctionComponent<PageProps> = ({
     noContentMargin,
     active
 }) => {
+    const theme = useTheme();
     const height = use100vh();
     return (
         <>

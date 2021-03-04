@@ -1,7 +1,6 @@
 import * as React from "react";
 import { ArrowLeft } from "react-feather";
-import theme from "../../styles/theme";
-import Page from "./Page";
+import useTheme from "../../src/hooks/useTheme";import Page from "./Page";
 import TopBar from "./TopBar";
 
 const SubPageHeader = ({
@@ -56,6 +55,7 @@ export interface SubPageProps {
 }
 
 const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
+    const theme = useTheme();
     const { children, title, onBack, active, noContentMargin } = props;
     if (!active) return null;
     return (

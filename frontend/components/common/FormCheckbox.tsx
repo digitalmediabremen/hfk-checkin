@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 import { Square, CheckSquare } from "react-feather";
-import theme from "../../styles/theme";
-import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import useTheme from "../../src/hooks/useTheme";import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 
 interface FormCheckboxProps
     extends Omit<FormElementBaseProps, "noOutline" | "onClick"> {
@@ -19,6 +18,7 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
     small,
     ...formElementBaseProps
 }) => {
+    const theme = useTheme();
     const Icon = value ? CheckSquare : Square;
 
     const handleChange = () => {

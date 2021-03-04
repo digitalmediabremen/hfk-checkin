@@ -1,11 +1,11 @@
 import React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface ListProps { }
 
 const List: React.FunctionComponent<ListProps> = ({
     children
 }) => {
+    const theme = useTheme();
     return (
         <ul>
             <style jsx>{`

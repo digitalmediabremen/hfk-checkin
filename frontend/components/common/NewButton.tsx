@@ -2,8 +2,7 @@ import classNames from "classnames";
 import React, { ReactNode } from "react";
 import { ArrowRight } from "react-feather";
 import css from "styled-jsx/css";
-import theme from "../../styles/theme";
-import EllipseText from "./EllipseText";
+import useTheme from "../../src/hooks/useTheme";import EllipseText from "./EllipseText";
 import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 
 interface NewButtonProps extends FormElementBaseProps {
@@ -28,6 +27,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
     narrow,
     ...formElementBaseProps
 }) => {
+    const theme = useTheme();
     const hasIcon = !!iconLeft || !!iconRight;
     return (
         <>
