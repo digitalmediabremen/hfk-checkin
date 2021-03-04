@@ -17,7 +17,6 @@ const needsProfile = <P extends object>(
     Component: React.ComponentType<P & NeedsProfileProps>
 ): React.FC<P> => (props) => {
     const router = useRouter();
-    const { t } = useTranslation();
     const { appState, dispatch } = useAppState();
     const { initialized } = appState;
     const {
@@ -43,7 +42,7 @@ const needsProfile = <P extends object>(
         if (additionalData?.notAuthorized) {
             dispatch({
                 type: "profile",
-                undefined,
+                profile: undefined,
             });
             router.replace(appUrls.createProfile);
         } else if (profile && !profile.phone) {
