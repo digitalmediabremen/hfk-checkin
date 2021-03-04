@@ -17,7 +17,7 @@ const SubPageHeader = ({
         <style jsx>{`
             .header {
                 display: flex;
-                line-height: 0;
+                // line-height: 0;
                 align-items: center;
                 justify-content: center;
                 position: relative;
@@ -35,9 +35,8 @@ const SubPageHeader = ({
             .back {
                 line-height: 0;
                 position: absolute;
-                left: ${theme.spacing(0)}px;
+                left: ${theme.spacing(-1.5)}px;
                 color: ${theme.primaryColor};
-                transform: translateY(1px);
             }
         `}</style>
         <div className="header" onClick={() => onBack()}>

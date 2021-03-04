@@ -44,6 +44,7 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
                 .push-right {
                     margin-left: auto;
                     text-align: right;
+                    line-height: 0;
                 }
 
                 .icon-interactable {

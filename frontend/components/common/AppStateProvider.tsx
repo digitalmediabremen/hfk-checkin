@@ -1,15 +1,11 @@
-import React, { FunctionComponent, useContext, useEffect } from "react";
-import useDelayedCallback from "../../src/hooks/useDelayedCallback";
+import React, { FunctionComponent, useContext, useLayoutEffect } from "react";
+import { useMediaLayout } from "use-media";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
-import useSafe from "../../src/hooks/useLocalStorage";
-import validate from "../../src/model/api/NewReservationBlueprint.validator";
-import validateRequestTemplate from "../../src/model/api/NewReservation.validator";
-
-import { AppAction, AppState } from "../../src/model/AppState";
-import { notEmpty } from "../../src/util/TypeUtil";
-import useReduceAppState, { initialAppState } from "../api/useReduceAppState";
-import useSubPage from "../api/useSubPage";
 import useTheme from "../../src/hooks/useTheme";
+import validateRequestTemplate from "../../src/model/api/NewReservation.validator";
+import validate from "../../src/model/api/NewReservationBlueprint.validator";
+import { AppAction, AppState } from "../../src/model/AppState";
+import useReduceAppState, { initialAppState } from "../api/useReduceAppState";
 
 const appStateContext = React.createContext<{
     appState: AppState;
@@ -24,18 +20,25 @@ const { Provider } = appStateContext;
 export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();
 
-    // set font size of theme
-    const theme = useTheme();
+    const isWide = useMediaLayout({ minWidth: 500 });
 
-    useLocalStorage(
-        "rr",
-        appState.reservationRequest,
-        validate,
-        (r) =>
-            dispatch({
-                type: "updateReservationRequest",
-                reservation: r,
-            })
+    useLayoutEffect(() => {
+        console.log("update");
+        dispatch({
+            type: "updateTheme",
+            theme: {
+                fontSize: isWide ? 18 : 16,
+                unit: isWide ? 10 : 8,
+                borderRadius: isWide ? 6 : 5
+            },
+        });
+    }, [isWide]);
+
+    useLocalStorage("rr", appState.reservationRequest, validate, (r) =>
+        dispatch({
+            type: "updateReservationRequest",
+            reservation: r,
+        })
     );
 
     useLocalStorage(
@@ -49,14 +52,7 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
             })
     );
 
-    return <>
-        <style jsx>{`
-            :global(body) {
-                font-size: ${theme.fontSize};
-            }
-        `}</style>
-        <Provider value={{ appState, dispatch }}>{children}</Provider>
-    </>;
+    return <Provider value={{ appState, dispatch }}>{children}</Provider>;
 };
 
 export const useAppState = () => useContext(appStateContext);

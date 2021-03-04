@@ -81,7 +81,7 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                     margin-right: ${theme.spacing(1)}px;
                 }
             `}</style>
-            <FormElementBase noOutline {...formBaseElementProps}>
+            <FormElementBase noPadding noOutline {...formBaseElementProps}>
                 <span key={value} className="amount">
                     {value}
                     {" "}{label && (

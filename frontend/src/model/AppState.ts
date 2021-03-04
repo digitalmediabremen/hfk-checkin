@@ -86,6 +86,6 @@ export type AppAction =
           type: "updateLocale";
           locale: string;
       } | {
-          type: "changeTheme";
+          type: "updateTheme";
           theme: Partial<Theme>;
       };

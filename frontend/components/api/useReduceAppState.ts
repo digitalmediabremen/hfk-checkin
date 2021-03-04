@@ -137,7 +137,7 @@ const useReduceAppState = () =>
                         action.locale
                     ),
                 };
-            case "changeTheme":
+            case "updateTheme":
                 return {
                     ...previousState,
                     theme: {
