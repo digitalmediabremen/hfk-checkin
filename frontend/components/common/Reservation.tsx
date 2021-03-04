@@ -3,11 +3,11 @@ import { useTranslation } from "../../localization";
 import { MyReservation } from "../../src/model/api/Reservation";
 import { getIcon, getLabel } from "../../src/util/ReservationUtil";
 import * as format from "../../src/util/TimeFormatUtil";
-import FormElement from "./FormElement";
+import FormElement, { FormElementProps } from "./FormElement";
 import { FormElementBaseProps } from "./FormElementBase";
 import Label from "./Label";
 
-interface ReservationProps extends FormElementBaseProps {
+interface ReservationProps extends FormElementProps {
     reservation: MyReservation;
 }
 

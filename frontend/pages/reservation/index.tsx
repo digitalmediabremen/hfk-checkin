@@ -1,13 +1,15 @@
 import Link from "next/link";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
+import { ArrowRight } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
+import Loading from "../../components/common/Loading";
 import Reservation from "../../components/common/Reservation";
-import SectionTitle from "../../components/common/SectionTitle";
 import Subtitle from "../../components/common/Subtitle";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
+import useReservations from "../../src/hooks/useReservations";
 import MyProfile from "../../src/model/api/MyProfile";
 import { MyReservation } from "../../src/model/api/Reservation";
 import { isToday } from "../../src/util/DateTimeUtil";
@@ -23,43 +25,61 @@ const sort = (a: MyReservation, b: MyReservation) =>
 
 const groupBy = (value: MyReservation): string =>
     format.date(value.begin, "de");
+// value.resource.display_name
 
 const headerProvider = (groupKey: string, firstValue: MyReservation) =>
-    isToday(firstValue.begin) ? null : (
-        <Subtitle key={groupKey} center>
-            {groupKey}
-        </Subtitle>
+    isToday(firstValue.begin) ? (
+        <>"Today"</>
+    ) : (
+        <Subtitle center>{groupKey}</Subtitle>
     );
 
 const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
     profile,
 }) => {
-    const { reservations } = profile;
+    const api = useReservations();
     const { t } = useTranslation("reservation");
+
+    useEffect(() => {
+        api.request();
+    }, []);
+
     return (
         <Layout>
             <Subtitle>{t("Buchungsanfragen")}</Subtitle>
-            <GroupedList
-                items={reservations}
-                by={groupBy}
-                headerProvider={headerProvider}
-                sort={sort}
-            >
-                {(reservation, last) => (
-                    <Link
-                        href={appUrls.reservation(reservation.uuid)[0]}
-                        as={appUrls.reservation(reservation.uuid)[1]}
+            <Loading loading={api.state === "loading"}>
+                {api.state === "success" && (
+                    <GroupedList
+                        items={api.result}
+                        by={groupBy}
+                        headerProvider={headerProvider}
+                        sort={sort}
                     >
-                        <a>
-                            <Reservation
-                                key={reservation.uuid}
-                                reservation={reservation}
-                                bottomSpacing={2}
-                            />
-                        </a>
-                    </Link>
+                        {(reservation, last) => (
+                            <Link
+                                href={
+                                    appUrls.reservation(
+                                        reservation.identifier
+                                    )[0]
+                                }
+                                as={
+                                    appUrls.reservation(
+                                        reservation.identifier
+                                    )[1]
+                                }
+                            >
+                                <a>
+                                    <Reservation
+                                        reservation={reservation}
+                                        bottomSpacing={last ? 2 : 1}
+                                        actionIcon={<ArrowRight strokeWidth={1}/>}
+                                    />
+                                </a>
+                            </Link>
+                        )}
+                    </GroupedList>
                 )}
-            </GroupedList>
+            </Loading>
         </Layout>
     );
 };

@@ -78,7 +78,7 @@ const useReduceAppState = () =>
                 };
                 const selectedUnitId =
                     newReservationState.selectedUnitId ||
-                    newReservationState.resource?.unit?.uuid;
+                    newReservationState.resource?.unit?.slug;
                 const resource_uuid = newReservationState.resource?.uuid;
 
                 const withUpdatedComputeds = {

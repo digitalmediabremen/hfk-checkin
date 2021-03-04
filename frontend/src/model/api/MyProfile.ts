@@ -5,7 +5,7 @@ import { MyReservation } from "./Reservation";
 export default interface MyProfile extends PrivateProfile {
     readonly verified: boolean;
     readonly last_checkins: Array<LastCheckin>;
-    readonly reservations: Array<MyReservation>;
+    // readonly reservations: Array<MyReservation>;
 }
 
 interface PrivateProfile extends BaseProfile {

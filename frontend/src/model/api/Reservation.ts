@@ -1,4 +1,4 @@
-import { Attendance, BaseProfile } from "./MyProfile";
+import { Attendance } from "./MyProfile";
 import Resource from "./Resource";
 
 export type ReservationState =
@@ -52,6 +52,12 @@ export default interface Reservation {
     // readonly updated_at: Date;
 }
 
-export type MyReservation = Pick<Reservation, "uuid" | "begin" | "end" | "state"> & {
-    readonly resource: Pick<Resource, "uuid" | "name" | "display_name" | "display_numbers">
-}
+export type MyReservation = Pick<
+    Reservation,
+    "uuid" | "begin" | "end" | "state"
+> & {
+    readonly resource: Pick<
+        Resource,
+        "uuid" | "name" | "display_name" | "display_numbers"
+    >;
+};

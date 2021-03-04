@@ -10,6 +10,7 @@ import Reservation from "../../components/common/Reservation";
 import SubPage from "../../components/common/SubPage";
 import Subtitle from "../../components/common/Subtitle";
 import Text from "../../components/common/Text";
+import { AdditionalRequestSubPageProps } from "../../components/getin/subpages/AdditionalRequestSubPage";
 import { createDynamicPage } from "../../components/getin/subpages/SubpageCollection";
 import { appUrls, buildSubPageUrl } from "../../config";
 import { useTranslation } from "../../localization";
@@ -49,71 +50,83 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
 
     return (
         <Loading loading={!reservation}>
-            <style jsx>{``}</style>
-            <Layout
-                direction={direction}
-                activeSubPage={activeSubPage}
-                subPages={
-                    <>
-                        <SubPage
-                            title={t("Weitere Anfrage")}
-                            {...subPageProps("additional")}
-                            // todo: hack callback state is not updated
-                            // use state directly and not via subpageprops
-                            active={"additional" === activeSubPage}
-                        >
-                            {() => <DynamicAdditionalRequestSubPage />}
-                        </SubPage>
-                    </>
-                }
-            >
-                {reservationSuccess && (
-                    <>
-                        <>
-                            <CheckinSucessIcon />
-                            <Subtitle>
-                                {t("Deine Anfrage ist eingegangen.")}
-                            </Subtitle>
-                        </>
-                        <Text paragraph>{reservation?.state_verbose}</Text>
-                    </>
-                )}
+            {!!reservation && (
+                <>
+                    <style jsx>{``}</style>
+                    <Layout
+                        direction={direction}
+                        activeSubPage={activeSubPage}
+                        subPages={
+                            <>
+                                <SubPage
+                                    title={t("Weitere Anfrage")}
+                                    {...subPageProps("additional")}
+                                    // todo: hack callback state is not updated
+                                    // use state directly and not via subpageprops
+                                    active={"additional" === activeSubPage}
+                                >
+                                    {() => (
+                                        <DynamicAdditionalRequestSubPage
+                                        />
+                                    )}
+                                </SubPage>
+                            </>
+                        }
+                    >
+                        {reservationSuccess && (
+                            <>
+                                <>
+                                    <CheckinSucessIcon />
+                                    <Subtitle>
+                                        {t("Deine Anfrage ist eingegangen.")}
+                                    </Subtitle>
+                                </>
+                                <Text paragraph>
+                                    {reservation?.state_verbose}
+                                </Text>
+                            </>
+                        )}
 
-                {reservation && (
-                    <>
-                        <Reservation
-                            reservation={reservation}
-                            bottomSpacing={4}
-                            extendedWidth
-                        />
-                        <Text paragraph>
-                            <b>1. Reservierung anfragen</b>
-                            <br />
-                            2. Auf Bearbeitung warten
-                            <br />
-                            3. Schlüssel an der Pforte holen <br />
-                            4. Am Raum einchecken <br />
-                            5. Raum nutzen <br />
-                            6. Aus Raum auschecken <br />
-                            7. Schlüssel zurückgeben
-                            <br />
-                        </Text>
-                    </>
-                )}
-                {(reservationSuccess || true) && (
-                    <>
-                        <AlignContent align="bottom" offsetBottomPadding>
-                            <NewButton
-                                extendedWidth
-                                noBottomSpacing
-                                {...handlerProps("additional")}
-                            >
-                                {t("weitere Anfrage")}
-                            </NewButton>
-                        </AlignContent>
-                    </>
-                )}
-            </Layout>
+                        {reservation && (
+                            <>
+                                <Reservation
+                                    reservation={reservation}
+                                    bottomSpacing={4}
+                                    extendedWidth
+                                />
+                                <Text paragraph>
+                                    <b>1. Reservierung anfragen</b>
+                                    <br />
+                                    2. Auf Bearbeitung warten
+                                    <br />
+                                    3. Schlüssel an der Pforte holen <br />
+                                    4. Am Raum einchecken <br />
+                                    5. Raum nutzen <br />
+                                    6. Aus Raum auschecken <br />
+                                    7. Schlüssel zurückgeben
+                                    <br />
+                                </Text>
+                            </>
+                        )}
+                        {(reservationSuccess || true) && (
+                            <>
+                                <AlignContent
+                                    align="bottom"
+                                    offsetBottomPadding
+                                >
+                                    <NewButton
+                                        extendedWidth
+                                        noBottomSpacing
+                                        {...handlerProps("additional")}
+                                    >
+                                        {t("weitere Anfrage")}
+                                    </NewButton>
+                                </AlignContent>
+                            </>
+                        )}
+                    </Layout>
+                </>
+            )}
         </Loading>
     );
 };
