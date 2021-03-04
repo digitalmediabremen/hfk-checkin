@@ -87,7 +87,7 @@ THIRD_PARTY_APPS = [
     #'import_export',
     'wkhtmltopdf',
     'rest_framework',
-    #'microsoft_auth',
+    'microsoft_auth',
     'corsheaders',
     'impersonate',
     'rangefilter',
@@ -116,7 +116,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
-    #'microsoft_auth.backends.MicrosoftAuthenticationBackend',
+    'microsoft_auth.backends.MicrosoftAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 ]
@@ -221,7 +221,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 #"nucleus.context_processors.nucleus",
-                #'microsoft_auth.context_processors.microsoft',
+                'microsoft_auth.context_processors.microsoft',
             ],
         },
     }
@@ -333,6 +333,14 @@ CORS_ALLOWED_ORIGINS = [
     "http://hfk-bremen.de",
     "https://hfk-checkin-frontend-staging.herokuapp.com",
     "http://hfk-checkin-frontend-staging.herokuapp.com",
+    "https://getin.uiuiui.digital",
+    "http://getin.uiuiui.digital",
+    "https://staging.getin.uiuiui.digital",
+    "http://staging.getin.uiuiui.digital",
+    "https://getin.hfk-bremen.de",
+    "http://getin.hfk-bremen.de",
+    "https://staging.getin.hfk-bremen.de",
+    "http://staging.getin.hfk-bremen.de",
 ]
 CORS_ALLOW_HEADERS = [
     'accept',
