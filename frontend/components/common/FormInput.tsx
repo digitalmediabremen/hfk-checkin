@@ -2,14 +2,14 @@
 
 import classNames from "classnames";
 import React, { forwardRef, InputHTMLAttributes } from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {}
 
 const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
     className,
     ...inputProps
 }, ref) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

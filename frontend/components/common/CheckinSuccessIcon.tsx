@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Airplay, Check, Clock, Circle, CheckCircle } from "react-feather";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface CheckinSucessIconProps {}
 
 const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
     props
 ) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

@@ -1,11 +1,11 @@
 import React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface DividerProps {
     noSpacing?: true;
 }
 
 const Divider: React.FunctionComponent<DividerProps> = ({ noSpacing }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

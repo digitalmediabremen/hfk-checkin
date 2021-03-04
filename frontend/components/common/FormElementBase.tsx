@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 export interface FormElementBaseProps {
     componentType?: "button" | "li" | "div";
     primary?: boolean;
@@ -42,6 +41,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     adaptiveWidth,
     above
 }) => {
+    const theme = useTheme();
     const ComponentType = componentType || "div";
     const outline = !noOutline;
     const interactable = !!onClick;

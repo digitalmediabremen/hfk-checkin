@@ -1,6 +1,5 @@
 import { SFC, Children, ChangeEvent } from "react";
-import theme from "../../styles/theme";
-import FormElementWrapper from "./FormElementWrapper";
+import useTheme from "../../src/hooks/useTheme";import FormElementWrapper from "./FormElementWrapper";
 
 export interface InputProps {
     onChange?: (e: ChangeEvent<any>) => void;
@@ -15,6 +14,7 @@ export interface InputProps {
 }
 
 export const Input: SFC<InputProps> = (props) => {
+    const theme = useTheme();
     const {
         value,
         label,

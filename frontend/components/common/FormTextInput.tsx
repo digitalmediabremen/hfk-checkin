@@ -2,8 +2,7 @@ import classNames from "classnames";
 import React, { forwardRef, InputHTMLAttributes, MutableRefObject, useCallback, useRef } from "react";
 import { ReferenceEntry } from "ts-morph";
 import { isNullishCoalesce } from "typescript";
-import theme from "../../styles/theme";
-import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import useTheme from "../../src/hooks/useTheme";import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import FormInput from "./FormInput";
 
 interface FormTextInputProps
@@ -31,6 +30,7 @@ const FormTextInput = forwardRef<HTMLInputElement, FormTextInputProps>(
         },
         ref
     ) => {
+    const theme = useTheme();
         const value = _value || "";
         const bottomErrorSpacing = _bottomErrorSpacing || 2;
         const bottomSpacing = error ? 0.5 : bottomErrorSpacing;

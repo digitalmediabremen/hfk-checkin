@@ -2,11 +2,11 @@ import Link from "next/link";
 import * as React from "react";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface IFooterProps {}
 
 const Footer: React.FunctionComponent<IFooterProps> = (props) => {
+    const theme = useTheme();
     const { t } = useTranslation();
 
     return (

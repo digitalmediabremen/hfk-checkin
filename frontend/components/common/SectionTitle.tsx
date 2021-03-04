@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface SectionTitleProps {
     center?: boolean;
     noMarginBottom?: boolean;
@@ -12,6 +11,7 @@ const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
     center,
     noMarginBottom,
 }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

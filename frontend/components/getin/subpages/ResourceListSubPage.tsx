@@ -6,8 +6,7 @@ import useReservationState from "../../../src/hooks/useReservationState";
 import useResources from "../../../src/hooks/useResources";
 import Resource from "../../../src/model/api/Resource";
 import { empty } from "../../../src/util/TypeUtil";
-import theme from "../../../styles/theme";
-import LazyList from "../../common/LazyList";
+import useTheme from "../../../src/hooks/useTheme";import LazyList from "../../common/LazyList";
 import Loading from "../../common/Loading";
 import ResourceListItem, {
     LoadingListItem
@@ -16,6 +15,7 @@ import ResourceListItem, {
 interface ResourceListSubPageProps {}
 
 const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = ({}) => {
+    const theme = useTheme();
     const r = useResources(true);
     const [itemCount, setItemCount] = useState(0);
     const [selectedResource, setSelectedResource] = useReservationState(

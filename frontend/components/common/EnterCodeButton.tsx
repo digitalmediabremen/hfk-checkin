@@ -3,14 +3,14 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
 import { appUrls } from "../../config";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface EnterCodeButtonProps {
 }
 
 const EnterCodeButton: React.FunctionComponent<EnterCodeButtonProps> = (
     props
 ) => {
+    const theme = useTheme();
     const router = useRouter();
     const isHidden = ["/", appUrls.enterCode].includes(router.pathname);
     return (

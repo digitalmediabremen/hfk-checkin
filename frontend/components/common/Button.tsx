@@ -1,6 +1,5 @@
 import { SFC, ReactNode } from "react";
-import theme from "../../styles/theme";
-import FormElementWrapper from "./FormElementWrapper";
+import useTheme from "../../src/hooks/useTheme";import FormElementWrapper from "./FormElementWrapper";
 import { LoadingInline } from "./Loading";
 
 export interface ButtonProps {
@@ -21,6 +20,7 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
     outline,
     ...props
 }) => {
+    const theme = useTheme();
     const handleClick = () => {
         if (!loading) onClick();
     };

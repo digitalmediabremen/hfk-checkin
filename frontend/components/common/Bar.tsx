@@ -1,10 +1,10 @@
 import classNames from "classnames";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 const Bar: React.FunctionComponent<{ extendedWidth?: boolean }> = ({
     extendedWidth,
     children,
 }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

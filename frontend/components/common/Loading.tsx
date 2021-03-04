@@ -1,8 +1,8 @@
-import theme from "../../styles/theme";
-import React, { memo, useState, useEffect } from "react";
+import useTheme from "../../src/hooks/useTheme";import React, { memo, useState, useEffect } from "react";
 import AlignContent from "./AlignContent";
 
 export const DotPulse = ({ invertColor }: { invertColor?: boolean }) => {
+    const theme = useTheme();
     const color = invertColor ? theme.secondaryColor : theme.primaryColor;
     return (
         <>

@@ -1,12 +1,12 @@
 import * as React from "react";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface TitleProps {
     bold?: true;
     subtext?: string | React.ReactNode;
 }
 
 const Title: React.FunctionComponent<TitleProps> = ({ children, bold, subtext }) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`

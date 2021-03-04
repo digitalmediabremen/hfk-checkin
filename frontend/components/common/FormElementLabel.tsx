@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import theme from "../../styles/theme";
-import EllipseText from "./EllipseText";
+import useTheme from "../../src/hooks/useTheme";import EllipseText from "./EllipseText";
 
 interface FormElementLabelProps {
     name: string;
@@ -14,6 +13,7 @@ const FormElementLabel: React.FunctionComponent<FormElementLabelProps> = ({
     shortName,
     extendedWidth,
 }) => {
+    const theme = useTheme();
     const displayName = (!extendedWidth && shortName) || name;
 
     return (

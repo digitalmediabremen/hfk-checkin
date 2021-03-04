@@ -1,7 +1,6 @@
 import * as React from "react";
 import SmoothCollapse from "react-smooth-collapse";
-import theme from "../../styles/theme";
-import { Button } from "../common/Button";
+import useTheme from "../../src/hooks/useTheme";import { Button } from "../common/Button";
 import Subtitle from "../common/Subtitle";
 
 interface HelpSectionProps {
@@ -11,6 +10,7 @@ interface HelpSectionProps {
 }
 
 const scrollIntoView = (element: HTMLInputElement) => {
+    const theme = useTheme();
     const headerOffset = 80;
     const elementPosition =
         element.getBoundingClientRect().top + window.scrollY;

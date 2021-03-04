@@ -3,8 +3,7 @@ import { CheckCircle, Circle, Key, Lock, Unlock, User } from "react-feather";
 import { useTranslation } from "../../localization";
 import Resource from "../../src/model/api/Resource";
 import { notEmpty } from "../../src/util/TypeUtil";
-import theme from "../../styles/theme";
-import FormMultilineValue from "../FormMultilineValue";
+import useTheme from "../../src/hooks/useTheme";import FormMultilineValue from "../FormMultilineValue";
 import Divider from "./Divider";
 import FormElement from "./FormElement";
 import FormElementBase from "./FormElementBase";
@@ -25,6 +24,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     last,
     showMeta,
 }) => {
+    const theme = useTheme();
     const handleSelect = () => {
         onSelect?.(!selected);
     };

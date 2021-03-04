@@ -14,14 +14,14 @@ import Text from "../../components/common/Text";
 import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface CheckInPageProps {}
 
 const isValidLocationCode = (locationCode: string) =>
     locationCode.replace(/" "/g, "").length === 4;
 
 const CheckInPage: SFC<CheckInPageProps> = () => {
+    const theme = useTheme();
     const [locationCode, setLocationCode] = useState<string>("");
     const { requestLocation, loading, location } = useLocation();
     const router = useRouter();

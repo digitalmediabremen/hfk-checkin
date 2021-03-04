@@ -3,8 +3,7 @@ import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import css from "styled-jsx/css";
 import { empty, notEmpty } from "../../src/util/TypeUtil";
-import theme from "../../styles/theme";
-
+import useTheme from "../../src/hooks/useTheme";
 interface LazyListProps<T> {
     // Are we currently loading a page of items?
     // (This may be an in-flight flag in your Redux store for example.)
@@ -41,6 +40,7 @@ const LazyList = <T extends {}>({
     itemHeight,
     itemCount,
 }: PropsWithChildren<LazyListProps<T>>) => {
+    const theme = useTheme();
     // Only load 1 page of items at a time.
     // Pass an empty callback to InfiniteLoader in case it asks us to load more than once.
     const nextHighestOffset = useRef(-1);
