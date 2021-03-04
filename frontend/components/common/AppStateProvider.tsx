@@ -9,6 +9,7 @@ import { AppAction, AppState } from "../../src/model/AppState";
 import { notEmpty } from "../../src/util/TypeUtil";
 import useReduceAppState, { initialAppState } from "../api/useReduceAppState";
 import useSubPage from "../api/useSubPage";
+import useTheme from "../../src/hooks/useTheme";
 
 const appStateContext = React.createContext<{
     appState: AppState;
@@ -22,6 +23,9 @@ const { Provider } = appStateContext;
 
 export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();
+
+    // set font size of theme
+    const theme = useTheme();
 
     useLocalStorage(
         "rr",
@@ -45,7 +49,14 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
             })
     );
 
-    return <Provider value={{ appState, dispatch }}>{children}</Provider>;
+    return <>
+        <style jsx>{`
+            :global(body) {
+                font-size: ${theme.fontSize};
+            }
+        `}</style>
+        <Provider value={{ appState, dispatch }}>{children}</Provider>
+    </>;
 };
 
 export const useAppState = () => useContext(appStateContext);

@@ -44,7 +44,7 @@ const Page: React.FunctionComponent<PageProps> = ({
         <>
             <style jsx>{`
                 .page {
-                    min-height: ${height! - theme.topBarHeight}px;
+                    min-height: ${height! - theme.topBarHeight()}px;
                     position: relative;
                     // height: 100%;
                     margin: 0 auto;
@@ -64,14 +64,14 @@ const Page: React.FunctionComponent<PageProps> = ({
                 .scroll-container {
                     overflow-y: auto;
                     overflow-x: hidden;
-                    height: ${height! - theme.topBarHeight}px;
+                    height: ${height! - theme.topBarHeight()}px;
                 }
 
                 .page.with-topbar {
-                    // padding-top: ${theme.topBarHeight}px;
+                    // padding-top: ${theme.topBarHeight()}px;
                 }
                 .page.with-footer {
-                    padding-bottom: ${theme.footerHeight}px;
+                    padding-bottom: ${theme.footerHeight()}px;
                 }
             `}</style>
             <div className={classNames({ "page-wrapper": scroll })}>

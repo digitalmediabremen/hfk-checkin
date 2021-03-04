@@ -3,6 +3,7 @@ import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
 import Reservation from "./api/Reservation";
 import { ReservationValidation } from "../util/ValidationUtil";
+import Theme from "./Theme";
 
 export type TransitionDirection = "left" | "right";
 
@@ -27,6 +28,7 @@ export interface AppState {
     reservationRequestTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;
     currentLocale: string;
+    theme: Theme;
 }
 
 export type AppAction =
@@ -83,4 +85,7 @@ export type AppAction =
     | {
           type: "updateLocale";
           locale: string;
+      } | {
+          type: "changeTheme";
+          theme: Partial<Theme>;
       };

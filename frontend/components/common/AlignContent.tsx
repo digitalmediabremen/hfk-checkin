@@ -27,7 +27,7 @@ const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
         }
     }, [children]);
     const containerHeight = (() => {
-        return `calc(100vh - ${offsetTop + theme.footerHeight + theme.spacing(2)}px)`;
+        return `calc(100vh - ${offsetTop + theme.footerHeight() + theme.spacing(2)}px)`;
     })();
     return (
         <>

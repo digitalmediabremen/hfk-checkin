@@ -1,7 +1,9 @@
 import { Reducer, useReducer } from "react";
+import { createExpressionWithTypeArguments } from "typescript";
 import { AppAction, AppState } from "../../src/model/AppState";
 import { assertNever } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/util/ValidationUtil";
+import createTheme from "../../styles/theme";
 
 export const initialAppState: AppState = {
     initialized: false,
@@ -9,7 +11,8 @@ export const initialAppState: AppState = {
     subPageTransitionDirection: "right",
     reservationValidation: [],
     currentLocale: "en",
-    status: undefined
+    status: undefined,
+    theme: createTheme()
 };
 
 const useReduceAppState = () =>
@@ -133,6 +136,14 @@ const useReduceAppState = () =>
                         previousState.reservationRequest || {},
                         action.locale
                     ),
+                };
+            case "changeTheme":
+                return {
+                    ...previousState,
+                    theme: {
+                        ...previousState.theme,
+                        ...action.theme
+                    }
                 };
             default:
                 assertNever(action, `Unhandled state change "${action!.type}"`);
