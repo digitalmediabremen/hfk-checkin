@@ -162,7 +162,7 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
     # images = NestedResourceImageSerializer(many=True)
     # equipment = ResourceEquipmentSerializer(many=True, read_only=True, source='resource_equipment')
     type = ResourceTypeSerializer()
-    unit = UnitSerializer()
+    unit = UnitSerializer(required=True)
     # FIXME: location field gets removed by munigeo
     # location = serializers.SerializerMethodField()
     # FIXME: Enable available_hours when it's more performant

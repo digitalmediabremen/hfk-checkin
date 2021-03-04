@@ -179,6 +179,8 @@ class Attachment(ModifiableModel, UUIDModelMixin):
 #         abstract = True
 
 
+def get_default_unit(): return Unit.objects.first().pk
+
 class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, AbstractAccessRestrictedModel):
     """
     A Resource, here a room, is a bookable object. Reservations will relate to Resources.
@@ -214,7 +216,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
 
     PARENT_FIELD_NAME = 'unit'
-    unit = models.ForeignKey('Unit', verbose_name=_('Unit'), db_index=True, null=True, blank=True,
+    unit = models.ForeignKey('Unit', verbose_name=_('Unit'), db_index=True, default=get_default_unit,
                              related_name="resources", on_delete=models.PROTECT)
     type = models.ForeignKey(ResourceType, verbose_name=_('Resource type'), db_index=True, null=True, blank=True,
                              on_delete=models.PROTECT)
