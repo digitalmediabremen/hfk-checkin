@@ -1,0 +1,49 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_modify %}
+{% load admin_urls %}
+{% load static %}
+{% block title %}{% translate "Calendar" %}{{ block.super }}{% endblock %}
+{% block extrahead %}
+    {{ block.super }}
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.css' rel='stylesheet'/>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/locales/de.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    start: 'title',
+                    center: '',
+                    end: 'today prev,next dayGridMonth,timeGridWeek,listWeek,dayGridWeek'
+                },
+                {#events: '/api/resource/{{ uuid }}/calendar',#}
+                events: '/api/event/',
+                locale: 'de',
+                weekNumbers: true,
+                nowIndicator: true,
+                businessHours: {
+                  // days of week. an array of zero-based day of week integers (0=Sunday)
+                  daysOfWeek: [ 1, 2, 3, 4, 5 ], // Monday - Thursday
+                  startTime: '10:00', // a start time (10am in this example)
+                  endTime: '20:00', // an end time (6pm in this example)
+                }
+            });
+            calendar.render();
+        });
+    </script>
+{% endblock %}
+{% block bodyclass %}{{ block.super }} {{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block breadcrumbs_last %}
+{% trans "Calendar" %}
+{% endblock %}
+
+{% block content_title %}
+    <h1>Calendar</h1>
+{% endblock %}
+
+{#{% block content %}#}
+{#    <div id='calendar'></div>#}
+{#{% endblock %}#}

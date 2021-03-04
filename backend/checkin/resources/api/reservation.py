@@ -810,3 +810,38 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
 
 register_view(ReservationViewSet, 'reservation')
 # register_view(ReservationCancelReasonCategoryViewSet, 'cancel_reason_category')
+
+class ReservationCalendarEventSerializer(ReservationSerializer):
+    start = serializers.DateTimeField(source='begin')
+    end = serializers.DateTimeField()
+    title = serializers.SerializerMethodField()
+    url = serializers.SerializerMethodField()
+    id = serializers.CharField(source='uuid')
+    resourceId = serializers.CharField(source='resource.uuid')
+
+    def get_url(self, obj):
+        return reverse('admin:{0}_{1}_change'.format(obj._meta.app_label, obj._meta.model_name), args=(obj.pk,))
+
+    def get_title(self, obj):
+        return "%s %s in %s" % (obj.identifier, obj.organizer, obj.resource)
+
+    class Meta:
+        model = Reservation
+        fields = ['url', 'id', 'identifier', 'start', 'end', 'title','resourceId']
+
+
+class ReservationCalendarViewSet(ReservationViewSet):
+    def get_serializer_class(self):
+        return ReservationCalendarEventSerializer
+
+    def get_queryset(self):
+        resource = self.kwargs.get('resource', None)
+        resources = self.request.query_params.get('resources', None)
+        if resource and resource != 'all':
+            return super().get_queryset().filter(resource__pk=resource)
+        if resources:
+            resources = resources.split('.')
+            return super().get_queryset().filter(resource__uuid__in=resources)
+        return super().get_queryset()
+
+register_view(ReservationCalendarViewSet, 'calendar/event')

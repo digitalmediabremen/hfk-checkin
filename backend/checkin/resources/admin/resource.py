@@ -5,6 +5,9 @@ from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 from .other import FixedGuardedModelAdminMixin
 from django.urls import reverse, path
+from django.template.response import TemplateResponse
+from django import forms
+from django.contrib.admin.widgets import AutocompleteSelect
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +23,14 @@ from .permission_inlines import (
 class ResourceTypeAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, TranslationAdmin):
     list_display = ('name', 'main_type','pk')
     pass
+
+
+class SelectResourceForm(forms.Form):
+    from ..models import Resource, Reservation
+    resource = forms.ModelChoiceField(
+        queryset=Resource.objects.all(),
+        widget=AutocompleteSelect(Reservation._meta.get_field('resource').remote_field, admin.site)
+    )
 
 
 class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, DynamicArrayMixin, ModifiableModelAdminMixin,
@@ -82,18 +93,22 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         super().save_related(request, form, formsets, change)
         form.instance.update_opening_hours()
 
-    # def get_urls(self):
-    #     # try: FIXME
-    #     from .resource_access import AccessToResourceAdmin, AccessToResource
-    #     urls = super().get_urls()
-    #     info = self.model._meta.app_label, self.model._meta.model_name
-    #     access_resource_model_admin = AccessToResourceAdmin(AccessToResource, self.admin_site)
-    #     myurls = [
-    #         path('<object_pk>/access/',
-    #              view=self.admin_site.admin_view(
-    #                  access_resource_model_admin.change_view),
-    #              name='%s_%s_access' % info),
-    #     ]
-    #     urls = myurls + urls
-    #     return urls
+    def get_urls(self):
+        # get the default urls
+        urls = super(ResourceAdmin, self).get_urls()
+        # define security urls
+        custom_urls = [
+            path('<uuid:uuid>/calendar/', self.admin_site.admin_view(self.calendar_view),
+                name='resource-calendar')
+        ]
+        # Make sure here you place your added urls first than the admin default urls
+        return custom_urls + urls
 
+    # Your view definition fn
+    def calendar_view(self, request, uuid):
+        context = dict(
+            **self.admin_site.each_context(request), # Include common variables for rendering the admin template.
+            uuid=uuid,
+            select_resource_form=SelectResourceForm(),
+        )
+        return TemplateResponse(request, "admin/resources/resource_calendar.html", context)
