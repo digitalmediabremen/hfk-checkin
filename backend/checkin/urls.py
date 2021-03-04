@@ -5,27 +5,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views import defaults as default_views
 
-# from django.utils.translation import ugettext_lazy as _
-# admin.site.site_header = _("HFK CHECKIN")
-# admin.site.site_title = _("HFK CHECKIN")
-# admin.site.index_title = _("Übersicht")
-
-
 from rest_framework import routers
 from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
 from checkin.booking.api import RoomViewSet, BookingRequestViewSet
 from microsoft_auth.models import MicrosoftAccount
 from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
 from rest_framework.schemas import get_schema_view
-
-if 'microsoft_auth' in settings.INSTALLED_APPS:
-    from microsoft_auth.models import MicrosoftAccount
-    from microsoft_auth.admin import UserAdmin as MicrosoftUserAdmin
 from checkin.resources.api import RespaAPIRouter
-
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from checkin.users.admin import UserAdmin
@@ -53,13 +41,8 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
 
 respa_router = RespaAPIRouter()
 
-if 'microsoft_auth' in settings.INSTALLED_APPS:
-    admin.site.unregister(MicrosoftAccount)
-    # register microsoft_account's hijacked UserAdmin
-    admin.site.unregister(User)
-    # put our own UserAdmin back in to place
-    admin.site.register(User, UserAdmin)
-
+from checkin.users.apps import fix_microsoft_auth_user_admin
+fix_microsoft_auth_user_admin()
 admin.site.enable_nav_sidebar = False
 
 urlpatterns += [
