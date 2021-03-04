@@ -3,15 +3,12 @@ import { Translation } from ".";
 const translation: Translation = {
     "en": {
       "common": {
+        "Datenschutzinformationen": "Data & Privacy",
+        "Hilfe": "Help",
         "nicht verifiziert": "Not verified",
         "Seite nicht gefunden": "Page not found",
-        "jetzt": "now",
-        "Hilfe": "Help",
-        "Datenschutzinformationen": "Data & Privacy",
-        "Protokoll": "Log",
-        "Noch keine Checkins vorhanden": "No checkins",
-        "Telefon ändern": "Change phone",
         "+{days} Tag": "NEW",
+        "jetzt": "now",
         "{fieldName} darf nicht leer sein.": "NEW",
         "Vorname": "NEW",
         "Nachname": "NEW",
@@ -22,9 +19,9 @@ const translation: Translation = {
         "Raum übernehmen": "NEW",
         "Zeit übernehmen": "enter time",
         "Neue Anfrage": "NEW",
-        "Weitere Anfrage": "NEW",
-        "Deine Anfrage ist eingegangen.": "NEW",
-        "weitere Anfrage": "NEW",
+        "Protokoll": "Log",
+        "Noch keine Checkins vorhanden": "No checkins",
+        "Telefon ändern": "Change phone",
         "Raum auswählen": "NEW",
         "Raum": "NEW",
         "Zeitangaben tätigen": "NEW",
@@ -36,7 +33,56 @@ const translation: Translation = {
         "Nachricht": "NEW",
         "Nach.": "NEW",
         "Bitte ruft mich bei Rückfragen zu dieser Buchung unter {phone} zurück.": "NEW",
-        "Anfragen": "NEW"
+        "Anfragen": "NEW",
+        "Weitere Anfrage": "NEW",
+        "Deine Anfrage ist eingegangen.": "NEW",
+        "weitere Anfrage": "NEW",
+        "weitere angaben": "NEW"
+      },
+      "request-message": {
+        "Bitte erläutere Deine Anfrage nach Bedarf. \\n\\nZum Beispiel kannst Du hier Angaben für die Werkstattleitung machen oder dem Raumteam wichtige Informationen übermitteln.": "NEW"
+      },
+      "request-attendees": {
+        "Studierende hinzufügen": "NEW",
+        "Gib die Anzahl der Studierenden an, die an dieser Buchung teilnehmen.": "NEW",
+        "HfK externe Person anmelden": "NEW",
+        "Delete": "NEW",
+        "Externe hinzufügen": "NEW",
+        "Weitere Externe hinzufügen": "NEW",
+        "HfK externe Personen müssen angemeldet werden. Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. Deine Anfrage wird an das Corona Office geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern": "NEW"
+      },
+      "request-purpose": {
+        "Solltest du grade an einer Abschlussarbeit sitzen oder aus anderen trifftigen Gründen auf den Raum angewiesen sein kannst du hier deine Situation schildern": "NEW",
+        "Begründung": "NEW",
+        "Bitte gib hier einen Ausnahmegrund an.": "NEW",
+        "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an.": "NEW"
+      },
+      "request-resource": {
+        "Gebäude auswählen": "NEW",
+        "Raum auswählen": "NEW",
+        "Keine Ergebnisse": "NEW",
+        "Raumübersicht öffnen": "NEW",
+        "Der Raum {roomNumber} ist zugangsbeschränkt.": "NEW",
+        "Wenn du trotzdem auf „Absenden“ klickst, geht deine Anfrage zur Bearbeitung an „[Person / RT / CO]“. Hinterlasse ihr/ihm am besten eine Notiz und erkläre, warum du in den Raum nutzen möchtest.": "NEW",
+        "Ich beanspruche den ganzen Raum": "NEW"
+      },
+      "request-time": {
+        "Räume können nur mit einer Vorlaufzeit von max. 14 Tagen gebucht werden.": "NEW",
+        "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an.": "NEW",
+        "Ausnahmeregelung": "NEW"
+      },
+      "request": {
+        "Zeit festlegen": "NEW",
+        "Raum auswählen": "NEW",
+        "Personen hinzufügen": "NEW",
+        "Externe hinzufügen": "NEW",
+        "Grund angeben": "NEW",
+        "Nachricht": "NEW",
+        "Raumliste": "NEW",
+        "Ein Ausnahmegrund muss angegeben werden.": "NEW",
+        "`Du hast keine Berichtigung den Raum {resource} zu buchen.`": "NEW",
+        "Du musst noch den Raum auswählen.": "NEW",
+        "Du musst noch eine Zeit angeben.": "NEW"
       },
       "createProfile": {
         "Halte dich an die Regeln...": "In-person instruction and more flexible access to the HfK’s rooms will only be possible if everyone at the HfK observes all of the COVID-19 rules",
@@ -82,56 +128,8 @@ const translation: Translation = {
         "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.": "Or scan the QR-Code at your location to check in.",
         "Einchecken": "Check in"
       },
-      "request-attendees": {
-        "Studierende hinzufügen": "NEW",
-        "Gib die Anzahl der Studierenden an, die an dieser Buchung teilnehmen.": "NEW",
-        "HfK externe Person anmelden": "NEW",
-        "Delete": "NEW",
-        "Externe hinzufügen": "NEW",
-        "Weitere Externe hinzufügen": "NEW",
-        "HfK externe Personen müssen angemeldet werden. Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. Deine Anfrage wird an das Corona Office geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern": "NEW"
-      },
-      "request-time": {
-        "Räume können nur mit einer Vorlaufzeit von max. 14 Tagen gebucht werden.": "NEW",
-        "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an.": "NEW",
-        "Ausnahmeregelung": "NEW"
-      },
-      "request-resource": {
-        "Gebäude auswählen": "NEW",
-        "Raum auswählen": "NEW",
-        "Keine Ergebnisse": "NEW",
-        "Raumübersicht öffnen": "NEW",
-        "Der Raum {roomNumber} ist zugangsbeschränkt.": "NEW",
-        "Wenn du trotzdem auf „Absenden“ klickst, geht deine Anfrage zur Bearbeitung an „[Person / RT / CO]“. Hinterlasse ihr/ihm am besten eine Notiz und erkläre, warum du in den Raum nutzen möchtest.": "NEW",
-        "Ich beanspruche den ganzen Raum": "NEW"
-      },
-      "request-purpose": {
-        "Normale Buchung": "NEW",
-        "Ich buche für eine Gremiensitzung": "NEW",
-        "Ich buche für eine Prüfung": "NEW",
-        "Anderer Grund": "NEW",
-        "Workshop Buchung": "NEW",
-        "Solltest du grade an einer Abschlussarbeit sitzen oder aus anderen trifftigen Gründen auf den Raum angewiesen sein kannst du hier deine Situation schildern": "NEW",
-        "Begründung": "NEW",
-        "Bitte gib hier einen Ausnahmegrund an.": "NEW",
-        "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an.": "NEW"
-      },
-      "request-message": {
-        "Bitte erläutere Deine Anfrage nach Bedarf. \\n\\nZum Beispiel kannst Du hier Angaben für die Werkstattleitung machen oder dem Raumteam wichtige Informationen übermitteln.": "NEW"
-      },
-      "request": {
-        "Zeit festlegen": "NEW",
-        "Raum auswählen": "NEW",
-        "Personen hinzufügen": "NEW",
-        "Externe hinzufügen": "NEW",
-        "Grund angeben": "NEW",
-        "Nachricht": "NEW",
-        "Raumliste": "NEW",
-        "Ein Ausnahmegrund muss angegeben werden.": "NEW",
-        "`Du hast keine Berichtigung den Raum {resource} zu buchen.`": "NEW",
-        "Du musst noch den Raum auswählen.": "NEW",
-        "Du musst noch eine Zeit angeben.": "NEW"
-      },
+      "reservation": {
+        "Buchungsanfragen": "NEW"
+      }
     }
   }
-export default translation;
