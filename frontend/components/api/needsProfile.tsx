@@ -14,9 +14,9 @@ interface NeedsProfileProps {
     profileUpdating: boolean;
 }
 
-const needsProfile = <P extends object>(
-    Component: React.ComponentType<P & NeedsProfileProps>
-): React.FC<P> => (props) => {
+const needsProfile = <P extends NeedsProfileProps, HocProps = Omit<P, keyof NeedsProfileProps>>(
+    Component: React.ComponentType<P>
+): React.FC<HocProps> => (props) => {
     const router = useRouter();
     const { appState, dispatch } = useAppState();
     const { initialized } = appState;
@@ -66,9 +66,9 @@ const needsProfile = <P extends object>(
         <Loading loading={loading && !profile}>
             {profile && (
                 <Component
-                    profile={profile!}
+                    profile={profile}
                     profileUpdating={loading}
-                    {...(props as P)}
+                    {...(props as any)}
                 />
             )}
         </Loading>

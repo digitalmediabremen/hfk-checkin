@@ -13,22 +13,24 @@ export default function useReservation(reservationId?: string) {
     const [useFromAppstate, setUseFromAppstate] = useState(
         !!reservationFromAppstate
     );
-    const showReservationSuccessful = useRef(
-        appState.showReservationSuccessful
-    );
+    const { showReservationSuccessful } = appState;å
+    const [reservationSuccess, setReservationSuccess] = useState(false);
 
     useEffect(() => {
-        dispatch({
-            type: "hideReservationSuccessful"
-        })
-    },[]);
+        if (showReservationSuccessful) {
+            setReservationSuccess(true);
+            dispatch({
+                type: "hideReservationSuccessful",
+            });
+        }
+    }, [showReservationSuccessful]);
 
     useEffect(() => {
         if (!api.result) return;
         dispatch({
             type: "updateReservation",
-            reservation: api.result
-        })
+            reservation: api.result,
+        });
     }, [api.result]);
 
     useLayoutEffect(() => {
@@ -47,7 +49,7 @@ export default function useReservation(reservationId?: string) {
     }, [reservationFromAppstate, reservationId]);
 
     return {
-        reservationSuccess: showReservationSuccessful.current,
+        reservationSuccess,
         reservation: useFromAppstate ? reservationFromAppstate : api.result,
         loading: useFromAppstate ? false : api.state === "loading",
         notFound: api.additionalData?.notFound,
