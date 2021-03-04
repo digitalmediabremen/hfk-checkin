@@ -72,10 +72,10 @@ const HelpContentDe = () => {
                 title="4. Muss ich weiterhin Räume buchen?"
             >
                 <Text paragraph>
-                    Ja, für eine Nutzung von Büros, Ateliers und Werkstätten ist
+                    Ja, für eine Nutzung von Büros, Ateliers, Überäumen und Werkstätten ist
                     die Buchung weiterhin erforderlich. Spontane und
                     unangemeldete Nutzungen sind für ausgewählte Räume möglich.
-                    z.B. die Bibliothek, Teeküchen und die Mensa.
+                    z.B. die Bibliothek, Teeküchen (Speicher XI) und die Mensa.
                 </Text>
             </HelpSection>
             <HelpSection

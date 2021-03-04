@@ -39,8 +39,7 @@ const HelpContentEn = () => {
                     <br />
                     <br />
                     Please do not forget to check out every time you leave a
-                    room. And do check out as you leave our premises (at this
-                    time only Speicher XI)!
+                    room. And do check out as you leave our premises.
                 </Text>
             </HelpSection>
 
@@ -49,7 +48,7 @@ const HelpContentEn = () => {
                 title="2. When do I have to check in?"
             >
                 <Text paragraph>
-                    Please check into Speicher XI as you enter the building.
+                    Please check in as soon as you enter the building.
                     Then check into every single room. If you use different
                     rooms at the same time, you can stay checked into all of
                     them.
@@ -79,11 +78,11 @@ const HelpContentEn = () => {
             >
                 <Text paragraph>
                     Yes, you still have to book rooms to access offices, studios
-                    and workshops.
+                    practice-rooms and workshops.
                     <br />
                     <br />
-                    You can only access Speicher XI without a prior reservation
-                    to visit the library and the cafeteria or use printers.
+                    Without a prior reservation, you can only access the building 
+                    to visit the library and the cafeteria or to use printers.
                 </Text>
             </HelpSection>
 
