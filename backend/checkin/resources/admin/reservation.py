@@ -64,21 +64,22 @@ class ReservationAdminForm(forms.ModelForm):
 
 class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin, admin.ModelAdmin):
     #extra_readonly_fields_on_update = ('access_code',)
-    list_display = ('short_uuid', 'user','resource','begin','end','state','modified_at')
+    list_display = ('short_uuid', 'user','resource','number_of_attendees','begin','end','state','modified_at')
     list_filter = ('type','resource','resource__unit','state',
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('created_at', DateRangeFilter),
                    ('modified_at', DateTimeRangeFilter),)
     search_fields = ('uuid','user__first_name', 'user__last_name', 'user__username', 'user__email')
     autocomplete_fields = ('user', 'resource')
-    readonly_fields = ('uuid','approver','number_of_attendees','get_reservation_info')
+    readonly_fields = ('uuid','approver','number_of_attendees','get_reservation_info','get_display_duration')
     extra_readonly_fields_edit = ('agreed_to_phone_contact','organizer_is_attending','type')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
+    date_hierarchy = ('begin')
 
     fieldsets = (
         (None, {
-            'fields': ('resource', 'user',  'begin', 'end', 'uuid')# 'short_uuid')
+            'fields': ('resource', 'user',  'begin', 'end', 'get_display_duration', 'uuid')# 'short_uuid')
         }),
         (_('State'), {
             'fields': ('state', 'approver','get_reservation_info'),
@@ -93,6 +94,9 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # }),
     )
     radio_fields = {'state': admin.HORIZONTAL}
+
+    def get_display_duration(self, obj=None):
+        return obj.duration
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # obj is not None, so this is an edit

@@ -36,31 +36,29 @@ generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für au
 
 class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin, DynamicArrayMixin):
     readonly_fields = ('code',)
-    list_display = ('org_name_method', 'org_number', 'org_size', 'capacity_1', 'capacity_2', 'capacity_3', 'code', 'updated_at')
-    list_display_with_loads = ('org_name_method', 'org_number', 'org_size', 'capacity_1', 'capacity_2', 'capacity_3', 'code',  'checkins_sum', 'real_load', 'updated_at')
+    list_display = ('get_name', 'display_numbers', 'area', 'capacity', 'capacity_1', 'capacity_2', 'capacity_3', 'code', 'updated_at')
+    list_display_with_loads = ('get_name', 'display_numbers', 'area', 'capacity', 'capacity_1', 'capacity_2', 'capacity_3', 'code',  'checkins_sum', 'real_load', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
-    list_filter = ('updated_at','removed','org_usage','org_bookable','org_book_via','org_activities')
-    #ordering = ('org_number','checkin_')
-    search_fields = ['org_name', 'org_number','code']
+    list_filter = ('updated_at','removed')
+    search_fields = ['resource.name', 'resource.numbers','code']
     list_max_show_all = 1000
-    mptt_indent_field = "org_name_method"
-    search_fields = ['code','org_name', 'org_number']
+    mptt_indent_field = "get_name"
 
     def get_list_display(self, request):
         if request.user.has_perm('tracking.can_display_location_loads'):
             return self.list_display_with_loads
         return self.list_display
 
-    def org_name_method(self, obj):
+    def get_name(self, obj):
         if obj.removed:
             return format_html(
                 '<strike>{}</strike>',
-                obj.org_name,
+                str(obj)
             )
-        return obj.org_name
-    org_name_method.short_description = _("Raumname / Standort")
-    org_name_method.admin_order_field = 'org_name'
+        return str(obj)
+    get_name.short_description = _("Raumname / Standort")
+    get_name.admin_order_field = 'resource.name'
 
     # TODO: do not repeat yourself.
 

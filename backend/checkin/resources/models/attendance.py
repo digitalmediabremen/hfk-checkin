@@ -4,6 +4,9 @@ from django_better_admin_arrayfield.models.fields import ArrayField
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.utils.translation import gettext_lazy as _
 import uuid
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from .utils import humanize_duration
 
 from .reservation import Reservation, PROFILE_MODEL
 from .base import ModifiableModel, UUIDModelMixin
@@ -17,14 +20,17 @@ class AttendanceStates(models.TextChoices):
 
 class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
 
-    reservation = models.ForeignKey(Reservation, verbose_name=_("Reservation"), on_delete=models.CASCADE)
+    reservation = models.ForeignKey(Reservation, verbose_name=_("Reservation"), on_delete=models.CASCADE, editable=False)
     user = models.ForeignKey(PROFILE_MODEL, verbose_name=_("Person"), on_delete=models.PROTECT)
     state = models.CharField(choices=AttendanceStates.choices, verbose_name=_("State"), blank=True, null=True, max_length=25)
     comment = models.CharField(_("Comment"), blank=True, null=True, max_length=255)
 
+    # for `checkin_set` see tracking.Checkin.attendance FK-relation
+
     class Meta:
         verbose_name = _("Attendance")
         verbose_name_plural = _("Attendances")
+        unique_together = ('reservation', 'user') # a user can only attend the same reservation once
 
     def __str__(self):
         return "%s %s @ %s" % (self._meta.verbose_name, self.user, self.reservation)
@@ -36,6 +42,11 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
     @property
     def is_external_user(self):
         return self.state == AttendanceStates.REQUESTED or False
+    is_external_user.fget.short_description = _("External")
+
+    @property
+    def resource(self):
+        return self.reservation.resource
 
     def get_display_name(self):
         if self.is_external_user:
@@ -54,14 +65,16 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
             self.state = AttendanceStates.REQUESTED
         super().save(*args, **kwargs)
 
+if not 'checkin.tracking' in settings.INSTALLED_APPS:
+    raise ImproperlyConfigured("Trying to import AttendanceCheckin, but checkin.tracking is not in INSTALLED_APPS.")
 
-# class AttendantInReservation(models.Model):
-#     bookingrequest = models.ForeignKey(RoomBookingRequest, on_delete=models.CASCADE)
-#     profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
-#     reason = models.CharField(_("Grund"), max_length=1000, blank=True, null=True)
-#     is_external = models.BooleanField(_("HfK-Extern"), blank=True, null=True)
-#     #status =
-#
-#     class Meta:
-#         verbose_name = _("Teilnehmedender an Raumnutzung")
-#         verbose_name_plural = _("Teilnehmedende an Raumnutzung")
+
+class CheckinAttendance(Attendance):
+
+    class Meta:
+        proxy = True
+        verbose_name = _("Registration")
+
+    def __str__(self):
+        return "%(profile)s on %(date)s for reservation %(reservation)s" % \
+               { 'profile': self.user, 'date': self.reservation.duration, 'reservation': self.reservation }

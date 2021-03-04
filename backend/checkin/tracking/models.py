@@ -24,6 +24,8 @@ CHECKIN_LIFETIME = timedelta(hours=24)
 LOAD_LOOKBACK_TIME = CHECKIN_LIFETIME
 
 from checkin.users.models import Profile
+#if not 'checkin.resources' in settings.INSTALLED_APPS:
+from checkin.resources.models.resource import Resource
 
 class ActivityProfile(models.Model):
     name_de = models.CharField(_("Bezeichnung DE"), max_length=255)
@@ -68,33 +70,65 @@ class BookingMethod(models.Model):
         verbose_name = _("Buchungsmethode")
         verbose_name_plural = _("Buchungsmethoden")
 
+# Checkin-App Model (2021-03-03)
+# class Location(MPTTModel):
+#     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
+#     parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=3)
+#     org_number = models.CharField(_("Raumnummer"), max_length=24, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
+#     org_name = models.CharField(_("Raumname / Standort"), max_length=255)
+#     org_alternative_name = ArrayField(models.CharField(max_length=255), verbose_name=_("Alternative Bezeichnungen"), blank=True, null=True)
+#     org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
+#     org_size = models.DecimalField(verbose_name=_("Größe"), help_text=_("in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
+#     org_floor_number = models.IntegerField(verbose_name=_("Etage"), help_text=_("-1: Keller, 0: Erdgeschoss, 1: Erste Etage, usw."), blank=True, null=True)
+#     org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
+#     org_usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
+#     org_capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Kapazität"), blank=True, null=True)
+#     org_bookable = models.BooleanField(_("Buchbar / Reservierbar"))
+#     org_book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True, blank=True)
+#     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
+#     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
+#     hide_load = models.BooleanField(verbose_name=_("Checkins verstecken"), default=False)
+#     removed = models.BooleanField(verbose_name=_("Entfernt"), default=False, help_text=_("Diese Raum ist deaktiviert oder entfernt. Eine Löschung ist jedoch noch nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"))
+#     # history = is registered via register_history (see below)
 
+
+# Getin/Checkin-App Model
 class Location(MPTTModel):
+    # FIXME resource needs to be OneToOne (or inheritance)
+    resource = models.ForeignKey(Resource, on_delete=models.PROTECT, null=True, blank=True)
     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
-    parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=260)
-    org_number = models.CharField(_("Raumnummer"), max_length=24, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: X.XX(x) Mehrere Raumnummern mit / trennen."))
-    org_name = models.CharField(_("Raumname / Standort"), max_length=255, help_text=_("Bezeichung laut Raumschild."))
-    org_alternative_name = ArrayField(models.CharField(max_length=255), verbose_name=_("Alternative Bezeichnungen"), blank=True, null=True)
-    org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
-    org_size = models.DecimalField(verbose_name=_("Größe"), help_text=_("in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
-    org_floor_number = models.IntegerField(verbose_name=_("Etage"), help_text=_("-1: Keller, 0: Erdgeschoss, 1: Erste Etage, usw."), blank=True, null=True)
-    org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
-    org_usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
-    org_capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Kapazität"), blank=True, null=True)
-    org_bookable = models.BooleanField(_("Buchbar / Reservierbar"))
-    org_book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True, blank=True)
+    parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=3)
+    # org_number = models.CharField(_("Raumnummer"), max_length=24, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
+    # org_name = models.CharField(_("Raumname / Standort"), max_length=255)
+    # org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
+    # org_size = models.DecimalField(verbose_name=_("Größe"), help_text=_("in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
+    # org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
+    # org_usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
+    # org_capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Kapazität"), blank=True, null=True)
+    # org_bookable = models.BooleanField(_("Buchbar / Reservierbar"))
+    # org_book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True, blank=True)
     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     hide_load = models.BooleanField(verbose_name=_("Anzahl der Anwesenden verstecken"), default=False, help_text=_("Anzahl der aktuell eingecheckten Personen den Nutzern nicht anzeigen. z.B. für Gebäude etc."))
     removed = models.BooleanField(verbose_name=_("Entfernt"), default=False, help_text=_("Diese Raum ist deaktiviert oder entfernt. Eine Löschung ist jedoch noch nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"))
     # history = is registered via register_history (see below)
 
-    class MPTTMeta:
-        order_insertion_by = ['org_number']
+    display_numbers = property(lambda self: self.resource.display_numbers if self.resource else None)
+    display_numbers.fget.short_description = _('Numbers')
+    org_number = property(lambda self: self.resource.display_numbers if self.resource else None)
+    name = property(lambda self: self.resource.name if self.resource else None)
+    org_name = property(lambda self: self.resource.name if self.resource else None)
+    org_responsible = property(lambda self: self.resource.get_reservation_delegates() if self.resource else None)
+    org_size = property(lambda self: self.resource.area if self.resource else None)
+    area = property(lambda self: self.resource.area if self.resource else None)
+
+    # FIXME order_insertion_by on FK
+    # class MPTTMeta:
+    #     order_insertion_by = ['org_numbers']
 
     class Meta:
-        verbose_name = _("Raum / Standort")
-        verbose_name_plural = _("Räume / Standorte")
+        verbose_name = _("Checkin-Standort")
+        verbose_name_plural = _("Checkin-Standorte")
         permissions = [
             ("can_print_location", _("Kann PDF-Raumausweise erstellen")),
             ("can_display_location_loads", _("Kann aktuelle aktuelle Checkins anzeigen")),
@@ -142,10 +176,10 @@ class Location(MPTTModel):
         return activities
 
     def __str__(self):
-        if self.org_number:
-            return "%s (%s)" % (self.org_name, self.org_number)
+        if self.resource:
+            return "%s / %s" % (self.code, self.resource.display_name,)
         else:
-            return "%s" % (self.org_name,)
+            return "%s" % (self.code,)
 
     # def get_absolute_url(self):
     #     return reverse('pdf-view', kwargs={'pk': self.pk }) + "?as=html"
@@ -157,7 +191,7 @@ class Location(MPTTModel):
 # registering history instead of using HistoricalRecords() on Location model
 # reason: HistoricalRecords() is not compatible with MPTT
 # see: https://github.com/jazzband/django-simple-history/issues/87
-register_history(Location)
+# register_history(Location)
 
 
 class CapacityForActivityProfile(models.Model):
@@ -281,6 +315,7 @@ class Origin(models.TextChoices):
     QR_SCAN = 'QR_SCAN', _("Scan eines QR-Codes")
     USER_MANUAL = 'USER_MANUAL', _("Manuelle Eingabe durch Nutzer")
     ADMIN_MANUAL = 'ADMIN_MANUAL', _("Manuelle Eingabe durch Betreiber")
+    FRONTDESK_MANUAL = 'FRONTDESK_MANUAL', _("Manuelle Eingabe durch Empfangspersonal")
     FOREIGN_SCAN = 'FOREIGN_SCAN', _("Scan eines QR-Codes durch andere Person")
     PARENT_CHECKIN = 'PARENT_CHECKIN', _("Checkin durch untergeordnetes Objekt")
     PARENT_CHECKOUT = 'PARENT_CHECKOUT', _("Checkout durch übergeordnetes Objekt")
@@ -290,11 +325,13 @@ class Origin(models.TextChoices):
 class Checkin(models.Model):
     profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT, null=True)
     location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.PROTECT, null=True)
-    time_entered = models.DateTimeField(_("Checkin"), default=timezone.datetime.now)
-    time_left = models.DateTimeField(_("Checkout"), blank=True, null=True)
+    time_entered = models.DateTimeField(_("Eingang"))
+    time_left = models.DateTimeField(_("Ausgang"), blank=True, null=True)
     # created_at = models.DateTimeField(auto_now_add=True)
-    origin_entered = models.CharField(_("Datenquelle Checkin"), choices=Origin.choices, blank=True, null=True, max_length=100)
-    origin_left = models.CharField(_("Datenquelle Checkout"), choices=Origin.choices, blank=True, null=True, max_length=100)
+    origin_entered = models.CharField(_("Datenquelle Eingang"), choices=Origin.choices, blank=True, null=True, max_length=100)
+    origin_left = models.CharField(_("Datenquelle Ausgang"), choices=Origin.choices, blank=True, null=True, max_length=100)
+
+    attendance = models.ForeignKey('resources.Attendance', null=True, on_delete=models.SET_NULL, blank=True)
 
     # NOTICE: the order of managers is important
     all = CheckinQuerySet.as_manager() # this needs to come first, so the manger uses is not LimitedCheckinManager.
@@ -329,8 +366,13 @@ class Checkin(models.Model):
     def is_active(self):
         return (not self.time_left) and (self.time_entered >= timezone.now()-CHECKIN_LIFETIME)
 
-    def checkout(self, origin=None):
-        return self.__class__.objects.checkout(location=self.location, profile=self.profile, origin=origin, for_checkin=self)
+    def checkout(self, origin=None, include_descendants=True):
+        return self.__class__.objects.checkout(location=self.location, profile=self.profile, origin=origin, for_checkin=self, include_descendants=include_descendants)
+
+    def save(self, *args, **kwargs):
+        if self.time_entered is None:
+            self.time_entered = timezone.now()
+        super().save(*args, **kwargs)
 
     # def save(self, ignore_double=False, include_ancestors=True, *args, **kwargs):
     #     if not ignore_double:

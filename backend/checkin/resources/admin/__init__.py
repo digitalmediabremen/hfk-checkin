@@ -16,6 +16,7 @@ from checkin.resources.admin.resource import (
     ResourceAdmin, ResourceTypeAdmin,
 )
 from checkin.resources.admin.resource_access import ResourceAccessAdmin
+from checkin.resources.admin.reception import *
 
 from checkin.resources.admin.unit import (
     UnitAdmin,
