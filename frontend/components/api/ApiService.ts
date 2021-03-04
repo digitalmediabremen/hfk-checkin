@@ -62,7 +62,7 @@ const toQueryString = (params?: RequestParameters) => {
     }, "");
 };
 
-const parseJson = <T>(item: string) => {
+const parseJsonWithDate = <T>(item: string) => {
     // @ts-ignore
     return JSON.parseWithDate(item);
 };
@@ -88,7 +88,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         ...otherRequestData,
     })
         .then(async (response) => ({
-            result: (parseJson(await response.text()) as unknown) as
+            result: (parseJsonWithDate(await response.text()) as unknown) as
                 | ApiResponse<ResultType>
                 | undefined,
             status: response.status,

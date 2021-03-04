@@ -5,7 +5,7 @@ import Document, {
     Main,
     NextScript,
 } from "next/document";
-import { getManifestUrl } from "../features";
+import { getManifestUrl, getPrimaryColorHex, getTitle } from "../features";
 import { getInitialLocale, LocaleConsumer } from "../localization";
 
 class MyDocument extends Document {
@@ -37,17 +37,17 @@ class MyDocument extends Document {
                             />
                             <meta
                                 name="application-name"
-                                content="HfK-Checkin"
+                                content={getTitle()}
                             />
                             <meta
                                 name="apple-mobile-web-app-title"
-                                content="HfK-Checkin"
+                                content={getTitle()}
                             />
-                            <meta name="theme-color" content="#D81830" />
+                            <meta name="theme-color" content={getPrimaryColorHex()} />
 
                             <meta
                                 name="msapplication-navbutton-color"
-                                content="#D81830"
+                                content={getPrimaryColorHex()}
                             />
                             <meta
                                 name="apple-mobile-web-app-status-bar-style"

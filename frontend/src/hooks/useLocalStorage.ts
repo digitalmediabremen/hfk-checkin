@@ -43,7 +43,7 @@ export default function useLocalStorage<T extends Object>(
             const parseAgainWithDates = (JSON.parseWithDate(
                 item
             ) as unknown) as T;
-            console.debug(`loaded "${key}" to local-storage`);
+            console.debug(`loaded "${key}" from local-storage`);
             onLoad?.(parseAgainWithDates);
         } catch (e) {
             console.error(e);
