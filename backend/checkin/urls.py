@@ -29,6 +29,7 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from checkin.users.admin import UserAdmin
+from checkin.resources.api.reservation import ReservationCalendarViewSet
 
 urlpatterns = []
 checkin_api_router = routers.SimpleRouter()
@@ -47,6 +48,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         path('location/html/', LocationsView.as_view(), name='html-export'),
         path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),
         path('api/', include(checkin_api_router.urls)),
+        re_path('^api/resource/(?P<resource>[^/.]+)/events/$', ReservationCalendarViewSet.as_view({'get': 'list'})),
     ]
 
 respa_router = RespaAPIRouter()
