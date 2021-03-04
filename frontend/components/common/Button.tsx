@@ -1,4 +1,4 @@
-import { SFC, ReactNode } from "react";
+import { SFC, ReactNode, FunctionComponent } from "react";
 import useTheme from "../../src/hooks/useTheme";import FormElementWrapper from "./FormElementWrapper";
 import { LoadingInline } from "./Loading";
 
@@ -20,7 +20,6 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
     outline,
     ...props
 }) => {
-    const theme = useTheme();
     const handleClick = () => {
         if (!loading) onClick();
     };
@@ -36,7 +35,7 @@ export const ButtonWithLoading: SFC<ButtonProps & { loading: boolean }> = ({
     );
 };
 
-export const Button: SFC<ButtonProps> = (props) => {
+export const Button: FunctionComponent<ButtonProps> = (props) => {
     const {
         children,
         outline,
@@ -45,6 +44,8 @@ export const Button: SFC<ButtonProps> = (props) => {
         iconComponent,
         ...otherProps
     } = props;
+
+    const theme = useTheme();
 
     const hasIcon = iconComponent || withBackIcon;
 
