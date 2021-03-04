@@ -28,10 +28,6 @@ const HelpContentEn = () => {
                             checkin@hfk-bremen.de
                         </a>
                     </strong>
-                    <br />
-                    <br />
-                    This application and the access procedure to Speicher XI are
-                    currently running in trail.
                 </Text>
             </HelpSection>
 
