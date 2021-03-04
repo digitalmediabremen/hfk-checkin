@@ -62,7 +62,7 @@ urlpatterns += [
 ]
 
 if 'checkin.notifications' in settings.INSTALLED_APPS:
-    path('notifications/', include('checkin.notifications.urls')),
+    urlpatterns += [path('notifications/', include('checkin.notifications.urls'))]
 
 if 'microsoft_auth' in settings.INSTALLED_APPS:
     urlpatterns += [path('login/', include('microsoft_auth.urls', namespace='microsoft'))]
