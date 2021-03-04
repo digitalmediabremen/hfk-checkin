@@ -67,6 +67,15 @@ export const createTime = (hours: number, minutes: number): Time => {
     return d;
 };
 
+const timeWithinDateIsConsideredNow = 30;
+
+export const isNow = (date: Date) =>
+    new Date().getTime() - date.getTime() <
+    timeWithinDateIsConsideredNow * 1000;
+
+export const isToday = (date: Date) =>
+    new Date().toDateString() === date.toDateString();
+
 export const createTimeNow = (): Time => {
     const now = new Date();
     const d = createTime(now.getHours(), now.getMinutes());
