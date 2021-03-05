@@ -1,5 +1,3 @@
-const { ModifierableNode } = require("ts-morph");
-
 function envToBoolean(envvar) {
     if (envvar === undefined) return false;
     if (!["1", "0"].includes(envvar)) throw "env variable must be 0 or 1";
