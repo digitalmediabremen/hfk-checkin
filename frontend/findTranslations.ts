@@ -1,7 +1,15 @@
 import * as stringsim from "string-similarity";
-import { CallExpression, Node, Project, ShorthandPropertyAssignment, SyntaxKind, ts } from "ts-morph";
+import {
+    CallExpression,
+    Node,
+    Project,
+    ShorthandPropertyAssignment,
+    SyntaxKind,
+    ts,
+} from "ts-morph";
 import yargs from "yargs";
 import colors from "colors";
+import { lazy } from "react";
 
 const project = new Project({
     tsConfigFilePath: "./tsconfig.json",
@@ -28,18 +36,18 @@ function createDefinitionSet() {
         .pop();
     const tFuncRefs = tFunc?.findReferencesAsNodes();
     const _tFuncRefs = _tFunc?.findReferencesAsNodes();
-
     // console.log(tFuncRefs?.[0]);
     const tDefinitionSet = new Set<string>();
 
     const relevantSourceFiles = new Set(
-        [...(tFuncRefs || []), ...(_tFuncRefs || [])]?.map((p) =>
-            p.getSourceFile()
+        [...(tFuncRefs || []), ...(_tFuncRefs || [])]?.map((p) => {
+            return p.getSourceFile()
+        }
         )
     );
 
     // remove definition file
-    relevantSourceFiles.delete(useTFunc!.getSourceFile())
+    relevantSourceFiles.delete(useTFunc!.getSourceFile());
 
     relevantSourceFiles.forEach((file) => {
         let currentModule: string | undefined = undefined;
@@ -57,7 +65,7 @@ function createDefinitionSet() {
             const inModule = strip(args[1].getText());
             const tString = strip((args[4] || args[2]).getText());
             tDefinitionSet.add(`${inModule}.${saveDots(tString)}`);
-        }
+        };
 
         const processLater: CallExpression<ts.CallExpression>[] = [];
 
