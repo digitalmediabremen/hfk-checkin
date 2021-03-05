@@ -3,8 +3,6 @@ import { Translation } from ".";
 const translation: Translation = {
     "en": {
       "common": {
-        "Datenschutzinformationen": "Data & Privacy",
-        "Hilfe": "Help",
         "nicht verifiziert": "Not verified",
         "Seite nicht gefunden": "Page not found",
         "+{days} Tag": "NEW",
@@ -19,6 +17,8 @@ const translation: Translation = {
         "Raum übernehmen": "NEW",
         "Zeit übernehmen": "enter time",
         "Neue Anfrage": "NEW",
+        "Hilfe": "Help",
+        "Datenschutzinformationen": "Data & Privacy",
         "Protokoll": "Log",
         "Noch keine Checkins vorhanden": "No checkins",
         "Telefon ändern": "Change phone",
@@ -26,6 +26,7 @@ const translation: Translation = {
         "Raum": "NEW",
         "Zeitangaben tätigen": "NEW",
         "Zeit": "NEW",
+        "weitere angaben": "NEW",
         "Teilnehmer": "NEW",
         "Pers.": "NEW",
         "Buchungsgrund": "NEW",
@@ -36,8 +37,7 @@ const translation: Translation = {
         "Anfragen": "NEW",
         "Weitere Anfrage": "NEW",
         "Deine Anfrage ist eingegangen.": "NEW",
-        "weitere Anfrage": "NEW",
-        "weitere angaben": "NEW"
+        "weitere Anfrage": "NEW"
       },
       "request-message": {
         "Bitte erläutere Deine Anfrage nach Bedarf. \\n\\nZum Beispiel kannst Du hier Angaben für die Werkstattleitung machen oder dem Raumteam wichtige Informationen übermitteln.": "NEW"
@@ -55,7 +55,12 @@ const translation: Translation = {
         "Solltest du grade an einer Abschlussarbeit sitzen oder aus anderen trifftigen Gründen auf den Raum angewiesen sein kannst du hier deine Situation schildern": "NEW",
         "Begründung": "NEW",
         "Bitte gib hier einen Ausnahmegrund an.": "NEW",
-        "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an.": "NEW"
+        "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an.": "NEW",
+        "Normale Buchung": "NEW",
+        "Ich buche für eine Gremiensitzung": "NEW",
+        "Ich buche für eine Prüfung": "NEW",
+        "Anderer Grund": "NEW",
+        "Workshop Buchung": "NEW"
       },
       "request-resource": {
         "Gebäude auswählen": "NEW",
@@ -133,3 +138,5 @@ const translation: Translation = {
       }
     }
   }
+
+  export default translation
