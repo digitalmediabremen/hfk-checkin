@@ -95,6 +95,7 @@ THIRD_PARTY_APPS = [
     'post_office',
     'guardian',
     'django_filters',
+    'django_premailer',
 ]
 
 LOCAL_APPS = [

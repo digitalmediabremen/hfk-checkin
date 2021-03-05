@@ -1,0 +1,51 @@
+{% extends "notifications/email_base.html" %}
+{% block preheader %}Deine Reservierungsanfrage für {{ reservation.resource.display_name }} wird in Kürze bearbeitet.{% endblock %}
+{% block reservation %}
+    {% block reservation_status %}
+    <p class="primary bold box">Deine Reservierungsanfrage wird in Kürze bearbeitet.</p>
+    {% endblock %}
+    <br/><br/><br/>
+    {% block reservation_info %}
+    <h2 class="secondary">{{ reservation.identifier }}</h2>
+    <h2 class="primary ">{{ reservation.resource.display_numbers }}<br/><span class="bold">{{ reservation.resource.name }}</span></h2>
+    <h2 class="primary">{{ reservation.begin.date|date:"D. d.m.Y" }}<br/>{{ reservation.begin|time:"H:i" }} – {{ reservation.end.time|time:"H:i" }}</h2>
+    {% endblock %}
+    <br/><br/>
+    {% block reservation_details %}
+            <p class="primary"><span class="bold">Angemeldete Personen:</span> {{ reservation.organizer|default:"Du" }}{% if reservation.number_of_attendees|add:"-1" > 1 %} und {{ reservation.number_of_attendees|add:"-1" }} weitere Personen{% endif %}</p>
+        {% if reservation.purpose %}
+            <p class="primary"><span class="bold">Grund:</span> {{ reservation.purpose }}</p>
+        {% endif %}
+        {% if reservation.message %}
+            <p class="primary"><span class="bold">Nachricht:</span> <i>{{ reservation.message }}</i></p>
+        {% endif %}
+    {% endblock %}
+    <br/><br/>
+    {% block reservation_instruction %}
+    <p class="secondary">Gebe bitte bei Rückfragen immer die Reservierungsnummer
+        {{ reservation.identifier }} an. Aktuell ist keine weitere Aktion notwendig. Die Bearbeitung
+        kann bis zu 48 Stunden dauern.</p>
+    {% endblock %}
+{% endblock %}
+
+{% block footer %}
+<table role="presentation" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td class="content-block">
+            {% block footer_reason %}
+            <span class="apple-link">Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.</span>
+            <span class="apple-link">Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a
+                    href="{{ url_root }}/help">Hilfeseite</a> zu finden.</span>
+            {% endblock %}
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            {% block footer_legal %}
+            <span class="apple-link">Bitte wenden Sie sich bei Fragen oder Problemen an <a
+                    href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.</span>
+            {% endblock %}
+        </td>
+    </tr>
+</table>
+{% endblock %}
