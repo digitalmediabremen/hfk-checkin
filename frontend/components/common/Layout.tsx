@@ -35,7 +35,7 @@ const { styles, className } = css.resolve`
 
     .page-animation > :global(.page-wrapper) {
         transition: transform ${pageTransitionDuration}ms;
-        will-change: transform, z-index;
+        will-change: transform;
     }
 
     :global(.left .page-animation > .page-wrapper) {
@@ -53,7 +53,7 @@ const { styles, className } = css.resolve`
     }
     .page-animation.enter-done > :global(.page-wrapper) {
         transform: translateX(0vw);
-        z-index: 10;
+        // z-index: 10;
     }
 
     // leave
@@ -67,7 +67,7 @@ const { styles, className } = css.resolve`
     }
 
     .page-animation.exit-done > :global(.page-wrapper) {
-        z-index: 1;
+        // z-index: 1;
     }
 
     :global(.left .page-animation.exit-done > .page-wrapper) {
