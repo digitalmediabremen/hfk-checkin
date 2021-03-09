@@ -40,6 +40,7 @@ ON_CAMPUS_IP_NETWORKS_WHITELIST = [
     IPNetwork("10.10.0.0/16"),
 ]
 
+
 class CSRFExemptSessionAuthentication(SessionAuthentication):
 
     def enforce_csrf(self, request):
@@ -137,10 +138,10 @@ class CheckinViewSet(viewsets.ReadOnlyModelViewSet):
             return qs.active()
         return qs
 
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    permission_classes = [DjangoModelPermissions]
+class ProfileViewSet(viewsets.ViewSet):
+    # queryset = Profile.objects.all()
+    # serializer_class = ProfileSerializer
+    # permission_classes = [IsAdminUser]
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
@@ -198,6 +199,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
 
         except (ValidationError, IntegrityError) as e:
             return Response({'detail': ERROR_PROFILE_NOT_SAVED}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LogoutViewSet(viewsets.ViewSet):
     """

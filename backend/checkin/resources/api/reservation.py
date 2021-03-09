@@ -6,7 +6,7 @@ import arrow
 import django_filters
 from arrow.parser import ParserError
 from .. import settings
-from ..models.permissions import NoSuperuserObjectPermissionChecker
+from ..models.permissions import NoSuperuserObjectPermissionChecker, ObjectPermissionChecker
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import (
@@ -26,6 +26,7 @@ from rest_framework import renderers
 from rest_framework.exceptions import NotAcceptable, ValidationError
 from rest_framework.settings import api_settings as drf_settings
 from django.urls import reverse
+from django.utils.functional import cached_property
 
 #from munigeo import api as munigeo_api
 from .resource import ResourceSerializer, ResourceListViewSet
@@ -110,7 +111,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, ModifiableModelSerializerMixin):
-    from checkin.users.api import UserProfileSerializer
+    from checkin.users.api import SimpleUserProfileSerializer
     #uuid = serializers.ReadOnlyField()
     identifier = serializers.ReadOnlyField(source='short_uuid')
     resource = ResourceSerializer(read_only=True)
@@ -119,7 +120,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     end = NullableDateTimeField()
     #organizer = EmailField(source='user.email', read_only=True) # or depending on permission
     # TODO do all users have permission to show / see organizers?!
-    organizer = UserProfileSerializer(source='user', read_only=True)
+    organizer = SimpleUserProfileSerializer(source='user', read_only=True)
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
     state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
@@ -664,6 +665,8 @@ class ReservationCacheMixin:
             checker.prefetch_perms(units)
         if resource_groups:
             checker.prefetch_perms(resource_groups)
+        if resources:
+            checker.prefetch_perms(resources)
 
     def _get_cache_context(self):
         context = {}
@@ -675,8 +678,8 @@ class ReservationCacheMixin:
 
 
 class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
-    queryset = Reservation.objects.select_related('user', 'resource', 'resource__unit')\
-        .prefetch_related('resource__groups').order_by('begin', 'resource__unit__name', 'resource__name')
+    queryset = Reservation.objects.select_related('user', 'user__profile', 'resource', 'resource__unit')\
+        .prefetch_related('resource__groups','attendance_set','attendance_set__user').order_by('begin', 'resource__unit__name', 'resource__name')
         # .prefetch_related('catering_orders')\
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('order', 'order__order_lines', 'order__order_lines__product')
@@ -709,6 +712,11 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
 
         return super().get_serializer(*args, **kwargs)
 
+    @cached_property
+    def request_user_object(self):
+        return get_user_model().objects.get(pk=self.request.user.pk)  # .prefetch_related('profile')
+        # .prefetch_related('unit_authorizations', 'unit_group_authorizations__subject__members')
+
     def get_serializer_context(self, *args, **kwargs):
         context = super().get_serializer_context(*args, **kwargs)
         if hasattr(self, '_page'):
@@ -718,7 +726,7 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
             request_user = self.request.user
 
             if request_user.is_authenticated:
-                prefetched_user = get_user_model().objects.get(pk=request_user.pk)
+                prefetched_user = self.request_user_object#.prefetch_related('profile')
                     #.prefetch_related('unit_authorizations', 'unit_group_authorizations__subject__members')
 
 
@@ -766,17 +774,17 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
     def perform_destroy(self, instance):
         instance.set_state(Reservation.CANCELLED, self.request.user)
 
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        if request.accepted_renderer.format == 'xlsx':
-            response['Content-Disposition'] = 'attachment; filename={}.xlsx'.format(_('reservations'))
-        return response
-
-    def retrieve(self, request, *args, **kwargs):
-        response = super().retrieve(request, *args, **kwargs)
-        if request.accepted_renderer.format == 'xlsx':
-            response['Content-Disposition'] = 'attachment; filename={}-{}.xlsx'.format(_('reservation'), kwargs['pk'])
-        return response
+    # def list(self, request, *args, **kwargs):
+    #     response = super().list(request, *args, **kwargs)
+    #     if request.accepted_renderer.format == 'xlsx':
+    #         response['Content-Disposition'] = 'attachment; filename={}.xlsx'.format(_('reservations'))
+    #     return response
+    #
+    # def retrieve(self, request, *args, **kwargs):
+    #     response = super().retrieve(request, *args, **kwargs)
+    #     if request.accepted_renderer.format == 'xlsx':
+    #         response['Content-Disposition'] = 'attachment; filename={}-{}.xlsx'.format(_('reservation'), kwargs['pk'])
+    #     return response
 
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())

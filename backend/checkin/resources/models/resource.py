@@ -215,7 +215,6 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     alternative_names = ArrayField(models.CharField(max_length=200), verbose_name=_("Alternative names"), blank=True, null=True)
     description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
 
-    PARENT_FIELD_NAME = 'unit'
     unit = models.ForeignKey('Unit', verbose_name=_('Unit'), db_index=True, default=get_default_unit,
                              related_name="resources", on_delete=models.PROTECT)
     type = models.ForeignKey(ResourceType, verbose_name=_('Resource type'), db_index=True, null=True, blank=True,

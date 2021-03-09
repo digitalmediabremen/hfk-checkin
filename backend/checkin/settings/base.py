@@ -131,6 +131,7 @@ AUTH_USER_MODEL = "users.User"
 # Custom model for django-guardian
 GUARDIAN_USER_OBJ_PERMS_MODEL = 'users.TimeEnabledUserObjectPermission'
 GUARDIAN_GROUP_OBJ_PERMS_MODEL = 'users.TimeEnabledGroupObjectPermission'
+GUARDIAN_AUTO_PREFETCH = True
 
 # PASSWORDS
 # ------------------------------------------------------------------------------

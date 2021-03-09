@@ -11,14 +11,8 @@ logger = logging.getLogger(__name__)
 class AbstractReservableModel(models.Model):
     """
     Abstracting all fields that are required on a reservable Resource / Room.
-    These fields are shared between Units and Resources.
-    If a Resource has not defined a certain property it shall be "inherited" from its Unit.
-    If not Unit is assigned it shall fail gracefully.
-
-    The field name of its parent is defined as PARENT_FIELD_NAME.
+    These fields might be shared between Units and Resources.
     """
-    PARENT_FIELD_NAME = None # can be defined in child
-    PARENT = None # will be loaded in __init__
 
     reservable = models.BooleanField(_("Buchbar"), default=True)
     # reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
@@ -63,13 +57,6 @@ class AbstractReservableModel(models.Model):
         verbose_name=_('External reservation URL'),
         help_text=_('A link to an external reservation system if this resource is managed elsewhere'),
         null=True, blank=True)
-
-    def __init__(self, *args, **kwargs):
-        super(AbstractReservableModel, self).__init__(*args, **kwargs)
-        if self.PARENT_FIELD_NAME:
-            self.PARENT = getattr(self, self.PARENT_FIELD_NAME)
-            if not self._meta.get_field(self.PARENT_FIELD_NAME).get_internal_type() is 'ForeignKey':
-                raise ImproperlyConfigured("AbstractRervable: A reservable Resource might have a 'parent' to 'inherit' attributes from. Define the 'parent field' in PARENT_FIELD_NAME. This field must be a ForeignKey.")
 
     class Meta:
         abstract = True

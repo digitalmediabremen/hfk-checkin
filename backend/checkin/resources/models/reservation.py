@@ -186,7 +186,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         :return: int: Total number of (expected) attendees.
         """
         extra = self.number_of_extra_attendees or 0
-        return self.attendees.count() + extra
+        return len(self.attendees.all()) + extra
     number_of_attendees.fget.short_description = _("Total number of attendees")
 
     # access-related fields

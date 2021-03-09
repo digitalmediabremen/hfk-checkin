@@ -16,12 +16,13 @@ def register_view(klass, name, base_name=None):
     all_views.append(entry)
 
 
-# class BaseProfileSerializer(serializers.ModelSerializer):
-#     id = serializers.ReadOnlyField()
-#     display_name = serializers.ReadOnlyField(source='get_display_name')
-#     class Meta:
-#         model = Profile
-#         fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email']
+class ProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    display_name = serializers.ReadOnlyField(source='get_display_name')
+
+    class Meta:
+        model = Profile
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -33,8 +34,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='profile.last_name')
     phone = serializers.CharField(source='profile.phone')
     email = serializers.EmailField(source='profile.email')
+    is_external = serializers.EmailField(source='profile.is_external')
     display_name = serializers.ReadOnlyField(source='get_display_name')
     #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
+    # TODO limited qs on reservations etc. ListField to ReservationsViewSet?
+    #reservations = serializers.ListField(serializers=)
     reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
     last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
     verified = serializers.ReadOnlyField(source='profile.verified')
@@ -42,10 +46,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins', 'reservations']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins', 'reservations', 'is_external']
 
     def validate_phone(self, value):
         return value.strip()
+
+
+class SimpleUserProfileSerializer(UserProfileSerializer):
+    class Meta(UserProfileSerializer.Meta):
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete',]
 
 
 class UserSerializer(serializers.ModelSerializer):
