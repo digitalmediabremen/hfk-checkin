@@ -1,47 +1,78 @@
 import { NextPage } from "next";
 import React from "react";
 import { AlertCircle } from "react-feather";
+import { updateLocale } from "yargs";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import useSubPage from "../../components/api/useSubPage";
 import FormCheckbox from "../../components/common/FormCheckbox";
 import FormElement from "../../components/common/FormElement";
 import Layout from "../../components/common/Layout";
+import { LoadingInline } from "../../components/common/Loading";
 import NewButton from "../../components/common/NewButton";
+import SectionTitle from "../../components/common/SectionTitle";
 import SubpageCollection from "../../components/getin/subpages/SubpageCollection";
 import { requestSubpages } from "../../config";
 import features from "../../features";
-import { useTranslation } from "../../localization";
+import { useTranslation, _t } from "../../localization";
+import useLocalStorage from "../../src/hooks/useLocalStorage";
+import useReservationPurposeText from "../../src/hooks/useReservationPurposeMessage";
 import useReservationState, {
     useReservationRequest,
 } from "../../src/hooks/useReservationState";
-import useReservationPurposeText from "../../src/hooks/useReservationPurposeMessage";
+import useSubmitReservation from "../../src/hooks/useSubmitReservation";
 import useValidation from "../../src/hooks/useValidation";
 import MyProfile from "../../src/model/api/MyProfile";
-import {
-    createTime,
-    fromTime,
-    getFormattedDate,
-    smallerThan,
-} from "../../src/util/DateTimeUtil";
-import useSubmitReservation from "../../src/hooks/useSubmitReservation";
-import { DotPulse, LoadingInline } from "../../components/common/Loading";
+import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
+import { getFormattedDate } from "../../src/util/DateTimeUtil";
 import { timeSpan } from "../../src/util/TimeFormatUtil";
-import useLocalStorage from "../../src/hooks/useLocalStorage";
-import SectionTitle from "../../components/common/SectionTitle";
 
-const presentTimeLabel = (start?: Date, end?: Date): string[] | undefined => {
-    if (!start || !end) return undefined;
-    return [
-        getFormattedDate(start, "de") || "",
-        timeSpan(start, end),
-    ];
+const timeFormValuePresenter = (
+    r: NewReservationBlueprint,
+    locale: string
+): string[] | undefined => {
+    const { begin, end } = r;
+    if (!begin || !end) return undefined;
+    return [getFormattedDate(begin, locale) || "", timeSpan(begin, end)];
 };
+
+const purposeFormValuePresenter = (
+    r: NewReservationBlueprint,
+    locale: string
+) => {
+    const { attendees, number_of_extra_attendees: extraAttendees } = r;
+    const module = "purpose";
+    const show =
+        (!!attendees && attendees.length > 0) ||
+        (extraAttendees && extraAttendees > 0);
+    return show
+        ? [
+              ...(attendees?.map((a) => (
+                  <>
+                      <b>
+                          {a.first_name} {a.last_name}
+                      </b>{" "}
+                      {_t(locale, module, "Extern")}
+                  </>
+              )) || []),
+              (extraAttendees || 0) !== 0 && (
+                  <>
+                      +{extraAttendees || 0} {_t(locale, module, "weitere")}
+                  </>
+              ),
+          ]
+        : undefined;
+};
+
+const resourceFormValuePresenter = (r: NewReservationBlueprint) =>
+    r.resource
+        ? [r.resource.display_numbers || "", <b>{r.resource.name}</b>]
+        : undefined;
 
 const Subpages = <SubpageCollection />;
 
 const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
     const { handlerProps, direction, activeSubPage } = useSubPage(
         requestSubpages
     );
@@ -50,28 +81,20 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const ValidationIcon = <AlertCircle />;
 
     const { reservation } = useReservationRequest();
-    const {
-        attendees,
-        number_of_extra_attendees: extraAttendees,
-        begin: start,
-        end,
-        resource,
-        purpose,
-        message: comment,
-    } = reservation;
+    const { purpose, message: comment } = reservation;
 
     const { submit, loading } = useSubmitReservation();
 
     const purposeLabel = useReservationPurposeText();
 
-    const [phoneCallback, setPhoneCallback] = useReservationState(
+    const [agreedToPhoneContact, setAgreedToPhoneContact] = useReservationState(
         "agreed_to_phone_contact"
     );
-    useLocalStorage("atpc", phoneCallback, undefined, (set) => {
-        setPhoneCallback(set);
+    useLocalStorage("atpc", agreedToPhoneContact, undefined, (set) => {
+        setAgreedToPhoneContact(set);
     });
 
-    const LoadingIcon = <LoadingInline invertColor loading={loading} />
+    const LoadingIcon = <LoadingInline invertColor loading={loading} />;
 
     return (
         <Layout
@@ -81,14 +104,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
         >
             <FormElement
                 {...handlerProps("resource")}
-                value={
-                    resource
-                        ? [
-                              resource.display_numbers || "",
-                              <b>{resource.name}</b>,
-                          ]
-                        : undefined
-                }
+                value={resourceFormValuePresenter(reservation)}
                 label={t("Raum auswählen")}
                 shortLabel={t("Raum")}
                 arrow
@@ -102,7 +118,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("time")}
                 label={t("Zeitangaben tätigen")}
-                value={presentTimeLabel(start, end)}
+                value={timeFormValuePresenter(reservation, locale)}
                 shortLabel={t("Zeit")}
                 arrow
                 actionIcon={
@@ -113,24 +129,10 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 extendedWidth
                 bottomSpacing={2}
             />
-            <SectionTitle center>
-                {t("weitere angaben")}
-            </SectionTitle>
+            <SectionTitle center>{t("weitere angaben")}</SectionTitle>
             <FormElement
                 {...handlerProps("attendees")}
-                value={[
-                    ...(attendees?.map((a) => (
-                        <>
-                            <b>
-                                {a.first_name} {a.last_name}
-                            </b>{" "}
-                            (Extern)
-                        </>
-                    )) || []),
-                    (extraAttendees || 0) !== 0 && (
-                        <>+{extraAttendees || 0} weitere</>
-                    ),
-                ]}
+                value={purposeFormValuePresenter(reservation, locale)}
                 label={t("Teilnehmer")}
                 shortLabel={t("Pers.")}
                 arrow
@@ -160,8 +162,8 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <FormCheckbox
                 extendedWidth
                 small
-                value={phoneCallback || false}
-                onChange={(v) => setPhoneCallback(v)}
+                value={agreedToPhoneContact || false}
+                onChange={(v) => setAgreedToPhoneContact(v)}
                 label={t(
                     "Bitte ruft mich bei Rückfragen zu dieser Buchung unter {phone} zurück.",
                     { phone: profile.phone! }
