@@ -119,3 +119,14 @@ media/
 
 # django backend
 /media
+
+# cloned respa respa develop/c155b8859c68d8551438c0fd132fd8710ad8028a into backend/respa from github.com/City-of-Helsinki/respa
+# only modules / files used are committed within the checkin.booking module
+respa/
+post_office_attachments/
+migrations-respa
+# respa tests etc.
+*-respa
+tests-disabled
+users-old
+requirements.txt
