@@ -1,4 +1,5 @@
 import { CheckCircle, Clock, MinusCircle, XCircle } from "react-feather";
+import { _t } from "../../localization";
 import NewReservation from "../model/api/NewReservation";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import { ReservationState } from "../model/api/Reservation";
@@ -40,17 +41,17 @@ type Keys<T extends {}> = {
     [K in Exclude<keyof T, undefined>]: K;
 }[Exclude<keyof T, undefined>][];
 
-const requestFieldLabelMap: MapToStringRecord<NewReservation> = {
-    agreed_to_phone_contact: "Telefonkontakt",
-    resource_uuid: "Raum",
-    exclusive_resource_usage: "Alleinnutzung",
-    attendees: "Externe Teilnehmer",
-    begin: "Anfang",
-    end: "Ende",
-    message: "Nachricht",
-    number_of_extra_attendees: "Weitere Teilnehmer",
-    purpose: "Grund",
-};
+const getRequestFieldLabelMap = (locale: string): MapToStringRecord<NewReservation> => ({
+    agreed_to_phone_contact: _t(locale, "request", "Telefonkontakt"),
+    resource_uuid: _t(locale, "request", "Raum"),
+    exclusive_resource_usage: _t(locale, "request", "Alleinnutzung"),
+    attendees: _t(locale, "request", "Externe Teilnehmer"),
+    begin: _t(locale, "request", "Anfang"),
+    end: _t(locale, "request", "Ende"),
+    message: _t(locale, "request", "Nachricht"),
+    number_of_extra_attendees: _t(locale, "request", "Weitere Teilnehmer"),
+    purpose: _t(locale, "request", "Grund"),
+});
 
 export function additionalFilledReservationRequestFields(
     res: NewReservation
@@ -88,10 +89,12 @@ export function resourceReservationRequestFields(
 }
 
 export function additionalFilledReservationRequestFieldsString(
-    res: NewReservation
+    res: NewReservation,
+    locale: string
 ) {
+    const labelMap = getRequestFieldLabelMap(locale);
     const fields = additionalFilledReservationRequestFields(res);
-    const labels = fields.map((r) => requestFieldLabelMap[r]).join(", ");
+    const labels = fields.map((r) => labelMap[r]).join(", ");
 
     if (!labels) return "";
 

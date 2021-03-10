@@ -2,7 +2,8 @@ import classNames from "classnames";
 import React, { ReactNode } from "react";
 import { ArrowRight } from "react-feather";
 import css from "styled-jsx/css";
-import useTheme from "../../src/hooks/useTheme";import EllipseText from "./EllipseText";
+import useTheme from "../../src/hooks/useTheme";
+import EllipseText from "./EllipseText";
 import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 
 interface NewButtonProps extends FormElementBaseProps {
@@ -40,9 +41,8 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
 
                 div.center {
                     margin: 0 ${iconRight ? -theme.spacing(4) : 0}px 0
-                    ${iconLeft ? -theme.spacing(4) : 0}px;
+                        ${iconLeft ? -theme.spacing(4) : 0}px;
                 }
-
 
                 h3 {
                     display: block;
@@ -59,7 +59,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                 div.center h3 {
                     text-align: center;
                     padding: 0 ${hasIcon ? theme.spacing(4) : 0}px 0
-                    ${hasIcon ? theme.spacing(4) : 0}px;
+                        ${hasIcon ? theme.spacing(4) : 0}px;
                     text-decoration: none;
                 }
 
@@ -79,9 +79,16 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                     margin-left: ${-theme.spacing(0)}px;
                 }
             `}</style>
-            <FormElementBase narrow noPadding={noOutline} noOutline={noOutline} {...formElementBaseProps} onClick={onClick} componentType="button">
+            <FormElementBase
+                narrow
+                noPadding={noOutline}
+                noOutline={noOutline}
+                {...formElementBaseProps}
+                onClick={onClick}
+                componentType="button"
+            >
                 {iconLeft && <span className="icon left">{iconLeft}</span>}
-                <div className={classNames({"center": !noOutline})}>
+                <div className={classNames({ center: !noOutline })}>
                     <EllipseText>
                         {(ellipseClass) => (
                             <h3 className={ellipseClass}>{children}</h3>

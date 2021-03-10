@@ -103,19 +103,6 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             subPages={Subpages}
         >
             <FormElement
-                {...handlerProps("resource")}
-                value={resourceFormValuePresenter(reservation)}
-                label={t("Raum auswählen")}
-                shortLabel={t("Raum")}
-                arrow
-                actionIcon={
-                    hasError("missingResourcePermissions") &&
-                    hasError("needsExceptionReason") &&
-                    ValidationIcon
-                }
-                extendedWidth
-            />
-            <FormElement
                 {...handlerProps("time")}
                 label={t("Zeitangaben tätigen")}
                 value={timeFormValuePresenter(reservation, locale)}
@@ -127,9 +114,22 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                     ValidationIcon
                 }
                 extendedWidth
+            />
+            <FormElement
+                {...handlerProps("resource")}
+                value={resourceFormValuePresenter(reservation)}
+                label={t("Raum auswählen")}
+                shortLabel={t("Raum")}
+                arrow
+                actionIcon={
+                    hasError("missingResourcePermissions") &&
+                    hasError("needsExceptionReason") &&
+                    ValidationIcon
+                }
+                extendedWidth
                 bottomSpacing={2}
             />
-            <SectionTitle center>{t("weitere angaben")}</SectionTitle>
+            <SectionTitle center>{t("optionale angaben")}</SectionTitle>
             <FormElement
                 {...handlerProps("attendees")}
                 value={purposeFormValuePresenter(reservation, locale)}

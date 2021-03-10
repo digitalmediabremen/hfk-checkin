@@ -82,7 +82,8 @@ const NewRequestFromTemplate: React.FunctionComponent<{
                             resource.display_numbers,
                             <b>{resource.name}</b>,
                             additionalFilledReservationRequestFieldsString(
-                                reservation
+                                reservation,
+                                locale
                             ),
                         ]}
                         actionIcon={<Copy />}
@@ -113,7 +114,8 @@ const NewRequestFromTemplate: React.FunctionComponent<{
                             <b>{format.date(reservation.begin, locale)}</b>,
                             format.timeSpan(reservation.begin, reservation.end),
                             additionalFilledReservationRequestFieldsString(
-                                reservation
+                                reservation,
+                                locale
                             ),
                         ]}
                         actionIcon={<Copy />}
