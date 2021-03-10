@@ -50,7 +50,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                     padding: 0;
                     text-align: left;
                     font-size: 1rem;
-                    line-height: 1em;
+                    // line-height: 1em;
                     width: 100%;
                     text-transform: uppercase;
                     text-decoration: underline;
@@ -66,6 +66,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                 .icon {
                     flex: 0 0 ${theme.spacing(4)}px;
                     width: ${theme.spacing(4)}px;
+                    line-height: 0;
                 }
 
                 .icon.right {
