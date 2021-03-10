@@ -55,8 +55,15 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     }, []);
 
     useEffect(() => {
-        if (units) return;
-        unitsApi.requestUnits();
+        if (units) {
+            // if only one unit autoselect it
+            if (units.length === 1) {
+                const unit = units[0];
+                setSelectedUnitId(unit.uuid);
+            }
+        } else {
+            unitsApi.requestUnits();
+        }
     }, [units]);
 
     useEffect(() => {
@@ -121,18 +128,22 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
     return (
         <>
-            <SectionTitle>{t("Gebäude auswählen")}</SectionTitle>
-            {units?.map((unit, index) => (
-                <FormElement
-                    primary={unit.slug === selectedUnitId}
-                    onClick={() => handleSetUnit(unit.slug)}
-                    superNarrow
-                    value={unit.name}
-                    adaptiveWidth
-                    key={unit.uuid}
-                    bottomSpacing={index === units.length - 1 ? 4 : 1}
-                />
-            ))}
+            {units && units.length > 1 && (
+                <>
+                    <SectionTitle>{t("Gebäude auswählen")}</SectionTitle>
+                    {units?.map((unit, index) => (
+                        <FormElement
+                            primary={unit.slug === selectedUnitId}
+                            onClick={() => handleSetUnit(unit.slug)}
+                            superNarrow
+                            value={unit.name}
+                            adaptiveWidth
+                            key={unit.uuid}
+                            bottomSpacing={index === units.length - 1 ? 4 : 1}
+                        />
+                    ))}
+                </>
+            )}
 
             {selectedUnitId && (
                 <>
@@ -157,7 +168,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     // autoFocus
                                     ref={inputRef}
                                     value={searchValue}
-                                    placeholder={t("Raum auswählen")}
+                                    placeholder={t("Wähle einne Raum")}
                                     onChange={(e) =>
                                         setSearchValue(e.target.value)
                                     }
