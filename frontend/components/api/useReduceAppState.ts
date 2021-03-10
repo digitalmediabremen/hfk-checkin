@@ -2,7 +2,7 @@ import { Reducer, useReducer } from "react";
 import { createExpressionWithTypeArguments } from "typescript";
 import { AppAction, AppState } from "../../src/model/AppState";
 import { assertNever } from "../../src/util/TypeUtil";
-import validateReservation from "../../src/util/ValidationUtil";
+import validateReservation from "../../src/util/ReservationValidationUtil";
 import createTheme from "../../styles/theme";
 
 export const initialAppState: AppState = {

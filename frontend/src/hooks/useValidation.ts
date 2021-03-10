@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { useAppState } from "../../components/common/AppStateProvider";
-import { ValidationType } from "../util/ValidationUtil";
+import { ValidationType } from "../util/ReservationValidationUtil";
 import useStatus from "./useStatus";
 
 export default function useValidation() {
