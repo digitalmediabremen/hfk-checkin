@@ -5,6 +5,7 @@ import needsProfile from "../../components/api/needsProfile";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
+import Notice from "../../components/common/Notice";
 import Reservation from "../../components/common/Reservation";
 import Subtitle from "../../components/common/Subtitle";
 import { appUrls } from "../../config";
@@ -34,6 +35,16 @@ const headerProvider = (groupKey: string, firstValue: MyReservation) =>
         <Subtitle center>{groupKey}</Subtitle>
     );
 
+const EmptyState = () => {
+    const { t } = useTranslation();
+
+    return (
+        <Notice>
+            {t("Du hast bisher noch keine Reservierung angefragt.")}
+        </Notice>
+    );
+};
+
 const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
     profile,
 }) => {
@@ -49,35 +60,40 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
             <Subtitle>{t("Buchungsanfragen")}</Subtitle>
             <Loading loading={api.state === "loading"}>
                 {api.state === "success" && (
-                    <GroupedList
-                        items={api.result}
-                        by={groupBy}
-                        headerProvider={headerProvider}
-                        sort={sort}
-                    >
-                        {(reservation, last) => (
-                            <Link
-                                href={
-                                    appUrls.reservation(
-                                        reservation.identifier
-                                    )[0]
-                                }
-                                as={
-                                    appUrls.reservation(
-                                        reservation.identifier
-                                    )[1]
-                                }
-                            >
-                                <a>
-                                    <Reservation
-                                        reservation={reservation}
-                                        bottomSpacing={last ? 2 : 1}
-                                        actionIcon={<ArrowRight strokeWidth={1}/>}
-                                    />
-                                </a>
-                            </Link>
-                        )}
-                    </GroupedList>
+                    <>
+                        {api.result.length === 0 && <EmptyState />}
+                        <GroupedList
+                            items={api.result}
+                            by={groupBy}
+                            headerProvider={headerProvider}
+                            sort={sort}
+                        >
+                            {(reservation, last) => (
+                                <Link
+                                    href={
+                                        appUrls.reservation(
+                                            reservation.identifier
+                                        )[0]
+                                    }
+                                    as={
+                                        appUrls.reservation(
+                                            reservation.identifier
+                                        )[1]
+                                    }
+                                >
+                                    <a>
+                                        <Reservation
+                                            reservation={reservation}
+                                            bottomSpacing={last ? 2 : 1}
+                                            actionIcon={
+                                                <ArrowRight strokeWidth={1} />
+                                            }
+                                        />
+                                    </a>
+                                </Link>
+                            )}
+                        </GroupedList>
+                    </>
                 )}
             </Loading>
         </Layout>
