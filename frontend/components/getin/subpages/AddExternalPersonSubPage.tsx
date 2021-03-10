@@ -28,7 +28,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
     >({
         mode: "onTouched",
         defaultValues: {
-            email: attendees?.[index]?.email || "",
+            // email: attendees?.[index]?.email || "",
             first_name: attendees?.[index]?.first_name || "",
             last_name: attendees?.[index]?.last_name || "",
             phone: attendees?.[index]?.phone || "",
@@ -79,7 +79,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
                 as={<FormTextInput />}
                 {...controllerProps("phone", t("Telefonnummer"), {})}
             />
-            <Controller
+            {/* <Controller
                 as={<FormTextInput bottomSpacing={2}></FormTextInput>}
                 {...controllerProps("email", t("E-Mail"), {
                     pattern: {
@@ -87,11 +87,11 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
                         message: t("Das ist leider keine E-Mail Adresse"),
                     },
                 })}
-            />
+            /> */}
             {/* <PhoneInput value="22" /> */}
             <Notice bottomSpacing={2}>
                 {t(
-                    "Die E-Mail Adresse und die Telefonnummer werden nur verwendet um den Gast bei Rückfragen kontaktieren zu können."
+                    "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet."
                 )}
             </Notice>
             <NewButton primary>Hinzufügen</NewButton>

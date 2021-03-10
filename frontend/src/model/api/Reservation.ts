@@ -9,9 +9,12 @@ export type ReservationState =
     | "requested";
 
 export type ReservationPurpose =
-    | "WORKSHOP_USAGE"
-    | "EXAM"
-    | "COUNCIL_MEETING"
+    | "FOR_WORKSHOP_USAGE"
+    | "FOR_EXAM"
+    | "FOR_COUNCIL_MEETING"
+    | "I_AM_INTERNATIONAL"
+    | "I_AM_FIRSTGRADE"
+    | "I_AM_HARDSHIP"
     | "OTHER";
 
 export default interface Reservation {

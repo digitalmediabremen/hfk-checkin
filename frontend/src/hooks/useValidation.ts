@@ -1,6 +1,11 @@
 import { useCallback, useEffect } from "react";
 import { useAppState } from "../../components/common/AppStateProvider";
-import { ValidationType } from "../util/ReservationValidationUtil";
+import {
+    getValidationObject,
+    hasValidationObject,
+    ValidationLevel,
+    ValidationType,
+} from "../util/ReservationValidationUtil";
 import useStatus from "./useStatus";
 
 export default function useValidation() {
@@ -16,16 +21,18 @@ export default function useValidation() {
     );
 
     const has = useCallback(
-        (type: ValidationType) =>
-            appState.reservationValidation.some((r) => r.type === type),
+        (type: ValidationType, level?: ValidationLevel) =>
+            hasValidationObject(appState.reservationValidation, type, level),
         [appState]
     );
 
     const get = useCallback(
-        (type: ValidationType) =>
-            appState.reservationValidation
-                .filter((r) => r.type === type)
-                .map((v) => v.message),
+        (type: ValidationType, level?: ValidationLevel) =>
+            getValidationObject(
+                appState.reservationValidation,
+                type,
+                level
+            ).map((v) => v.message),
         [appState]
     );
 
@@ -40,7 +47,7 @@ export default function useValidation() {
     };
 
     return {
-        hasError: has,
+        hasError: (type: ValidationType) => has(type, "error"),
         getError: get,
         allErrors,
         hasErrors,

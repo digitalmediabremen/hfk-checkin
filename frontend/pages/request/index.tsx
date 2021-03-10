@@ -1,7 +1,6 @@
 import { NextPage } from "next";
 import React from "react";
 import { AlertCircle } from "react-feather";
-import { updateLocale } from "yargs";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import useSubPage from "../../components/api/useSubPage";
@@ -16,15 +15,15 @@ import { requestSubpages } from "../../config";
 import features from "../../features";
 import { useTranslation, _t } from "../../localization";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
-import useReservationPurposeText from "../../src/hooks/useReservationPurposeMessage";
 import useReservationState, {
-    useReservationRequest,
+    useReservationRequest
 } from "../../src/hooks/useReservationState";
 import useSubmitReservation from "../../src/hooks/useSubmitReservation";
 import useValidation from "../../src/hooks/useValidation";
 import MyProfile from "../../src/model/api/MyProfile";
 import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
 import { getFormattedDate } from "../../src/util/DateTimeUtil";
+import { getPurposeLabel } from "../../src/util/ReservationUtil";
 import { timeSpan } from "../../src/util/TimeFormatUtil";
 
 const timeFormValuePresenter = (
@@ -36,7 +35,7 @@ const timeFormValuePresenter = (
     return [getFormattedDate(begin, locale) || "", timeSpan(begin, end)];
 };
 
-const purposeFormValuePresenter = (
+const attendeesFormValuePresenter = (
     r: NewReservationBlueprint,
     locale: string
 ) => {
@@ -69,6 +68,9 @@ const resourceFormValuePresenter = (r: NewReservationBlueprint) =>
         ? [r.resource.display_numbers || "", <b>{r.resource.name}</b>]
         : undefined;
 
+const purposeFormValuePresenter = (r: NewReservationBlueprint, locale: string) => 
+    r.purpose ? getPurposeLabel(r.purpose, locale) : undefined
+
 const Subpages = <SubpageCollection />;
 
 const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
@@ -84,8 +86,6 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const { purpose, message: comment } = reservation;
 
     const { submit, loading } = useSubmitReservation();
-
-    const purposeLabel = useReservationPurposeText();
 
     const [agreedToPhoneContact, setAgreedToPhoneContact] = useReservationState(
         "agreed_to_phone_contact"
@@ -110,7 +110,6 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 arrow
                 actionIcon={
                     hasError("exceedsBookableRange") &&
-                    hasError("needsExceptionReason") &&
                     ValidationIcon
                 }
                 extendedWidth
@@ -123,7 +122,6 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 arrow
                 actionIcon={
                     hasError("missingResourcePermissions") &&
-                    hasError("needsExceptionReason") &&
                     ValidationIcon
                 }
                 extendedWidth
@@ -132,7 +130,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <SectionTitle center>{t("optionale angaben")}</SectionTitle>
             <FormElement
                 {...handlerProps("attendees")}
-                value={purposeFormValuePresenter(reservation, locale)}
+                value={attendeesFormValuePresenter(reservation, locale)}
                 label={t("Teilnehmer")}
                 shortLabel={t("Pers.")}
                 arrow
@@ -140,7 +138,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             />
             <FormElement
                 {...handlerProps("purpose")}
-                value={purpose ? [purposeLabel(purpose)] : undefined}
+                value={purposeFormValuePresenter(reservation, locale)}
                 label={t("Buchungsgrund")}
                 shortLabel={t("Grund")}
                 arrow

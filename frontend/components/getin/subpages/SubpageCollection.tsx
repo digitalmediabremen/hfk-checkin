@@ -5,7 +5,7 @@ import { useTranslation } from "../../../localization";
 import useSubPage from "../../api/useSubPage";
 import { LoadingScreen } from "../../common/Loading";
 import SubPage from "../../common/SubPage";
-import { SetPersonSubpageProps } from "./SetPersonSubpage";
+import { SetPersonSubpageProps } from "./AddAttendeesSubpage";
 
 interface SubpageListProps {}
 
@@ -20,11 +20,11 @@ const DynamicSetTimeSubpage = createDynamicPage(
 );
 
 const DynamicSetRoomSubpage = createDynamicPage(
-    () => import("./SetRoomSubpage")
+    () => import("./SelectResourceSubPage")
 );
 
 const DynamicSetPersonSubpage = createDynamicPage<SetPersonSubpageProps>(
-    () => import("./SetPersonSubpage")
+    () => import("./AddAttendeesSubpage")
 );
 
 const DynamicAddExternalPersonSubpage = createDynamicPage(
@@ -57,13 +57,13 @@ const SubpageList: React.FunctionComponent<SubpageListProps> = ({
                 {() => <DynamicSetRoomSubpage />}
             </SubPage>
             <SubPage
-                title={t("Personen hinzufügen")}
+                title={t("Teilnehmer hinzufügen")}
                 {...subPageProps("attendees")}
             >
                 {() => <DynamicSetPersonSubpage />}
             </SubPage>
             <SubPage
-                title={t("Externe hinzufügen")}
+                title={t("Person hinzufügen")}
                 {...subPageProps("attendee-set", "attendees")}
             >
                 {() => <DynamicAddExternalPersonSubpage />}

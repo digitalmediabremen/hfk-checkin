@@ -2,7 +2,7 @@ import MyProfile from "./api/MyProfile";
 import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
 import Reservation from "./api/Reservation";
-import { ReservationValidation } from "../util/ReservationValidationUtil";
+import { Validation } from "../util/ReservationValidationUtil";
 import Theme from "./Theme";
 
 export type TransitionDirection = "left" | "right";
@@ -23,7 +23,7 @@ export interface AppState {
     reservationRequest?: NewReservationBlueprint;
     // validation object, updated on every
     // change of reserverationRequest object
-    reservationValidation: ReservationValidation;
+    reservationValidation: Validation;
     // template object from which a new request can be based on
     reservationRequestTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;

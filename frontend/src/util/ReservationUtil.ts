@@ -2,8 +2,8 @@ import { CheckCircle, Clock, MinusCircle, XCircle } from "react-feather";
 import { _t } from "../../localization";
 import NewReservation from "../model/api/NewReservation";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
-import { ReservationState } from "../model/api/Reservation";
-import { assertNever } from "./TypeUtil";
+import { ReservationPurpose, ReservationState } from "../model/api/Reservation";
+import { assertNever, empty, notEmpty } from "./TypeUtil";
 
 export function getIcon(state: ReservationState) {
     if (state === "requested") return Clock;
@@ -41,7 +41,9 @@ type Keys<T extends {}> = {
     [K in Exclude<keyof T, undefined>]: K;
 }[Exclude<keyof T, undefined>][];
 
-const getRequestFieldLabelMap = (locale: string): MapToStringRecord<NewReservation> => ({
+const getRequestFieldLabelMap = (
+    locale: string
+): MapToStringRecord<NewReservation> => ({
     agreed_to_phone_contact: _t(locale, "request", "Telefonkontakt"),
     resource_uuid: _t(locale, "request", "Raum"),
     exclusive_resource_usage: _t(locale, "request", "Alleinnutzung"),
@@ -52,6 +54,14 @@ const getRequestFieldLabelMap = (locale: string): MapToStringRecord<NewReservati
     number_of_extra_attendees: _t(locale, "request", "Weitere Teilnehmer"),
     purpose: _t(locale, "request", "Grund"),
 });
+
+// returns the bookable range for a requested resource in days
+export function calculateBookableRange(reservation?: NewReservationBlueprint) {
+    return {
+        range: reservation?.resource?.reservable_max_days_in_advance || 14,
+        resource: reservation?.resource,
+    };
+}
 
 export function additionalFilledReservationRequestFields(
     res: NewReservation
@@ -129,4 +139,55 @@ export function newReservationRequestFromTemplate(
     console.log("new", newReservationRequest);
 
     return newReservationRequest;
+}
+
+export function getPurposeLabel(
+    key: ReservationPurpose | undefined,
+    locale: string
+) {
+    return key
+        ? getPurposeLabelMap(locale)[key]
+        : _t(locale, "purpose", "Normale Buchung");
+}
+
+export function getPurposeLabelMap(
+    locale: string
+): Record<ReservationPurpose, string> {
+    return {
+        FOR_WORKSHOP_USAGE: _t(
+            locale,
+            "purpose",
+            "Ich möchte eine Werkstatt benutzen"
+        ),
+        FOR_EXAM: _t(
+            locale,
+            "purpose",
+            "Ich buche für meine Prüfung bzw. Prüfungsvorbereitung"
+        ),
+        FOR_COUNCIL_MEETING: _t(
+            locale,
+            "purpose",
+            "Ich buche für eine Gremiensitzung"
+        ),
+        I_AM_INTERNATIONAL: _t(
+            locale,
+            "purpose",
+            "Ich bin internationale Studentin / internationaler Student und möchte in den Speicher XI"
+        ),
+        I_AM_FIRSTGRADE: _t(
+            locale,
+            "purpose",
+            "Ich bin Student*in im ersten Semester / im ersten Studienjahr und möchte in den Speicher XI"
+        ),
+        I_AM_HARDSHIP: _t(
+            locale,
+            "purpose",
+            "Ich habe eine Härtefallgenehmigung"
+        ),
+        OTHER: _t(
+            locale,
+            "purpose",
+            "Nichts von dem hier genannten, aber ich möchte in den Speicher XI"
+        ),
+    };
 }

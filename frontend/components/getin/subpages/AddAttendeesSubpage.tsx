@@ -42,8 +42,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
 
     return (
         <>
-            <style jsx>{``}</style>
-            <SectionTitle>{t("Studierende hinzufügen")}</SectionTitle>
+            {/* <SectionTitle>{t("Studierende hinzufügen")}</SectionTitle>
             <FormAmountInput
                 value={amount}
                 label={amountAttendees > 0 ? `+${amountAttendees}` : undefined}
@@ -56,8 +55,8 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                     "Gib die Anzahl der Studierenden an, die an dieser Buchung teilnehmen."
                 )}
             </Notice>
-            <Divider />
-            <SectionTitle>{t("HfK externe Person anmelden")}</SectionTitle>
+            <Divider /> */}
+            <SectionTitle>{t("HfK externe Person(en) anmelden")}</SectionTitle>
             {attendees?.map((profile, index) => (
                 <FormElement
                     key={index}
@@ -93,13 +92,18 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 bottomSpacing={3}
             >
                 {amountAttendees === 0
-                    ? t("Externe hinzufügen")
-                    : t("Weitere Externe hinzufügen")}
+                    ? t("Person hinzufügen")
+                    : t("Weitere Person hinzufügen")}
             </NewButton>
 
             <Notice>
                 {t(
-                    "HfK externe Personen müssen angemeldet werden. Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. Deine Anfrage wird an das Corona Office geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern"
+                    "HfK externe Personen müssen vorab angemeldet werden. Deine Anfrage wird an die Corona-Beauftragte geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern."
+                )}
+            </Notice>
+            <Notice>
+                {t(
+                    "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. "
                 )}
             </Notice>
         </>

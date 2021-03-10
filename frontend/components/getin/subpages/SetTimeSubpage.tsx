@@ -19,7 +19,9 @@ import {
     Time,
     timeFromDateOrNow,
 } from "../../../src/util/DateTimeUtil";
+import { calculateBookableRange } from "../../../src/util/ReservationUtil";
 import { empty, notEmpty } from "../../../src/util/TypeUtil";
+import { getReservationRequest } from "../../api/ApiService";
 import useSubPage from "../../api/useSubPage";
 import { useAppState } from "../../common/AppStateProvider";
 import Fade from "../../common/Fade";
@@ -32,7 +34,7 @@ import Notice from "../../common/Notice";
 interface SetTimeSubpageProps {}
 
 const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
-    const { hasError } = useValidation();
+    const { hasError, getError } = useValidation();
     const { t } = useTranslation("request-time");
     const { goForward } = useSubPage(requestSubpages);
     const firstRender = useRef(true);
@@ -51,7 +53,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const exceedsBookableRange =
         hasError("exceedsBookableRange") && hasError("needsExceptionReason");
 
-    // update date values
+        // update date values
     useEffect(() => {
         if (firstRender.current) return;
         if (notEmpty(date) && notEmpty(timeFrom) && notEmpty(timeTo)) {
@@ -67,7 +69,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
 
     useEffect(() => {
         firstRender.current = false;
-    }, [])
+    }, []);
 
     return (
         <>
@@ -101,9 +103,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                 <Notice
                     error
                     bottomSpacing={2}
-                    title={t(
-                        "Räume können nur mit einer Vorlaufzeit von max. 14 Tagen gebucht werden."
-                    )}
+                    title={getError("exceedsBookableRange").join("\n")}
                 >
                     {t(
                         "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an."
@@ -120,14 +120,15 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                 </Notice>
             </Fade>
             <Fade in={!exceedsBookableRange}>
-                <Notice>
-                    Bitte berücksichtige bei deiner Anfrage eine
-                    Bearbeitungszeit von ca. 24 Stunden.
-                    <br />
-                    <br />
-                    Wichtig: Anfragen für Samstag, Sonntag und Montag müssen bis
-                    Donnerstag 16 Uhr gestellt werden. Am Wochenende können
-                    i.d.R. keine Anfragen bearbeitet werden.
+                <Notice bottomSpacing={1}>
+                    {t(
+                        "Bitte rechne mit einer Bearbeitungszeit von mind. 48 Stunden."
+                    )}
+                </Notice>
+                <Notice bottomSpacing={0}>
+                    {t(
+                        "Wichtig: Am Wochenende werden in der Regel keine Anfragen bearbeitet. Willst du also eine Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage bis spätestens Donnerstag 10 Uhr."
+                    )}
                 </Notice>
             </Fade>
             {/* <FormElementBase>
