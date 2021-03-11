@@ -4,12 +4,14 @@ import useTheme from "../../src/hooks/useTheme";
 interface SectionTitleProps {
     center?: boolean;
     noMarginBottom?: boolean;
+    bottomSpacing?: number;
 }
 
 const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
     children,
     center,
     noMarginBottom,
+    bottomSpacing
 }) => {
     const theme = useTheme();
     return (
@@ -26,7 +28,7 @@ const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
                 }
 
                 h3.margin-bottom {
-                    margin-bottom: ${theme.spacing(2)}px;
+                    margin-bottom: ${theme.spacing(bottomSpacing || 2)}px;
                 }
 
                 h3.center {

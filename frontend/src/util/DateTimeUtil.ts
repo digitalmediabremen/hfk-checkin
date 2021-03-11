@@ -1,5 +1,4 @@
-import { createDeflate } from "zlib";
-import { empty, notEmpty } from "./TypeUtil";
+import { empty } from "./TypeUtil";
 
 export type TimeString = `${number}${number}:${number}${number}`;
 
@@ -58,7 +57,7 @@ export const createTime = (hours: number, minutes: number): Time => {
     const d = new Date(0) as Time;
 
     // only allow steps of 5 minutes
-    const expected = (minutes + (60 - minutes) % 10)
+    const expected = minutes + ((60 - minutes) % 10);
     const minutesBoxed = expected % 60;
     const hoursBoxed = expected >= 60 ? hours + 1 : hours;
     d["isTime"] = true;
@@ -76,6 +75,10 @@ export const isNow = (date: Date) =>
 export const isToday = (date: Date) =>
     new Date().toDateString() === date.toDateString();
 
+export const isTomorrow = (date: Date) =>
+    addDates(new Date(), duration.days(1)).toDateString() ===
+    date.toDateString();
+
 export const createTimeNow = (): Time => {
     const now = new Date();
     const d = createTime(now.getHours(), now.getMinutes());
@@ -87,10 +90,10 @@ export const createTimeFromDate = (v: Date): Time => {
     return d;
 };
 
-export const timeFromDateOrNow = (d?: Date) : Time => {
+export const timeFromDateOrNow = (d?: Date): Time => {
     if (empty(d)) return createTimeNow();
     return createTime(d?.getHours(), d?.getMinutes());
-}
+};
 
 export const fromTime = (time: Time | Date): TimeString => {
     function pad(number: number) {
@@ -127,15 +130,23 @@ export const maxDate = (date: Date, dateToCompare: Date) => {
 };
 
 export const addDates = (value: Date, valueToAdd: Date) => {
-    return createDate(value.getTime() + valueToAdd.getTime()- valueToAdd.getTimezoneOffset() * 60 * 1000);
+    return createDate(
+        value.getTime() +
+            valueToAdd.getTime() -
+            valueToAdd.getTimezoneOffset() * 60 * 1000
+    );
 };
- 
+
 export const addDateTime = (value: Date, valueToAdd: Date) => {
-    return createDatetime(value.getTime() + valueToAdd.getTime() - valueToAdd.getTimezoneOffset() * 60 * 1000);
+    return createDatetime(
+        value.getTime() +
+            valueToAdd.getTime() -
+            valueToAdd.getTimezoneOffset() * 60 * 1000
+    );
 };
 export const mergeDateAndTime = (date: Date, time: Date | Time) => {
     const d = new Date();
-    d.setFullYear(date.getFullYear())
+    d.setFullYear(date.getFullYear());
     d.setMonth(date.getMonth());
     d.setDate(date.getDate());
     d.setHours(time.getHours());
@@ -151,7 +162,7 @@ export const createDateNow = () => {
 
 export const duration = {
     days: (days: number): Date => {
-        return createDate(ONE_DAY_INTERVAL * (days));
+        return createDate(ONE_DAY_INTERVAL * days);
     },
 };
 
@@ -198,7 +209,7 @@ export const createDatetime = (datetime: number): Date => {
 };
 
 export const fromDateString = (dateString: DateString): Date => {
-    const timestamp = Date.parse(dateString.replace(/-/g, '/'));
+    const timestamp = Date.parse(dateString.replace(/-/g, "/"));
     if (isNaN(timestamp)) throw `DateString in wrong format`;
     const date = new Date(dateString);
     date.setHours(0);

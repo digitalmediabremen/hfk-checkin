@@ -50,25 +50,25 @@ const SubpageList: React.FunctionComponent<SubpageListProps> = ({
     const { t } = useTranslation("request");
     return (
         <Fragment>
-            <SubPage title={t("Zeit festlegen")} {...subPageProps("time")}>
+            <SubPage title={t("Datum und Uhrzeit")} {...subPageProps("time")}>
                 {() => <DynamicSetTimeSubpage />}
             </SubPage>
-            <SubPage title={t("Raum auswählen")} {...subPageProps("resource")}>
+            <SubPage title={t("Raum")} {...subPageProps("resource")}>
                 {() => <DynamicSetRoomSubpage />}
             </SubPage>
             <SubPage
-                title={t("Teilnehmer")}
+                title={t("Externe Personen")}
                 {...subPageProps("attendees")}
             >
                 {() => <DynamicSetPersonSubpage />}
             </SubPage>
             <SubPage
-                title={t("Teilnehmer hinzufügen")}
+                title={t("Person hinzufügen")}
                 {...subPageProps("attendee-set", "attendees")}
             >
                 {() => <DynamicAddExternalPersonSubpage />}
             </SubPage>
-            <SubPage title={t("Nutzungsgrund")} {...subPageProps("purpose")}>
+            <SubPage title={t("Buchungsgrund")} {...subPageProps("purpose")}>
                 {() => <DynamicSetPurposeSubPage />}
             </SubPage>
             <SubPage title={t("Nachricht")} {...subPageProps("message")}>

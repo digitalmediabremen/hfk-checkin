@@ -22,11 +22,7 @@ interface ReservationsPageProps {
 }
 
 const sort = (a: MyReservation, b: MyReservation) =>
-    b.begin.getTime() - a.begin.getTime();
-
-const groupBy = (value: MyReservation): string =>
-    format.date(value.begin, "de");
-// value.resource.display_name
+    a.begin.getTime() - b.begin.getTime();
 
 const headerProvider = (groupKey: string, firstValue: MyReservation) =>
     isToday(firstValue.begin) ? (
@@ -49,7 +45,10 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
     profile,
 }) => {
     const api = useReservations();
-    const { t } = useTranslation("reservation");
+    const { t, locale } = useTranslation("reservation");
+
+    const groupBy = (value: MyReservation): string =>
+        format.dateRelative(value.begin, locale);
 
     useEffect(() => {
         api.request();
@@ -57,7 +56,7 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
 
     return (
         <Layout>
-            <Subtitle>{t("Buchungsanfragen")}</Subtitle>
+            <Subtitle>{t("Buchungen")}</Subtitle>
             <Loading loading={api.state === "loading"}>
                 {api.state === "success" && (
                     <>

@@ -154,35 +154,20 @@ export function getPurposeLabelMap(
     locale: string
 ): Record<ReservationPurpose, string> {
     return {
-        FOR_WORKSHOP_USAGE: _t(
-            locale,
-            "request-purpose",
-            "Ich möchte eine Werkstatt benutzen"
-        ),
         FOR_EXAM: _t(
             locale,
             "request-purpose",
             "Prüfung bzw. Prüfungsvorbereitung"
         ),
+        FOR_PICKUP: _t(
+            locale,
+            "request-purpose",
+            "Abholung"
+        ),
         FOR_COUNCIL_MEETING: _t(
             locale,
             "request-purpose",
             "Gremiensitzung"
-        ),
-        I_AM_INTERNATIONAL: _t(
-            locale,
-            "request-purpose",
-            "Ich bin internationale Studentin / internationaler Student und möchte in den Speicher XI"
-        ),
-        I_AM_FIRSTGRADE: _t(
-            locale,
-            "request-purpose",
-            "Ich bin Student*in im ersten Semester / im ersten Studienjahr und möchte in den Speicher XI"
-        ),
-        I_AM_HARDSHIP: _t(
-            locale,
-            "request-purpose",
-            "Ich habe eine Härtefallgenehmigung"
         ),
         OTHER: _t(
             locale,

@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import React, { ReactNode } from "react";
-import { ArrowRight } from "react-feather";
 import css from "styled-jsx/css";
 import useTheme from "../../src/hooks/useTheme";
 import EllipseText from "./EllipseText";

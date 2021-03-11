@@ -17,8 +17,10 @@ export type Translation = Record<
     Partial<Record<TranslationModules, Record<string, string>>>
 >;
 
-export type RequestSubpagesModuleType = `request-${keyof typeof requestSubpages["subpages"]}`;
 export type ConvertRequestPageNames<T extends string> = `request-${T}`;
+export type RequestSubpagesModuleType = ConvertRequestPageNames<
+    keyof typeof requestSubpages["subpages"]
+>;
 export type TranslationModules =
     | keyof typeof appUrls
     | "common"
@@ -72,6 +74,18 @@ export type TranslationFunction = (
     alternativeId?: string
 ) => string;
 
+export const useTranslation = (inModule: TranslationModules = "common") => {
+    let { locale } = useContext(localeContext);
+    if (![baseLocale, ...Object.keys(translation)].includes(locale))
+        locale = defaultLocale;
+    const t: TFunction = useCallback(
+        (s, data?, alternativeId?) =>
+            _t(locale, inModule, s, data, alternativeId),
+        []
+    );
+    return { locale, t };
+};
+
 export function _t(
     locale: string,
     inModule: TranslationModules,
@@ -97,18 +111,6 @@ export function _t(
         console.error(`No translation for ${translationId} provided`);
 
     return translatedString || translationId;
-};
-
-export const useTranslation = (inModule: TranslationModules = "common") => {
-    let { locale } = useContext(localeContext);
-    if (![baseLocale, ...Object.keys(translation)].includes(locale))
-        locale = defaultLocale;
-    const t: TFunction = useCallback(
-        (s, data?, alternativeId?) =>
-            _t(locale, inModule, s, data, alternativeId),
-        []
-    );
-    return { locale, t };
-};
+}
 
 export default translation;

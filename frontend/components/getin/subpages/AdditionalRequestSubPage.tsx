@@ -66,7 +66,7 @@ const NewRequestFromTemplate: React.FunctionComponent<{
         };
         return (
             <>
-                <SectionTitle>{t("Raum übernehmen")}</SectionTitle>
+                <SectionTitle bottomSpacing={1}>{t("Raum übernehmen")}</SectionTitle>
                 <FormElement
                     value={[resource.display_numbers, <b>{resource.name}</b>]}
                     actionIcon={<Copy />}
@@ -95,7 +95,7 @@ const NewRequestFromTemplate: React.FunctionComponent<{
                         }
                     />
                 )}
-                <SectionTitle>{t("Zeit übernehmen")}</SectionTitle>
+                <SectionTitle bottomSpacing={1}>{t("Zeit übernehmen")}</SectionTitle>
                 <FormElement
                     value={[
                         <b>{format.date(reservation.begin, locale)}</b>,

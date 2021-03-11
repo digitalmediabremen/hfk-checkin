@@ -1,5 +1,19 @@
 import { start } from "repl";
-import { createTime, fromTime, getFormattedDate, smallerThan, Time, TimeString } from "./DateTimeUtil";
+import { _t } from "../../localization";
+import reservation from "../../pages/reservation";
+import {
+    addDates,
+    createDateNow,
+    createTime,
+    duration,
+    fromTime,
+    getFormattedDate,
+    isToday,
+    isTomorrow,
+    smallerThan,
+    Time,
+    TimeString,
+} from "./DateTimeUtil";
 
 export function time(time: Date): TimeString {
     function pad(number: number) {
@@ -28,4 +42,10 @@ export function date(date: Date, locale: string) {
     });
 
     return `${weekday}, ${dateString}`;
+}
+
+export function dateRelative(_date: Date, locale: string) {
+    if (isToday(_date)) return _t(locale, "common", "Heute");
+    if (isTomorrow(_date)) return _t(locale, "common", "Morgen");
+    return date(_date, locale);
 }

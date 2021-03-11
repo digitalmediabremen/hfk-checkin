@@ -2,7 +2,7 @@ import React from "react";
 import { ArrowRight, Delete, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
-import useReservationState from "../../../src/hooks/useReservationState";
+import useReservationState, { useReservationArrayState } from "../../../src/hooks/useReservationState";
 import useSubPage from "../../api/useSubPage";
 import Divider from "../../common/Divider";
 import FormAmountInput from "../../common/FormAmountInput";
@@ -14,29 +14,18 @@ import SectionTitle from "../../common/SectionTitle";
 
 export interface SetPersonSubpageProps {}
 
-const remove_item = function (arr: Array<any>, value: unknown) {
-    var b = "" as any;
-    for (b in arr) {
-        if (arr[b] === value) {
-            arr.splice(b, 1);
-            break;
-        }
-    }
-    return arr;
-};
-
 const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) => {
     const { t } = useTranslation("request-attendees");
 
-    const [_amount, _setAmount] = useReservationState(
-        "number_of_extra_attendees"
-    );
-    const [attendees, setAttendees] = useReservationState("attendees");
+    // const [_amount, _setAmount] = useReservationState(
+    //     "number_of_extra_attendees"
+    // );
+    const [attendees,,removeAttendee] = useReservationArrayState("attendees");
     const amountAttendees = attendees?.length || 0;
-    const amount = (_amount || 0) + 1;
-    const setAmount = (value: number) => {
-        _setAmount(value - 1);
-    };
+    // const amount = (_amount || 0) + 1;
+    // const setAmount = (value: number) => {
+    //     _setAmount(value - 1);
+    // };
 
     const { goForward } = useSubPage(requestSubpages);
 
@@ -78,7 +67,8 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                                 profile.last_name
                             } (Extern)"?`
                         );
-                        if (c) setAttendees(remove_item(attendees, profile));
+                        console.log(c);
+                        if (c) removeAttendee(index);
                     }}
                 ></FormElement>
             ))}
@@ -92,8 +82,8 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 bottomSpacing={3}
             >
                 {amountAttendees === 0
-                    ? t("Externe Teilnehmer hinzufügen")
-                    : t("Weitere Teilnehmer hinzufügen")}
+                    ? t("Person hinzufügen")
+                    : t("Weitere Person hinzufügen")}
             </NewButton>
 
             <Notice>
@@ -103,8 +93,17 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
             </Notice>
             <Notice>
                 {t(
-                    "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en. "
+                    "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en."
                 )}
+                <br />
+                <br />
+                <NewButton
+                    noOutline
+                    iconRight={<ArrowRight strokeWidth={1} />}
+                    onClick={() => goForward("message")}
+                >
+                    {t("Aufenthaltsgrund angeben")}
+                </NewButton>
             </Notice>
         </>
     );

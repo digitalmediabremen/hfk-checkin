@@ -106,21 +106,21 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     title={getError("exceedsBookableRange").join("\n")}
                 >
                     {t(
-                        "Bitte wähle ein anderes Datum aus oder gib eine Ausnahmeregelung an."
+                        "Bitte wähle ein frühreres Datum aus oder gib einen Buchungsgrund an."
                     )}
                     <br />
                     <br />
                     <NewButton
                         noOutline
-                        iconRight={<ArrowRight />}
+                        iconRight={<ArrowRight strokeWidth={1} />}
                         onClick={() => goForward("purpose")}
                     >
-                        {t("Ausnahmeregelung")}
+                        {t("Buchungsgrund angeben")}
                     </NewButton>
                 </Notice>
             </Fade>
             <Fade in={!exceedsBookableRange}>
-                <Notice bottomSpacing={1}>
+                <Notice bottomSpacing={2}>
                     {t(
                         "Bitte rechne mit einer Bearbeitungszeit von mind. 48 Stunden."
                     )}

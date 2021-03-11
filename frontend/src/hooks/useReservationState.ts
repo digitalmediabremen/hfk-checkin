@@ -62,7 +62,7 @@ export default function useReservationState<
                 },
             });
         },
-        [value]
+        [value, appState]
     );
 
     return [value, setHandler, reservation] as const;
@@ -71,8 +71,6 @@ export default function useReservationState<
 type ArrayOnly<T> = {
     [K in keyof T as T[K] extends Array<infer S> | undefined ? K : never]: T[K];
 };
-
-type test = keyof ArrayOnly<NewReservationBlueprint>;
 
 export const useSubpageQuery = <
     ReservationFieldType extends keyof NewReservationBlueprint
@@ -103,8 +101,6 @@ export const useReservationArrayState = <
         ? _arrayValue
         : []) as NonNullable<NewReservationBlueprint[ReservatonFieldType]>;
 
-    type c = typeof arrayValue;
-
     const handleAddValue = (
         value: ExtractTypeFromArray<
             NonNullable<NewReservationBlueprint[ReservatonFieldType]>
@@ -121,10 +117,13 @@ export const useReservationArrayState = <
 
     const handleRemoveValue = (index: number) => {
         if (!arrayValue) return;
+
         if (index > -1) {
             arrayValue.splice(index, 1);
         }
-        setArrayValue(arrayValue);
+        setArrayValue([...arrayValue] as NonNullable<
+            NewReservationBlueprint[ReservatonFieldType]
+        >);
     };
 
     return [arrayValue, handleAddValue, handleRemoveValue] as const;

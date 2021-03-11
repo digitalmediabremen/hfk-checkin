@@ -25,7 +25,7 @@ export interface BaseProfile {
 
 type AttendanceState = "requested" | "confirmed" | "denied";
 
-export interface Attendance extends Omit<BaseProfile, "id" | "email"> {
+export interface Attendance extends Omit<BaseProfile, "id"> {
     readonly profile_id: number;
     readonly uuid: string;
     readonly is_external: boolean;
@@ -34,4 +34,6 @@ export interface Attendance extends Omit<BaseProfile, "id" | "email"> {
 
 export type ProfileUpdate = Writable<MyProfile>;
 
-export type AttendanceUpdate = Writable<Attendance & PrivateProfile>;
+export type AttendanceUpdate = Writable<
+    Attendance & Omit<PrivateProfile, "email">
+>;

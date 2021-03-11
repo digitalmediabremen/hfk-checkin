@@ -21,6 +21,8 @@ function reapplyDots(text: string) {
 
 function createDefinitionSet() {
     const f = project.getSourceFile("./localization/index.tsx");
+    if (!f) throw "Localization file not found"
+
     const useTFunc = f?.getVariableDeclarationOrThrow("useTranslation");
     const _tFunc = f?.getFunctionOrThrow("_t");
     const tFunc = useTFunc

@@ -104,7 +104,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
         >
             <FormElement
                 {...handlerProps("time")}
-                label={t("Zeitangaben tätigen")}
+                label={t("Datum und Uhrzeit")}
                 value={timeFormValuePresenter(reservation, locale)}
                 shortLabel={t("Zeit")}
                 arrow
@@ -117,7 +117,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("resource")}
                 value={resourceFormValuePresenter(reservation)}
-                label={t("Raum auswählen")}
+                label={t("Raum")}
                 shortLabel={t("Raum")}
                 arrow
                 actionIcon={
@@ -131,20 +131,22 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("attendees")}
                 value={attendeesFormValuePresenter(reservation, locale)}
-                label={t("Teilnehmer")}
+                label={t("Externe Personen")}
                 shortLabel={t("Pers.")}
                 arrow
                 extendedWidth
+                dotted={!attendeesFormValuePresenter(reservation, locale)}
             />
             <FormElement
                 {...handlerProps("purpose")}
                 value={purposeFormValuePresenter(reservation, locale)}
-                label={t("Grund")}
+                label={t("Buchungsgrund")}
                 shortLabel={t("Grund")}
                 arrow
                 actionIcon={hasError("needsExceptionReason") && ValidationIcon}
                 extendedWidth
                 maxRows={2}
+                dotted={!hasError("needsExceptionReason") && !purposeFormValuePresenter(reservation, locale)}
             />
             <FormElement
                 {...handlerProps("message")}
@@ -156,6 +158,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 maxRows={3}
                 isText
                 extendedWidth
+                dotted={!comment}
             />
             <FormCheckbox
                 extendedWidth

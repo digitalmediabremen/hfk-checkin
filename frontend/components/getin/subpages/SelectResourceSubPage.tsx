@@ -5,10 +5,10 @@ import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useResources from "../../../src/hooks/useResources";
-import useStatus from "../../../src/hooks/useStatus";
 import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
+import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
 import Fade from "../../common/Fade";
 import FormCheckbox from "../../common/FormCheckbox";
@@ -147,6 +147,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
             {selectedUnitId && (
                 <>
+                    <SectionTitle bottomSpacing={2}>{t("Raum suchen")}</SectionTitle>
                     {selectedResource ? (
                         <FormElement
                             bottomSpacing={2}
@@ -160,7 +161,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                     ) : (
                         <>
                             <FormElementBase
-                                bottomSpacing={showDropdown ? -1 : 2}
+                                bottomSpacing={showDropdown ? -1 : 1}
                                 zIndex={2}
                                 above={showDropdown}
                             >
@@ -168,7 +169,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     // autoFocus
                                     ref={inputRef}
                                     value={searchValue}
-                                    placeholder={t("Wähle einen Raum")}
+                                    placeholder={t("Name oder Nummer eingeben...")}
                                     onChange={(e) =>
                                         setSearchValue(e.target.value)
                                     }
@@ -216,46 +217,49 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     </List>
                                 </FormElementBase>
                             )}
+                            <NewButton
+                                noOutline
+                                iconRight={<ArrowRight strokeWidth={1} />}
+                                onClick={() =>
+                                    goForward("resource-list", selectedUnitId)
+                                }
+                                bottomSpacing={4}
+                            >
+                                {t("Aus Raumliste auswählen")}
+                            </NewButton>
                         </>
                     )}
-                    <NewButton
-                        noOutline
-                        iconRight={<ArrowRight strokeWidth={1} />}
-                        onClick={() =>
-                            goForward("resource-list", selectedUnitId)
-                        }
-                        bottomSpacing={4}
-                    >
-                        {t("Raumübersicht öffnen")}
-                    </NewButton>
 
                     <Fade in={hasError("missingResourcePermissions")}>
                         <Notice
                             error
-                            title={getError("missingResourcePermissions").join("\n")}
+                            title={getError("missingResourcePermissions").join(
+                                "\n"
+                            )}
                             bottomSpacing={4}
                         >
                             {t(
-                                "Wenn du trotzdem auf „Absenden“ klickst, geht deine Anfrage zur Bearbeitung an „[Person / RT / CO]“. Hinterlasse ihr/ihm am besten eine Notiz und erkläre, warum du in den Raum nutzen möchtest."
+                                "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern."
                             )}
+                            <NewButton
+                                noOutline
+                                iconRight={<ArrowRight strokeWidth={1} />}
+                                onClick={() => goForward("message")}
+                            >
+                                {t("Kommentar hinzufügen")}
+                            </NewButton>
                         </Notice>
                     </Fade>
 
                     <FormCheckbox
-                        value={checked || false}
-                        label={t("Ich möchte den ganzen Raum buchen")}
+                        value={notEmpty(checked) ? checked : true}
+                        label={t("Ich möchte den Raum allein nutzen.")}
                         onChange={setChecked}
                         bottomSpacing={2}
                     />
 
                     {!hasError("missingResourcePermissions") && (
                         <>
-                            <Notice bottomSpacing={1}>
-                                Gib die Raumnummer oder den Raumnamen an. Die
-                                Raumübersicht zeigt dir alle Räume im Speicher
-                                XI mit Nummer, Namen, Raumgröße und max.
-                                Personenzahl an.
-                            </Notice>
                             <Notice>
                                 Jeder Raum muss einzeln angefragt werden. Wenn
                                 du mehrere Räume für den gleichen Zeitraum

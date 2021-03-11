@@ -1,4 +1,5 @@
 import React from "react";
+import { Copy, X } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
 import useSubPage from "../../components/api/useSubPage";
 import AlignContent from "../../components/common/AlignContent";
@@ -65,10 +66,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                     // use state directly and not via subpageprops
                                     active={"additional" === activeSubPage}
                                 >
-                                    {() => (
-                                        <DynamicAdditionalRequestSubPage
-                                        />
-                                    )}
+                                    {() => <DynamicAdditionalRequestSubPage />}
                                 </SubPage>
                             </>
                         }
@@ -91,10 +89,11 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                             <>
                                 <Reservation
                                     reservation={reservation}
-                                    bottomSpacing={4}
+                                    bottomSpacing={2}
                                     extendedWidth
                                 />
-                                <Text paragraph>
+
+                                {/* <Text paragraph>
                                     <b>1. Reservierung anfragen</b>
                                     <br />
                                     2. Auf Bearbeitung warten
@@ -105,22 +104,31 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                     6. Aus Raum auschecken <br />
                                     7. Schlüssel zurückgeben
                                     <br />
-                                </Text>
+                                </Text> */}
                             </>
                         )}
                         {(reservationSuccess || true) && (
                             <>
                                 <AlignContent
-                                    align="bottom"
+                                    align="center"
                                     offsetBottomPadding
                                 >
-                                    <NewButton
-                                        extendedWidth
-                                        noBottomSpacing
-                                        {...handlerProps("additional")}
-                                    >
-                                        {t("weitere Anfrage")}
-                                    </NewButton>
+                                    <div style={{ width: "100%" }}>
+                                        <NewButton
+                                            iconRight={<X strokeWidth={1} />}
+                                            bottomSpacing={2}
+                                            // extendedWidth
+                                        >
+                                            {t("Anfrage stornieren")}
+                                        </NewButton>
+                                        <NewButton
+                                            noBottomSpacing
+                                            iconRight={<Copy strokeWidth={1} />}
+                                            {...handlerProps("additional")}
+                                        >
+                                            {t("weitere Anfrage")}
+                                        </NewButton>
+                                    </div>
                                 </AlignContent>
                             </>
                         )}

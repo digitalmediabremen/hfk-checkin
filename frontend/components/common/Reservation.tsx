@@ -17,6 +17,7 @@ const ReservationComponent: React.FunctionComponent<ReservationProps> = ({
 }) => {
     const { resource, begin, end, state } = reservation;
     const { locale } = useTranslation();
+    const dotted = state !== "confirmed";
     const value = [
         resource.display_numbers,
         <b>{resource.name}</b>,
@@ -28,7 +29,7 @@ const ReservationComponent: React.FunctionComponent<ReservationProps> = ({
     return (
         <FormElement
             labelIcon={<Icon strokeWidth={1} />}
-            dotted
+            dotted={dotted}
             {...formElementBaseProps}
             value={value}
         />

@@ -30,6 +30,7 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
             <style jsx>{`
                 .icon {
                     flex: 0 0 ${theme.spacing(5)}px;
+                    line-height: 0;
                 }
 
                 .label {

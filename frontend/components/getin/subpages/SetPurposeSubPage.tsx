@@ -1,4 +1,6 @@
 import React, { useMemo } from "react";
+import SmoothCollapse from "react-smooth-collapse";
+import { createLogicalAnd } from "typescript";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useValidation from "../../../src/hooks/useValidation";
@@ -23,13 +25,9 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
     };
 
     const displayedPurposes: Array<ReservationPurpose | undefined> = [
-        undefined,
-        // "FOR_WORKSHOP_USAGE",
+        "FOR_PICKUP",
         "FOR_EXAM",
         "FOR_COUNCIL_MEETING",
-        // "I_AM_INTERNATIONAL",
-        // "I_AM_FIRSTGRADE",
-        // "I_AM_HARDSHIP",
         "OTHER",
     ];
 
@@ -39,6 +37,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
                 <>
                     {displayedPurposes.map((p, index, arr) => (
                         <FormCheckbox
+                            key={p}
                             value={purpose === p}
                             onChange={(v) => setPurpose(v ? p : undefined)}
                             label={getPurposeLabel(p, locale)}
@@ -53,13 +52,13 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
     return (
         <>
             <style jsx>{``}</style>
-            <Fade in={hasError("needsExceptionReason")}>
+            <SmoothCollapse expanded={hasError("needsExceptionReason")}>
                 <Notice
                     error
                     bottomSpacing={2}
                     title={getError("needsExceptionReason").join("\n")}
                 ></Notice>
-            </Fade>
+            </SmoothCollapse>
             <Notice bottomSpacing={1}>
                 {t(
                     "Bitte ergänze deine Anfrage mit folgender Information."
