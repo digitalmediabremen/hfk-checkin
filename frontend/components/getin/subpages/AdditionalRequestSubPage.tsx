@@ -141,7 +141,6 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
     const handleNewReservationRequest = (
         reservation?: NewReservationBlueprint
     ) => {
-        console.log("sdfsd");
         dispatch({
             type: "updateReservationRequest",
             reservation: undefined,
@@ -150,6 +149,7 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
             type: "updateReservationRequest",
             reservation,
         });
+        router.push(appUrls.request);
     };
 
     return (

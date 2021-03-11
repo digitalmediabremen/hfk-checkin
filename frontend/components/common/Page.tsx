@@ -69,6 +69,10 @@ const Page: React.FunctionComponent<PageProps> = ({
                     height: ${height! - theme.topBarHeight()}px;
                 }
 
+                .scroll-container::-webkit-scrollbar {
+                    display: none;
+                }
+
                 .page.with-topbar {
                     // padding-top: ${theme.topBarHeight()}px;
                 }

@@ -134,8 +134,13 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
 
                 .form-element-base.scroll {
                     align-items: flex-start;
-                    overflow: auto;
+                    overflow-y: auto;
+                    overflow-x: hidden;
                     max-height: ${maxHeight || "none"};
+                }
+
+                .form-element-base.scroll::-webkit-scrollbar {
+                    display: none;
                 }
 
                 .form-element-base.outline.above {

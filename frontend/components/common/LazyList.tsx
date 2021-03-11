@@ -29,6 +29,13 @@ const { className, styles } = css.resolve`
         margin: 0;
         padding: 0;
     }
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
 `;
 
 const LazyList = <T extends {}>({
