@@ -160,8 +160,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                     <TopBar
                         actionProvider={() => (
                             <Link
-                                href={appUrls.requestHref()}
-                                as={appUrls.requestHref()}
+                                href={appUrls.request}
                             >
                                 <a>
                                     <PlusSquare

@@ -40,7 +40,7 @@ const attendeesFormValuePresenter = (
     locale: string
 ) => {
     const { attendees, number_of_extra_attendees: extraAttendees } = r;
-    const module = "purpose";
+    const module = "request-purpose";
     const show =
         (!!attendees && attendees.length > 0) ||
         (extraAttendees && extraAttendees > 0);

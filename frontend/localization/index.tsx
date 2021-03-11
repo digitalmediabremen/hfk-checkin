@@ -19,8 +19,12 @@ export type Translation = Record<
     Partial<Record<TranslationModules, Record<string, string>>>
 >;
 
+export type RequestSubpagesModuleType = `request-${keyof typeof requestSubpages["subpages"]}`;
 export type ConvertRequestPageNames<T extends string> = `request-${T}`;
-export type TranslationModules = string
+export type TranslationModules =
+    | keyof typeof appUrls
+    | "common"
+    | RequestSubpagesModuleType;
 
 export const localeContext = createContext<{ locale: string }>({
     locale: defaultLocale,

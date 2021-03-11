@@ -147,7 +147,7 @@ export function getPurposeLabel(
 ) {
     return key
         ? getPurposeLabelMap(locale)[key]
-        : _t(locale, "purpose", "Normale Buchung");
+        : _t(locale, "request-purpose", "Normale Buchung");
 }
 
 export function getPurposeLabelMap(
@@ -156,37 +156,37 @@ export function getPurposeLabelMap(
     return {
         FOR_WORKSHOP_USAGE: _t(
             locale,
-            "purpose",
+            "request-purpose",
             "Ich möchte eine Werkstatt benutzen"
         ),
         FOR_EXAM: _t(
             locale,
-            "purpose",
+            "request-purpose",
             "Ich buche für meine Prüfung bzw. Prüfungsvorbereitung"
         ),
         FOR_COUNCIL_MEETING: _t(
             locale,
-            "purpose",
+            "request-purpose",
             "Ich buche für eine Gremiensitzung"
         ),
         I_AM_INTERNATIONAL: _t(
             locale,
-            "purpose",
+            "request-purpose",
             "Ich bin internationale Studentin / internationaler Student und möchte in den Speicher XI"
         ),
         I_AM_FIRSTGRADE: _t(
             locale,
-            "purpose",
+            "request-purpose",
             "Ich bin Student*in im ersten Semester / im ersten Studienjahr und möchte in den Speicher XI"
         ),
         I_AM_HARDSHIP: _t(
             locale,
-            "purpose",
+            "request-purpose",
             "Ich habe eine Härtefallgenehmigung"
         ),
         OTHER: _t(
             locale,
-            "purpose",
+            "request-purpose",
             "Nichts von dem hier genannten, aber ich möchte in den Speicher XI"
         ),
     };

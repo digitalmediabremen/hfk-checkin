@@ -150,7 +150,6 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
             type: "updateReservationRequest",
             reservation,
         });
-        router.push(appUrls.requestHref());
     };
 
     return (

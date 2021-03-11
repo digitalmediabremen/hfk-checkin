@@ -55,14 +55,15 @@ export const appUrls = {
         `/reservation/${reservationId}`,
     ],
     reservations: "/reservation",
-    requestHref: (subPageId?: string, param?: string) => buildSubPageUrl("/request", subPageId, param),
+    request: "/request",
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
 } as const;
 
 export const requestSubpages = {
-    urlProvider: appUrls.requestHref,
+    urlProvider: (subPageId?: string, param?: string) =>
+        buildSubPageUrl(appUrls.request, subPageId, param),
     subpages: {
         time: {},
         resource: {},
@@ -84,4 +85,3 @@ export const isServer = typeof window === "undefined";
 export const defaultLocale = "en" as const;
 export const baseLocale = "de" as const;
 export const forceLocale: string | undefined = "de";
-

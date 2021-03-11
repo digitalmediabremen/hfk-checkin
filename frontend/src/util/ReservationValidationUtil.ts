@@ -95,7 +95,7 @@ function _validateReservation(
             message: notEmpty(resource)
                 ? _t(
                       locale,
-                      "time",
+                      "request-time",
                       `Der Raum "{resource}" kann maximal {days} Tage im Vorraus gebucht werden.`,
                       {
                           resource: resource.name,
@@ -104,7 +104,7 @@ function _validateReservation(
                   )
                 : _t(
                       locale,
-                      "time",
+                      "request-time",
                       `Räume können maximal {days} Tage im Vorraus gebucht werden.`,
                       {
                           days: bookableRange,
