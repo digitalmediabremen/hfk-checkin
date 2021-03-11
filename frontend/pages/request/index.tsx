@@ -40,7 +40,6 @@ const attendeesFormValuePresenter = (
     locale: string
 ) => {
     const { attendees, number_of_extra_attendees: extraAttendees } = r;
-    const module = "request-purpose";
     const show =
         (!!attendees && attendees.length > 0) ||
         (extraAttendees && extraAttendees > 0);
@@ -51,12 +50,12 @@ const attendeesFormValuePresenter = (
                       <b>
                           {a.first_name} {a.last_name}
                       </b>{" "}
-                      {_t(locale, module, "Extern")}
+                      {_t(locale, "request-purpose", "Extern")}
                   </>
               )) || []),
               (extraAttendees || 0) !== 0 && (
                   <>
-                      +{extraAttendees || 0} {_t(locale, module, "weitere")}
+                      +{extraAttendees || 0} {_t(locale, "request-purpose", "weitere")}
                   </>
               ),
           ]
