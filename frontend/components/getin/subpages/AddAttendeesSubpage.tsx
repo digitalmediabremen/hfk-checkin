@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Delete, X } from "react-feather";
+import { ArrowRight, Delete, UserPlus, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState, { useReservationArrayState } from "../../../src/hooks/useReservationState";
@@ -73,12 +73,13 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 ></FormElement>
             ))}
             <NewButton
-                noOutline={amountAttendees > 0}
-                extendedWidth={amountAttendees === 0}
+                // noOutline={amountAttendees > 0}
+                extendedWidth
                 onClick={() =>
                     goForward("attendee-set", `${attendees?.length || 0}`)
                 }
                 iconRight={<ArrowRight strokeWidth={1} />}
+                iconLeft={<UserPlus strokeWidth={1} />}
                 bottomSpacing={3}
             >
                 {amountAttendees === 0

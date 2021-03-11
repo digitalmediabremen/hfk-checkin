@@ -39,6 +39,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 .text {
                     font-style: italic;
                     line-height: 1.25em;
+                    width: 100%;
                 }
 
                 .error .text {

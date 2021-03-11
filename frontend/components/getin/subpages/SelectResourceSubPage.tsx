@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, X } from "react-feather";
+import { ArrowRight, Menu, Search, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useResources from "../../../src/hooks/useResources";
+import useTheme from "../../../src/hooks/useTheme";
 import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
@@ -48,6 +49,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         !!queryResourceRequest.result && searchValue.length >= 2;
     const inputRef = useRef<HTMLInputElement>(null);
     const { hasError, getError } = useValidation();
+    const theme = useTheme();
 
     useEffect(() => {
         const timer = window.setTimeout(() => inputRef.current?.focus(), 300);
@@ -165,6 +167,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                 zIndex={2}
                                 above={showDropdown}
                             >
+                                <Search style={{marginRight: `${theme.spacing(1)}px`}} />
                                 <FormInput
                                     // autoFocus
                                     ref={inputRef}
@@ -218,14 +221,15 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                 </FormElementBase>
                             )}
                             <NewButton
-                                noOutline
+                                // noOutline
+                                iconLeft={<Menu strokeWidth={1} />}
                                 iconRight={<ArrowRight strokeWidth={1} />}
                                 onClick={() =>
                                     goForward("resource-list", selectedUnitId)
                                 }
                                 bottomSpacing={4}
                             >
-                                {t("Aus Raumliste auswählen")}
+                                {t("Aus Liste wählen")}
                             </NewButton>
                         </>
                     )}
