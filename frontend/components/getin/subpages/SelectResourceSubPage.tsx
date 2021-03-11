@@ -149,7 +149,9 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
             {selectedUnitId && (
                 <>
-                    <SectionTitle bottomSpacing={2}>{t("Raum suchen")}</SectionTitle>
+                    <SectionTitle bottomSpacing={2}>
+                        {t("Raum suchen")}
+                    </SectionTitle>
                     {selectedResource ? (
                         <FormElement
                             bottomSpacing={2}
@@ -167,12 +169,18 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                 zIndex={2}
                                 above={showDropdown}
                             >
-                                <Search style={{marginRight: `${theme.spacing(1)}px`}} />
+                                <Search
+                                    style={{
+                                        marginRight: `${theme.spacing(1)}px`,
+                                    }}
+                                />
                                 <FormInput
                                     // autoFocus
                                     ref={inputRef}
                                     value={searchValue}
-                                    placeholder={t("Name oder Nummer eingeben...")}
+                                    placeholder={t(
+                                        "Name oder Nummer eingeben..."
+                                    )}
                                     onChange={(e) =>
                                         setSearchValue(e.target.value)
                                     }
@@ -245,6 +253,8 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             {t(
                                 "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern."
                             )}
+                            <br />
+                            <br />
                             <NewButton
                                 noOutline
                                 iconRight={<ArrowRight strokeWidth={1} />}

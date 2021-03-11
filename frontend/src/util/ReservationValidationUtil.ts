@@ -113,7 +113,7 @@ function _validateReservation(
         });
     }
 
-    if (!vHasExceptionReason && vHasMissingResourcePermissions) {
+    if (vHasMissingResourcePermissions) {
         v.push({
             level: "error",
             type: "missingResourcePermissions",

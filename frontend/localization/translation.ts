@@ -57,7 +57,7 @@ const translation: Translation = {
         "Raum suchen": "NEW",
         "Name oder Nummer eingeben...": "NEW",
         "Keine Ergebnisse": "NEW",
-        "Aus Raumliste auswählen": "NEW",
+        "Aus Liste wählen": "NEW",
         "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern.": "NEW",
         "Kommentar hinzufügen": "NEW",
         "Ich möchte den Raum allein nutzen.": "NEW"
