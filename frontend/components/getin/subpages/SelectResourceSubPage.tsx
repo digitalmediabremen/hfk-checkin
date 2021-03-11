@@ -47,7 +47,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const showDropdown =
         !!queryResourceRequest.result && searchValue.length >= 2;
     const inputRef = useRef<HTMLInputElement>(null);
-    const { hasError } = useValidation();
+    const { hasError, getError } = useValidation();
 
     useEffect(() => {
         const timer = window.setTimeout(() => inputRef.current?.focus(), 300);
@@ -232,13 +232,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                     <Fade in={hasError("missingResourcePermissions")}>
                         <Notice
                             error
-                            title={t(
-                                "Der Raum {roomNumber} ist zugangsbeschränkt.",
-                                {
-                                    roomNumber:
-                                        selectedResource?.display_name || "",
-                                }
-                            )}
+                            title={getError("missingResourcePermissions").join("\n")}
                             bottomSpacing={4}
                         >
                             {t(

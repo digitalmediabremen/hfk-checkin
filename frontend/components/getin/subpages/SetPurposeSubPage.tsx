@@ -24,12 +24,12 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
 
     const displayedPurposes: Array<ReservationPurpose | undefined> = [
         undefined,
-        "FOR_WORKSHOP_USAGE",
+        // "FOR_WORKSHOP_USAGE",
         "FOR_EXAM",
         "FOR_COUNCIL_MEETING",
-        "I_AM_INTERNATIONAL",
-        "I_AM_FIRSTGRADE",
-        "I_AM_HARDSHIP",
+        // "I_AM_INTERNATIONAL",
+        // "I_AM_FIRSTGRADE",
+        // "I_AM_HARDSHIP",
         "OTHER",
     ];
 
@@ -62,7 +62,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
             </Fade>
             <Notice bottomSpacing={1}>
                 {t(
-                    "Solltest du grade an einer Abschlussarbeit sitzen oder aus anderen trifftigen Gründen auf den Raum angewiesen sein solltest du hier deine Situation schildern."
+                    "Bitte ergänze deine Anfrage mit folgender Information."
                 )}
             </Notice>
 

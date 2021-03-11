@@ -139,7 +139,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("purpose")}
                 value={purposeFormValuePresenter(reservation, locale)}
-                label={t("Buchungsgrund")}
+                label={t("Grund")}
                 shortLabel={t("Grund")}
                 arrow
                 actionIcon={hasError("needsExceptionReason") && ValidationIcon}
@@ -163,7 +163,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 value={agreedToPhoneContact || false}
                 onChange={(v) => setAgreedToPhoneContact(v)}
                 label={t(
-                    "Bitte ruft mich bei Rückfragen zu dieser Buchung unter {phone} zurück.",
+                    "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.",
                     { phone: profile.phone! }
                 )}
                 bottomSpacing={3}

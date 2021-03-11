@@ -92,8 +92,8 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 bottomSpacing={3}
             >
                 {amountAttendees === 0
-                    ? t("Person hinzufügen")
-                    : t("Weitere Person hinzufügen")}
+                    ? t("Externe Teilnehmer hinzufügen")
+                    : t("Weitere Teilnehmer hinzufügen")}
             </NewButton>
 
             <Notice>

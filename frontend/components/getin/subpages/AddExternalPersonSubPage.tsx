@@ -71,7 +71,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
             />
 
             <Controller
-                as={<FormTextInput bottomSpacing={3} />}
+                as={<FormTextInput bottomSpacing={4} />}
                 {...controllerProps("last_name", t("Nachname"))}
             />
 

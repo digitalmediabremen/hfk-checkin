@@ -96,7 +96,7 @@ function _validateReservation(
                 ? _t(
                       locale,
                       "request-time",
-                      `Der Raum "{resource}" kann maximal {days} Tage im Vorraus gebucht werden.`,
+                      `Der Raum "{resource}" kann maximal {days} Tage im Voraus gebucht werden.`,
                       {
                           resource: resource.name,
                           days: bookableRange,

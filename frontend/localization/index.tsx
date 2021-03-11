@@ -97,7 +97,7 @@ export function _t(
         console.error(`No translation for ${translationId} provided`);
 
     return translatedString || translationId;
-}
+};
 
 export const useTranslation = (inModule: TranslationModules = "common") => {
     let { locale } = useContext(localeContext);

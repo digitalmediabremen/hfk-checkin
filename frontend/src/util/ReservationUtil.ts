@@ -162,12 +162,12 @@ export function getPurposeLabelMap(
         FOR_EXAM: _t(
             locale,
             "request-purpose",
-            "Ich buche für meine Prüfung bzw. Prüfungsvorbereitung"
+            "Prüfung bzw. Prüfungsvorbereitung"
         ),
         FOR_COUNCIL_MEETING: _t(
             locale,
             "request-purpose",
-            "Ich buche für eine Gremiensitzung"
+            "Gremiensitzung"
         ),
         I_AM_INTERNATIONAL: _t(
             locale,
@@ -187,7 +187,7 @@ export function getPurposeLabelMap(
         OTHER: _t(
             locale,
             "request-purpose",
-            "Nichts von dem hier genannten, aber ich möchte in den Speicher XI"
+            "Anderer Grund"
         ),
     };
 }
