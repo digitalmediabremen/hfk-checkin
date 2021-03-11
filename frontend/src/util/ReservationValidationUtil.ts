@@ -55,7 +55,7 @@ export function getValidationObject(
 
 function exceedsBookingRange(reservation: NewReservationBlueprint) {
     if (reservation.begin && reservation.end) {
-        const { range: bookableRange, resource } = calculateBookableRange(
+        const { range: bookableRange } = calculateBookableRange(
             reservation
         );
         return smallerThan(
@@ -90,7 +90,7 @@ function _validateReservation(
     );
     if (vExceedsBookingRange && !vHasExceptionReason) {
         v.push({
-            level: "notice",
+            level: "error",
             type: "exceedsBookableRange",
             message: notEmpty(resource)
                 ? _t(
