@@ -12,6 +12,7 @@ from django import forms
 from post_office.models import Email
 from django.urls import reverse
 from .other import FixedGuardedModelAdminMixin
+from .resource import ResourceAdmin
 from .list_filters import ResourceFilter, UserFilter
 from django.contrib.admin.utils import format_html
 
@@ -200,6 +201,14 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                     messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
             if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
                 messages.add_message(request, messages.WARNING, _("The organizer is missing from attendance list."))
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        # add extra content for resource calendar
+        # FIXME move to template tag
+        extra_context = ResourceAdmin.get_resource_calendar_extra_context()
+        return super().change_view(
+            request, object_id, form_url, extra_context=extra_context,
+        )
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
         if obj:

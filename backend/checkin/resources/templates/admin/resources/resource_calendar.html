@@ -1,17 +1,32 @@
 {% extends "admin/base_site.html" %}
-{% load i18n %}
+{% load i18n static admin_urls %}
 {% block title %}{% translate "Calendar" %}{{ block.super }}{% endblock %}
 {% block extrahead %}
     {{ block.super }}
-    {{ select_resource_form.media }}
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.css' rel='stylesheet'/>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.5.1/main.min.css' rel='stylesheet'/>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.5.1/main.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/locales/de.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.5.1/locales/de.js'></script>
+    {{ calendar_select_resource_form.media }}
+    <link href='{% static 'resources/fullcalendar-5.5.1/lib/main.min.css'%}' rel='stylesheet'/>
+    <link href='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/main.min.css'%}' rel='stylesheet'/>
+    <script src='{% static 'resources/fullcalendar-5.5.1/lib/main.min.js'%}'></script>
+    <script src='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/main.min.js'%}'></script>
+    <script src='{% static 'resources/fullcalendar-5.5.1/lib/locales/de.js'%}'></script>
+    <script src='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/locales/de.js'%}'></script>
+    <style>
+        .fc-event {
+                background: var(--theme-color-primary);
+                color: white;
+                border-color: var(--theme-color-primary);
+            }
+        .fc-event.inactive {
+            background: rgba(255,255,255,0.5);
+            border-color: var(--theme-color-primary);
+            border-style: dashed;
+        }
+        .fc-event.inactive .fc-event-main {
+            color: var(--theme-color-primary);
+        }
+    </style>
     <script>
-        var resource_uuids = ['{{ uuid }}'];
+        var resource_uuids = ['{{ calendar_resource_id }}'];
         var resource_extraParams = function() {
             return { resources: resource_uuids.join('.') }
         };
@@ -24,9 +39,9 @@
                 headerToolbar: {
                     start: 'title',
                     center: '',
-                    end: 'today prev,next dayGridMonth,timeGridWeek,listWeek,dayGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth,resourceTimelineYear resourceTimeGridDay,resourceTimeGridWeek'
+                    end: 'today prev,next dayGridMonth,dayGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth,resourceTimelineYear resourceTimeGridDay,resourceTimeGridWeek'
                 },
-                height: 500,
+                height: 'calc(100vh - 250px)',
                 events: {
                     url: '/api/calendar/event/',
                     method: 'GET',
@@ -79,7 +94,7 @@
                   startTime: '10:00', // a start time (10am in this example)
                   endTime: '20:00', // an end time (6pm in this example)
                 },
-                eventColor: 'var(--theme-color-primary)',
+                {#eventColor: 'var(--theme-color-primary)',#}
             });
             calendar.render();
             django.jQuery(document.querySelector('#id_resource')).on('change', (event) => {
@@ -93,8 +108,25 @@
         });
     </script>
 {% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ module_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'change' object.pk|admin_urlquote %}">{{ object|truncatewords:"18" }}</a>
+&rsaquo; {% translate 'Calendar' %}
+</div>
+{% endblock %}
+{% endif %}
+
 {% block content %}
+    <div id="content-main">
+    <div class="module">
     <div id='calendar'></div>
     <br/>
-    <label>+ Add Resource</label>  {{ select_resource_form.resource }}
+    <label>+ Add Resource to view </label>  {{ calendar_select_resource_form.resource }}
+    </div>
+    </div>
 {% endblock %}

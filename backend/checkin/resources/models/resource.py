@@ -255,10 +255,12 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
 
     @property
     def display_name(self):
+        name = "%s" % (get_translated(self, 'name'),)
         if self.numbers:
-            return "%s (%s)" % (get_translated(self, 'name'), self.display_numbers)
-        else:
-            return "%s" % (get_translated(self, 'name'),)
+            name += " (%s)" % self.display_numbers
+        if self.people_capacity:
+            name += " (%d)" % self.people_capacity
+        return name
     display_name.fget.short_description = _('Name')
 
     @property

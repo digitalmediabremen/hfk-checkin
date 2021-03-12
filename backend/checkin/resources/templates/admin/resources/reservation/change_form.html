@@ -2,15 +2,18 @@
 {% load i18n admin_urls static admin_modify %}
 {% block extrahead %}
     {{ block.super }}
-    {{ select_resource_form.media }}
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.css' rel='stylesheet'/>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.5.1/main.min.css' rel='stylesheet'/>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/main.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.5.1/main.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.5.1/locales/de.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@5.5.1/locales/de.js'></script>
+    {{ calendar_select_resource_form.media }}
+{% endblock %}
+{% block footer %}
+    {{ block.super }}
+    <link href='{% static 'resources/fullcalendar-5.5.1/lib/main.min.css'%}' rel='stylesheet'/>
+    <link href='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/main.min.css'%}' rel='stylesheet'/>
+    <script src='{% static 'resources/fullcalendar-5.5.1/lib/main.min.js'%}'></script>
+    <script src='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/main.min.js'%}'></script>
+    <script src='{% static 'resources/fullcalendar-5.5.1/lib/locales/de.js'%}'></script>
+    <script src='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/locales/de.js'%}'></script>
     <script>
-        var resource_uuids = ['{{ uuid|default:original.resource.uuid }}'];
+        var resource_uuids = ['{{ calendar_resource_id|default:original.resource.uuid }}'];
         var resource_extraParams = function() {
             return { resources: resource_uuids.join('.') }
         };
@@ -25,7 +28,7 @@
                     center: '',
                     end: 'today prev,next resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth,resourceTimelineYear'
                 },
-                height: 400,
+                height: 300,
                 initialDate: '{{ original.begin|date:"c" }}',
                 eventSources: [{
                     url: '/api/calendar/event/',
@@ -76,8 +79,8 @@
                     width: "20%",
                 }
                 ],
-                locale: 'de',
-                weekNumbers: true,
+                locale: {% get_current_language as LANGUAGE_CODE %}'{{ LANGUAGE_CODE }}',
+                {#weekNumbers: true,#}
                 nowIndicator: true,
                 businessHours: {
                   // days of week. an array of zero-based day of week integers (0=Sunday)
@@ -88,6 +91,9 @@
                 eventColor: 'var(--theme-color-primary)',
             });
             calendar.render();
+{#            {% if calendar_select_resource_form %}#}
+{#            django.jQuery('.fc-today-button').before('<div class="fc-button-group"><label>Add Resource:  </label>{% spaceless %}{{ calendar_select_resource_form.resource }}{% endspaceless %}</div>');#}
+{#            {% endif %}#}
             django.jQuery(document.querySelector('#id_resource')).on('change', (event) => {
                 var uuid = event.target.value;
                 if (uuid && !resource_uuids.includes(uuid)) {
@@ -102,9 +108,14 @@
 
 {#{% block header %}#}
 {% block breadcrumbs %}
-    <div style="padding: 20px 40px"id='calendar'></div>
-    <hr/>
     {{ block.super }}
+    <div style="padding: 20px 40px">
+        <div id='calendar'></div><br/>
+        {% url 'admin:resources_resource_calendar' original.resource.pk|admin_urlquote as url %}
+<a href="{% add_preserved_filters url is_popup to_field %}?_popup=1" class="related-widget-wrapper-link" target="resource-calendar">
+{% translate 'Open Calendar for' %} {{ original.resource.display_name }}</a></div>
+
+    <hr/>
 {% endblock %}
 
 {#{% block nav-sidebar %}#}

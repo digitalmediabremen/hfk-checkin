@@ -828,16 +828,26 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
     url = serializers.SerializerMethodField()
     id = serializers.CharField(source='uuid')
     resourceId = serializers.CharField(source='resource.uuid')
+    classNames = serializers.SerializerMethodField(required=False)
 
     def get_url(self, obj):
         return reverse('admin:{0}_{1}_change'.format(obj._meta.app_label, obj._meta.model_name), args=(obj.pk,))
 
     def get_title(self, obj):
-        return "%s %s in %s" % (obj.identifier, obj.organizer, obj.resource)
+        return "%(user)s (%(attendees)d) (%(id)s)" % {
+            'user':obj.organizer,
+            'attendees':obj.number_of_attendees,
+            'id': obj.identifier
+        }
+
+    # FIXME remove render-specific attributes form representation!
+    def get_classNames(self, obj):
+        if obj.state not in [Reservation.CONFIRMED]:
+            return 'inactive'
 
     class Meta:
         model = Reservation
-        fields = ['url', 'id', 'identifier', 'start', 'end', 'title','resourceId']
+        fields = ['url', 'id', 'identifier', 'start', 'end', 'title','resourceId','classNames']
 
 
 class ReservationCalendarViewSet(ReservationViewSet):
