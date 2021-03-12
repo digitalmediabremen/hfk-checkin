@@ -64,6 +64,7 @@ const getRequestFieldLabelMap = (
     message: _t(locale, "request", "Nachricht"),
     number_of_extra_attendees: _t(locale, "request", "Weitere Teilnehmer"),
     purpose: _t(locale, "request", "Grund"),
+    templateId: ""
 });
 
 // returns the bookable range for a requested resource in days
