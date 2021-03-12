@@ -35,12 +35,21 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
         setCurrentStatus(undefined);
     };
 
-    // idea fead a local state with appstate
-    // if last interval to short than cancel the state change
+    useEffect(() => {
+        if (!currentStatus) return;
+        if (currentStatus.isError) return;
+        const timer = window.setTimeout(() => {
+            setCurrentStatus(undefined);
+            console.log("remove")
+        }, 2000);
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [currentStatus]);
 
+    // delay adding to queue.
     useEffect(() => {
         if (!status) return;
-        console.log(status);
         const timer = window.setTimeout(
             () => {
                 setCurrentStatus({
@@ -53,7 +62,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
             currentStatus ? 500 : 0
         );
 
-        return () => clearInterval(timer);
+        return () => clearTimeout(timer);
     }, [status]);
 
     const duration = 300;
@@ -187,26 +196,21 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                             key={currentStatus.id}
                             timeout={duration}
                         >
-                            {(state) => (
-                                <div
-                                    className="animation"
-                                    onClick={() => remove()}
-                                >
-                                    <Bar extendedWidth maxWidth>
-                                        <div className="status error">
-                                            {currentStatus.isError && (
-                                                <span className="icon">
-                                                    <AlertCircle />
-                                                </span>
-                                            )}
-                                            <span className="text">
-                                                {currentStatus.message}
+                            <div className="animation" onClick={() => remove()}>
+                                <Bar extendedWidth maxWidth>
+                                    <div className="status error">
+                                        {currentStatus.isError && (
+                                            <span className="icon">
+                                                <AlertCircle />
                                             </span>
-                                        </div>
-                                    </Bar>
-                                    {/* {JSON.stringify(transitionStyles[state])} */}
-                                </div>
-                            )}
+                                        )}
+                                        <span className="text">
+                                            {currentStatus.message}
+                                        </span>
+                                    </div>
+                                </Bar>
+                                {/* {JSON.stringify(transitionStyles[state])} */}
+                            </div>
                         </CSSTransition>
                     )}
                 </TransitionGroup>

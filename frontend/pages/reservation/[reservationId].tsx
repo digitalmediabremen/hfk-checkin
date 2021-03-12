@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React from "react";
 import { Copy, X } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
@@ -17,6 +18,7 @@ import { appUrls, buildSubPageUrl } from "../../config";
 import { useTranslation } from "../../localization";
 import useParam from "../../src/hooks/useParam";
 import useReservation from "../../src/hooks/useReservation";
+import useStatus from "../../src/hooks/useStatus";
 import Page404 from "../404";
 import Error from "../Error";
 
@@ -28,13 +30,15 @@ const DynamicAdditionalRequestSubPage = createDynamicPage(
 
 const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const [id] = useParam("reservationId");
+    const router = useRouter();
 
     const { reservation, notFound, error, reservationSuccess } = useReservation(
         id
     );
 
-    const { t } = useTranslation("reservation");
+    const { setNotice } = useStatus();
 
+    const { t } = useTranslation("reservation");
     const { direction, activeSubPage, subPageProps, handlerProps } = useSubPage(
         {
             urlProvider: (name, param) =>
@@ -44,8 +48,21 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
             } as const,
         }
     );
-    if (!id) return null;
 
+    const handleCancel = () => {
+        if (!reservation) return;
+
+        (async () => {
+            await router.push(appUrls.reservations);
+            setNotice(
+                t('Deine Buchung "{identifier}" wurde storniert.', {
+                    identifier: reservation.identifier,
+                })
+            );
+        })();
+    };
+
+    if (!id) return null;
     if (notFound) return <Page404 />;
     if (error) return <Error error={error} />;
 
@@ -110,13 +127,14 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                         {(reservationSuccess || true) && (
                             <>
                                 <AlignContent
-                                    align="center"
+                                    align="bottom"
                                     offsetBottomPadding
                                 >
                                     <div style={{ width: "100%" }}>
                                         <NewButton
                                             iconRight={<X strokeWidth={1} />}
                                             bottomSpacing={2}
+                                            onClick={handleCancel}
                                             // extendedWidth
                                         >
                                             {t("Anfrage stornieren")}

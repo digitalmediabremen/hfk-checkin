@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle, Circle, Key, Lock, Unlock, User } from "react-feather";
+import { CheckCircle, Circle, Key, Lock, Unlock, User, UserPlus } from "react-feather";
 import { useTranslation } from "../../localization";
 import Resource from "../../src/model/api/Resource";
 import { notEmpty } from "../../src/util/TypeUtil";
@@ -45,7 +45,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                     flex: 0 0 ${theme.spacing(4)}px;
                     text-align: right;
                     margin-right: ${-theme.spacing(0)}px;
-                    color: ${theme.disabledColor};
+                    color: ${theme.primaryColor};
                     display: flex;
                     flex-direction: column;
                     align-items: flex-end;
@@ -106,7 +106,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                     )}
                     {resource.capacity && showMeta && (
                         <span className="capacity">
-                            {resource.capacity} <User width={12} height={12} />
+                            {resource.capacity} <UserPlus width={12} height={12} />
                         </span>
                     )}
                 </span>

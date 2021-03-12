@@ -86,7 +86,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         queryResourceRequest.reset();
         setSearchValue("");
         const timer = window.setTimeout(() => inputRef.current?.focus(), 10);
-        return () => window.clearInterval(timer);
+        return () => window.clearTimeout(timer);
     };
 
     const handleDeselectResource = () => {
