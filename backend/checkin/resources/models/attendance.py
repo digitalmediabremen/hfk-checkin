@@ -3,6 +3,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django_better_admin_arrayfield.models.fields import ArrayField
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
 import uuid
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -33,7 +34,7 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
         unique_together = ('reservation', 'user') # a user can only attend the same reservation once
 
     def __str__(self):
-        return "%s %s @ %s" % (self._meta.verbose_name, self.user, self.reservation)
+        return "%s %s @ %s %s" % (self._meta.verbose_name, self.get_display_name(), self.reservation._meta.verbose_name, self.reservation)
 
     def __init__(self, *args, **kwargs):
         super(Attendance, self).__init__(*args, **kwargs)
@@ -41,17 +42,26 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
 
     @property
     def is_external_user(self):
-        return self.state == AttendanceStates.REQUESTED or False
+        #return self.state == AttendanceStates.REQUESTED or False
+        return self.user.is_external
     is_external_user.fget.short_description = _("External")
+
+    @property
+    def is_organizer(self):
+        # return self.state == AttendanceStates.REQUESTED or False
+        return self.user == self.reservation.organizer
 
     @property
     def resource(self):
         return self.reservation.resource
 
     def get_display_name(self):
+        name = self.user.get_full_name()
         if self.is_external_user:
-            return _("%(profile_display_name)s (External)" % {'profile_display_name': self.user.get_full_name()})
-        return self.user.get_full_name()
+            name += " " + gettext("(External)")
+        if self.is_organizer:
+            name += " " + gettext("(Organizer)")
+        return name
 
     def save(self, *args, **kwargs):
         """

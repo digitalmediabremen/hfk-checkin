@@ -19,8 +19,15 @@ logger = logging.getLogger(__name__)
 class AttendanceInline(admin.TabularInline):
     autocomplete_fields = ('user',)
     model = Attendance
-    readonly_fields = ('modified_at','modified_by')
+    fields = ('get_organizer','user','state','comment','modified_at')
+    #readonly_fields = ('get_organizer', 'modified_at','modified_by')
+    readonly_fields = ('modified_at','modified_by','get_organizer')
     extra = 0
+
+    def get_organizer(self, obj):
+        return _('🎩') if obj.is_organizer else ''
+    get_organizer.short_description = ''
+    #get_organizer.boolean = True
 
 
 class RelatedEmailInline(admin.TabularInline):
