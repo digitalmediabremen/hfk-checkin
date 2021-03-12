@@ -3,6 +3,7 @@ import { ArrowRight, Delete, UserPlus, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState, { useReservationArrayState } from "../../../src/hooks/useReservationState";
+import { attendeePresenter } from "../../../src/util/ReservationPresenterUtil";
 import useSubPage from "../../api/useSubPage";
 import Divider from "../../common/Divider";
 import FormAmountInput from "../../common/FormAmountInput";
@@ -15,7 +16,7 @@ import SectionTitle from "../../common/SectionTitle";
 export interface SetPersonSubpageProps {}
 
 const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) => {
-    const { t } = useTranslation("request-attendees");
+    const { t, locale } = useTranslation("request-attendees");
 
     // const [_amount, _setAmount] = useReservationState(
     //     "number_of_extra_attendees"
@@ -50,12 +51,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> = ({}) =>
                 <FormElement
                     key={index}
                     value={[
-                        <>
-                            <b>
-                                {profile.first_name} {profile.last_name}
-                            </b>{" "}
-                            (Extern)
-                        </>,
+                        attendeePresenter(profile, locale),
                         `Tel: ${profile.phone}`,
                     ]}
                     onClick={() => goForward("attendee-set", `${index}`)}

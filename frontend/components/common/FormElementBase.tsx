@@ -39,7 +39,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     zIndex,
     dotted,
     adaptiveWidth,
-    above
+    above,
 }) => {
     const theme = useTheme();
     const ComponentType = componentType || "div";
@@ -130,6 +130,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                 }
 
                 .form-element-base:not(.outline) {
+                    background-color: transparent;
                 }
 
                 .form-element-base.scroll {
@@ -148,7 +149,9 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                 }
             `}</style>
             <ComponentType
-                disabled={disabled}
+                {...(componentType === "button" && disabled
+                    ? { disabled: true }
+                    : undefined)}
                 onClick={onClick}
                 className={classNames("form-element-base", className, {
                     outline,
@@ -159,7 +162,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     padding: !noPadding,
                     scroll: !!maxHeight,
                     "adaptive-width": adaptiveWidth,
-                    above
+                    above,
                 })}
             >
                 {children}

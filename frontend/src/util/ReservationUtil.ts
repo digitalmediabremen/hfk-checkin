@@ -1,8 +1,12 @@
-import { CheckCircle, Clock, MinusCircle, XCircle } from "react-feather";
+import { CheckCircle, Clock, MinusCircle, UserCheck, UserX, XCircle } from "react-feather";
+import { locale } from "yargs";
 import { _t } from "../../localization";
+import { AttendanceState } from "../model/api/MyProfile";
 import NewReservation from "../model/api/NewReservation";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import { ReservationPurpose, ReservationState } from "../model/api/Reservation";
+import { getFormattedDate } from "./DateTimeUtil";
+import { timeSpan } from "./TimeFormatUtil";
 import { assertNever, empty, notEmpty } from "./TypeUtil";
 
 export function getIcon(state: ReservationState) {
@@ -14,12 +18,19 @@ export function getIcon(state: ReservationState) {
     assertNever(state);
 }
 
-export function getLabel(state: ReservationState) {
-    if (state === "requested") return "angefragt";
-    if (state === "confirmed") return "bestätigt";
-    if (state === "denied") return "abgelehnt";
-    if (state === "cancelled") return "storniert";
-    if (state === "created") return "erstellt";
+export function getAttendanceStateIcon(state: AttendanceState) {
+    if (state === "confirmed") return UserCheck;
+    if (state === "denied") return UserX;
+    if (state === "requested") return Clock;
+    assertNever(state);
+}
+
+export function getStateLabel(state: ReservationState, locale: string) {
+    if (state === "requested") return _t(locale, "reservation", "angefragt");
+    if (state === "confirmed") return _t(locale, "reservation", "bestätigt");
+    if (state === "denied") return _t(locale, "reservation", "abgelehnt");
+    if (state === "cancelled") return _t(locale, "reservation", "storniert");
+    if (state === "created") return _t(locale, "reservation", "erstellt");
     assertNever(state);
 }
 

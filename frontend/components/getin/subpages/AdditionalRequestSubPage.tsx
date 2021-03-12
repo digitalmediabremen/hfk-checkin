@@ -1,11 +1,11 @@
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import { Copy, PlusSquare } from "react-feather";
 import { appUrls } from "../../../config";
 import { useTranslation } from "../../../localization";
-import useResource from "../../../src/hooks/useResource";
-import NewReservation from "../../../src/model/api/NewReservation";
 import NewReservationBlueprint from "../../../src/model/api/NewReservationBlueprint";
+import Reservation from "../../../src/model/api/Reservation";
+import { createTemplateFromReservation } from "../../../src/util/ReservationTemplateUtil";
 import {
     additionalFilledReservationRequestFields,
     additionalFilledReservationRequestFieldsString,
@@ -14,129 +14,136 @@ import {
 import * as format from "../../../src/util/TimeFormatUtil";
 import { useAppState } from "../../common/AppStateProvider";
 import FormElement from "../../common/FormElement";
-import Loading from "../../common/Loading";
 import NewButton from "../../common/NewButton";
 import SectionTitle from "../../common/SectionTitle";
 
 export interface AdditionalRequestSubPageProps {
-    reservationTemplate: NewReservation;
+    reservation: Reservation;
 }
 
 const NewRequestFromTemplate: React.FunctionComponent<{
-    reservationRequestTemplate: NewReservation;
+    reservation: Reservation;
     onSubmit: (newRes: NewReservationBlueprint) => void;
-}> = ({ reservationRequestTemplate: reservation, onSubmit }) => {
-    const { resource_uuid } = reservation;
+}> = ({ reservation, onSubmit }) => {
+    const { appState } = useAppState();
+
+    const reservationRequestTemplate = (() => {
+        const { reservationRequestTemplate } = appState;
+        // localstorage template corresponds to current reservation
+        if (reservationRequestTemplate?.templateId === reservation.uuid) {
+            return reservationRequestTemplate;
+        }
+        return createTemplateFromReservation(reservation);
+    })();
+
+    const { resource } = reservation;
     const { t, locale } = useTranslation();
-    const { dispatch } = useAppState();
-    const router = useRouter();
+    const hasAdditionalFields =
+        additionalFilledReservationRequestFields(reservationRequestTemplate)
+            .length > 0;
 
-    const api = useResource();
-    useEffect(() => {
-        api.request(resource_uuid);
-    }, []);
-
-    useEffect(() => {}, [api.state]);
-
-    if (api.state === "initial" || api.state === "error") return null;
-
-    const Content = () => {
-        if (api.state !== "success") return;
-        const hasAdditionalFields =
-            additionalFilledReservationRequestFields(reservation).length > 0;
-        const resource = api.result;
-
-        const handleNewRequestFromTemplate = (
-            withTime: boolean,
-            withResource: boolean,
-            withAdditionalFields: boolean
-        ) => {
-            const newReservationRequest: NewReservationBlueprint = {
-                ...newReservationRequestFromTemplate(
-                    reservation,
-                    withTime,
-                    withResource,
-                    withAdditionalFields
-                ),
-                // add resource retrieved from the api
-                ...(withResource ? { resource } : undefined),
-            };
-
-            onSubmit(newReservationRequest);
+    const handleNewRequestFromTemplate = (
+        withTime: boolean,
+        withResource: boolean,
+        withAdditionalFields: boolean
+    ) => {
+        const newReservationRequest: NewReservationBlueprint = {
+            ...newReservationRequestFromTemplate(
+                reservationRequestTemplate,
+                withTime,
+                withResource,
+                withAdditionalFields
+            ),
+            // add resource retrieved from the api
+            ...(withResource ? { resource } : undefined),
         };
-        return (
-            <>
-                <SectionTitle bottomSpacing={1}>{t("Raum übernehmen")}</SectionTitle>
-                <FormElement
-                    value={[resource.display_numbers, <b>{resource.name}</b>]}
-                    actionIcon={<Copy />}
-                    extendedWidth
-                    onClick={() =>
-                        handleNewRequestFromTemplate(false, true, false)
-                    }
-                    bottomSpacing={hasAdditionalFields ? 1 : 4}
-                />
-                {hasAdditionalFields && (
-                    <FormElement
-                        value={[
-                            resource.display_numbers,
-                            <b>{resource.name}</b>,
-                            additionalFilledReservationRequestFieldsString(
-                                reservation,
-                                locale
-                            ),
-                        ]}
-                        actionIcon={<Copy />}
-                        extendedWidth
-                        bottomSpacing={4}
-                        maxRows={5}
-                        onClick={() =>
-                            handleNewRequestFromTemplate(false, true, true)
-                        }
-                    />
-                )}
-                <SectionTitle bottomSpacing={1}>{t("Zeit übernehmen")}</SectionTitle>
+
+        onSubmit(newReservationRequest);
+    };
+    return (
+        <>
+            <SectionTitle bottomSpacing={1}>
+                {t("Raum übernehmen")}
+            </SectionTitle>
+            <FormElement
+                value={[resource.display_numbers, <b>{resource.name}</b>]}
+                actionIcon={<Copy />}
+                extendedWidth
+                onClick={() => handleNewRequestFromTemplate(false, true, false)}
+                bottomSpacing={hasAdditionalFields ? 1 : 4}
+            />
+            {hasAdditionalFields && (
                 <FormElement
                     value={[
-                        <b>{format.date(reservation.begin, locale)}</b>,
-                        format.timeSpan(reservation.begin, reservation.end),
+                        resource.display_numbers,
+                        <b>{resource.name}</b>,
+                        additionalFilledReservationRequestFieldsString(
+                            reservationRequestTemplate,
+                            locale
+                        ),
+                    ]}
+                    actionIcon={<Copy />}
+                    extendedWidth
+                    bottomSpacing={4}
+                    maxRows={5}
+                    onClick={() =>
+                        handleNewRequestFromTemplate(false, true, true)
+                    }
+                />
+            )}
+            <SectionTitle bottomSpacing={1}>
+                {t("Zeit übernehmen")}
+            </SectionTitle>
+            <FormElement
+                value={[
+                    <b>
+                        {format.date(reservationRequestTemplate.begin, locale)}
+                    </b>,
+                    format.timeSpan(
+                        reservationRequestTemplate.begin,
+                        reservationRequestTemplate.end
+                    ),
+                ]}
+                actionIcon={<Copy />}
+                extendedWidth
+                onClick={() => handleNewRequestFromTemplate(true, false, false)}
+            />
+            {hasAdditionalFields && (
+                <FormElement
+                    maxRows={5}
+                    value={[
+                        <b>
+                            {format.date(
+                                reservationRequestTemplate.begin,
+                                locale
+                            )}
+                        </b>,
+                        format.timeSpan(
+                            reservationRequestTemplate.begin,
+                            reservationRequestTemplate.end
+                        ),
+                        additionalFilledReservationRequestFieldsString(
+                            reservationRequestTemplate,
+                            locale
+                        ),
                     ]}
                     actionIcon={<Copy />}
                     extendedWidth
                     onClick={() =>
-                        handleNewRequestFromTemplate(true, false, false)
+                        handleNewRequestFromTemplate(true, false, true)
                     }
                 />
-                {hasAdditionalFields && (
-                    <FormElement
-                        maxRows={5}
-                        value={[
-                            <b>{format.date(reservation.begin, locale)}</b>,
-                            format.timeSpan(reservation.begin, reservation.end),
-                            additionalFilledReservationRequestFieldsString(
-                                reservation,
-                                locale
-                            ),
-                        ]}
-                        actionIcon={<Copy />}
-                        extendedWidth
-                        onClick={() =>
-                            handleNewRequestFromTemplate(true, false, true)
-                        }
-                    />
-                )}
-            </>
-        );
-    };
-
-    return <Loading loading={api.state === "loading"}>{Content()}</Loading>;
+            )}
+        </>
+    );
 };
 
-const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPageProps> = ({}) => {
+const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPageProps> = ({
+    reservation,
+}) => {
     const { t } = useTranslation();
     const router = useRouter();
-    const { appState, dispatch } = useAppState();
-    const { reservationRequestTemplate } = appState;
+    const { dispatch } = useAppState();
 
     const handleNewReservationRequest = (
         reservation?: NewReservationBlueprint
@@ -163,12 +170,10 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
                 {t("Neue Anfrage")}
             </NewButton>
 
-            {reservationRequestTemplate && (
-                <NewRequestFromTemplate
-                    onSubmit={handleNewReservationRequest}
-                    reservationRequestTemplate={reservationRequestTemplate}
-                />
-            )}
+            <NewRequestFromTemplate
+                onSubmit={handleNewReservationRequest}
+                reservation={reservation}
+            />
         </>
     );
 };

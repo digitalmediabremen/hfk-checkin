@@ -1,10 +1,11 @@
 import { useRouter } from "next/router";
 import React from "react";
-import { Copy, X } from "react-feather";
+import { Copy, X, XCircle } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
 import useSubPage from "../../components/api/useSubPage";
 import AlignContent from "../../components/common/AlignContent";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
+import CompleteReservation from "../../components/common/CompleteReservation";
 import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
 import NewButton from "../../components/common/NewButton";
@@ -12,6 +13,7 @@ import Reservation from "../../components/common/Reservation";
 import SubPage from "../../components/common/SubPage";
 import Subtitle from "../../components/common/Subtitle";
 import Text from "../../components/common/Text";
+import Title from "../../components/common/Title";
 import { AdditionalRequestSubPageProps } from "../../components/getin/subpages/AdditionalRequestSubPage";
 import { createDynamicPage } from "../../components/getin/subpages/SubpageCollection";
 import { appUrls, buildSubPageUrl } from "../../config";
@@ -24,7 +26,7 @@ import Error from "../Error";
 
 interface ReservationPageProps {}
 
-const DynamicAdditionalRequestSubPage = createDynamicPage(
+const DynamicAdditionalRequestSubPage = createDynamicPage<AdditionalRequestSubPageProps>(
     () => import("../../components/getin/subpages/AdditionalRequestSubPage")
 );
 
@@ -83,7 +85,11 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                     // use state directly and not via subpageprops
                                     active={"additional" === activeSubPage}
                                 >
-                                    {() => <DynamicAdditionalRequestSubPage />}
+                                    {() => (
+                                        <DynamicAdditionalRequestSubPage
+                                            reservation={reservation}
+                                        />
+                                    )}
                                 </SubPage>
                             </>
                         }
@@ -104,7 +110,8 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
 
                         {reservation && (
                             <>
-                                <Reservation
+                                <CompleteReservation
+                                    includeState={!reservationSuccess}
                                     reservation={reservation}
                                     bottomSpacing={2}
                                     extendedWidth
@@ -132,12 +139,14 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                 >
                                     <div style={{ width: "100%" }}>
                                         <NewButton
-                                            iconRight={<X strokeWidth={1} />}
+                                            iconRight={
+                                                <XCircle strokeWidth={1} />
+                                            }
                                             bottomSpacing={2}
                                             onClick={handleCancel}
                                             // extendedWidth
                                         >
-                                            {t("Anfrage stornieren")}
+                                            {t("Stornieren")}
                                         </NewButton>
                                         <NewButton
                                             noBottomSpacing

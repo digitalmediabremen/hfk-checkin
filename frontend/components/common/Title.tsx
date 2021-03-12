@@ -2,10 +2,16 @@ import * as React from "react";
 import useTheme from "../../src/hooks/useTheme";
 interface TitleProps {
     bold?: true;
+    subTextBold?: true;
     subtext?: string | React.ReactNode;
 }
 
-const Title: React.FunctionComponent<TitleProps> = ({ children, bold, subtext }) => {
+const Title: React.FunctionComponent<TitleProps> = ({
+    children,
+    bold,
+    subtext,
+    subTextBold,
+}) => {
     const theme = useTheme();
     return (
         <>
@@ -23,12 +29,14 @@ const Title: React.FunctionComponent<TitleProps> = ({ children, bold, subtext })
                     font-size: 2rem;
                     color: ${theme.primaryColor};
                     margin: 0;
-                    margin-bottom: ${subtext ? theme.spacing(0) : theme.spacing(3)}px;
+                    margin-bottom: ${subtext
+                        ? theme.spacing(0.5)
+                        : theme.spacing(3)}px;
                 }
 
                 h2 {
                     font-size: 1.25rem;
-                    font-weight: normal;
+                    font-weight: ${subTextBold ? "bold" : "normal"};
                     margin: 0 0 ${theme.spacing(3)}px 0;
                 }
             `}</style>

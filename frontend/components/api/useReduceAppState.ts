@@ -99,7 +99,7 @@ const useReduceAppState = () =>
             case "updateReservationRequestTemplate":
                 return {
                     ...previousState,
-                    reservationRequestTemplate: action.reservation,
+                    reservationRequestTemplate: action.reservation
                 };
             case "reservationSuccessful":
                 return {
@@ -110,6 +110,7 @@ const useReduceAppState = () =>
                     },
                     reservationRequestTemplate: {
                         ...action.reservationRequestTemplate,
+                        templateId: action.reservation.uuid
                     },
                 };
             case "updateReservation":

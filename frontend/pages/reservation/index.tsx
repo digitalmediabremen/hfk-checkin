@@ -79,6 +79,7 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
                                 >
                                     <a>
                                         <Reservation
+                                            includeState
                                             reservation={reservation}
                                             bottomSpacing={last ? 2 : 1}
                                             actionIcon={
