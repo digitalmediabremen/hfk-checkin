@@ -68,7 +68,7 @@ from .types import NotificationType
 
 class NotificationEmailTemplate(EmailTemplate):
     """ extends django-postoffice's EmailTemplate to include with file based templates and type definitions"""
-    """ Similar to respa's NotificationTempalte, differnt with name and type"""
+    """ Similar to respa's NotificationTemplate, different with name and type"""
 
     type = models.CharField(
         verbose_name=_('Type'), choices=NotificationType.choices, max_length=100, unique=True, db_index=True,

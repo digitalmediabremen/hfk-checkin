@@ -9,21 +9,6 @@ from .management.commands.send_test_email import Command as SendTestEmailCommand
 from post_office.utils import get_email_template
 from post_office.models import Email, get_template_engine
 
-class PreviewView(TemplateView):
-    template_name = 'notifications/email_base.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return {
-            'name': 'alice',
-            'title': "Anfrage eingegangen.",
-            'subject': "Test",
-            'body': "Hi liebes Raumteam, ich habe am 30.01.2021 meine Prüfung und würde gerne den Raum schon ab dem 27.01. buchen, um aufzubauen. Den 31. Brauche ich dann zum Abbauen. Es kommen außerdem zwei Fotograf*innen, die meine Präsentation filmen und fotografieren. Ich hoffe, dass alles klappt und freu mich auf eure Rückmeldung.  ",
-            'button_label': 'Buchungsanfrage öffnen',
-            'button_link': 'http://',
-        }
-        #return context
-
 
 class TemplatePreviewView(View):
 
@@ -35,11 +20,15 @@ class TemplatePreviewView(View):
         #     'message': "If you receive this message your settings might be correct.",
         #     'subject': "Test Notification from management command",
         # }
+        template_id = request.GET.get('template', default=NotificationEmailTemplate.objects.last().pk)
         context = SendTestEmailCommand.get_context()
-        tt = get_email_template('test_notification')
+        tt = NotificationEmailTemplate.objects.get(pk=template_id)
+        #tt = get_email_template(tt.name)
         email = Email(template=tt, context=context)
         # message = message.email_message()
         # print(message)
         engine = get_template_engine()
+        subject = engine.from_string(email.template.subject).render(context)
+        context['subject'] = subject
         html_message = engine.from_string(email.template.html_content).render(context)
         return HttpResponse(content=html_message)

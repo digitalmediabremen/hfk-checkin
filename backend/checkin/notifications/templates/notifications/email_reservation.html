@@ -1,31 +1,36 @@
 {% extends "notifications/email_base.html" %}
-{% block preheader %}Deine Reservierungsanfrage für {{ reservation.resource.display_name }} wird in Kürze bearbeitet.{% endblock %}
+{% load i18n %}
+{% block preheader %}{% blocktranslate %}Es liegt ein Update für Deine Reservierungsanfrage für {{ reservation.resource.display_name }} vor.{% endblocktranslate %}{% endblock %}
 {% block reservation %}
-    {% block reservation_status %}
-    <p class="primary bold box">Deine Reservierungsanfrage wird in Kürze bearbeitet.</p>
-    {% endblock %}
+    {% translate 'Update zu Deiner Reservierungsanfrage' as default_verbose_status %}
+    <p class="primary bold box">
+    {% block reservation_status %}{{ reservation.status_verbose|default:default_verbose_status }}{% endblock %}</p>
     <br/><br/><br/>
+    {% if update_message %}
+        <p class="primary"><i>{{ update_message }}</i></p>
+        <br/>
+        <br/>
+    {% endif %}
     {% block reservation_info %}
-    <h2 class="secondary">{{ reservation.identifier }}</h2>
+    <h2 class="secondary{% if reservation.is_inactive %} strike{% endif %}">{{ reservation.identifier }}</h2>
     <h2 class="primary ">{{ reservation.resource.display_numbers }}<br/><span class="bold">{{ reservation.resource.name }}</span></h2>
-    <h2 class="primary">{{ reservation.begin.date|date:"D. d.m.Y" }}<br/>{{ reservation.begin|time:"H:i" }} – {{ reservation.end.time|time:"H:i" }}</h2>
+    <h2 class="primary{% if reservation.is_inactive %} strike{% endif %}">{{ reservation.begin_in_resource_tz_naive.date|date:"D. d.m.Y" }}<br/>{{ reservation.begin_in_resource_tz_naive|time:"H:i" }} – {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}</h2>
     {% endblock %}
     <br/><br/>
     {% block reservation_details %}
-            <p class="primary"><span class="bold">Angemeldete Personen:</span> {{ reservation.organizer|default:"Du" }}{% if reservation.number_of_attendees|add:"-1" > 1 %} und {{ reservation.number_of_attendees|add:"-1" }} weitere Personen{% endif %}</p>
+            <p class="primary"><span class="bold">{% translate 'Angemeldete Personen' %}:</span> {{ reservation.organizer|default:"Du" }}{% if reservation.number_of_attendees|add:"-1" > 1 %} und {{ reservation.number_of_attendees|add:"-1" }} weitere Personen{% endif %}</p>
         {% if reservation.purpose %}
-            <p class="primary"><span class="bold">Grund:</span> {{ reservation.purpose }}</p>
+            <p class="primary"><span class="bold">{% translate 'Grund' %}:</span> {{ reservation.purpose }}</p>
         {% endif %}
         {% if reservation.message %}
-            <p class="primary"><span class="bold">Nachricht:</span> <i>{{ reservation.message }}</i></p>
+            <p class="primary"><span class="bold">{% translate 'Nachricht' %}:</span> <i>{{ reservation.message }}</i></p>
         {% endif %}
     {% endblock %}
     <br/><br/>
-    {% block reservation_instruction %}
-    <p class="secondary">Gebe bitte bei Rückfragen immer die Reservierungsnummer
+
+    <p class="secondary">{% block reservation_instruction %}{% blocktranslate %}Gebe bitte bei Rückfragen immer die Reservierungsnummer
         {{ reservation.identifier }} an. Aktuell ist keine weitere Aktion notwendig. Die Bearbeitung
-        kann bis zu 48 Stunden dauern.</p>
-    {% endblock %}
+        kann bis zu 48 Stunden dauern.{% endblocktranslate %}{% endblock %}</p>
 {% endblock %}
 
 {% block footer %}
@@ -33,17 +38,19 @@
     <tr>
         <td class="content-block">
             {% block footer_reason %}
-            <span class="apple-link">Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.</span>
+            <span class="apple-link">{% blocktranslate %}Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.</span>
             <span class="apple-link">Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a
-                    href="{{ url_root }}/help">Hilfeseite</a> zu finden.</span>
+                    href="{{ url_root }}/help">Hilfeseite</a> zu finden.{% endblocktranslate %}</span>
             {% endblock %}
         </td>
     </tr>
     <tr>
         <td class="content-block">
             {% block footer_legal %}
-            <span class="apple-link">Bitte wenden Sie sich bei Fragen oder Problemen an <a
-                    href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.</span>
+{#            {% if support_email %}#}
+            <span class="apple-link">{% blocktranslate %}Bitte wenden Sie sich bei Fragen oder Problemen an <a
+                    href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.{% endblocktranslate %}</span>
+{#            {% endif %}#}
             {% endblock %}
         </td>
     </tr>

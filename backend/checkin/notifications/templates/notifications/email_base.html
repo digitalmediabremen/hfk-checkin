@@ -1,5 +1,5 @@
 {% load premailer %}
-{% premailer root_url|default:"http://example.com" %}
+{% premailer %}
     <!doctype html>
     <html>
     <head>
@@ -100,6 +100,9 @@
                 margin-top: 10px;
                 text-align: center;
                 width: 100%;
+            }
+            .strike {
+                text-decoration: line-through;
             }
 
             .footer td,
@@ -478,31 +481,31 @@
 
 {#                    <hr/>#}
 
-{#                    <!-- START FOOTER -->#}
-{#                    <div class="footer">#}
-{#                        {% block footer %}#}
-{#                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">#}
-{#                            <tr>#}
-{#                                <td class="content-block">#}
-{#                                    {% block footer_reason %}#}
-{#                                    <span class="apple-link">Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.</span>#}
-{#                                    <span class="apple-link">Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a#}
-{#                                            href="{{ url_root }}/help">Hilfeseite</a> zu finden.</span>#}
-{#                                    {% endblock %}#}
-{#                                </td>#}
-{#                            </tr>#}
-{#                            <tr>#}
-{#                                <td class="content-block">#}
-{#                                    {% block footer_legal %}#}
-{#                                    <span class="apple-link">Bitte wenden Sie sich bei Fragen oder Problemen an <a#}
-{#                                            href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.</span>#}
-{#                                    {% endblock %}#}
-{#                                </td>#}
-{#                            </tr>#}
-{#                        </table>#}
-{#                        {% endblock %}#}
-{#                    </div>#}
-{#                    <!-- END FOOTER -->#}
+                    <!-- START FOOTER -->
+                    <div class="footer">
+                        {% block footer %}
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td class="content-block">
+                                    {% block footer_reason %}
+                                    <span class="apple-link">Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.</span>
+                                    <span class="apple-link">Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a
+                                            href="{{ url_root }}/help">Hilfeseite</a> zu finden.</span>
+                                    {% endblock %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="content-block">
+                                    {% block footer_legal %}
+                                    <span class="apple-link">Bitte wenden Sie sich bei Fragen oder Problemen an <a
+                                            href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.</span>
+                                    {% endblock %}
+                                </td>
+                            </tr>
+                        </table>
+                        {% endblock %}
+                    </div>
+                    <!-- END FOOTER -->
 
                 </div>
             </td>

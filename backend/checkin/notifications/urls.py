@@ -1,8 +1,9 @@
 from django.urls import path, include
 
-from .views import PreviewView, TemplatePreviewView
+from .views import TemplatePreviewView
+
+app_name = "notifications"
 
 urlpatterns = [
-    #path('preview/', PreviewView.as_view(), name='email-preview'),
     path('preview/', TemplatePreviewView.as_view(), name='email-preview'),
 ]
