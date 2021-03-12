@@ -310,6 +310,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    'PAGE_SIZE': 100,
     "EXCEPTION_HANDLER": "checkin.api_exception_handler.custom_exception_handler",
 }
 handler500 = 'rest_framework.exceptions.server_error'
