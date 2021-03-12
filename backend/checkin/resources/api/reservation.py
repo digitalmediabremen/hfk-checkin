@@ -172,11 +172,12 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             required = resource.get_required_reservation_extra_field_names(cache=cache)
 
             # staff events have less requirements
-            request_user = self.context['request'].user
-            is_staff_event = data.get('staff_event', False)
+            if self.context.get('request', None):
+                request_user = self.context['request'].user
+                is_staff_event = data.get('staff_event', False)
 
-            if is_staff_event and resource.can_create_staff_event(request_user):
-                required = {'reserver_name', 'event_description'}
+                if is_staff_event and resource.can_create_staff_event(request_user):
+                    required = {'reserver_name', 'event_description'}
 
             # we don't need to remove a field here if it isn't supported, as it will be read-only and will be more
             # easily removed in to_representation()

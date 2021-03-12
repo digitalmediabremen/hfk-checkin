@@ -270,7 +270,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     display_numbers.fget.short_description = _('Numbers')
     display_numbers.fget.admin_order_field = 'numbers'
 
-    @property
+    @cached_property
     def time_zone(self):
         if self.unit and self.unit.time_zone:
             return self.unit.time_zone
@@ -355,7 +355,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
                 raise ValidationError(_("Maximum number of active reservations for this resource exceeded."))
 
     def get_reservation_collisions_qs(self, begin, end, reservation=None):
-        overlapping = self.reservations.overlaps_or_touches(begin, end)
+        overlapping = self.reservations.overlaps(begin, end)
         if reservation:
             overlapping = overlapping.exclude(pk=reservation.pk)
         return overlapping
@@ -363,14 +363,18 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     def check_reservation_collision(self, begin, end, reservation):
         return self.get_reservation_collisions_qs(begin, end, reservation).exists()
 
+    def get_total_number_of_attendees_for_period(self, begin, end, reservation=None):
+        # FIXME do sum of attendees on db.
+        overlaps = self.get_reservation_collisions_qs(begin, end, reservation)
+        total_number_of_attendees = sum(c.number_of_attendees for c in overlaps)
+        return total_number_of_attendees
+
     def check_capacity_exhausted(self, begin, end, reservation=None):
         if not self.people_capacity:
             return False
-        # TODO implement capacity usage calculation
-        # TODO needs attendance number calculation first
-        # self.get_reservation_collisions_qs(begin, end, reservation)
-        return True
-
+        if self.get_total_number_of_attendees_for_period(begin, end, reservation) > self.people_capacity:
+            return True
+        return False
 
     def get_available_hours(self, start=None, end=None, duration=None, reservation=None, during_closing=False):
         """

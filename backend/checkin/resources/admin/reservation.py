@@ -56,20 +56,27 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
-    status_message = forms.Textarea()
+    message_state_update = forms.CharField(required=False, label=_('Notification Message'), widget=forms.Textarea(attrs={'cols':80, 'rows':5}),
+                                           help_text=_('This message might be used in the notification send to the organizer on this update. The message will not be saved.'))
     class Meta:
         model = Reservation
         fields = ('__all__')
 
+    def clean_state(self):
+        value = self.cleaned_data['state']
+        if value == Reservation.CREATED:
+            raise ValidationError(_("Already existing reservations can not have state %s" % Reservation.CREATED))
+        return value
+
 
 class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin, admin.ModelAdmin):
     #extra_readonly_fields_on_update = ('access_code',)
-    list_display = ('short_uuid', 'user','resource','number_of_attendees','begin','end','state','modified_at')
+    list_display = ('short_uuid', 'user','resource','display_duration','number_of_attendees','begin','end','state','modified_at')
     list_filter = ('type','resource','resource__unit','state',
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('created_at', DateRangeFilter),
                    ('modified_at', DateTimeRangeFilter),)
-    search_fields = ('uuid','user__first_name', 'user__last_name', 'user__username', 'user__email')
+    search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
     readonly_fields = ('uuid','approver','number_of_attendees','get_reservation_info','get_display_duration')
     extra_readonly_fields_edit = ('agreed_to_phone_contact','organizer_is_attending','type')
@@ -82,10 +89,10 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             'fields': ('resource', 'user',  'begin', 'end', 'get_display_duration', 'uuid')# 'short_uuid')
         }),
         (_('State'), {
-            'fields': ('state', 'approver','get_reservation_info'),
+            'fields': ('state','message_state_update','approver','get_reservation_info'),
         }),
         (_('Details'), {
-            'classes': ('collapse',),
+            #'classes': ('collapse',),
             'fields': ('message', 'purpose', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'organizer_is_attending', 'type'),
         }),
         # (_('Creation and modifications'), {
@@ -108,7 +115,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         if obj and obj.resource:
             return obj.resource.reservation_info
         return self.get_empty_value_display()
-    get_reservation_info.short_description = _("Reservation info")
+    get_reservation_info.short_description = _("Resource instructions")
 
     _original_state = None
 
@@ -125,16 +132,17 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # give some info
         # TODO move all warnings to validate_reservation()
         if obj:
-            if obj.state in [Reservation.CANCELLED, Reservation.DENIED]:
+            if obj.is_inactive:
                 messages.add_message(request, messages.ERROR, _("Has been cancelled or denied."))
             if obj.has_priority:
                 messages.add_message(request, messages.WARNING, _("Has priority."))
             if obj.exclusive_resource_usage:
                 messages.add_message(request, messages.WARNING, _("Uses space exclusively."))
             if not obj.organizer_is_attending:
-                messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
                 if obj.organizer in obj.attendees.all():
-                    messages.add_message(request, messages.WARNING, _("Yet the organizer is in the attendance list."))
+                    messages.add_message(request, messages.WARNING, _("Organizer does not want to attend. Yet the organizer is in the attendance list."))
+                else:
+                    messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
             if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
                 messages.add_message(request, messages.WARNING, _("The organizer is missing from attendance list."))
 
@@ -159,7 +167,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # process state change and catch all warnings as messages
         # FIXME improve warnings and notifications in general. Make DRY.
         with warnings.catch_warnings(record=True) as warns:
-            obj.process_state_change(self._original_state, obj.state, request.user)
+            message_state_update = form.cleaned_data.get('message_state_update', None)
+            obj.process_state_change(self._original_state, obj.state, request.user, update_message=message_state_update)
             for w in warns:
                 messages.add_message(request, messages.INFO, str(w.message))
         # show resulted (new state verbose) state as message

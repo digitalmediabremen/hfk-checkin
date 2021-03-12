@@ -97,6 +97,19 @@ def humanize_duration(duration):
     mins_string = ungettext('%(count)d minute', '%(count)d minutes', mins) % {'count': mins} if mins else None
     return ' '.join(filter(None, (hours_string, mins_string)))
 
+def humanize_dayspan(duration):
+    """
+    Return the given duration in a localized humanized form.
+    Examples: "2 hours 30 minutes", "1 hour", "30 minutes"
+
+    :type duration: datetime.timedelta
+    :rtype: str
+    """
+    hours = duration.days * 24 + duration.seconds // 3600
+    mins = duration.seconds // 60 % 60
+    hours_string = ungettext('%(count)d hour', '%(count)d hours', hours) % {'count': hours} if hours else None
+    mins_string = ungettext('%(count)d minute', '%(count)d minutes', mins) % {'count': mins} if mins else None
+    return ' '.join(filter(None, (hours_string, mins_string)))
 
 notification_logger = logging.getLogger('respa.notifications')
 

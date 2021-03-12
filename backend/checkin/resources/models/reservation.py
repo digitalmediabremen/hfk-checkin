@@ -18,6 +18,10 @@ from django.db.models import Q
 from psycopg2.extras import DateTimeTZRange
 import warnings
 from django.db.models.signals import m2m_changed, post_save, post_delete
+from django.utils.translation import ngettext
+from django.template.defaultfilters import date as datefilter
+from django.utils.timezone import make_naive
+from django.utils.functional import cached_property
 
 #from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
 from checkin.notifications.models import NotificationEmailTemplate
@@ -45,6 +49,8 @@ RESERVATION_EXTRA_FIELDS = ('has_priority','agreed_to_phone_contact','exclusive_
 class ReservationWarning(UserWarning):
     pass
 
+class ReservationNotice(UserWarning):
+    pass
 
 class ReservationCollisionWarning(ReservationWarning):
     pass
@@ -53,6 +59,8 @@ class ReservationCollisionWarning(ReservationWarning):
 class ReservationCapacityWarning(ReservationWarning):
     pass
 
+class ReservationCapacityNotice(ReservationNotice):
+    pass
 
 class ReservationAvailabilityWarning(ReservationWarning):
     pass
@@ -83,8 +91,8 @@ class ReservationQuerySet(models.QuerySet):
     def overlaps(self, begin, end):
         return self.filter(self.OVERLAP_Q(begin, end))
 
-    def overlaps_or_touches(self, begin, end):
-        return self.overlaps(begin, end)
+    # def overlaps_or_touches(self, begin, end):
+    #     return self.overlaps(begin, end)
 
     def for_date(self, date):
         if isinstance(date, str):
@@ -188,6 +196,35 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         extra = self.number_of_extra_attendees or 0
         return len(self.attendees.all()) + extra
     number_of_attendees.fget.short_description = _("Total number of attendees")
+
+    @property
+    def is_inactive(self):
+        return self.state in [Reservation.CANCELLED, Reservation.DENIED]
+
+    @cached_property
+    def begin_in_resource_tz_naive(self):
+        if self.resource:
+            return make_naive(self.begin, timezone=self.resource.get_tz())
+        return self.begin
+
+
+    @cached_property
+    def end_in_resource_tz_naive(self):
+        if self.resource:
+            return make_naive(self.end, timezone=self.resource.get_tz())
+        return self.end
+
+
+    @property
+    def display_duration(self):
+        timedelta = self.end_in_resource_tz_naive - self.begin_in_resource_tz_naive
+        # this is not strftime formatters but django's localized template formatters using https://php.net/date
+        str_begin = datefilter(self.begin_in_resource_tz_naive, 'D j.n. H:i')
+        str_end = datefilter(self.end_in_resource_tz_naive, 'H:i')
+        str_days = ngettext('%d day','%d days',timedelta.days) % timedelta.days
+        if timedelta.days > 0:
+            str_end += " (+%s)" % str_days
+        return "%s – %s" % (str_begin, str_end)
 
     # access-related fields
     #access_code = models.CharField(verbose_name=_('Access code'), max_length=32, null=True, blank=True)
@@ -296,7 +333,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         self.state = new_state
         self.save()
 
-    def process_state_change(self, old_state, new_state, user):
+    def process_state_change(self, old_state, new_state, user, update_message=None):
         if new_state == Reservation.CREATED:
             # TODO do not raise ValidationError here. They will not be caught.
             raise ValidationError(_("Already existing reservations can not have state %s" % Reservation.CREATED))
@@ -334,25 +371,25 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         elif new_state == Reservation.CONFIRMED:
             self.set_state_verbose(_("Reservation was just confirmed by %s." % user))
             if self.need_manual_confirmation():
-                self.send_reservation_confirmed_mail()
+                self.send_reservation_confirmed_mail(extra_context={'update_message': update_message})
             # elif self.access_code:
             #     self.send_reservation_created_with_access_code_mail()
             else:
                 if not user_is_staff:
                     # notifications are not sent from staff created reservations to avoid spam
-                    self.send_reservation_created_mail()
+                    self.send_reservation_created_mail(extra_context={'update_message': update_message})
         elif new_state == Reservation.DENIED:
             self.set_state_verbose(_("Reservation was denied by %s." % user))
-            self.send_reservation_denied_mail()
+            self.send_reservation_denied_mail(extra_context={'update_message': update_message})
         elif new_state == Reservation.CANCELLED:
             self.set_state_verbose(_("Reservation was canceled by %s." % user))
             order = self.get_order()
             if order:
                 if order.state == order.CANCELLED:
-                    self.send_reservation_cancelled_mail()
+                    self.send_reservation_cancelled_mail(extra_context={'update_message': update_message})
             else:
                 if user != self.user:
-                    self.send_reservation_cancelled_mail()
+                    self.send_reservation_cancelled_mail(extra_context={'update_message': update_message})
             reservation_cancelled.send(sender=self.__class__, instance=self,
                                        user=user)
         # elif new_state == Reservation.WAITING_FOR_PAYMENT:
@@ -517,8 +554,12 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                     'collisions': ", ".join([c.identifier for c in collisions])
                 }, ReservationCollisionWarning)
 
-            if self.resource.check_capacity_exhausted(self.begin, self.end, original_reservation):
-                warnings.warn(gettext("The resource's capacity is already exhausted for some of the period"), ReservationCapacityWarning)
+            total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end, original_reservation)
+            if self.resource.people_capacity and total_number_of_attendees > self.resource.people_capacity:
+                warnings.warn(gettext("The resource's capacity (%d) is already exhausted for some of the period. Attendance on other reservations: %d" % (self.resource.people_capacity, total_number_of_attendees)), ReservationCapacityWarning)
+            elif total_number_of_attendees > 0:
+                warnings.warn(gettext(
+                    "Attendance on other reservations: %d" % (total_number_of_attendees)), ReservationCapacityNotice)
 
         #if not user_is_admin:
         if self.resource.min_period and (self.end - self.begin) < self.resource.min_period:
@@ -677,35 +718,37 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         return email.to
 
-    def send_reservation_requested_mail(self):
-        return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED)
+    def send_reservation_requested_mail(self, **kwargs):
+        return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED, **kwargs)
 
-    def send_reservation_requested_mail_to_officials(self):
+    def send_reservation_requested_mail_to_officials(self, **kwargs):
         #notify_users = self.resource.get_users_with_perm('can_approve_reservation')
         notify_users = self.resource.get_reservation_delegates()
         logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
         for user in notify_users:
-            return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user)
+            return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user, **kwargs)
 
-    def send_external_user_requested_mail_to_officials(self, external_attendee):
+    def send_external_user_requested_mail_to_officials(self, external_attendee, **kwargs):
         notify_users = self.resource.get_user_confirmation_delegates()
         logger.debug('notify_users external user for %s: %s' % (self, notify_users))
+        extra_context = kwargs.pop('extra_context', {})
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
         elif len(notify_users) < 1:
             raise ValueError("Can not notify user confirmation delegate because no delegate was set.")
         for user in notify_users:
             return self.send_reservation_mail(NotificationType.RESERVATION_EXTERNAL_USER_REQUESTED_OFFICIAL, user=user, extra_context={
-                'external_attendee': external_attendee
-            })
+                'external_attendee': external_attendee,
+                **extra_context
+            }, **kwargs)
         return None
 
-    def send_reservation_denied_mail(self):
-        return self.send_reservation_mail(NotificationType.RESERVATION_DENIED)
+    def send_reservation_denied_mail(self, **kwargs):
+        return self.send_reservation_mail(NotificationType.RESERVATION_DENIED, **kwargs)
 
-    def send_reservation_confirmed_mail(self):
+    def send_reservation_confirmed_mail(self, **kwargs):
         reservations = [self]
         # TODO ical attachment
         # ical_file = build_reservations_ical_file(reservations)
@@ -714,19 +757,19 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         attachments = self.get_resource_email_attachments()
 
         return self.send_reservation_mail(NotificationType.RESERVATION_CONFIRMED,
-                                   attachments=attachments)
+                                   attachments=attachments, **kwargs)
 
-    def send_reservation_cancelled_mail(self):
-        return self.send_reservation_mail(NotificationType.RESERVATION_CANCELLED)
+    def send_reservation_cancelled_mail(self, **kwargs):
+        return self.send_reservation_mail(NotificationType.RESERVATION_CANCELLED, **kwargs)
 
-    def send_reservation_created_mail(self):
+    def send_reservation_created_mail(self, **kwargs):
         reservations = [self]
         ical_file = build_reservations_ical_file(reservations)
         ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
         attachments = [ics_attachment] + self.get_resource_email_attachments()
 
         return self.send_reservation_mail(NotificationType.RESERVATION_CREATED,
-                                   attachments=attachments)
+                                   attachments=attachments, **kwargs)
 
     # def send_reservation_created_with_access_code_mail(self):
     #     reservations = [self]
