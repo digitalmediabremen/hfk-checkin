@@ -29,6 +29,8 @@ from .models import NotificationEmailTemplate
 #
 # admin_site.register(NotificationTemplate, NotificationTemplateAdmin)
 from post_office.admin import EmailTemplateAdmin, EmailTemplate
+from .views import TemplatePreviewView
+from django.urls import path
 
 class NotificationEmailTemplateAdmin(EmailTemplateAdmin):
     fieldsets = [
@@ -43,6 +45,14 @@ class NotificationEmailTemplateAdmin(EmailTemplateAdmin):
 
     class Meta:
         section = 'post_office'
+
+    def get_urls(self):
+        urls = super().get_urls()
+        extra_urls = [
+            path('<path:object_id>/preview/', self.admin_site.admin_view(TemplatePreviewView.as_view()),
+                name='notifications_template_preview'),
+        ]
+        return extra_urls + urls
 
 #unregister original emailtemplate admin
 admin_site.unregister(EmailTemplate)
