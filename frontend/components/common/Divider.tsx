@@ -11,6 +11,7 @@ const Divider: React.FunctionComponent<DividerProps> = ({ noSpacing }) => {
             <style jsx>{`
                 hr {
                     border-top: 1px solid ${theme.primaryColor};
+                    border-bottom: 0;
                     margin: ${theme.spacing(noSpacing ? 0 : 2)}px
                         ${theme.spacing(noSpacing ? 0 : -3)}px;
                 }

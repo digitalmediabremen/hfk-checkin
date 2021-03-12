@@ -1,7 +1,7 @@
-import React, { FunctionComponent, useContext, useEffect, useLayoutEffect } from "react";
+import React, { FunctionComponent, useContext, useEffect } from "react";
 import useMedia from "use-media";
+import { isClient } from "../../config";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
-import useTheme from "../../src/hooks/useTheme";
 import validateRequestTemplate from "../../src/model/api/NewReservation.validator";
 import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { AppAction, AppState } from "../../src/model/AppState";
@@ -21,7 +21,10 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();
 
     const isWide = useMedia({ minWidth: 500 });
-    const isPwa = useMedia({ displayMode: "standalone" })
+    const isPwa =
+        useMedia({ displayMode: "standalone" }) ||
+        // @ts-ignore
+        (isClient && window.navigator.standalone === true);
 
     useEffect(() => {
         dispatch({
@@ -30,7 +33,7 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
                 fontSize: isWide ? 18 : 16,
                 unit: isWide ? 9 : 8,
                 borderRadius: isWide ? 6 : 5,
-                offsetTopBar: isPwa ? 16 : 0 
+                offsetTopBar: isPwa ? 16 : 0,
             },
         });
     }, [isWide]);

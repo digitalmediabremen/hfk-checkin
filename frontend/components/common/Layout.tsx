@@ -8,7 +8,7 @@ import React, {
     useRef,
 } from "react";
 import { use100vh } from "react-div-100vh";
-import { Plus, PlusSquare } from "react-feather";
+import { Plus, PlusCircle, PlusSquare } from "react-feather";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import css from "styled-jsx/css";
 import { appUrls, isClient, pageTransitionDuration } from "../../config";
@@ -163,7 +163,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                                 href={appUrls.request}
                             >
                                 <a>
-                                    <PlusSquare
+                                    <PlusCircle
                                         size={40}
                                         strokeWidth={(2 / 40) * 24}
                                     />
