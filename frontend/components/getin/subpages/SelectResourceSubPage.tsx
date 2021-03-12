@@ -9,6 +9,7 @@ import useTheme from "../../../src/hooks/useTheme";
 import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
+import { scrollIntoView } from "../../../src/util/DomUtil";
 import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
 import Fade from "../../common/Fade";
@@ -55,6 +56,13 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
         const timer = window.setTimeout(() => inputRef.current?.focus(), 300);
         return () => window.clearTimeout(timer);
     }, []);
+
+    // scroll input into view
+    useEffect(() => {
+        if (!showDropdown) return;
+        if (!inputRef.current) return;
+        scrollIntoView(inputRef.current, 80 + 16);
+    }, [showDropdown]);
 
     useEffect(() => {
         if (units) {

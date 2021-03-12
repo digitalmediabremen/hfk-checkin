@@ -1,25 +1,13 @@
 import * as React from "react";
 import SmoothCollapse from "react-smooth-collapse";
-import useTheme from "../../src/hooks/useTheme";import { Button } from "../common/Button";
-import Subtitle from "../common/Subtitle";
+import useTheme from "../../src/hooks/useTheme";
+import { scrollIntoView } from "../../src/util/DomUtil";
 
 interface HelpSectionProps {
     open?: boolean;
     onOpen?: (open: boolean) => void;
     title: string;
 }
-
-const scrollIntoView = (element: HTMLInputElement) => {
-    const headerOffset = 80;
-    const elementPosition =
-        element.getBoundingClientRect().top + window.scrollY;
-    const offsetPosition = elementPosition - headerOffset;
-
-    window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-    });
-};
 
 export const useOnlyOneOpen = (
     enabled: boolean = true
@@ -80,6 +68,7 @@ const HelpSection: React.FunctionComponent<HelpSectionProps> = (props) => {
     const handleExpanded = () => {
         if (!open) return;
         if (!ref.current) return;
+        console.log("transition now");
         scrollIntoView(ref.current);
     };
 
@@ -93,7 +82,8 @@ const HelpSection: React.FunctionComponent<HelpSectionProps> = (props) => {
                 <HelpTitle>{sectionTitle}</HelpTitle>
             </div>
             <SmoothCollapse
-                heightTransition="0.2s ease"
+                heightTransition=".2s ease"
+                
                 eagerRender={true}
                 onChangeEnd={handleExpanded}
                 expanded={open}
