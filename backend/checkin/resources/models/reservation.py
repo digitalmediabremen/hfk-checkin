@@ -134,11 +134,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     REQUESTED = 'requested'
     WAITING_FOR_PAYMENT = 'waiting_for_payment'
     STATE_CHOICES = (
-        (CREATED, _('newly created')),
-        (REQUESTED, _('requested')),
-        (CONFIRMED, _('confirmed')),
-        (DENIED, _('denied')),
-        (CANCELLED, _('cancelled')),
+        (CREATED, _('◯ newly created')),
+        (REQUESTED, _('◐ requested')),
+        (CONFIRMED, _('◑ confirmed')),
+        (DENIED, _('◓ denied')),
+        (CANCELLED, _('◒ cancelled')),
         #(WAITING_FOR_PAYMENT, _('waiting for payment')), # deactiveted with all other payment methods
     )
 
