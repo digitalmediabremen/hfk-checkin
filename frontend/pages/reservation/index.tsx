@@ -25,11 +25,8 @@ const sort = (a: MyReservation, b: MyReservation) =>
     a.begin.getTime() - b.begin.getTime();
 
 const headerProvider = (groupKey: string, firstValue: MyReservation) =>
-    isToday(firstValue.begin) ? (
-        <>"Today"</>
-    ) : (
-        <Subtitle center>{groupKey}</Subtitle>
-    );
+    <Subtitle center>{groupKey}</Subtitle>
+    
 
 const EmptyState = () => {
     const { t } = useTranslation();
