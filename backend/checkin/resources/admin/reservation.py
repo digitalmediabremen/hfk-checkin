@@ -12,6 +12,8 @@ from django import forms
 from post_office.models import Email
 from django.urls import reverse
 from .other import FixedGuardedModelAdminMixin
+from .list_filters import ResourceFilter, UserFilter
+from django.contrib.admin.utils import format_html
 
 logger = logging.getLogger(__name__)
 
@@ -78,18 +80,24 @@ class ReservationAdminForm(forms.ModelForm):
 
 class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin, admin.ModelAdmin):
     #extra_readonly_fields_on_update = ('access_code',)
-    list_display = ('short_uuid', 'user','resource','display_duration','number_of_attendees','begin','end','state','modified_at')
-    list_filter = ('type','resource','resource__unit','state',
+    list_display = ('get_state_colored','user','resource','get_display_duration','number_of_attendees','get_priority','get_exclusive')
+    list_filter = (ResourceFilter,'resource__unit','state','has_priority','exclusive_resource_usage','purpose',
+                   UserFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
-                   ('created_at', DateRangeFilter),
-                   ('modified_at', DateTimeRangeFilter),)
+                   ('begin', DateTimeRangeFilter),
+                   ('end', DateTimeRangeFilter),
+                   'type',
+                   ('modified_at', DateTimeRangeFilter),
+                   )
     search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
-    readonly_fields = ('uuid','approver','number_of_attendees','get_reservation_info','get_display_duration')
+    readonly_fields = ('uuid','approver','number_of_attendees','get_reservation_info','message', 'purpose','get_phone_number')
     extra_readonly_fields_edit = ('agreed_to_phone_contact','organizer_is_attending','type')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
-    date_hierarchy = ('begin')
+    date_hierarchy = 'begin'
+    actions_on_top = True
+    list_display_links = ('user','resource')
 
     fieldsets = (
         (None, {
@@ -98,9 +106,9 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         (_('State'), {
             'fields': ('state','message_state_update','approver','get_reservation_info'),
         }),
-        (_('Details'), {
+        (_('Request details'), {
             #'classes': ('collapse',),
-            'fields': ('message', 'purpose', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'organizer_is_attending', 'type'),
+            'fields': ('message', 'purpose', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'get_phone_number','organizer_is_attending', 'type'),
         }),
         # (_('Creation and modifications'), {
         #     'classes': ('collapse',),
@@ -123,6 +131,46 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             return obj.resource.reservation_info
         return self.get_empty_value_display()
     get_reservation_info.short_description = _("Resource instructions")
+
+    def get_phone_number(self, obj):
+        # FIXME add permission 'can_display_phone_number_if_agreed'
+        if obj.agreed_to_phone_contact:
+            return obj.organizer.phone
+        return None
+    get_phone_number.short_description = _("Phone number")
+
+    def get_priority(self, obj):
+        return obj.has_priority
+    get_priority.short_description = _("Prio.")
+    get_priority.admin_order_field = 'has_priority'
+    get_priority.boolean = True
+
+    def get_exclusive(self, obj):
+        return obj.exclusive_resource_usage
+    get_exclusive.short_description = _("Excl.")
+    get_exclusive.admin_order_field = 'exclusive_resource_usage'
+    get_exclusive.boolean = True
+
+    def get_display_duration(self, obj):
+        return obj.display_duration
+    get_display_duration.short_description = _("Timespan")
+    get_display_duration.admin_order_field = 'begin'
+
+    def get_state_colored(self, obj):
+        colors = {
+            Reservation.CREATED: '#555',#('green', ''),
+            Reservation.CANCELLED: '#E2574C',
+            Reservation.CONFIRMED: '#58AD69',
+            Reservation.DENIED: '#E2574C',
+            Reservation.REQUESTED: '#FFBC49',
+            Reservation.WAITING_FOR_PAYMENT: '#FFBC49',
+        }
+        return format_html(
+            '<b style="color:{};">{}</b>',
+            colors[obj.state],
+            obj.state,
+        )
+    get_state_colored.short_description = _("State")
 
     _original_state = None
 

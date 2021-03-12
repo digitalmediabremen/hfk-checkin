@@ -195,11 +195,19 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         """
         extra = self.number_of_extra_attendees or 0
         return len(self.attendees.all()) + extra
-    number_of_attendees.fget.short_description = _("Total number of attendees")
+    number_of_attendees.fget.short_description = _("N")
 
     @property
     def is_inactive(self):
         return self.state in [Reservation.CANCELLED, Reservation.DENIED]
+    is_inactive.fget.short_description = _("Inactive")
+    is_inactive.fget.boolean = True
+    
+    @property
+    def is_active(self):
+        return not self.is_inactive
+    is_active.fget.short_description = _("Inactive")
+    is_active.fget.boolean = True
 
     @cached_property
     def begin_in_resource_tz_naive(self):

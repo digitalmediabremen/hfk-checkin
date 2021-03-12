@@ -79,6 +79,9 @@ DJANGO_APPS = [
     'dal_select2',
     #"nucleus", # before django.contrib.admin
     'modeltranslation', # before django.contrib.admin
+    'dal', # dal = django-autocomplete-light needs to come BEFORE django.contrib.admin
+    'dal_select2',
+    'dal_admin_filters',
     "django.contrib.admin",
 ]
 THIRD_PARTY_APPS = [
