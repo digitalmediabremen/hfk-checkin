@@ -6,6 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('resources', '0016_checkin_attendance'),
         ('resources', '0017_auto_20210303_1813'),
     ]
 
