@@ -92,7 +92,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                    )
     search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
-    readonly_fields = ('uuid','approver','number_of_attendees','get_reservation_info','message', 'purpose','get_phone_number')
+    readonly_fields = ('user','uuid','approver','number_of_attendees','get_reservation_info','message', 'purpose','get_phone_number')
     extra_readonly_fields_edit = ('agreed_to_phone_contact','organizer_is_attending','type')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
@@ -102,14 +102,14 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     fieldsets = (
         (None, {
-            'fields': ('resource', 'user',  'begin', 'end', 'get_display_duration', 'uuid')# 'short_uuid')
+            'fields': ('resource', 'user',  'begin', 'end')# 'short_uuid')
         }),
         (_('State'), {
             'fields': ('state','message_state_update','approver','get_reservation_info'),
         }),
         (_('Request details'), {
             #'classes': ('collapse',),
-            'fields': ('message', 'purpose', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'get_phone_number','organizer_is_attending', 'type'),
+            'fields': ('message', 'purpose', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'get_phone_number','organizer_is_attending', 'type', 'uuid'),
         }),
         # (_('Creation and modifications'), {
         #     'classes': ('collapse',),
