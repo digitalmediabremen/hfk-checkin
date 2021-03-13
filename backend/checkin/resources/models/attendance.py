@@ -54,6 +54,7 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
     @property
     def resource(self):
         return self.reservation.resource
+    resource.fget.admin_order_field = 'reservation__resource'
 
     def get_display_name(self):
         name = self.user.get_full_name()
@@ -87,4 +88,4 @@ class CheckinAttendance(Attendance):
 
     def __str__(self):
         return "%(profile)s on %(date)s for reservation %(reservation)s" % \
-               { 'profile': self.user, 'date': self.reservation.duration, 'reservation': self.reservation }
+               { 'profile': self.user, 'date': self.reservation.display_duration, 'reservation': self.reservation }

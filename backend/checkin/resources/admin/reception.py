@@ -2,6 +2,9 @@ from django.contrib import admin
 from ..models.attendance import Attendance, CheckinAttendance
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.utils.timezone import make_naive
+from .list_filters import ReservationResourceFilter
+from rangefilter.filter import DateTimeRangeFilter
 
 from checkin.tracking.models import Checkin, Origin as CheckinOrigin
 from checkin.tracking.models import Location as CheckinLocation
@@ -57,25 +60,39 @@ class CheckinAttendanceAdmin(AttendanceAdmin):
     inlines = [CheckinInline]
     readonly_fields = (*AttendanceAdmin.readonly_fields, 'state','comment')
     list_editable = ()
-    list_display = ('user', 'resource', 'get_begin_time','enter_action','get_begin_time','leave_action','comment')
-    list_filter = ('reservation__begin',)
+    #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
+    list_display = ('user', 'resource', 'get_display_duration','enter_action','leave_action','comment','state')
+    list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
+                   # 'resources', 'start', 'end', 'status', 'is_important',
+                   ('reservation__begin', DateTimeRangeFilter),
+                   ('reservation__end', DateTimeRangeFilter),
+                   )
+    search_fields = ('reservation__uuid','user__first_name', 'user__last_name', 'user__email','reservation__resource__name','reservation__resource__numbers')
+    date_hierarchy = 'reservation__begin'
+    actions_on_top = True
+    #list_display_links = ('user','resource')
 
     # FIXME improve front desk registration view and methods!
 
     def get_display_duration(self, obj):
-        duration = obj.reservation.duration
-        # FIXME use arrow or humanize. Move to utils.
-        return "%s – %s" % (duration.upper.strftime("%a %d.%m. %H:%M"), duration.lower.strftime("%H:%M"))
+        return obj.reservation.display_duration
+    get_display_duration.short_description = _("Timespan")
+    get_display_duration.admin_order_field = 'begin'
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related('checkin_set')
 
     def get_begin_time(self, obj):
-        return format_html("<strong>{}</strong>", obj.reservation.begin.time().strftime("%H:%M"))
+        return format_html("<strong>{}</strong>", make_naive(obj.reservation.begin, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
     get_begin_time.short_description = _("Begin")
     get_begin_time.allow_tags = True
+    get_begin_time.admin_order_field = 'reservation__begin'
 
     def get_end_time(self, obj):
-        return format_html("<strong>{}</strong>", obj.reservation.end.time().strftime("%H:%M"))
+        return format_html("<strong>{}</strong>", make_naive(obj.reservation.end, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
     get_end_time.short_description = _("End")
     get_end_time.allow_tags = True
+    get_begin_time.admin_order_field = 'reservation__end'
 
     def get_urls(self):
         urls = super().get_urls()
@@ -96,18 +113,23 @@ class CheckinAttendanceAdmin(AttendanceAdmin):
     
     def enter_leave_action(self, obj, checkin_field, btn_label, url):
         try:
-            last = obj.checkin_set.order_by(checkin_field)[0]
-            record = getattr(last, checkin_field)
-            if record is not None:
-                return record.time()
+            # FIXME optimize query on db level
+            last = obj.checkin_set.first()
+            if last:
+                record = getattr(last, checkin_field)
+                if record is not None:
+                    return make_naive(record, obj.reservation.resource.get_tz()).time()
         except (IndexError, Checkin.DoesNotExist):
             pass
-        info = self.model._meta.app_label, self.model._meta.model_name
-        return format_html(
-            '<a class="button" href="{}" style="color:white">{}</a>',
-            reverse(url % info, args=[obj.pk]),
-            btn_label,
-        )
+        if obj.reservation.resource.checkinlocation:
+            info = self.model._meta.app_label, self.model._meta.model_name
+            return format_html(
+                '<a class="button" href="{}" style="color:white">{}</a>',
+                reverse(url % info, args=[obj.pk]),
+                btn_label,
+            )
+        # No CheckinLocation for this Resource. Can not checkin then.
+        return None
     
     def enter_action(self, obj):
         return self.enter_leave_action(obj, 'time_entered', _('Record enter'), 'admin:%s_%s_checkin')

@@ -95,7 +95,7 @@ class BookingMethod(models.Model):
 # Getin/Checkin-App Model
 class Location(MPTTModel):
     # FIXME resource needs to be OneToOne (or inheritance)
-    resource = models.ForeignKey(Resource, on_delete=models.PROTECT, null=True, blank=True)
+    resource = models.OneToOneField(Resource, on_delete=models.PROTECT, null=True, blank=True, related_name='checkinlocation')
     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
     parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=3)
     # org_number = models.CharField(_("Raumnummer"), max_length=24, blank=True, help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
