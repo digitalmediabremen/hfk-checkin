@@ -3,7 +3,6 @@ from ..models.attendance import Attendance, CheckinAttendance
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils.timezone import make_naive
-from .list_filters import ReservationResourceFilter
 from rangefilter.filter import DateTimeRangeFilter
 
 from checkin.tracking.models import Checkin, Origin as CheckinOrigin
