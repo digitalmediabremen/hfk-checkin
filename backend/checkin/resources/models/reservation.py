@@ -22,6 +22,7 @@ from django.utils.translation import ngettext
 from django.template.defaultfilters import date as datefilter
 from django.utils.timezone import make_naive
 from django.utils.functional import cached_property
+from django.db.models import Count
 
 #from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
 from checkin.notifications.models import NotificationEmailTemplate
@@ -116,6 +117,9 @@ class ReservationQuerySet(models.QuerySet):
         # allowed_resources = Resource.objects.with_perm('can_view_reservation_extra_fields', user)
         # return self.filter(Q(user=user) | Q(resource__in=allowed_resources))
 
+    def annotate_number_of_attendances(self):
+        return self.annotate(number_of_attendances=Count('attendance'))
+
     # def catering_orders_visible(self, user):
     #     if not user.is_authenticated:
     #         return self.none()
@@ -125,6 +129,10 @@ class ReservationQuerySet(models.QuerySet):
     #     allowed_resources = Resource.objects.with_perm('can_view_reservation_catering_orders', user)
     #     return self.filter(Q(user=user) | Q(resource__in=allowed_resources))
 
+
+# class ReservationManager(models.Manager):
+#     def get_queryset(self, *args, **kwargs):
+#         return ReservationQuerySet()
 
 class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     CREATED = 'created'
@@ -169,6 +177,35 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         blank=False, verbose_name=_('Type'), max_length=32, choices=TYPE_CHOICES, default=TYPE_NORMAL)
     _state_verbose = None #
 
+    # attendance related fields
+    # TODO
+    # attendees
+    attendees = models.ManyToManyField(PROFILE_MODEL, through='resources.Attendance', verbose_name=_("Attendees"),
+                                       related_name='reservations_attending', blank=True)
+    number_of_extra_attendees = models.PositiveSmallIntegerField(_("Number of extra attendees"), blank=True, default=0,
+        help_text=_("Extra attendees are added to the attendess that are explicitly identified, when building total attendee number for capacity calculation."))
+
+    # access-related fields
+    #access_code = models.CharField(verbose_name=_('Access code'), max_length=32, null=True, blank=True)
+
+    # EXTRA FIELDS START HERE
+
+    has_priority = models.BooleanField(_("Has priority"), blank=True, default=False)
+    agreed_to_phone_contact = models.BooleanField(_("Phone contact agreed"), blank=True, default=False)
+    exclusive_resource_usage = models.BooleanField(_('Exclusive resource usage'), blank=True, default=False)
+    organizer_is_attending = models.BooleanField(_("Organizer is attending"), blank=True, default=True)
+
+    #objects = ReservationManager()
+    objects = ReservationQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = _("Reservation")
+        verbose_name_plural = _("Reservations")
+        ordering = ('begin','end')
+
+    def __str__(self):
+        return "%s" % (self.short_uuid,)
+
     @property
     def organizer(self):
         """
@@ -180,20 +217,14 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         raise ValueError("User (%s) without Profile set as organizer on Reservation." % self.user)
         #return self.user
 
-    # attendance related fields
-    # TODO
-    # attendees
-    attendees = models.ManyToManyField(PROFILE_MODEL, through='resources.Attendance', verbose_name=_("Attendees"),
-                                       related_name='reservations_attending', blank=True)
-    number_of_extra_attendees = models.PositiveSmallIntegerField(_("Number of extra attendees"), blank=True, default=0,
-        help_text=_("Extra attendees are added to the attendess that are explicitly identified, when building total attendee number for capacity calculation."))
-
     @property
     def number_of_attendees(self):
         """
         :return: int: Total number of (expected) attendees.
         """
         extra = self.number_of_extra_attendees or 0
+        if hasattr(self,'number_of_attendances'): # from DB with annotation
+            return self.number_of_attendances + extra
         return len(self.attendees.all()) + extra
     number_of_attendees.fget.short_description = _("N")
 
@@ -233,26 +264,6 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if timedelta.days > 0:
             str_end += " (+%s)" % str_days
         return "%s – %s" % (str_begin, str_end)
-
-    # access-related fields
-    #access_code = models.CharField(verbose_name=_('Access code'), max_length=32, null=True, blank=True)
-
-    # EXTRA FIELDS START HERE
-
-    has_priority = models.BooleanField(_("Has priority"), blank=True, default=False)
-    agreed_to_phone_contact = models.BooleanField(_("Phone contact agreed"), blank=True, default=False)
-    exclusive_resource_usage = models.BooleanField(_('Exclusive resource usage'), blank=True, default=False)
-    organizer_is_attending = models.BooleanField(_("Organizer is attending"), blank=True, default=True)
-
-    objects = ReservationQuerySet.as_manager()
-
-    class Meta:
-        verbose_name = _("Reservation")
-        verbose_name_plural = _("Reservations")
-        ordering = ('begin','end')
-
-    def __str__(self):
-        return "%s" % (self.short_uuid,)
 
     @property
     def identifier(self):
@@ -558,24 +569,24 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             original_reservation = self if self.pk else kwargs.get('original_reservation', None)
             collisions = self.resource.get_reservation_collisions_qs(self.begin, self.end, original_reservation)
             if collisions:
-                warnings.warn(gettext("The resource is already reserved for some of the period by %(collisions)s") % {
+                warnings.warn(gettext("The resource is already reserved for some of the period by %(collisions)s.") % {
                     'collisions': ", ".join([c.identifier for c in collisions])
                 }, ReservationCollisionWarning)
 
             total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end, original_reservation)
             if self.resource.people_capacity and total_number_of_attendees > self.resource.people_capacity:
-                warnings.warn(gettext("The resource's capacity (%d) is already exhausted for some of the period. Attendance on other reservations: %d" % (self.resource.people_capacity, total_number_of_attendees)), ReservationCapacityWarning)
+                warnings.warn(gettext("The resource's capacity (%d) is already exhausted for some of the period. Total attendance on other reservations: %d." % (self.resource.people_capacity, total_number_of_attendees)), ReservationCapacityWarning)
             elif total_number_of_attendees > 0:
                 warnings.warn(gettext(
-                    "Attendance on other reservations: %d" % (total_number_of_attendees)), ReservationCapacityNotice)
+                    "Total attendance on other reservations during this period: %d." % (total_number_of_attendees)), ReservationCapacityNotice)
 
         #if not user_is_admin:
         if self.resource.min_period and (self.end - self.begin) < self.resource.min_period:
-            warnings.warn(gettext("The minimum reservation length is %(min_period)s") %
+            warnings.warn(gettext("The minimum reservation length is %(min_period)s.") %
                                   {'min_period': humanize_duration(self.resource.min_period)}, ReservationTimingWarning)
         #else:
         if self.resource.slot_size and not (self.end - self.begin) % self.resource.slot_size == datetime.timedelta(0):
-            warnings.warn(gettext("The reservation duration must fit the slot size of %(slot_size)s or multiples of it") %
+            warnings.warn(gettext("The reservation duration must fit the slot size of %(slot_size)s or multiples of it.") %
                                   {'slot_size': humanize_duration(self.resource.slot_size)}, ReservationTimingWarning)
 
         # if self.access_code:

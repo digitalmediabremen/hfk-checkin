@@ -40,7 +40,7 @@ from ..models.attendance import Attendance
 #from resources.models.utils import generate_reservation_xlsx
 from ..models.utils import get_object_or_none
 
-from ..auth import is_general_admin
+from ..auth import is_general_admin, is_staff
 from .base import (
     NullableDateTimeField, TranslatedModelSerializer, register_view, DRFFilterBooleanWidget,
     ExtraDataMixin, ModifiableModelSerializerMixin
@@ -685,7 +685,7 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         # .prefetch_related('catering_orders')\
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('order', 'order__order_lines', 'order__order_lines__product')
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, UserFilterBackend, ReservationFilterBackend,
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, UserFilterBackend, ReservationFilterBackend, ExcludePastFilterBackend,
                        NeedManualConfirmationFilterBackend, StateFilterBackend, CanApproveFilterBackend)
     filterset_class = ReservationFilterSet
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, ReservationPermission)
@@ -737,12 +737,12 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().annotate_number_of_attendances()
         user = self.request.user
 
         # General Administrators can see all reservations
-        # if is_general_admin(user):
-        #     return queryset
+        if is_staff(user):
+            return queryset
 
         # normal users can see only their own reservations and reservations that are confirmed, requested or
         # waiting for payment
@@ -820,48 +820,3 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
 
 register_view(ReservationViewSet, 'reservation')
 # register_view(ReservationCancelReasonCategoryViewSet, 'cancel_reason_category')
-
-class ReservationCalendarEventSerializer(ReservationSerializer):
-    start = serializers.DateTimeField(source='begin')
-    end = serializers.DateTimeField()
-    title = serializers.SerializerMethodField()
-    url = serializers.SerializerMethodField()
-    id = serializers.CharField(source='uuid')
-    resourceId = serializers.CharField(source='resource.uuid')
-    classNames = serializers.SerializerMethodField(required=False)
-
-    def get_url(self, obj):
-        return reverse('admin:{0}_{1}_change'.format(obj._meta.app_label, obj._meta.model_name), args=(obj.pk,))
-
-    def get_title(self, obj):
-        return "%(user)s (%(attendees)d) (%(id)s)" % {
-            'user':obj.organizer,
-            'attendees':obj.number_of_attendees,
-            'id': obj.identifier
-        }
-
-    # FIXME remove render-specific attributes form representation!
-    def get_classNames(self, obj):
-        if obj.state not in [Reservation.CONFIRMED]:
-            return 'inactive'
-
-    class Meta:
-        model = Reservation
-        fields = ['url', 'id', 'identifier', 'start', 'end', 'title','resourceId','classNames']
-
-
-class ReservationCalendarViewSet(ReservationViewSet):
-    def get_serializer_class(self):
-        return ReservationCalendarEventSerializer
-
-    def get_queryset(self):
-        resource = self.kwargs.get('resource', None)
-        resources = self.request.query_params.get('resources', None)
-        if resource and resource != 'all':
-            return super().get_queryset().filter(resource__pk=resource)
-        if resources:
-            resources = resources.split('.')
-            return super().get_queryset().filter(resource__uuid__in=resources)
-        return super().get_queryset()
-
-register_view(ReservationCalendarViewSet, 'calendar/event')

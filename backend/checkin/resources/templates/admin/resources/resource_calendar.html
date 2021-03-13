@@ -10,102 +10,19 @@
     <script src='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/main.min.js'%}'></script>
     <script src='{% static 'resources/fullcalendar-5.5.1/lib/locales/de.js'%}'></script>
     <script src='{% static 'resources/fullcalendar-scheduler-5.5.1/lib/locales/de.js'%}'></script>
-    <style>
-        .fc-event {
-                background: var(--theme-color-primary);
-                color: white;
-                border-color: var(--theme-color-primary);
-            }
-        .fc-event.inactive {
-            background: rgba(255,255,255,0.5);
-            border-color: var(--theme-color-primary);
-            border-style: dashed;
-        }
-        .fc-event.inactive .fc-event-main {
-            color: var(--theme-color-primary);
-        }
-    </style>
+    <link href='{% static 'resources/fullcalendar_resources.css'%}' rel='stylesheet'/>
+    <script src='{% static 'resources/fullcalendar_resources.js'%}'></script>
     <script>
-        var resource_uuids = ['{{ calendar_resource_id }}'];
-        var resource_extraParams = function() {
-            return { resources: resource_uuids.join('.') }
-        };
-        var last_added_resource = null;
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'resourceTimelineWeek',
-                schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-                headerToolbar: {
-                    start: 'title',
-                    center: '',
-                    end: 'today prev,next dayGridMonth,dayGridWeek resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth,resourceTimelineYear resourceTimeGridDay,resourceTimeGridWeek'
-                },
-                height: 'calc(100vh - 250px)',
-                events: {
-                    url: '/api/calendar/event/',
-                    method: 'GET',
-                    extraParams: resource_extraParams,
-                    failure: function() {
-                        resource_uuids.pop(last_added_resource);
-                        last_added_resource = null;
-                        calendar.addResource({
-                            title: "Nicht gefunden",
-                            id: "NOT_FOUND"
-                        });
-                        setTimeout(() => {
-                            calendar.getResourceById('NOT_FOUND').remove()
-                        }, 2000);
-                      },
-                    success: function(){
-                        calendar.refetchResources()
-                    }
-                },
-                {#resources: '/api/calendar/resource/',#}
-                resources: {
-                    url: '/api/calendar/resource/',
-                    method: 'GET',
-                    extraParams: resource_extraParams,
-                },
-                resourceOrder: 'index,title,id',
-                resourceGroupField: 'unit_name',
-                resourceAreaColumns: [
-                {
-                    field: 'name',
-                    headerContent: 'Space',
-                },
-                {
-                    field: 'display_numbers',
-                    headerContent: 'Number',
-                    width: "30%",
-                },
-                {
-                    field: 'capacity',
-                    headerContent: 'Cap.',
-                    width: "20%",
-                }
-                ],
-                locale: 'de',
-                weekNumbers: true,
-                nowIndicator: true,
-                businessHours: {
-                  // days of week. an array of zero-based day of week integers (0=Sunday)
-                  daysOfWeek: [ 1, 2, 3, 4, 5 ], // Monday - Thursday
-                  startTime: '10:00', // a start time (10am in this example)
-                  endTime: '20:00', // an end time (6pm in this example)
-                },
-                {#eventColor: 'var(--theme-color-primary)',#}
-            });
-            calendar.render();
-            django.jQuery(document.querySelector('#id_resource')).on('change', (event) => {
-                var uuid = event.target.value;
-                if (uuid && !resource_uuids.includes(uuid)) {
-                    resource_uuids.push(uuid);
-                    last_added_resource = uuid;
-                    calendar.refetchEvents();
-                }
-            });
-        });
+        // use var fullcalendar_resources_config to overwrite fullcalendar_resources_base_config
+        {% get_current_language as LANGUAGE_CODE %}
+        var parameters = {
+            resources_uuids: ['{{ calendar_resource_id }}'],
+        }
+        var config = {
+            locale: '{{ LANGUAGE_CODE }}',
+            height: 'calc(100vh - 100px)',
+        }
+        resources_fullcalendar.init(parameters, config)
     </script>
 {% endblock %}
 

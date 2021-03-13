@@ -16,8 +16,8 @@ from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import get_user_model
 User = get_user_model()
+from checkin.resources.api.calendar import ReservationCalendarViewSet
 from checkin.users.admin import UserAdmin
-from checkin.resources.api.reservation import ReservationCalendarViewSet
 
 urlpatterns = []
 checkin_api_router = routers.SimpleRouter()
