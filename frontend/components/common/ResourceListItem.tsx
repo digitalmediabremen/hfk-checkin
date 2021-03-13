@@ -116,17 +116,32 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     );
 };
 
-export const LoadingListItem: React.FunctionComponent<{}> = () => {
+export const LoadingListItem: React.FunctionComponent<{index?: number}> = ({index}) => {
+    const theme = useTheme();
     return (
         <>
             <style jsx>{`
                 div {
                     height: 100%;
+                    display: flex;
+                    align-items: center;
+                    text-align: center;
+                    justify-content: center;
+                    animation: load .5s infinite alternate;
+                    animation-delay: ${((index || 0) % 10) / 10}s;
+                }
+
+                @keyframes load {
+                    from {
+                        background-color: ${theme.shadePrimaryColor(0)}
+                    }
+                    to {
+                        background-color: ${theme.shadePrimaryColor(0.1)}
+                    }
                 }
             `}</style>
-            <div>
-                <LoadingInline loading={true} />
-            </div>
+            <div />
+            <Divider noSpacing />
         </>
     );
 };

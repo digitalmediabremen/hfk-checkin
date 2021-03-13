@@ -61,7 +61,10 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     useEffect(() => {
         if (!showDropdown) return;
         if (!inputRef.current) return;
-        scrollIntoView(inputRef.current, 80 + 16);
+        scrollIntoView(
+            inputRef.current,
+            theme.topBarHeight() + theme.spacing(4) + theme.offsetTopBar
+        );
     }, [showDropdown]);
 
     useEffect(() => {

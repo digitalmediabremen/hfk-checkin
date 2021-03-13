@@ -51,7 +51,6 @@ const Page: React.FunctionComponent<PageProps> = ({
                     // height: 100%;
                     margin: 0 auto;
                     display: block;
-                    overflow: visible;
                     // fix adjecant margin top error
                     border-top: 1px solid transparent;
                 }
@@ -66,6 +65,8 @@ const Page: React.FunctionComponent<PageProps> = ({
                 .scroll-container {
                     overflow-y: auto;
                     overflow-x: hidden;
+                    // bouncy scroll behaviour
+                    -webkit-overflow-scrolling: touch;
                     height: ${height! - theme.topBarHeight()}px;
                 }
 

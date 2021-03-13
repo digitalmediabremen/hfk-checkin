@@ -92,6 +92,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                         );
                         return (
                             <FormElement
+                                key={attendee.uuid}
                                 labelIcon={
                                     <AttendeeStateIcon strokeWidth={1} />
                                 }

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactNode, useRef } from "react";
+import React, { PropsWithChildren, ReactElement, ReactNode, useRef } from "react";
 import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import css from "styled-jsx/css";
@@ -17,7 +17,7 @@ interface LazyListProps<T> {
     ) => Promise<void | null>;
 
     children: (item: T, last: boolean) => ReactNode;
-    loadingComponent: ReactNode;
+    loadingComponent: ReactElement;
 
     height: number;
     itemHeight: number;
@@ -74,7 +74,7 @@ const LazyList = <T extends {}>({
         let content;
         const item = items[index];
         if (empty(item)) {
-            content = loadingComponent;
+            content = React.cloneElement(loadingComponent, { index });
         } else {
             content = children(item, index === itemCount - 1);
         }
