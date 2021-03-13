@@ -55,9 +55,12 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
             # 'classes': ('collapse',),
             'fields': ('type','description','people_capacity','area','floor_number','floor_name'),#'purposes'
         }),
+        (_('Features'), {
+            'fields': ('features',),
+        }),
         (_('Reservation'), {
             #'classes': ('collapse',),
-            'fields': ('reservable', 'reservation_info',#'need_manual_confirmation', 'reservation_delegates',
+            'fields': ('reservable', 'reservation_info','need_manual_confirmation',# 'reservation_delegates',
                        'min_period','max_period','slot_size','max_reservations_per_user',
                        'reservation_requested_notification_extra','reservation_confirmed_notification_extra',
                        'reservable_max_days_in_advance','reservable_min_days_in_advance',
@@ -75,14 +78,15 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     #readonly_fields = ('uuid',)
     #autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
-    list_display = ('display_numbers', 'name', 'get_unit_slug', 'people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
-    list_filter = ('unit', 'reservable')#,'need_manual_confirmation') # 'public',
+    list_display = ('display_numbers','name','get_unit_slug','people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
+    list_filter = ('unit','reservable','people_capacity','access_restricted','features','type','floor_number','need_manual_confirmation') #,'need_manual_confirmation') # 'public',
     list_select_related = ('unit',)
     ordering = ('unit', 'name')
     search_fields = ('name','numbers','unit__name')
     list_display_links = ('display_numbers', 'name')
     readonly_fields = ModifiableModelAdminMixin._fields
     list_max_show_all = 1000
+    filter_horizontal = ('features',)
 
     def get_unit_slug(self, obj):
         if obj.unit:

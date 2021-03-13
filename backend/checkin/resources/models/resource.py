@@ -90,6 +90,19 @@ def determine_hours_time_range(begin, end, tz):
     return begin, end
 
 
+class ResourceFeature(ModifiableModel, UUIDModelMixin):
+    #identifier = models.CharField(verbose_name=_('Identifier'), max_length=100)
+    name = models.CharField(verbose_name=_('Name'), max_length=200)
+
+    class Meta:
+        verbose_name = _('Resource feature')
+        verbose_name_plural = _('Resource features')
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
+
+
 class ResourceType(ModifiableModel, UUIDModelMixin):
     MAIN_TYPES = (
         ('space', _('Space')),
@@ -222,7 +235,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     # FIXME type would be better named category? what are types actually?
     #purposes = models.ManyToManyField(Purpose, verbose_name=_('Purposes'), blank=True)
     # FIXME purposes = usages?
-    #features = wheelchair access, projector, tags...
+    features = models.ManyToManyField(ResourceFeature, verbose_name=_('Features'), blank=True)
 
     people_capacity = models.PositiveIntegerField(verbose_name=_('People capacity'), null=True, blank=True)
     area = models.DecimalField(verbose_name=_('Area (m2)'), help_text=_("in Quadratmetern"), max_digits=8,

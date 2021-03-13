@@ -18,7 +18,7 @@ class AbstractReservableModel(models.Model):
     # reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
     #                                                blank=True,
     #                                                related_name='%(app_label)s_%(class)s_reservation_delegated')
-    # need_manual_confirmation = models.BooleanField(verbose_name=_('Need manual confirmation'), default=True)
+    need_manual_confirmation = models.BooleanField(verbose_name=_('Need manual confirmation'), default=True)
     #usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
     #capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Einschränkungen / Kapazität"), blank=True, null=True)
     # book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True,
@@ -60,11 +60,6 @@ class AbstractReservableModel(models.Model):
 
     class Meta:
         abstract = True
-
-    @property
-    def need_manual_confirmation(self):
-        # all resources need manual confirmation
-        return True
 
     @property
     def allow_overlapping_reservations(self):

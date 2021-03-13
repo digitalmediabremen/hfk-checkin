@@ -486,8 +486,8 @@ class ResourceFilterSet(django_filters.rest_framework.FilterSet):
     # purpose = ParentCharFilter(field_name='purposes__id', lookup_expr='iexact')
     # type = django_filters.Filter(field_name='type__id', lookup_expr='in', widget=django_filters.widgets.CSVWidget)
     # people = django_filters.NumberFilter(field_name='people_capacity', lookup_expr='gte')
-    # need_manual_confirmation = django_filters.BooleanFilter(field_name='need_manual_confirmation',
-    #                                                         widget=DRFFilterBooleanWidget)
+    need_manual_confirmation = django_filters.BooleanFilter(field_name='need_manual_confirmation',
+                                                             widget=DRFFilterBooleanWidget)
     # is_favorite = django_filters.BooleanFilter(method='filter_is_favorite', widget=DRFFilterBooleanWidget)
     unit_uuid = django_filters.CharFilter(field_name='unit__uuid', lookup_expr='iexact')
     unit_slug = django_filters.CharFilter(field_name='unit__slug', lookup_expr='iexact')

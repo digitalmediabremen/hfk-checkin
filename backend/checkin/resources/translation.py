@@ -27,6 +27,10 @@ class ResourceTypeTranslationOptions(TranslationOptions):
     fields = ('name',)
 
 
+@register(ResourceFeature)
+class ResourceFeatureTranslationOptions(TranslationOptions):
+    fields = ('name',)
+
 # @register(ResourceImage)
 # class ResourceImageTranslationOptions(TranslationOptions):
 #     fields = ('caption',)

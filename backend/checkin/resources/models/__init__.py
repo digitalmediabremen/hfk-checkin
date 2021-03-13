@@ -10,7 +10,7 @@ from checkin.resources.models.reservation import (
     ReservationWarning
 )
 from checkin.resources.models.resource import (
-    Resource, ResourceType, ResourceGroup,
+    Resource, ResourceType, ResourceGroup, ResourceFeature,
     # Purpose, ResourceEquipment,
     # ResourceDailyOpeningHours, TermsOfUse,
     Attachment,

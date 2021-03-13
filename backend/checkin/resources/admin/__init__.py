@@ -1,5 +1,6 @@
 from django.contrib.admin import site as admin_site
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 
 # use absolute imports in __init__.py
 # otherwise tests will not work
@@ -13,7 +14,7 @@ from checkin.resources.admin.other import (
 from checkin.resources.admin.reservation import ReservationAdmin
 
 from checkin.resources.admin.resource import (
-    ResourceAdmin, ResourceTypeAdmin,
+    ResourceAdmin, ResourceTypeAdmin
 )
 from checkin.resources.admin.resource_access import ResourceAccessAdmin
 from checkin.resources.admin.reception import *
@@ -28,12 +29,14 @@ from checkin.resources.models import (
     Unit,
     #Day,
     ResourceGroup,
+    ResourceFeature,
 )
 
 #admin_site.register(ResourceImage, ResourceImageAdmin)
 admin_site.register(Resource, ResourceAdmin)
 admin_site.register(Reservation, ReservationAdmin)
 admin_site.register(ResourceType, ResourceTypeAdmin)
+admin_site.register(ResourceFeature, TranslationAdmin)
 #admin_site.register(Purpose, PurposeAdmin)
 #admin_site.register(Day)
 admin_site.register(Unit, UnitAdmin)
