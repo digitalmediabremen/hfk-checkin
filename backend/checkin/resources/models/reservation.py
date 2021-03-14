@@ -22,7 +22,9 @@ from django.utils.translation import ngettext
 from django.template.defaultfilters import date as datefilter
 from django.utils.timezone import make_naive
 from django.utils.functional import cached_property
-from django.db.models import Count
+from django.db.models import Count, Sum, F, ExpressionWrapper
+from django.db.models.functions import Coalesce
+from django.db.models.fields import IntegerField
 
 #from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
 from checkin.notifications.models import NotificationEmailTemplate
@@ -126,6 +128,13 @@ class ReservationQuerySet(models.QuerySet):
     def annotate_number_of_attendances(self):
         return self.annotate(number_of_attendances=Count('attendance'))
 
+    def annotate_total_number_of_attendees(self):
+        return self.annotate(total_number_of_attendees=ExpressionWrapper(Count('attendance') - F('number_of_extra_attendees'), output_field=IntegerField()))
+
+    def aggregate_sum_of_total_number_of_attendees(self):
+        # sum of annotated total_number_of_attendees or 0
+        return self.annotate_total_number_of_attendees().aggregate(sum_of_total_number_of_attendees=Coalesce(Sum('total_number_of_attendees'),0))
+
     def prefetch_resource_and_unit(self):
         from django.db.models import Prefetch
         return self.prefetch_related(
@@ -149,7 +158,8 @@ class ReservationQuerySet(models.QuerySet):
 class ReservationManager(models.Manager.from_queryset(ReservationQuerySet)):
     def get_queryset(self):
         return super(ReservationManager, self).get_queryset() \
-            .annotate_number_of_attendances()
+            .annotate_number_of_attendances() \
+            .annotate_total_number_of_attendees()
 
 class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     CREATED = 'created'
@@ -237,8 +247,12 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     @property
     def number_of_attendees(self):
         """
+        Sum of explicit attendances and implicit number_of_extra_attendees.
+        Better calculate on db. If not use this method.
         :return: int: Total number of (expected) attendees.
         """
+        if hasattr(self,'total_number_of_attendees'):
+            return getattr(self,'total_number_of_attendees')
         extra = self.number_of_extra_attendees or 0
         if hasattr(self,'number_of_attendances'): # from DB with annotation
             return self.number_of_attendances + extra
@@ -388,7 +402,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         if new_state == Reservation.CONFIRMED:
             self.approver = user
-            self.set_state_verbose(_("Reservation was just confirmed."))
+            self.set_state_verbose(_("Reservation was confirmed."))
             reservation_confirmed.send(sender=self.__class__, instance=self,
                                        user=user)
         elif old_state == Reservation.CONFIRMED:

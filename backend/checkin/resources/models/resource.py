@@ -313,8 +313,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         name = "%s" % (get_translated(self, 'name'),)
         if self.numbers:
             name += " (%s)" % self.display_numbers
-        if self.people_capacity:
-            name += " (%d)" % self.people_capacity
+        if hasattr(self, 'people_capacity'):
+            name += " (%s)" % str(getattr(self, 'people_capacity', '?'))
         return name
     display_name.fget.short_description = _('Name')
 
@@ -412,7 +412,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
                 raise ValidationError(_("Maximum number of active reservations for this resource exceeded."))
 
     def get_reservation_collisions_qs(self, begin, end, reservation=None):
-        overlapping = self.reservations.overlaps(begin, end)
+        # only collide with current() reservations (!)
+        overlapping = self.reservations.current().overlaps(begin, end)
         if reservation:
             overlapping = overlapping.exclude(pk=reservation.pk)
         return overlapping
@@ -421,10 +422,11 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         return self.get_reservation_collisions_qs(begin, end, reservation).exists()
 
     def get_total_number_of_attendees_for_period(self, begin, end, reservation=None):
-        # FIXME do sum of attendees on db.
         overlaps = self.get_reservation_collisions_qs(begin, end, reservation)
-        total_number_of_attendees = sum(c.number_of_attendees for c in overlaps)
-        return total_number_of_attendees
+        aggregate_sum = overlaps.aggregate_sum_of_total_number_of_attendees()
+        # total_number_of_attendees = sum(c.total_number_of_attendees for c in overlaps)
+        print(aggregate_sum)
+        return aggregate_sum['sum_of_total_number_of_attendees']
 
     def check_capacity_exhausted(self, begin, end, reservation=None):
         if not self.people_capacity:
