@@ -39,9 +39,8 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     inlines = [
         # PeriodInline,
         # ResourceEquipmentInline,
-        # ResourceGroupInline,
+        ResourceGroupInline,
         # RoomAccessPolicyInline
-        # TODO
         AccessDelegatesForResourceUserPermissionInline,
         ReservationDelegatesForResourceUserPermissionInline,
         AccessAllowedToResourceUserPermissionInline,
