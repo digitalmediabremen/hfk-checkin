@@ -94,7 +94,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
     readonly_fields = ('uuid','approver','agreed_to_phone_contact','number_of_attendees','get_reservation_info','get_phone_number')
-    extra_readonly_fields_edit = ('user','organizer_is_attending','type''message','purpose',)
+    extra_readonly_fields_edit = ('user','organizer_is_attending','type','message','purpose',)
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
     date_hierarchy = 'begin'
@@ -231,7 +231,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             self._original_state = obj.state
         return super().get_form(request, obj, **kwargs)
 
-    def save_model(self, request, obj, form, change):
+    def process_state_change_and_warn(self,request,obj,form,change):
         # FIXME what if no _original_state. New object?
         if not self._original_state:
             self._original_state = Reservation.CREATED
@@ -246,6 +246,9 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # show resulted (new state verbose) state as message
         messages.add_message(request, messages.INFO, _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
         # actually save obj
+
+    def save_model(self, request, obj, form, change):
+        self.process_state_change_and_warn(request,obj,form,change)
         super().save_model(request, obj, form, change)
 
     def save_related(self, request, form, formsets, change):
