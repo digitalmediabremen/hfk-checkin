@@ -13,7 +13,7 @@ from checkin.resources.models.resource import (
     Resource, ResourceType, ResourceGroup, ResourceFeature,
     # Purpose, ResourceEquipment,
     # ResourceDailyOpeningHours, TermsOfUse,
-    Attachment,
+    Attachment, ResourceCapacityPolicy
 )
 #from checkin.resources.models.equipment import Equipment, EquipmentAlias, EquipmentCategory
 from checkin.resources.models.unit import Unit

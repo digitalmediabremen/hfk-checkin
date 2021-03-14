@@ -167,11 +167,32 @@ class ResourceQuerySet(models.QuerySet):
                                      with_superuser=False)
         resource_groups = get_objects_for_user(user, 'group:%s' % perm, klass=ResourceGroup,
                                                with_superuser=False)
-
         allowed_roles = UNIT_ROLE_PERMISSIONS.get(perm)
         units_where_role = Unit.objects.by_roles(user, allowed_roles)
-
         return self.filter(Q(unit__in=list(units) + list(units_where_role)) | Q(groups__in=resource_groups)).distinct()
+
+    def annotate_capacity_calculation(self):
+        from django.db.models import Case, Value, Min, Max, When, PositiveIntegerField, F
+        from django.db.models.functions import Floor, Least
+        capacity_field_name = 'people_capacity_default'
+        capacity_policies_related_name = 'capacity_policies__value'
+        # calculate min or max of applying ResourceCapacityPolicies for this Resource
+        q = self.annotate(capacity_policies_value=Case(
+            When(people_capacity_calculation_type=Resource.CAPACITY_CALCULATION_MIN, then=Min(capacity_policies_related_name)),
+            When(people_capacity_calculation_type=Resource.CAPACITY_CALCULATION_MAX, then=Max(capacity_policies_related_name)),
+            default = capacity_field_name,
+            output_field = PositiveIntegerField(),
+        ))
+        # calculate min or max between default and calculated policy value
+        q = q.annotate(people_capacity=Case(
+            When(people_capacity_calculation_type=Resource.CAPACITY_CALCULATION_MIN,
+                 then=Least(F('capacity_policies_value'),capacity_field_name)),
+            When(people_capacity_calculation_type=Resource.CAPACITY_CALCULATION_MAX,
+                 then=Least(F('capacity_policies_value'),capacity_field_name)),
+            default=capacity_field_name,
+            output_field=PositiveIntegerField(),
+        ))
+        return q
 
 
 # FIXME not in use
@@ -190,6 +211,11 @@ class Attachment(ModifiableModel, UUIDModelMixin):
 #
 #     class Meta:
 #         abstract = True
+
+class ResourceManager(models.Manager.from_queryset(ResourceQuerySet)):
+    def get_queryset(self):
+        return super(ResourceManager, self).get_queryset() \
+            .annotate_capacity_calculation()
 
 
 def get_default_unit(): return Unit.objects.first().pk
@@ -219,6 +245,15 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         (ACCESS_CODE_TYPE_PIN6, _('6-digit PIN code')),
     )
 
+    CAPACITY_CALCULATION_NONE = 'None'
+    CAPACITY_CALCULATION_MIN = 'Min'
+    CAPACITY_CALCULATION_MAX = 'Max'
+    CAPACITY_CALCULATION_TYPES = (
+        (CAPACITY_CALCULATION_NONE, _('Default')),
+        (CAPACITY_CALCULATION_MIN, _('Minimum')),
+        (CAPACITY_CALCULATION_MAX, _('Maximum')),
+    )
+
     #id = models.CharField(primary_key=True, max_length=100)
     #public = models.BooleanField(default=True, verbose_name=_('Public'))
     #public = True
@@ -237,7 +272,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     # FIXME purposes = usages?
     features = models.ManyToManyField(ResourceFeature, verbose_name=_('Features'), blank=True)
 
-    people_capacity = models.PositiveIntegerField(verbose_name=_('People capacity'), null=True, blank=True)
+    people_capacity_default = models.PositiveIntegerField(verbose_name=_('Default people capacity'), null=True, blank=True)
+    people_capacity_calculation_type = models.CharField(verbose_name=_('Capacity calculation'), max_length=20, choices=CAPACITY_CALCULATION_TYPES, default=CAPACITY_CALCULATION_MIN)
     area = models.DecimalField(verbose_name=_('Area (m2)'), help_text=_("in Quadratmetern"), max_digits=8,
                                     decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
                                     blank=True, null=True)
@@ -245,7 +281,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     floor_name = models.CharField(verbose_name=_('Floor name'), max_length=200, null=True, blank=True)
     #history = HistoricalRecords()
 
-    objects = ResourceQuerySet.as_manager()
+    objects = ResourceManager()
 
     class Meta:
         verbose_name = _("Space")
@@ -928,3 +964,18 @@ class ResourceDailyOpeningHours(models.Model):
             lower = self.open_between.lower
             upper = self.open_between.upper
         return "%s: %s -> %s" % (self.resource, lower, upper)
+
+
+
+class ResourceCapacityPolicy(ModifiableModel, UUIDModelMixin):
+    CAPACITY_POLICY_TYPES = (
+        ('ABS', _('Absolute value')),
+        # ('RATIO', _('Percentage of original capacity'))
+    )
+    name = models.CharField(verbose_name=_("Name"), max_length=255)
+    value = models.PositiveIntegerField(_("Value"))
+    type = models.CharField(choices=CAPACITY_POLICY_TYPES, max_length=20, default='ABS')
+    resources = models.ManyToManyField(Resource, related_name='capacity_policies')
+
+
+

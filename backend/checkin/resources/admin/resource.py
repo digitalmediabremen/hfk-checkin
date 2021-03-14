@@ -53,7 +53,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Details'), {
             # 'classes': ('collapse',),
-            'fields': ('type','description','people_capacity','area','floor_number','floor_name'),#'purposes'
+            'fields': ('type','description','people_capacity_default','people_capacity_calculation_type','get_people_capacity','area','floor_number','floor_name'),#'purposes'
         }),
         (_('Features'), {
             'fields': ('features',),
@@ -78,15 +78,19 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     #readonly_fields = ('uuid',)
     #autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
-    list_display = ('display_numbers','name','get_unit_slug','people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
-    list_filter = ('unit','reservable','people_capacity','access_restricted','features','type','floor_number','need_manual_confirmation') #,'need_manual_confirmation') # 'public',
+    list_display = ('display_numbers','name','get_unit_slug','get_people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
+    list_filter = ('unit','reservable','people_capacity_default','access_restricted','features','type','floor_number','need_manual_confirmation') #,'need_manual_confirmation') # 'public',
     list_select_related = ('unit',)
     ordering = ('unit', 'name')
     search_fields = ('name','numbers','unit__name')
     list_display_links = ('display_numbers', 'name')
-    readonly_fields = ModifiableModelAdminMixin._fields
+    readonly_fields = ('get_people_capacity', *ModifiableModelAdminMixin._fields)
     list_max_show_all = 1000
     filter_horizontal = ('features',)
+
+    def get_people_capacity(self, obj):
+        return obj.people_capacity
+    get_people_capacity.short_description = "Active Capacity"
 
     def get_unit_slug(self, obj):
         if obj.unit:

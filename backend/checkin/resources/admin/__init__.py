@@ -14,7 +14,7 @@ from checkin.resources.admin.other import (
 from checkin.resources.admin.reservation import ReservationAdmin
 
 from checkin.resources.admin.resource import (
-    ResourceAdmin, ResourceTypeAdmin
+    ResourceAdmin, ResourceTypeAdmin,
 )
 from checkin.resources.admin.resource_access import ResourceAccessAdmin
 from checkin.resources.admin.reception import *
@@ -30,6 +30,7 @@ from checkin.resources.models import (
     #Day,
     ResourceGroup,
     ResourceFeature,
+    ResourceCapacityPolicy
 )
 
 #admin_site.register(ResourceImage, ResourceImageAdmin)
@@ -47,6 +48,7 @@ admin_site.register(Unit, UnitAdmin)
 #admin_site.register(ReservationMetadataField, ReservationMetadataFieldAdmin)
 #admin_site.register(ReservationMetadataSet, ReservationMetadataSetAdmin)
 admin.site.register(ResourceGroup, ResourceGroupAdmin)
+admin.site.register(ResourceCapacityPolicy)
 #if admin.site.is_registered(Municipality):
 #    admin.site.unregister(Municipality)
 #admin.site.register(Municipality, MunicipalityAdmin)
