@@ -5,6 +5,7 @@ from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from .mixins import ExtraReadonlyFieldsOnUpdateMixin, CommonExcludeMixin, PopulateCreatedAndModifiedMixin
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 from ..models import Attendance, Reservation
+from ..models.reservation import ReservationWarning, ReservationCriticalWarning, ReservationNotice
 from django.contrib import messages
 import warnings
 from django.core.exceptions import ValidationError
@@ -119,7 +120,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     radio_fields = {'state': admin.HORIZONTAL}
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user', 'user__profile', 'resource','resource__unit').annotate_number_of_attendances()
+        return super().get_queryset(request).select_related('user', 'user__profile')\
+            .prefetch_resource_and_unit()
 
     def get_display_duration(self, obj=None):
         return obj.duration
@@ -140,7 +142,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # FIXME add permission 'can_display_phone_number_if_agreed'
         if obj.agreed_to_phone_contact:
             return obj.organizer.phone
-        return None
+        return _('(phone contact not allowed)')
     get_phone_number.short_description = _("Phone number")
 
     def get_priority(self, obj):
@@ -187,7 +189,10 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                 # form will validate and show errors anyway
                 # messages.add_message(request, messages.ERROR, str(e.message))
             for w in warns:
-                messages.add_message(request, messages.WARNING, str(w.message))
+                if issubclass(w.category, ReservationCriticalWarning):
+                    messages.add_message(request, messages.ERROR, str(w.message))
+                else:
+                    messages.add_message(request, messages.WARNING, str(w.message))
         # give some info
         # TODO move all warnings to validate_reservation()
         if obj:

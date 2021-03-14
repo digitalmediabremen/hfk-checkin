@@ -53,12 +53,18 @@ class ReservationWarning(UserWarning):
 class ReservationNotice(UserWarning):
     pass
 
+class ReservationCriticalWarning(UserWarning):
+    pass
+
 class ReservationCollisionWarning(ReservationWarning):
     pass
 
+class ReservationCapacityCriticalWarning(ReservationCriticalWarning):
+    pass
 
 class ReservationCapacityWarning(ReservationWarning):
     pass
+
 
 class ReservationCapacityNotice(ReservationNotice):
     pass
@@ -120,6 +126,16 @@ class ReservationQuerySet(models.QuerySet):
     def annotate_number_of_attendances(self):
         return self.annotate(number_of_attendances=Count('attendance'))
 
+    def prefetch_resource_and_unit(self):
+        from django.db.models import Prefetch
+        return self.prefetch_related(
+            Prefetch(
+                'resource',
+                queryset=Resource.objects.annotate_capacity_calculation()
+            ),
+            'resource__unit'
+        )
+
     # def catering_orders_visible(self, user):
     #     if not user.is_authenticated:
     #         return self.none()
@@ -130,9 +146,10 @@ class ReservationQuerySet(models.QuerySet):
     #     return self.filter(Q(user=user) | Q(resource__in=allowed_resources))
 
 
-# class ReservationManager(models.Manager):
-#     def get_queryset(self, *args, **kwargs):
-#         return ReservationQuerySet()
+class ReservationManager(models.Manager.from_queryset(ReservationQuerySet)):
+    def get_queryset(self):
+        return super(ReservationManager, self).get_queryset() \
+            .annotate_number_of_attendances()
 
 class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     CREATED = 'created'
@@ -195,8 +212,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     exclusive_resource_usage = models.BooleanField(_('Exclusive resource usage'), blank=True, default=False)
     organizer_is_attending = models.BooleanField(_("Organizer is attending"), blank=True, default=True)
 
-    #objects = ReservationManager()
-    objects = ReservationQuerySet.as_manager()
+    objects = ReservationManager()
+    #objects = ReservationQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Reservation")
@@ -573,12 +590,12 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                     'collisions': ", ".join([c.identifier for c in collisions])
                 }, ReservationCollisionWarning)
 
-            total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end, original_reservation)
+            total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end)
             if self.resource.people_capacity and total_number_of_attendees > self.resource.people_capacity:
-                warnings.warn(gettext("The resource's capacity (%d) is already exhausted for some of the period. Total attendance on other reservations: %d." % (self.resource.people_capacity, total_number_of_attendees)), ReservationCapacityWarning)
+                warnings.warn(gettext("The resource's capacity (%d) is already exhausted for some of the period. Total attendance (incl. this one): %d." % (self.resource.people_capacity, total_number_of_attendees)), ReservationCapacityCriticalWarning)
             elif total_number_of_attendees > 0:
                 warnings.warn(gettext(
-                    "Total attendance on other reservations during this period: %d." % (total_number_of_attendees)), ReservationCapacityNotice)
+                    "Total attendance (incl. this one): %d." % (total_number_of_attendees)), ReservationCapacityNotice)
 
         #if not user_is_admin:
         if self.resource.min_period and (self.end - self.begin) < self.resource.min_period:

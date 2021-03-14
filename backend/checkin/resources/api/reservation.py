@@ -737,7 +737,7 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset().annotate_number_of_attendances()
+        queryset = super().get_queryset()
         user = self.request.user
 
         # General Administrators can see all reservations
