@@ -5,6 +5,7 @@ class NotificationType(models.TextChoices):
     RESERVATION_REQUESTED = 'reservation_requested', _('Reservation requested')
     RESERVATION_REQUESTED_OFFICIAL = 'reservation_requested_official', _('Reservation requested to delegtes')
     RESERVATION_EXTERNAL_USER_REQUESTED_OFFICIAL = 'reservation_external_user_requested_official', _('External attendee requested to delegtes')
+    RESERVATION_ACCESS_REQUESTED_OFFICIAL = 'reservation_access_requested_official', _('Resource access requested to access delegtes')
     RESERVATION_CANCELLED = 'reservation_cancelled', _('Reservation cancelled')
     RESERVATION_CONFIRMED = 'reservation_confirmed', _('Reservation confirmed')
     RESERVATION_DENIED = 'reservation_denied', _('Reservation denied')

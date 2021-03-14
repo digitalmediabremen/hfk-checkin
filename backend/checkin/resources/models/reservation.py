@@ -414,12 +414,14 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if new_state == Reservation.REQUESTED:
             # FIXME generate status messages (set_state_verbose) here? or in reservation logic? ... multilang?
             notified_users = self.send_reservation_requested_mail()
-            notified_officials = self.send_reservation_requested_mail_to_officials()
+            notified_reservation_delegates = self.send_reservation_requested_mail_to_officials()
+            if self.resource.access_restricted and not self.resource.can_make_reservations(user):
+                notified_access_delegates = self.send_access_requested_mail_to_officials()
             # notified_external_user_officials = self.send_external_user_requested_mail_to_officials()
             # notify external user confirmation official via Signal m2m_changed attendees_changed
-            self.set_state_verbose(_("Reservation was just requested and is now forwarded to %s." % self.resource.get_reservation_delegates_display()))
+            self.set_state_verbose(_("Reservation was just requested and will be processed shortly" ))
         elif new_state == Reservation.CONFIRMED:
-            self.set_state_verbose(_("Reservation was just confirmed by %s." % user))
+            self.set_state_verbose(_("Reservation was just confirmed."))
             if self.need_manual_confirmation():
                 self.send_reservation_confirmed_mail(extra_context={'update_message': update_message})
             # elif self.access_code:
@@ -429,10 +431,10 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                     # notifications are not sent from staff created reservations to avoid spam
                     self.send_reservation_created_mail(extra_context={'update_message': update_message})
         elif new_state == Reservation.DENIED:
-            self.set_state_verbose(_("Reservation was denied by %s." % user))
+            self.set_state_verbose(_("Reservation was denied."))
             self.send_reservation_denied_mail(extra_context={'update_message': update_message})
         elif new_state == Reservation.CANCELLED:
-            self.set_state_verbose(_("Reservation was canceled by %s." % user))
+            self.set_state_verbose(_("Reservation was canceled."))
             order = self.get_order()
             if order:
                 if order.state == order.CANCELLED:
@@ -456,7 +458,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def get_state_verbose(self):
         # TODO add this verbose state in modelhistory details?
         if self._state_verbose is None:# or not isinstance(self._state_verbose, str):
-            return _("Reservation %s has now state %s." % (self.identifier, self.state))
+            return _("Reservation %s: %s" % (self.identifier, self.state))
         else:
             return self._state_verbose
 
@@ -539,7 +541,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         the original reservation need to be provided in kwargs as 'original_reservation', so
         that it can be excluded when checking if the resource is available.
 
-        Raises ReservationWarning exceptions on non critical failures.
+        Raises ReservationWarning (or similar) exceptions on non critical failures.
         Data integrity failures shall raise ValidationErrors instead.
         """
 
@@ -739,7 +741,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         try:
             notification_template = NotificationEmailTemplate.objects.get(type=notification_type)
         except NotificationEmailTemplate.DoesNotExist:
-            logger.debug("DoesNotExists: NotificationEmailTemplate for type %s" % str(notification_type))
+            logger.warning("DoesNotExists: NotificationEmailTemplate for type %s" % str(notification_type))
             return
 
         if getattr(self, 'order', None) and self.billing_email_address:
@@ -766,7 +768,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         self.related_emails.add(email)
 
-        return email.to
+        return email.to or []
 
     def send_reservation_requested_mail(self, **kwargs):
         return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED, **kwargs)
@@ -779,6 +781,17 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
         for user in notify_users:
             return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user, **kwargs)
+        return []
+
+    def send_access_requested_mail_to_officials(self, **kwargs):
+        # notify_users = self.resource.get_users_with_perm('can_approve_reservation')
+        notify_users = self.resource.get_access_delegates()
+        logger.debug('notify_users for %s: %s' % (self, notify_users))
+        if len(notify_users) > 100:
+            raise Exception("Refusing to notify more than 100 users (%s)" % self)
+        for user in notify_users:
+            return self.send_reservation_mail(NotificationType.RESERVATION_ACCESS_REQUESTED_OFFICIAL, user=user, **kwargs)
+        return []
 
     def send_external_user_requested_mail_to_officials(self, external_attendee, **kwargs):
         notify_users = self.resource.get_user_confirmation_delegates()
@@ -793,7 +806,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 'external_attendee': external_attendee,
                 **extra_context
             }, **kwargs)
-        return None
+        return []
 
     def send_reservation_denied_mail(self, **kwargs):
         return self.send_reservation_mail(NotificationType.RESERVATION_DENIED, **kwargs)

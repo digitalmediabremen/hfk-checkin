@@ -93,8 +93,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                    )
     search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
-    readonly_fields = ('user','uuid','approver','number_of_attendees','get_reservation_info','message', 'purpose','get_phone_number')
-    extra_readonly_fields_edit = ('agreed_to_phone_contact','organizer_is_attending','type')
+    readonly_fields = ('uuid','approver','agreed_to_phone_contact','number_of_attendees','get_reservation_info','get_phone_number')
+    extra_readonly_fields_edit = ('user','organizer_is_attending','type''message','purpose',)
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
     date_hierarchy = 'begin'

@@ -109,4 +109,21 @@ class AbstractAccessRestrictedModel(models.Model):
     class Meta:
         abstract = True
 
+    def get_access_delegates_display(self):
+        return ", ".join([d.get_display_name() for d in self.get_access_delegates()])
+
+    def get_access_delegates(self):
+        """
+        Returns list of Users delegated to manage reservations on this resource.
+        If resource has none, it will use reservation_delegates of Unit.
+
+        :return:
+        """
+        users = []
+        users += get_users_with_perms(self, only_with_perms_in=['resource:can_modify_access'])
+        if self.unit:
+            users += get_users_with_perms(self.unit, only_with_perms_in=['unit:can_modify_access'])
+        logger.error("%s: No access delegates found." % self)
+        return users
+
 
