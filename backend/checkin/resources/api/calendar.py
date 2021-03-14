@@ -65,7 +65,7 @@ class ReservationCalendarViewSet(ReservationViewSet):
             raise Http404
         return qs
 
-register_view(ReservationCalendarViewSet, 'calendar/event')
+register_view(ReservationCalendarViewSet, 'calendar/event', base_name='calendarevent')
 
 
 
@@ -102,7 +102,10 @@ class ResourceCalendarViewSet(ResourceListViewSet):
         return CalendarResourceSerializer
 
     def get_resources_from_query_params(self):
-        return self.request.query_params.get('resources', None).split('.')
+        resources_filter = self.request.query_params.get('resources', None)
+        if resources_filter:
+            return resources_filter.split('.')
+        return None
 
     def get_queryset(self):
         resources = self.get_resources_from_query_params()
@@ -127,4 +130,4 @@ class ResourceCalendarViewSet(ResourceListViewSet):
         return context
 
 
-register_view(ResourceCalendarViewSet, 'calendar/resource')
+register_view(ResourceCalendarViewSet, 'calendar/resource', base_name='calendarresource')

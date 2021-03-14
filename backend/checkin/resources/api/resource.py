@@ -186,10 +186,11 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
     # min_price_per_hour = serializers.SerializerMethodField()
     access_allowed_to_current_user = serializers.SerializerMethodField()
     capacity = serializers.IntegerField(required=False, source='people_capacity')
+    features = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Resource
-        fields = ('url','uuid','name','alternative_names','numbers','display_name','display_numbers','unit','type',
+        fields = ('url','uuid','name','alternative_names','numbers','display_name','display_numbers','unit','type', 'features',
                   'floor_number','floor_name','area','description','capacity', 'min_period', 'max_period', 'slot_size', 'max_reservations_per_user',
                   'reservable_max_days_in_advance', 'reservable_min_days_in_advance', 'external_reservation_url',
                   'access_restricted','access_allowed_to_current_user') + tuple(ModifiableModelSerializerMixin.Meta.fields)
