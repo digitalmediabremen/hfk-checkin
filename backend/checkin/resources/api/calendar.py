@@ -53,15 +53,17 @@ class ReservationCalendarViewSet(ReservationViewSet):
     def get_queryset(self):
         resource = self.kwargs.get('resource', None)
         resources = self.request.query_params.get('resources', None)
+        # only display current reservations
+        qs = super().get_queryset().current()
         try:
             if resource and resource != 'all':
-                return super().get_queryset().filter(resource__pk=resource)
+                return qs.filter(resource__pk=resource)
             if resources:
                 resources = resources.split('.')
-                return super().get_queryset().filter(resource__uuid__in=resources)
+                return qs.filter(resource__uuid__in=resources)
         except (ValidationError, Resource.DoesNotExist):
             raise Http404
-        return super().get_queryset()
+        return qs
 
 register_view(ReservationCalendarViewSet, 'calendar/event')
 
