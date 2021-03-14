@@ -293,6 +293,11 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     def __str__(self):
         return self.display_name
 
+    def clean(self, *args, **kwargs):
+        if self.reservable and self.external_reservation_url:
+            raise ValidationError(_("Resources can not be reservable in this system and use a external reservation service url at the same time."))
+        super().clean(*args, **kwargs)
+
     @property
     def public(self):
         DeprecationWarning("Resource has no attribute 'public' any more.")

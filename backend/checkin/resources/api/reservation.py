@@ -27,6 +27,7 @@ from rest_framework.exceptions import NotAcceptable, ValidationError
 from rest_framework.settings import api_settings as drf_settings
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.timezone import localtime
 
 #from munigeo import api as munigeo_api
 from .resource import ResourceSerializer, ResourceListViewSet
