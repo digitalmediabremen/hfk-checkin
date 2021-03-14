@@ -360,7 +360,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         if self.is_admin(user):
             return
 
-        tz = self.unit.get_tz()
+        tz = self.get_tz()
         # check if data from serializer is present:
         if data:
             begin = data['begin']

@@ -764,6 +764,9 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         instance = serializer.save(**override_data)
         resource = instance.resource
 
+        if not resource.reservable:
+            raise ValidationError('Reservations for this resource are disabled.')
+
         if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
             new_state = Reservation.REQUESTED
         else:
@@ -772,7 +775,7 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
             else:
                 new_state = Reservation.CONFIRMED
 
-        instance.set_state(new_state, self.request.user)
+        instance.try_to_set_state(new_state, self.request.user)
 
     def perform_destroy(self, instance):
         instance.set_state(Reservation.CANCELLED, self.request.user)

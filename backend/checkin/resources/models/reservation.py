@@ -193,8 +193,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     message = models.TextField(null=True, blank=True, verbose_name=_('Message'))
     # reason or usage
     purpose = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Purpose'))
-    user = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('Organizer'), null=True,
-                                           blank=True, db_index=True, on_delete=models.PROTECT)
+    user = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('Organizer'), db_index=True, on_delete=models.PROTECT)
     state = models.CharField(max_length=32, choices=STATE_CHOICES, verbose_name=_('State'), default=CREATED)
     approver = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('Approver'),
                                  related_name='approved_reservations', null=True, blank=True,
@@ -383,10 +382,31 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         self.state = new_state
         self.save()
 
+    def try_to_set_state(self, new_state, user):
+        """
+        Tryies to set new state on Reservation. Will validate, check collisions and availability first.
+        TODO check opening ours
+        TODO check availabilty to user
+        TODO check permission to make reservation
+        TODO check collissions, capacity
+
+        :param new_state:
+        :param user:
+        :return:
+        """
+        if new_state == Reservation.CONFIRMED:
+            # TODO validate reservation here
+            # TODO compare to ReservationSerializer.validate()
+            # TODO use exlusive_resource_usage
+            # if okay leave state on CONFIRMED
+            # if warnings or errors occur set to REQUESTED
+            new_state = Reservation.REQUESTED
+        return self.set_state(new_state, user)
+
     def process_state_change(self, old_state, new_state, user, update_message=None):
-        if new_state == Reservation.CREATED:
-            # TODO do not raise ValidationError here. They will not be caught.
-            raise ValidationError(_("Already existing reservations can not have state %s" % Reservation.CREATED))
+        if old_state == Reservation.CREATED and new_state == Reservation.CREATED:
+            # nothing to do?
+            return
 
         # Make sure it is a known state
         assert new_state in (
@@ -648,6 +668,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
 
     def get_notification_context(self, language_code, user=None, notification_type=None, extra_context={}):
+        from ..api.reservation import ReservationSerializer, ResourceSerializer
 
         if not user:
             user = self.user
