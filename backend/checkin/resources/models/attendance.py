@@ -84,7 +84,7 @@ class CheckinAttendance(Attendance):
 
     class Meta:
         proxy = True
-        verbose_name = _("Registration")
+        verbose_name = _("Attendance registration")
 
     def __str__(self):
         return "%(profile)s on %(date)s for reservation %(reservation)s" % \

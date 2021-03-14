@@ -4,6 +4,9 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.utils.timezone import make_naive
 from rangefilter.filter import DateTimeRangeFilter
+from django.utils.timezone import now
+from django.shortcuts import redirect
+from django.utils.http import urlencode
 
 from checkin.tracking.models import Checkin, Origin as CheckinOrigin
 from checkin.tracking.models import Location as CheckinLocation
@@ -166,6 +169,18 @@ class CheckinAttendanceAdmin(AttendanceAdmin):
             pass
         info = self.model._meta.app_label, self.model._meta.model_name
         return redirect(reverse('admin:%s_%s_changelist' % info))
+
+    def changelist_view(self, request, extra_context=None):
+        if request.GET:
+            return super().changelist_view(request, extra_context=extra_context)
+
+        date = now().date()
+        params = ['day', 'month', 'year']
+        field_keys = ['{}__{}'.format(self.date_hierarchy, i) for i in params]
+        field_values = [getattr(date, i) for i in params]
+        query_params = dict(zip(field_keys, field_values))
+        url = '{}?{}'.format(request.path, urlencode(query_params))
+        return redirect(url)
 
 
 

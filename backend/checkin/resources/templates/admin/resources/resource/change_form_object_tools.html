@@ -8,5 +8,13 @@
 {% blocktrans with cl.opts.verbose_name as name %}Calendar{% endblocktrans %}
 </a>
 </li>
+{#{% if "resource:can_modify_access" in resource_perms %}#}
+<li>
+{% url 'admin:resources_resourceaccess_change' original.pk|admin_urlquote as url %}
+<a href="{% add_preserved_filters url is_popup to_field %}" class="accesspermissionlink">
+  {% blocktrans with cl.opts.verbose_name as name %}Access Permissions{% endblocktrans %}
+</a>
+</li>
+{#{% endif %}#}
 {{ block.super }}
 {% endblock %}
