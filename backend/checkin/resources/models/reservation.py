@@ -129,7 +129,7 @@ class ReservationQuerySet(models.QuerySet):
         return self.annotate(number_of_attendances=Count('attendance'))
 
     def annotate_total_number_of_attendees(self):
-        return self.annotate(total_number_of_attendees=ExpressionWrapper(Count('attendance') - F('number_of_extra_attendees'), output_field=IntegerField()))
+        return self.annotate(total_number_of_attendees=ExpressionWrapper(Count('attendance') + F('number_of_extra_attendees'), output_field=IntegerField()))
 
     def aggregate_sum_of_total_number_of_attendees(self):
         # sum of annotated total_number_of_attendees or 0
@@ -256,7 +256,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if hasattr(self,'number_of_attendances'): # from DB with annotation
             return self.number_of_attendances + extra
         return len(self.attendees.all()) + extra
-    number_of_attendees.fget.short_description = _("N")
+    number_of_attendees.fget.short_description = _("Num.")
 
     @property
     def is_inactive(self):

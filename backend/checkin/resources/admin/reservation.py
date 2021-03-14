@@ -82,7 +82,7 @@ class ReservationAdminForm(forms.ModelForm):
 
 class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin, admin.ModelAdmin):
     #extra_readonly_fields_on_update = ('access_code',)
-    list_display = ('get_state_colored','user','resource','get_display_duration','number_of_attendees','get_priority','get_exclusive')
+    list_display = ('get_state_colored','user','resource','get_display_duration','number_of_attendees','get_collisions','get_priority','get_exclusive')
     list_filter = (ResourceFilter,'resource__unit','state','has_priority','exclusive_resource_usage','purpose',
                    UserFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
@@ -123,9 +123,6 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         return super().get_queryset(request).select_related('user', 'user__profile')\
             .prefetch_resource_and_unit()
 
-    def get_display_duration(self, obj=None):
-        return obj.duration
-
     def get_readonly_fields(self, request, obj=None):
         if obj:  # obj is not None, so this is an edit
             return self.readonly_fields + self.extra_readonly_fields_edit
@@ -161,6 +158,17 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         return obj.display_duration
     get_display_duration.short_description = _("Timespan")
     get_display_duration.admin_order_field = 'begin'
+
+    def get_collisions(self, obj):
+        all_attendees_count = obj.resource.get_total_number_of_attendees_for_period(obj.begin, obj.end)
+        if all_attendees_count > obj.resource.people_capacity:
+            return format_html(
+                '<b style="color:red;">{} / {}</b>',
+                all_attendees_count, obj.resource.people_capacity
+            )
+        else:
+            return "%d / %d" % (all_attendees_count, obj.resource.people_capacity)
+    get_collisions.short_description = _("Avail.")
 
     def get_state_colored(self, obj):
         colors = {
