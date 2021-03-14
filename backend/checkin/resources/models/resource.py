@@ -282,6 +282,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     #history = HistoricalRecords()
 
     objects = ResourceManager()
+    objects_without_annotations = ResourceQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("Space")

@@ -300,7 +300,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             # Mark begin of a critical section. Subsequent calls with this same resource will block here until the first
             # request is finished. This is needed so that the validations and possible reservation saving are
             # executed in one block and concurrent requests cannot be validated incorrectly.
-            Resource.objects.select_for_update().get(pk=resource.pk)
+            Resource.objects_without_annotations.select_for_update().get(pk=resource.pk)
 
             # Check maximum number of active reservations per user per resource.
             # Only new reservations are taken into account ie. a normal user can modify an existing reservation
