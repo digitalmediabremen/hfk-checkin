@@ -64,7 +64,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-n', '--count', type=int, nargs='?', default=5, help='Number of requests to send.')
-        parser.add_argument('-w', '--wait', type=int, nargs='?', default=1,
+        parser.add_argument('-w', '--wait', type=int, nargs='?', default=0,
                             help='Number seconds to wait after each request sent.')
         parser.add_argument('-sd', '--startdate', required=True,
                             type=lambda d: datetime.datetime.strptime(d, '%Y-%m-%d'),
@@ -77,7 +77,7 @@ class Command(BaseCommand):
         print = self.stdout.write
 
         possible_users = list(get_or_create_test_users())
-        possible_resources = list(get_or_create_test_resources(3))
+        possible_resources = list(get_or_create_test_resources(20))
 
         number_of_requests = options['count']
         run_id = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(4))

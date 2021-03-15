@@ -681,8 +681,10 @@ class ReservationCacheMixin:
 
 
 class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
-    queryset = Reservation.objects.select_related('user', 'user__profile', 'resource', 'resource__unit')\
-        .prefetch_related('resource__groups','attendance_set','attendance_set__user').order_by('begin', 'resource__unit__name', 'resource__name')
+    queryset = Reservation.objects.select_related('user', 'user__profile')\
+        .prefetch_resource_and_unit()\
+        .prefetch_related('resource__groups','attendance_set','attendance_set__user')\
+        .order_by('begin', 'resource__unit__name', 'resource__name')
         # .prefetch_related('catering_orders')\
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('order', 'order__order_lines', 'order__order_lines__product')
