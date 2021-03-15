@@ -4,7 +4,6 @@ const translation: Translation = {
     en: {
         common: {
             "nicht verifiziert": "Not verified",
-            "Du hast bisher noch keine Reservierung angefragt.": "NEW",
             "Seite nicht gefunden": "Page not found",
             "+{days} Tag": "NEW",
             jetzt: "now",
@@ -22,34 +21,25 @@ const translation: Translation = {
             Protokoll: "Log",
             "Noch keine Checkins vorhanden": "No checkins",
             "Telefon ändern": "Change phone",
-            "Datum und Uhrzeit": "NEW",
-            Zeit: "NEW",
-            Raum: "NEW",
-            "optionale angaben": "NEW",
-            "Externe Personen": "NEW",
-            "Pers.": "NEW",
-            Buchungsgrund: "NEW",
-            Grund: "NEW",
-            Nachricht: "NEW",
-            "Nach.": "NEW",
-            "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
-                "NEW",
-            Anfragen: "NEW",
             Heute: "NEW",
             Morgen: "NEW",
         },
         reservation: {
             Buchungen: "NEW",
+            "'Deine Buchung {identifier} wurde storniert.'": "NEW",
             "Weitere Anfrage": "NEW",
             "Deine Anfrage ist eingegangen.": "NEW",
-            "weitere Anfrage": "NEW",
-            "'Deine Buchung {identifier} wurde storniert.'": "NEW",
             Stornieren: "NEW",
+            "weitere Anfrage": "NEW",
             angefragt: "NEW",
             bestätigt: "NEW",
             abgelehnt: "NEW",
             storniert: "NEW",
             erstellt: "NEW",
+            "Noch hast du keine Buchungsanfragen gestellt.": "NEW",
+            "Neue Buchungsanfrage": "NEW",
+            "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
+                "NEW",
         },
         request: {
             "Externe Personen": "NEW",
@@ -59,18 +49,25 @@ const translation: Translation = {
             Raum: "NEW",
             "Person hinzufügen": "NEW",
             Raumliste: "NEW",
+            Grund: "NEW",
             Telefonkontakt: "NEW",
             Alleinnutzung: "NEW",
             "Externe Teilnehmer": "NEW",
             Anfang: "NEW",
             Ende: "NEW",
             "Weitere Teilnehmer": "NEW",
-            Grund: "NEW",
             "Du hast keine Berechtigung den Raum \\{resource}\\ zu buchen.":
                 "NEW",
             "Ein Ausnahmegrund muss angegeben werden.": "NEW",
             "Du musst noch den Raum auswählen.": "NEW",
             "Du musst noch eine Zeit angeben.": "NEW",
+            Zeit: "NEW",
+            "optionale angaben": "NEW",
+            "Pers.": "NEW",
+            "Nach.": "NEW",
+            "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
+                "NEW",
+            Anfragen: "NEW",
         },
         "request-attendees": {
             "HfK externe Person(en) anmelden": "NEW",
@@ -179,5 +176,4 @@ const translation: Translation = {
         },
     },
 };
-
 export default translation;

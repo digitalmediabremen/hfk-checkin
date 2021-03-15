@@ -31,7 +31,7 @@ const headerProvider = (groupKey: string, firstValue: MyReservation) => (
 );
 
 const EmptyState = () => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("reservation");
     const router = useRouter();
 
     return (
@@ -42,7 +42,7 @@ const EmptyState = () => {
                 )}
             </Notice>
             <NewButton onClick={() => router.push(appUrls.request)}>
-                {t("neue buchungsanfrage")}
+                {t("Neue Buchungsanfrage")}
             </NewButton>
         </>
     );
