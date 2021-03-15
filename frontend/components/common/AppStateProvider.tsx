@@ -33,7 +33,7 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
                 fontSize: isWide ? 18 : 16,
                 unit: isWide ? 9 : 8,
                 borderRadius: isWide ? 6 : 5,
-                offsetTopBar: isPwa ? 16 : 0,
+                offsetTopBar: isPwa ? 0 : 0,
             },
         });
     }, [isWide]);

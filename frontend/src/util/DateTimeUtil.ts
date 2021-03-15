@@ -66,11 +66,13 @@ export const createTime = (hours: number, minutes: number): Time => {
     return d;
 };
 
-const timeWithinDateIsConsideredNow = 30;
+const timeWithinDateIsConsideredNow = 1;
 
-export const isNow = (date: Date) =>
-    new Date().getTime() - date.getTime() <
-    timeWithinDateIsConsideredNow * 1000;
+export const isNow = (
+    date: Date,
+    thresholdInMinutes: number = timeWithinDateIsConsideredNow
+) =>
+    Math.abs(new Date().getTime() - date.getTime()) < thresholdInMinutes * 60 * 1000;
 
 export const isToday = (date: Date) =>
     new Date().toDateString() === date.toDateString();

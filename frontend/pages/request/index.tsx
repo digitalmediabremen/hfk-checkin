@@ -31,7 +31,7 @@ import {
 const Subpages = <SubpageCollection />;
 
 const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
-    const { t, locale } = useTranslation();
+    const { t, locale } = useTranslation("request");
     const { handlerProps, direction, activeSubPage } = useSubPage(
         requestSubpages
     );
@@ -40,7 +40,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const ValidationIcon = <AlertCircle />;
 
     const { reservation } = useReservationRequest();
-    const { purpose, message: comment } = reservation;
+    const { message: comment } = reservation;
 
     const { submit, loading } = useSubmitReservation();
 

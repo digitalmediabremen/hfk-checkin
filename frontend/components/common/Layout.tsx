@@ -133,6 +133,7 @@ export interface LayoutProps {
     subPages?: ReactElement;
     direction?: TransitionDirection;
     children: ReactNode;
+    noContentMargin?: boolean;
 }
 
 const Layout: FunctionComponent<LayoutProps> = ({
@@ -140,6 +141,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
     activeSubPage,
     subPages,
     direction,
+    noContentMargin
 }) => {
     const theme = useTheme();
     return (
@@ -156,6 +158,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
             <Page
                 active={!activeSubPage}
                 scroll
+                noContentMargin={noContentMargin}
                 topBar={
                     <TopBar
                         actionProvider={() => (

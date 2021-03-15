@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect } from "react";
 import { ArrowRight } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
+import NewButton from "../../components/common/NewButton";
 import Notice from "../../components/common/Notice";
 import Reservation from "../../components/common/Reservation";
 import Subtitle from "../../components/common/Subtitle";
@@ -13,7 +15,7 @@ import { useTranslation } from "../../localization";
 import useReservations from "../../src/hooks/useReservations";
 import MyProfile from "../../src/model/api/MyProfile";
 import { MyReservation } from "../../src/model/api/Reservation";
-import { isToday } from "../../src/util/DateTimeUtil";
+import { isNow, isToday } from "../../src/util/DateTimeUtil";
 import * as format from "../../src/util/TimeFormatUtil";
 
 interface ReservationsPageProps {
@@ -24,17 +26,25 @@ interface ReservationsPageProps {
 const sort = (a: MyReservation, b: MyReservation) =>
     a.begin.getTime() - b.begin.getTime();
 
-const headerProvider = (groupKey: string, firstValue: MyReservation) =>
+const headerProvider = (groupKey: string, firstValue: MyReservation) => (
     <Subtitle center>{groupKey}</Subtitle>
-    
+);
 
 const EmptyState = () => {
     const { t } = useTranslation();
+    const router = useRouter();
 
     return (
-        <Notice>
-            {t("Du hast bisher noch keine Reservierung angefragt.")}
-        </Notice>
+        <>
+            <Notice>
+                {t(
+                    "Hier siehst du alle deine Buchungsanfragen und ihren Status."
+                )}
+            </Notice>
+            <NewButton onClick={() => router.push(appUrls.request)}>
+                {t("Neue Buchung erstellen")}
+            </NewButton>
+        </>
     );
 };
 
@@ -79,6 +89,14 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
                                 >
                                     <a>
                                         <Reservation
+                                            above={
+                                                isNow(
+                                                    reservation.begin,
+                                                    60 * 3
+                                                ) &&
+                                                reservation.state ===
+                                                    "confirmed"
+                                            }
                                             includeState
                                             reservation={reservation}
                                             bottomSpacing={last ? 2 : 1}
