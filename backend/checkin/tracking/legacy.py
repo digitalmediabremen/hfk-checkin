@@ -39,9 +39,9 @@ class Location(MPTTModel):
     @property
     def capacity(self):
         # use new Location to get (legacy) activity profiles
-        activities = CapacityForActivityProfile.objects.filter(location=NewLocation.objects.get(pk=self.pk)).all()
+        activities = CapacityForActivityProfile.objects.filter(location_id=NewLocation.objects.values('pk').get(pk=self.pk)['pk']).values('capacity').all()
         if activities:
-            max_capacity = max([act.capacity for act in activities])
+            max_capacity = max([act['capacity'] for act in activities])
             return max_capacity
         return None
     capacity.fget.short_description = _('Kapazität')

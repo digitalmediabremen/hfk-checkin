@@ -18,6 +18,7 @@ from django.db.models import Count
 from django.contrib.postgres.search import SearchVector
 from dirtyfields import DirtyFieldsMixin
 from django_better_admin_arrayfield.models.fields import ArrayField
+import random, string
 
 CHECKIN_RETENTION_TIME = timedelta(weeks=4)
 CHECKIN_LIFETIME = timedelta(hours=24)
@@ -113,12 +114,15 @@ class Location(MPTTModel):
     removed = models.BooleanField(verbose_name=_("Entfernt"), default=False, help_text=_("Diese Raum ist deaktiviert oder entfernt. Eine Löschung ist jedoch noch nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"))
     # history = is registered via register_history (see below)
 
+    # random name for data migration from v1 to v2 only
+    random_name = property(lambda self: ''.join(random.choices(string.ascii_uppercase + string.digits, k=10)))
+
     display_numbers = property(lambda self: self.resource.display_numbers if self.resource else None)
     display_numbers.fget.short_description = _('Numbers')
-    number = property(lambda self: self.resource.display_numbers if self.resource else self._number)
-    org_number = property(lambda self: self.resource.display_numbers if self.resource else self._number)
-    name = property(lambda self: self.resource.name if self.resource else self._name)
-    org_name = property(lambda self: self.resource.name if self.resource else self._name)
+    number = property(lambda self: self.resource.display_numbers if self.resource else getattr(self, '_number', None))
+    org_number = property(lambda self: self.resource.display_numbers if self.resource else getattr(self, '_number', None))
+    name = property(lambda self: self.resource.name if self.resource else getattr(self, '_name', self.random_name))
+    org_name = property(lambda self: self.resource.name if self.resource else getattr(self, '_name', self.random_name))
     org_responsible = property(lambda self: self.resource.get_reservation_delegates() if self.resource else None)
     org_size = property(lambda self: self.resource.area if self.resource else None)
     area = property(lambda self: self.resource.area if self.resource else None)

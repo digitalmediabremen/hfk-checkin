@@ -57,6 +57,16 @@ class Migration(migrations.Migration):
             old_name='org_number',
             new_name='_number',
         ),
+        migrations.AlterField(
+            model_name='location',
+            name='_name',
+            field=models.CharField(help_text='Used if not attached to resource.', max_length=255, verbose_name='Raumname / Standort'),
+        ),
+        migrations.AlterField(
+            model_name='location',
+            name='_number',
+            field=models.CharField(blank=True, help_text='Used if not attached to resource.', max_length=24, verbose_name='Raumnummer'),
+        ),
         migrations.RemoveField(
             model_name='location',
             name='org_responsible',
@@ -68,11 +78,6 @@ class Migration(migrations.Migration):
         migrations.RemoveField(
             model_name='location',
             name='org_usage',
-        ),
-        migrations.AddField(
-            model_name='location',
-            name='resource',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='resources.resource'),
         ),
         migrations.AlterField(
             model_name='checkin',

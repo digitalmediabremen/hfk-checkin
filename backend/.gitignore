@@ -125,6 +125,7 @@ media/
 respa/
 post_office_attachments/
 migrations-respa
+migrations-dev
 # respa tests etc.
 *-respa
 tests-disabled

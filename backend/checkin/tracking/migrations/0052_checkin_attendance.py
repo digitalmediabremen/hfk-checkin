@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('resources', '0016_checkin_attendance'),
+        ('resources', '0002_migration_to_v2'),
         ('tracking', '0051_transfer_profile_to_users_app'),
     ]
 

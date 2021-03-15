@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('resources', '0018_merging_resources_with_checkin_locations'),
         ('tracking', '0052_checkin_attendance'),
     ]
 

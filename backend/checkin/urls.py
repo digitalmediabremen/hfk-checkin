@@ -34,6 +34,8 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         path('location/html/', LocationsView.as_view(), name='html-export'),
         path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),
         path('api/', include(checkin_api_router.urls)),
+        path('paperlog-location-autocomplete/', LocationAutocomplete.as_view(), name='paper-location-autocomplete'),
+        path('paperlog-profile-autocomplete/', ProfileAutocomplete.as_view(), name='paper-profile-autocomplete'),
     ]
 
 respa_router = RespaAPIRouter()
@@ -44,8 +46,6 @@ if 'microsoft_auth' in settings.INSTALLED_APPS:
 
 urlpatterns += [
     path('admin/', admin.site.urls),
-    path('paperlog-location-autocomplete/', LocationAutocomplete.as_view(), name='paper-location-autocomplete'),
-    path('paperlog-profile-autocomplete/', ProfileAutocomplete.as_view(), name='paper-profile-autocomplete'),
     path('impersonate/', include('impersonate.urls')),
     path('login/redirect/', to_ms_redirect),
     path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout

@@ -23,6 +23,11 @@ class Migration(migrations.Migration):
                     name='profile',
                     field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='users.profile', verbose_name='Person'),
                 ),
+                migrations.AlterField(
+                    model_name='paperlog',
+                    name='profile',
+                    field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='users.profile', verbose_name='Person'),
+                ),
             ],
             # Table already exists. checkin/tracking/migrations/0038_transfer_profile_to_users_app.py
             database_operations=[],

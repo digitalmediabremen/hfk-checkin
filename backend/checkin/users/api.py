@@ -26,8 +26,13 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    from checkin.resources.api.nested import SimpleReservationSerializer
-    from checkin.tracking.serializers import SimpleCheckinSerializer
+    from django.conf import settings
+    if 'checkin.tracking' in settings.INSTALLED_APPS:
+        from checkin.tracking.serializers import SimpleCheckinSerializer
+        last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
+    if 'checkin.resources' in settings.INSTALLED_APPS:
+        from checkin.resources.api.nested import SimpleReservationSerializer
+        reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
     id = serializers.ReadOnlyField(source='profile.pk')
     display_name = serializers.ReadOnlyField(source='get_display_name')
     first_name = serializers.CharField(source='profile.first_name')
@@ -35,12 +40,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(source='profile.phone')
     email = serializers.EmailField(source='profile.email')
     is_external = serializers.EmailField(source='profile.is_external')
-    display_name = serializers.ReadOnlyField(source='get_display_name')
     #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     # TODO limited qs on reservations etc. ListField to ReservationsViewSet?
     #reservations = serializers.ListField(serializers=)
-    reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
-    last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
     verified = serializers.ReadOnlyField(source='profile.verified')
     complete = serializers.ReadOnlyField(source='profile.complete')
 

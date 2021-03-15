@@ -76,16 +76,14 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
             self.state = AttendanceStates.REQUESTED
         super().save(*args, **kwargs)
 
-if not 'checkin.tracking' in settings.INSTALLED_APPS:
-    raise ImproperlyConfigured("Trying to import AttendanceCheckin, but checkin.tracking is not in INSTALLED_APPS.")
+if 'checkin.tracking' in settings.INSTALLED_APPS:
 
+    class CheckinAttendance(Attendance):
 
-class CheckinAttendance(Attendance):
+        class Meta:
+            proxy = True
+            verbose_name = _("Attendance registration")
 
-    class Meta:
-        proxy = True
-        verbose_name = _("Attendance registration")
-
-    def __str__(self):
-        return "%(profile)s on %(date)s for reservation %(reservation)s" % \
-               { 'profile': self.user, 'date': self.reservation.display_duration, 'reservation': self.reservation }
+        def __str__(self):
+            return "%(profile)s on %(date)s for reservation %(reservation)s" % \
+                   { 'profile': self.user, 'date': self.reservation.display_duration, 'reservation': self.reservation }
