@@ -6,25 +6,23 @@ from django.conf.urls.static import static
 from django.views import defaults as default_views
 
 from rest_framework import routers
-from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
-from checkin.booking.api import RoomViewSet, BookingRequestViewSet
-from microsoft_auth.models import MicrosoftAccount
-from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
 from rest_framework.schemas import get_schema_view
-from checkin.resources.api import RespaAPIRouter
+
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth import get_user_model
 User = get_user_model()
-from checkin.resources.api.calendar import ReservationCalendarViewSet
-from checkin.users.admin import UserAdmin
 
+from checkin.resources.api import RespaAPIRouter
+
+admin.site.enable_nav_sidebar = False
 urlpatterns = []
 checkin_api_router = routers.SimpleRouter()
 
 if 'checkin.tracking' in settings.INSTALLED_APPS:
     from checkin.tracking.views.location import LocationsPDFView, LocationsView
     from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
+    from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
     #from checkin.booking.api import RoomViewSet, BookingRequestViewSet
     checkin_api_router.register(r'location', LocationViewSet)
     checkin_api_router.register(r'checkin', CheckinViewSet, basename='checkin')
@@ -36,14 +34,13 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         path('location/html/', LocationsView.as_view(), name='html-export'),
         path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),
         path('api/', include(checkin_api_router.urls)),
-        re_path('^api/resource/(?P<resource>[^/.]+)/events/$', ReservationCalendarViewSet.as_view({'get': 'list'})),
     ]
 
 respa_router = RespaAPIRouter()
 
-from checkin.users.apps import fix_microsoft_auth_user_admin
-fix_microsoft_auth_user_admin()
-admin.site.enable_nav_sidebar = False
+if 'microsoft_auth' in settings.INSTALLED_APPS:
+    from checkin.users.apps import fix_microsoft_auth_user_admin
+    fix_microsoft_auth_user_admin()
 
 urlpatterns += [
     path('admin/', admin.site.urls),

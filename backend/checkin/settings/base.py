@@ -74,9 +74,6 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.forms",
-    # dal = django-autocomplete-light needs to come BEFORE django.contrib.admin
-    'dal',
-    'dal_select2',
     #"nucleus", # before django.contrib.admin
     'modeltranslation', # before django.contrib.admin
     'dal', # dal = django-autocomplete-light needs to come BEFORE django.contrib.admin
@@ -104,7 +101,6 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'checkin.users',
     'checkin.tracking',
-    #'checkin.booking',
     'checkin.resources',
     'checkin.notifications',
 ]
