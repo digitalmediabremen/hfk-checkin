@@ -94,7 +94,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
     readonly_fields = ('uuid','approver','agreed_to_phone_contact','number_of_attendees','get_reservation_info','get_phone_number')
-    extra_readonly_fields_edit = ('user','organizer_is_attending','type','message','purpose',)
+    extra_readonly_fields_edit = ('organizer_is_attending','type','message','purpose',) # 'user',
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
     date_hierarchy = 'begin'
@@ -161,6 +161,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     def get_collisions(self, obj):
         all_attendees_count = obj.resource.get_total_number_of_attendees_for_period(obj.begin, obj.end)
+        if not obj.resource.people_capacity:
+            return "%d / ?" % (all_attendees_count,)
         if all_attendees_count > obj.resource.people_capacity:
             return format_html(
                 '<b style="color:red;">{} / {}</b>',

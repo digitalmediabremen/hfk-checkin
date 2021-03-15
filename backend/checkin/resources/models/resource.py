@@ -431,7 +431,6 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         overlaps = self.get_reservation_collisions_qs(begin, end, reservation)
         aggregate_sum = overlaps.aggregate_sum_of_total_number_of_attendees()
         # total_number_of_attendees = sum(c.total_number_of_attendees for c in overlaps)
-        print(aggregate_sum)
         return aggregate_sum['sum_of_total_number_of_attendees']
 
     def check_capacity_exhausted(self, begin, end, reservation=None):
