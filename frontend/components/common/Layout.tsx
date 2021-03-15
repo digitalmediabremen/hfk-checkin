@@ -84,12 +84,6 @@ const { styles, className } = css.resolve`
     .page-animation.exit-done > :global(.page-wrapper) {
         transition: none;
     }
-
-    // safari fix
-    :global(body) {
-        overflow: hidden;
-        position: relative;
-    }
 `;
 
 const PageTransition: FunctionComponent<PageAnimationProps> = ({
@@ -143,7 +137,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
     subPages,
     direction,
     noContentMargin,
-    overrideHeader
+    overrideHeader,
 }) => {
     const theme = useTheme();
     return (
@@ -155,6 +149,8 @@ const Layout: FunctionComponent<LayoutProps> = ({
             <style jsx>{`
                 :global(html, body) {
                     font-size: ${theme.fontSize}px;
+                    overflow: hidden;
+                    position: relative;
                 }
             `}</style>
             <Page
@@ -164,9 +160,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                 topBar={
                     <TopBar
                         actionProvider={() => (
-                            <Link
-                                href={appUrls.request}
-                            >
+                            <Link href={appUrls.request}>
                                 <a>
                                     <PlusCircle
                                         size={40}
