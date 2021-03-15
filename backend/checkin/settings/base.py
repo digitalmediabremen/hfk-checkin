@@ -87,7 +87,7 @@ THIRD_PARTY_APPS = [
     #'import_export',
     'wkhtmltopdf',
     'rest_framework',
-    'microsoft_auth',
+    #'microsoft_auth',
     'corsheaders',
     'impersonate',
     'rangefilter',
@@ -96,6 +96,9 @@ THIRD_PARTY_APPS = [
     'guardian',
     'django_filters',
     'django_premailer',
+    'oauth2_provider',
+    'social_django',
+    'rest_framework_social_oauth2',
 ]
 
 LOCAL_APPS = [
@@ -116,9 +119,11 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
-    'microsoft_auth.backends.MicrosoftAuthenticationBackend',
+    'rest_framework_social_oauth2.backends.DjangoOAuth2',
+    #'microsoft_auth.backends.MicrosoftAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
+    'social_core.backends.azuread_tenant.AzureADTenantOAuth2',
 ]
 # # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 # AUTH_USER_MODEL = "people.User"
@@ -222,7 +227,9 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 #"nucleus.context_processors.nucleus",
-                'microsoft_auth.context_processors.microsoft',
+                #'microsoft_auth.context_processors.microsoft',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     }
@@ -306,6 +313,9 @@ REST_FRAMEWORK = {
         "checkin.api_auth.CSRFExemptSessionAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',
+        'social_core.backends.azuread_tenant.AzureADTenantOAuth2',
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
@@ -321,6 +331,9 @@ MICROSOFT_AUTH_CLIENT_SECRET = getenv("MICROSOFT_AUTH_CLIENT_SECRET", default=No
 # Tenant ID is also needed for single tenant applications
 MICROSOFT_AUTH_TENANT_ID = '09e769ef-38f0-4cf4-a9e2-194cccd24761'
 environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = 'true' # does not use django.conf. Set os.env instead.
+SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_KEY = MICROSOFT_AUTH_CLIENT_ID
+SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_SECRET = MICROSOFT_AUTH_CLIENT_SECRET
+SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_TENANT_ID = MICROSOFT_AUTH_TENANT_ID
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",

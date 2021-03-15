@@ -44,6 +44,16 @@ if 'microsoft_auth' in settings.INSTALLED_APPS:
     from checkin.users.apps import fix_microsoft_auth_user_admin
     fix_microsoft_auth_user_admin()
 
+if 'social_django' in settings.INSTALLED_APPS:
+    from social_django import views as social_django_views
+    urlpatterns += [
+        path('auth/', include('rest_framework_social_oauth2.urls')),
+        # add custom urls for 'azure-ad-begin' to work with existing redirect urls
+        #path('login/redirect/', social_django_views.auth, kwargs={'backend': 'azuread-tenant-oauth2'}, name='azure-ad-begin', ),
+        #path('login/auth-callback/', social_django_views.complete, kwargs={'backend': 'azuread-tenant-oauth2'}, name='azure-ad-complete'),
+        path('', include('social_django.urls', namespace='social')),
+    ]
+
 urlpatterns += [
     path('admin/', admin.site.urls),
     path('impersonate/', include('impersonate.urls')),
