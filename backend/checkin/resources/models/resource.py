@@ -263,7 +263,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     #public = models.BooleanField(default=True, verbose_name=_('Public'))
     #public = True
     numbers = ArrayField(models.CharField(max_length=24), verbose_name=_("Room number(s)"), blank=True, null=True,
-                         help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XX"))
+                         help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XXx"))
     name = models.CharField(_("Name"), max_length=200)
     alternative_names = ArrayField(models.CharField(max_length=200), verbose_name=_("Alternative names"), blank=True, null=True)
     description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
@@ -318,8 +318,9 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         name = "%s" % (get_translated(self, 'name'),)
         if self.numbers:
             name += " (%s)" % self.display_numbers
-        if hasattr(self, 'people_capacity'):
-            name += " (%s)" % str(getattr(self, 'people_capacity', '?'))
+        cap = getattr(self, 'people_capacity', None)
+        if cap:
+            name += " (%d)" % cap
         return name
     display_name.fget.short_description = _('Name')
 
