@@ -47,13 +47,15 @@ class Migration(migrations.Migration):
             model_name='location',
             name='org_comment',
         ),
-        migrations.RemoveField(
+        migrations.RenameField(
             model_name='location',
-            name='org_name',
+            old_name='org_name',
+            new_name='_name',
         ),
-        migrations.RemoveField(
+        migrations.RenameField(
             model_name='location',
-            name='org_number',
+            old_name='org_number',
+            new_name='_number',
         ),
         migrations.RemoveField(
             model_name='location',
