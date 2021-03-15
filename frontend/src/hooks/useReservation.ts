@@ -2,7 +2,7 @@ import { resourceUsage } from "process";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { setConstantValue } from "typescript";
 import { useApi } from "../../components/api/ApiHooks";
-import { getReservationRequest } from "../../components/api/ApiService";
+import { cancelReservationRequest, getReservationRequest } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
 import Reservation from "../model/api/Reservation";
 
@@ -26,6 +26,7 @@ export default function useReservation(reservationId?: string) {
     }, [showReservationSuccessful]);
 
     useEffect(() => {
+        console.log("updated reservation", api.result)
         if (!api.result) return;
         dispatch({
             type: "updateReservation",
@@ -48,11 +49,17 @@ export default function useReservation(reservationId?: string) {
         }
     }, [reservationFromAppstate, reservationId]);
 
+    const cancelReservation = () => {
+        if (!reservationId) return;
+        return api.request(() => cancelReservationRequest(reservationId))
+    }
+
     return {
         reservationSuccess,
         reservation: useFromAppstate ? reservationFromAppstate : api.result,
         loading: useFromAppstate ? false : api.state === "loading",
         notFound: api.additionalData?.notFound,
+        cancel: cancelReservation,
         ...api,
     };
 }

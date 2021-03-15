@@ -36,13 +36,13 @@ const EmptyState = () => {
 
     return (
         <>
-            <Notice>
+            <Notice bottomSpacing={4}>
                 {t(
-                    "Hier siehst du alle deine Buchungsanfragen und ihren Status."
+                    "Noch hast du keine Buchungsanfragen gestellt."
                 )}
             </Notice>
             <NewButton onClick={() => router.push(appUrls.request)}>
-                {t("Neue Buchung erstellen")}
+                {t("neue buchungsanfrage")}
             </NewButton>
         </>
     );
@@ -98,6 +98,7 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
                                                     "confirmed"
                                             }
                                             includeState
+                                            extendedWidth
                                             reservation={reservation}
                                             bottomSpacing={last ? 2 : 1}
                                             actionIcon={

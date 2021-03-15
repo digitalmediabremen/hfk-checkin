@@ -31,15 +31,18 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
     includeState,
     ...formElementBaseProps
 }) => {
-    const { state, message, attendees, identifier } = reservation;
+    const { state, message, attendees } = reservation;
     const theme = useTheme();
     const { t, locale } = useTranslation("request");
     const purposeValue = purposeFormValuePresenter(reservation, locale);
+    const disabled = state === "cancelled" || state === "denied";
+
 
     const formElementProps = {
         noPadding: true,
         noOutline: true,
         narrow: true,
+        disabled
     };
 
     const isConfirmed = state === "confirmed";
@@ -80,6 +83,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                 reservation={reservation}
                 bottomSpacing={3}
                 includeIndentifier
+                disabled={disabled}
             />
             {attendees && attendees.length > 0 && (
                 <>
@@ -88,7 +92,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                     </SectionTitle>
                     {attendees?.map((attendee) => {
                         const AttendeeStateIcon = getAttendanceStateIcon(
-                            attendee.state || "confirmed"
+                            attendee.state || "requested"
                         );
                         return (
                             <FormElement

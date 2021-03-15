@@ -7,6 +7,7 @@ interface ErrorProps {
 }
 
 const Error: React.FunctionComponent<ErrorProps> = ({ error }) => {
+    console.error(error);
     return (
         <>
             <Layout>

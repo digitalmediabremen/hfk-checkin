@@ -44,7 +44,7 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
     const theme = useTheme();
     const ComponentType = componentType || "div";
     const outline = !noOutline;
-    const interactable = !!onClick;
+    const interactable = !disabled && !!onClick;
 
     const calculateMargin = () => {
         if (extendedWidth) return -theme.spacing(1.5) + 1;
@@ -157,8 +157,8 @@ const FormElementBase: React.FunctionComponent<FormElementBaseProps> = ({
                     outline,
                     dotted,
                     primary,
-                    interactable: !disabled && onClick,
-                    disabled: disabled,
+                    interactable,
+                    disabled,
                     padding: !noPadding,
                     scroll: !!maxHeight,
                     "adaptive-width": adaptiveWidth,

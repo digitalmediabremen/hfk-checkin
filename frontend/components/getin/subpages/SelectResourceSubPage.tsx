@@ -72,12 +72,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
             // if only one unit autoselect it
             if (units.length === 1) {
                 const unit = units[0];
-                setSelectedUnitId(unit.uuid);
+                setSelectedUnitId(unit.slug);
             }
-        } else {
-            unitsApi.requestUnits();
         }
-    }, [units]);
+        if (unitsApi.state === "initial") unitsApi.requestUnits();
+    }, [units, unitsApi.state]);
 
     useEffect(() => {
         if (unitsApi.state !== "success") return;

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { forwardRef } from "react";
 import { Copy, X, XCircle } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
 import useSubPage from "../../components/api/useSubPage";
@@ -34,9 +34,16 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const [id] = useParam("reservationId");
     const router = useRouter();
 
-    const { reservation, notFound, error, reservationSuccess } = useReservation(
-        id
-    );
+    const {
+        reservation,
+        notFound,
+        error,
+        reservationSuccess,
+        cancel,
+    } = useReservation(id);
+
+    const showCancelButton =
+        reservation?.state !== "denied" && reservation?.state !== "cancelled";
 
     const { setNotice } = useStatus();
 
@@ -54,7 +61,17 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const handleCancel = () => {
         if (!reservation) return;
 
+        const c = window.confirm(
+            `${t(
+                "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen."
+            )}`
+        );
+
+        if (!c) return;
+
         (async () => {
+            await cancel();
+            if (error) return;
             await router.push(appUrls.reservations);
             setNotice(
                 t('Deine Buchung "{identifier}" wurde storniert.', {
@@ -66,7 +83,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
 
     if (!id) return null;
     if (notFound) return <Page404 />;
-    if (error) return <Error error={error} />;
+    // if (error) return <Error error={error} />;
 
     return (
         <Loading loading={!reservation}>
@@ -138,16 +155,18 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                     offsetBottomPadding
                                 >
                                     <div style={{ width: "100%" }}>
-                                        <NewButton
-                                            iconRight={
-                                                <XCircle strokeWidth={1} />
-                                            }
-                                            bottomSpacing={2}
-                                            onClick={handleCancel}
-                                            // extendedWidth
-                                        >
-                                            {t("Stornieren")}
-                                        </NewButton>
+                                        {showCancelButton && (
+                                            <NewButton
+                                                iconRight={
+                                                    <XCircle strokeWidth={1} />
+                                                }
+                                                bottomSpacing={2}
+                                                onClick={handleCancel}
+                                                // extendedWidth
+                                            >
+                                                {t("Stornieren")}
+                                            </NewButton>
+                                        )}
                                         <NewButton
                                             noBottomSpacing
                                             iconRight={<Copy strokeWidth={1} />}

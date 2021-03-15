@@ -78,7 +78,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     const forceLocaleHeader = config.forceLocale
         ? { "Accept-Language": config.forceLocale }
         : undefined;
-    return await fetch(url, {
+    return (fetch(url, {
         headers: {
             "Content-Type": "application/json",
             ...headers,
@@ -141,13 +141,12 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             return result;
         })
         .catch((error) => {
-            console.error(error);
             if (error.error !== undefined) return error;
             return {
                 error: "You are most likely offline.",
                 status: config.httpStatuses.unprocessable,
             };
-        });
+        }));
 };
 
 export const updateProfileRequest = async (
@@ -216,13 +215,23 @@ export const getReservationRequest = async (
         validateReservation
     );
 
+export const cancelReservationRequest = async (
+    reservationId: string,
+    options?: RequestOptions
+) =>
+    await apiRequest<Reservation>(
+        `reservation/${reservationId}/`,
+        { ...options, method: "DELETE" },
+        validateReservation
+    );
+
 export const getReservationsRequest = async (options?: RequestOptions) =>
     await apiRequest<Reservation[]>(
         `reservation/`,
         { ...options },
         (reservations) => reservations.map((r: any) => validateReservation(r))
     );
-    
+
 export const updateReservationRequest = async (
     reservation: NewReservation,
     options?: RequestOptions

@@ -144,7 +144,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                 .push-right {
                     margin-left: auto;
                     line-height: 0;
-                    margin-right: -${theme.spacing(1.5)}px;
+                    // margin-right: -${theme.spacing(1.5)}px;
                 }
 
                 .animation.enter-active {
@@ -182,7 +182,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                 }
             `}</style>
             <header className="status-bar">
-                <Bar>
+                <Bar extendedWidth>
                     {children}
                     {!!actionProvider ? (
                         <span className="push-right">{actionProvider()}</span>
