@@ -28,7 +28,7 @@ def create_resource_from_location(location, using='default'):
     if hasattr(l, 'org_floor_number'):
         r.floor_number = l.org_floor_number
     r.unit, created = Unit.objects.using(using).get_or_create(name=l.get_root().org_name,
-                                                              slug=l.get_root().org_name.lower())
+                                                              slug=l.get_root().org_name.lower()[:20])
     # r.checkinlocation = l
     r.save(using=using)
     # r.groups.add(*groups)
