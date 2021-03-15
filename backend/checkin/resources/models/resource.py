@@ -218,7 +218,12 @@ class ResourceManager(models.Manager.from_queryset(ResourceQuerySet)):
             .annotate_capacity_calculation()
 
 
-def get_default_unit(): return Unit.objects.first().pk
+def get_default_unit():
+    unit = Unit.objects.first()
+    if not unit:
+        unit, created = Unit.objects.get_or_create(slug='default', name="Default Unit")
+    return unit.pk
+
 
 class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, AbstractAccessRestrictedModel):
     """

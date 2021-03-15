@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('tracking', '0036_auto_20201118_1411'),
+        ('tracking', '0041_merge_20210202_1439'),
     ]
 
     operations = [

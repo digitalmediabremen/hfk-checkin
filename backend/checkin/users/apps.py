@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 class UsersConfig(AppConfig):
     name = 'checkin.users'
+    label = 'users'
     verbose_name = ugettext_lazy('Users and Profiles')
 
     # correct site_domain is required for microsoft-auth to work properly.
