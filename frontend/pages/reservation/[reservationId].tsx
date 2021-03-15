@@ -10,7 +10,7 @@ import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
 import NewButton from "../../components/common/NewButton";
 import Reservation from "../../components/common/Reservation";
-import SubPage from "../../components/common/SubPage";
+import SubPage, { SubPageHeader } from "../../components/common/SubPage";
 import Subtitle from "../../components/common/Subtitle";
 import Text from "../../components/common/Text";
 import Title from "../../components/common/Title";
@@ -91,6 +91,9 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                 <>
                     <style jsx>{``}</style>
                     <Layout
+                        overrideHeader={
+                            <SubPageHeader title={`#${reservation.identifier}`} onBack={() => router.push(appUrls.reservations)} />
+                        }
                         direction={direction}
                         activeSubPage={activeSubPage}
                         subPages={

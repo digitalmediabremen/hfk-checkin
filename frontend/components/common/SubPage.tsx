@@ -3,7 +3,7 @@ import { ArrowLeft } from "react-feather";
 import useTheme from "../../src/hooks/useTheme";import Page from "./Page";
 import TopBar from "./TopBar";
 
-const SubPageHeader = ({
+export const SubPageHeader = ({
     title,
     onBack,
 }: {
@@ -35,7 +35,7 @@ const SubPageHeader = ({
             .back {
                 line-height: 0;
                 position: absolute;
-                left: ${theme.spacing(-1.5)}px;
+                left: 0px;
                 color: ${theme.primaryColor};
             }
         `}</style>

@@ -1,12 +1,8 @@
-import classNames from "classnames";
-import { isEmptyArray, swap } from "formik";
 import React, { ReactNode, useEffect, useState } from "react";
 import { AlertCircle } from "react-feather";
 import {
-    SwitchTransition,
     CSSTransition,
-    TransitionGroup,
-    Transition,
+    TransitionGroup
 } from "react-transition-group";
 import useStatus from "../../src/hooks/useStatus";
 import useTheme from "../../src/hooks/useTheme";
@@ -143,6 +139,8 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
 
                 .push-right {
                     margin-left: auto;
+                    position: absolute;
+                    right: ${theme.spacing(1.5)}px;
                     line-height: 0;
                     // margin-right: -${theme.spacing(1.5)}px;
                 }

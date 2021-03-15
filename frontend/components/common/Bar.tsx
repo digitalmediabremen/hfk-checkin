@@ -14,6 +14,7 @@ const Bar: React.FunctionComponent<{ extendedWidth?: boolean, maxWidth?: true }>
                     display: flex;
                     align-items: center;
                     min-height: 100%;
+                    position: relative;
                 }
 
                 .bar.max-width {

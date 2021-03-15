@@ -1,12 +1,10 @@
 import React, { useMemo } from "react";
 import SmoothCollapse from "react-smooth-collapse";
-import { createLogicalAnd } from "typescript";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useValidation from "../../../src/hooks/useValidation";
 import { ReservationPurpose } from "../../../src/model/api/Reservation";
 import { getPurposeLabel } from "../../../src/util/ReservationUtil";
-import Fade from "../../common/Fade";
 import FormCheckbox from "../../common/FormCheckbox";
 import FormMultilineTextInput from "../../common/FormMultilineTextInput";
 import Notice from "../../common/Notice";
@@ -25,6 +23,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
     };
 
     const displayedPurposes: Array<ReservationPurpose | undefined> = [
+        undefined,
         "FOR_PICKUP",
         "FOR_EXAM",
         "FOR_COUNCIL_MEETING",
@@ -60,9 +59,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
                 ></Notice>
             </SmoothCollapse>
             <Notice bottomSpacing={1}>
-                {t(
-                    "Bitte ergänze deine Anfrage mit folgender Information."
-                )}
+                {t("Bitte ergänze deine Anfrage mit folgender Information.")}
             </Notice>
 
             <Checkboxes />

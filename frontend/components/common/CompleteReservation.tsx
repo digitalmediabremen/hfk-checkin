@@ -1,11 +1,9 @@
 import React from "react";
-import { Hash } from "react-feather";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
 import Reservation from "../../src/model/api/Reservation";
 import {
     attendeePresenter,
-    attendeesFormValuePresenter,
     purposeFormValuePresenter,
 } from "../../src/util/ReservationPresenterUtil";
 import {
@@ -13,13 +11,9 @@ import {
     getIcon,
     getStateLabel,
 } from "../../src/util/ReservationUtil";
-import * as format from "../../src/util/TimeFormatUtil";
 import FormElement, { FormElementProps } from "./FormElement";
-import Label from "./Label";
 import ReservationComponent from "./Reservation";
 import SectionTitle from "./SectionTitle";
-import Subtitle from "./Subtitle";
-import Title from "./Title";
 
 interface CompleteReservationProps extends FormElementProps {
     reservation: Reservation;
@@ -37,12 +31,11 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
     const purposeValue = purposeFormValuePresenter(reservation, locale);
     const disabled = state === "cancelled" || state === "denied";
 
-
     const formElementProps = {
         noPadding: true,
         noOutline: true,
         narrow: true,
-        disabled
+        disabled,
     };
 
     const isConfirmed = state === "confirmed";

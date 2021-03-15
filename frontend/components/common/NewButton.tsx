@@ -25,7 +25,6 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
     iconRight,
     noOutline,
     narrow,
-    href,
     ...formElementBaseProps
 }) => {
     const theme = useTheme();
@@ -85,13 +84,12 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                 noOutline={noOutline}
                 {...formElementBaseProps}
                 onClick={onClick}
-                href={href}
-                componentType={!!href ? "a" : "button"}
+                componentType={"button"}
             >
                 {iconLeft && <span className="icon left">{iconLeft}</span>}
                 <div className={classNames({ center: !noOutline })}>
                     <EllipseText>
-                        {(ellipseClass) => (
+                        {ellipseClass => (
                             <h3 className={ellipseClass}>{children}</h3>
                         )}
                     </EllipseText>

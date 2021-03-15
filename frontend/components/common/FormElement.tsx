@@ -76,6 +76,7 @@ const FormElement: React.FunctionComponent<FormElementProps> = ({
 
                 .label-icon {
                     padding-right: ${theme.spacing(1)}px;
+                    line-height: 0;
                 }
             `}</style>
             <FormElementBase {...formElementBaseProps}>

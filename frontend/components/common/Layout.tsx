@@ -134,6 +134,7 @@ export interface LayoutProps {
     direction?: TransitionDirection;
     children: ReactNode;
     noContentMargin?: boolean;
+    overrideHeader?: ReactNode;
 }
 
 const Layout: FunctionComponent<LayoutProps> = ({
@@ -141,7 +142,8 @@ const Layout: FunctionComponent<LayoutProps> = ({
     activeSubPage,
     subPages,
     direction,
-    noContentMargin
+    noContentMargin,
+    overrideHeader
 }) => {
     const theme = useTheme();
     return (
@@ -174,7 +176,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                             </Link>
                         )}
                     >
-                        <ProfileBar />
+                        {overrideHeader || <ProfileBar />}
                     </TopBar>
                 }
                 footer={<Footer />}
