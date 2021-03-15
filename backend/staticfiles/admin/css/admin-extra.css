@@ -1,3 +1,8 @@
+:root {
+  --theme-color-primary: #D81830;
+  --theme-color-primary: #002EFF;
+}
+
 @font-face
 {
   font-family: 'DINWebPro';
@@ -45,20 +50,20 @@ body, td, th, a, button {
 /* LINKS */
 
 a:link, a:visited {
-    color: #D81830;
+    color: var(--theme-color-primary);
     text-decoration: none;
 }
 
 a:focus, a:hover {
-    color: #D81830;
+    color: var(--theme-color-primary);
 }
 
 .button, input[type=submit], input[type=button], .submit-row input, a.button {
-    background: #D81830;
+    background: var(--theme-color-primary);
 }
 
 .button:active, input[type=submit]:active, input[type=button]:active, .button:focus, input[type=submit]:focus, input[type=button]:focus, .button:hover, input[type=submit]:hover, input[type=button]:hover {
-    background: #D81830;
+    background: var(--theme-color-primary);
 }
 
 /* HEADER */
@@ -70,7 +75,7 @@ a:focus, a:hover {
     justify-content: space-between;
     align-items: center;
     padding: 10px 40px;
-    background: #D81830;
+    background: var(--theme-color-primary);
     color: #fff;
     overflow: hidden;
 }
@@ -92,7 +97,7 @@ a:focus, a:hover {
     font-weight: 400;
     font-size: 13px;
     text-align: left;
-    background: #D81830;
+    background: var(--theme-color-primary);
     color: #fff;
 }
 
@@ -112,15 +117,15 @@ a:focus, a:hover {
 
 div.breadcrumbs {
     background: #fff;
-    color: #D81830;
+    color: var(--theme-color-primary);
 }
 
 div.breadcrumbs a {
-    color: #D81830;
+    color: var(--theme-color-primary);
 }
 
 div.breadcrumbs a:focus, div.breadcrumbs a:hover {
-    color: #D81830;
+    color: var(--theme-color-primary);
 }
 
 /* Paper Log entry form */
