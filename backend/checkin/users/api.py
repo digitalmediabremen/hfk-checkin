@@ -136,6 +136,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'phone': userprofile_data['phone'],
             #'email': userprofile_data['email'], # can only be writable if we validate emails
         })
+        instance.profile.save()
         instance.save()
         return instance
 
