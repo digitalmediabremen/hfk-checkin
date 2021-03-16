@@ -334,6 +334,16 @@ environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = 'true' # does not use django.conf. Set o
 SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_KEY = MICROSOFT_AUTH_CLIENT_ID
 SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_SECRET = MICROSOFT_AUTH_CLIENT_SECRET
 SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_TENANT_ID = MICROSOFT_AUTH_TENANT_ID
+LOGIN_URL = "/auth/login/azuread-tenant-oauth2/"
+LOGIN_REDIRECT_URL = "/admin/"
+
+OAUTH2_PROVIDER = {
+    'SCOPES': {
+        'reservations-rw': 'Read and write Reservations',
+        'checkins-rw': 'Read and write Checkins',
+    },
+}
+DRFSO2_PROPRIETARY_BACKEND_NAME = 'azuread-tenant-oauth2'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
