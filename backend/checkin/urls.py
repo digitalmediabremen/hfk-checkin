@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
-from microsoft_auth.views import to_ms_redirect
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views import defaults as default_views
+from django.views.generic import RedirectView
 
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
@@ -40,20 +40,18 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
 
 respa_router = RespaAPIRouter()
 
-if 'microsoft_auth' in settings.INSTALLED_APPS:
-    from checkin.users.apps import fix_microsoft_auth_user_admin
-    fix_microsoft_auth_user_admin()
-
 if 'rest_framework_social_oauth2' in settings.INSTALLED_APPS:
     from social_django import views as social_django_views
     urlpatterns += [
         path('auth/', include('rest_framework_social_oauth2.urls')),
+        # redirect for legacy microsoft_auth callback urls
+        path('login/auth-callback/', RedirectView.as_view(url='/auth/complete/azuread-tenant-oauth2/', permanent=True, query_string=True)),
     ]
 
 urlpatterns += [
     path('admin/', admin.site.urls),
     path('impersonate/', include('impersonate.urls')),
-    path('login/redirect/', to_ms_redirect),
+    path('login/redirect/', RedirectView.as_view(url=settings.LOGIN_URL, permanent=False)),
     path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout
     path('api/', include(respa_router.urls)),
     path('resources/', include('checkin.resources.urls')),
@@ -67,9 +65,6 @@ urlpatterns += [
 
 if 'checkin.notifications' in settings.INSTALLED_APPS:
     urlpatterns += [path('notifications/', include('checkin.notifications.urls'))]
-
-if 'microsoft_auth' in settings.INSTALLED_APPS:
-    urlpatterns += [path('login/', include('microsoft_auth.urls', namespace='microsoft'))]
 
 if "debug_toolbar" in settings.INSTALLED_APPS:
     import debug_toolbar
