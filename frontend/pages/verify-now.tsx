@@ -65,7 +65,7 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
                 <Button
                     noBottomMargin
                     outline
-                    onClick={() => router.push(appUrls.enterCode)}
+                    onClick={() => router.push(appUrls.home)}
                 >
                     {t("Abschliessen")}
                 </Button>

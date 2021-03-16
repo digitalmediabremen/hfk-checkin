@@ -159,7 +159,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                 scroll
                 noContentMargin={noContentMargin}
                 topBar={
-                    <TopBar actionProvider={() => <NewRequestButton />}>
+                    <TopBar key="global-top-bar" actionProvider={() => <NewRequestButton />}>
                         {overrideHeader || <ProfileBar />}
                     </TopBar>
                 }

@@ -91,8 +91,6 @@ const FormElementBase = forwardRef<FormElementBaseRefType, FormElementBaseProps>
                         )}px;
                         color: ${theme.primaryColor};
                         background-color: ${theme.secondaryColor};
-
-                        user-select: none;
                     }
 
                     .form-element-base.adaptive-width {
@@ -119,6 +117,7 @@ const FormElementBase = forwardRef<FormElementBaseRefType, FormElementBaseProps>
                     .form-element-base.interactable {
                         transition: transform 0.2s;
                         touch-action: manipulation;
+                        user-select: none;
                     }
 
                     .form-element-base.outline.dotted {

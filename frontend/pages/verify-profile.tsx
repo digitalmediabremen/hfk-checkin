@@ -32,7 +32,7 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
             </Text>
             </FormGroup>
             <br />
-            <Button outline onClick={() => router.push(appUrls.enterCode)}>{t("Erledigt")}</Button>
+            <Button outline onClick={() => router.push(appUrls.home)}>{t("Erledigt")}</Button>
         </Layout>
     );
 };
