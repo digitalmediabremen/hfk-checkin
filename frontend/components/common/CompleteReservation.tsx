@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
 import Reservation from "../../src/model/api/Reservation";
@@ -37,6 +37,9 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
         narrow: true,
         disabled,
     };
+
+    const gender = useRef(Math.random() > 0.5 ? t("Teilnehmerinnen") : t("Teilnehmer"))
+
 
     const isConfirmed = state === "confirmed";
 
@@ -81,7 +84,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
             {attendees && attendees.length > 0 && (
                 <>
                     <SectionTitle bottomSpacing={.5}>
-                        {Math.random() > 0.5 ? t("Teilnehmerinnen") : t("Teilnehmer")}
+                        {gender.current}
                     </SectionTitle>
                     {attendees?.map((attendee) => {
                         const AttendeeStateIcon = getAttendanceStateIcon(

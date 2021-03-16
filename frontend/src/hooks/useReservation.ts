@@ -1,8 +1,9 @@
-import { resourceUsage } from "process";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { setConstantValue } from "typescript";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useApi } from "../../components/api/ApiHooks";
-import { cancelReservationRequest, getReservationRequest } from "../../components/api/ApiService";
+import {
+    cancelReservationRequest,
+    getReservationRequest,
+} from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
 import Reservation from "../model/api/Reservation";
 
@@ -26,7 +27,6 @@ export default function useReservation(reservationId?: string) {
     }, [showReservationSuccessful]);
 
     useEffect(() => {
-        console.log("updated reservation", api.result)
         if (!api.result) return;
         dispatch({
             type: "updateReservation",
@@ -36,23 +36,15 @@ export default function useReservation(reservationId?: string) {
 
     useLayoutEffect(() => {
         if (reservationId) {
-            if (
-                reservationFromAppstate &&
-                (reservationFromAppstate.identifier === reservationId ||
-                    reservationFromAppstate.uuid === reservationId)
-            ) {
-                setUseFromAppstate(true);
-            } else {
-                api.request(() => getReservationRequest(reservationId));
-                setUseFromAppstate(false);
-            }
+            api.request(() => getReservationRequest(reservationId));
+            setUseFromAppstate(false);
         }
-    }, [reservationFromAppstate, reservationId]);
+    }, [reservationId]);
 
     const cancelReservation = () => {
         if (!reservationId) return;
-        return api.request(() => cancelReservationRequest(reservationId))
-    }
+        return api.request(() => cancelReservationRequest(reservationId));
+    };
 
     return {
         reservationSuccess,
