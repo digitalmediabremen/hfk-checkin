@@ -1,13 +1,15 @@
 import { useRouter } from "next/router";
-import { SFC, useCallback, useEffect, useState } from "react";
+import React, { SFC, useCallback, useEffect, useState } from "react";
 import SmoothCollapse from "react-smooth-collapse";
 import { useLocation } from "../../components/api/ApiHooks";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import { ButtonWithLoading } from "../../components/common/Button";
+import Layout from "../../components/common/Layout";
+import { LoadingInline } from "../../components/common/Loading";
 import LocationCodeInput from "../../components/common/LocationCodeInput";
+import NewButton from "../../components/common/NewButton";
 import Notice from "../../components/common/Notice";
-import Layout from "../../components/common/Page";
 import QRIcon from "../../components/common/QRIcon";
 import Subtitle from "../../components/common/Subtitle";
 import Text from "../../components/common/Text";
@@ -115,13 +117,13 @@ const CheckInPage: SFC<CheckInPageProps> = () => {
                 </div>
             </div>
 
-            <ButtonWithLoading
-                noBottomMargin
-                loading={loading}
-                onClick={() => {}}
+            <NewButton
+                primary
+                iconRight={<LoadingInline invertColor loading={loading} />}
+                disabled={loading}
             >
                 {t("Einchecken")}
-            </ButtonWithLoading>
+            </NewButton>
         </Layout>
     );
 };

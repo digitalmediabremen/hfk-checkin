@@ -15,6 +15,8 @@ import validateResource from "../../src/model/api/Resource.validator";
 import validateUnit from "../../src/model/api/Unit.validator";
 import Unit from "../../src/model/api/Unit";
 import { notEmpty } from "../../src/util/TypeUtil";
+import validateCheckin from "../../src/model/api/Checkin.validator";
+import validateLocation from "../../src/model/api/Location.validator";
 
 export type ApiResponse<T> =
     | {
@@ -157,7 +159,7 @@ export const updateProfileRequest = async (
         method: "POST",
         body: JSON.stringify(profile),
         headers,
-    });
+    }, validateProfile);
 
 export const getCheckinsRequest = async (
     options?: RequestOptions<{
@@ -178,7 +180,7 @@ export const doCheckinRequest = async (
 ) => {
     return await apiRequest<Checkin>(`location/${locationCode}/checkin/`, {
         ...options,
-    });
+    }, validateCheckin);
 };
 
 export const doCheckoutRequest = async (
@@ -187,7 +189,7 @@ export const doCheckoutRequest = async (
 ) =>
     await apiRequest<Checkin>(`location/${locationCode}/checkout/`, {
         headers,
-    });
+    }, validateCheckin);
 
 export const getLocationRequest = async (
     locationCode: string,
@@ -195,7 +197,7 @@ export const getLocationRequest = async (
 ) =>
     await apiRequest<Location>(`location/${locationCode}/`, {
         headers,
-    });
+    }, validateLocation);
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<MyProfile>("profile/me/", { headers }, validateProfile);

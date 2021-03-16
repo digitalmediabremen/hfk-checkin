@@ -44,7 +44,6 @@ const CheckoutPage: React.FunctionComponent<CheckoutPageProps> = ({
     if (data.state === "error") return <>{data.error}</>;
 
     return (
-        <Layout>
             <Loading loading={data.state === "loading"}>
                 {data.result && activeCheckinData.result && (
                     <CheckinComponent
@@ -60,7 +59,6 @@ const CheckoutPage: React.FunctionComponent<CheckoutPageProps> = ({
                     <Title>{activeCheckinData.error}</Title>
                 )}
             </Loading>
-        </Layout>
     );
 };
 

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect } from "react";
 import { ArrowRight } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
+import AlignContent from "../../components/common/AlignContent";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
@@ -65,9 +66,9 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
             <Loading loading={api.state === "loading"}>
                 {api.state === "success" && (
                     <>
-                        {api.result.length === 0 && <EmptyState />}
+                        {api.result!.length === 0 && <EmptyState />}
                         <GroupedList
-                            items={api.result}
+                            items={api.result!}
                             by={groupBy}
                             headerProvider={headerProvider}
                             sort={sort}
@@ -110,6 +111,11 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
                     </>
                 )}
             </Loading>
+            <AlignContent offsetBottomPadding>
+                <Link href={appUrls.setprofile} passHref>
+                    <NewButton noBottomSpacing>{t("Telefon ändern")}</NewButton>
+                </Link>
+            </AlignContent>
         </Layout>
     );
 };

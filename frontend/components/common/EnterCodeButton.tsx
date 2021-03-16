@@ -2,6 +2,7 @@ import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
+import { LogIn } from "react-feather";
 import { appUrls } from "../../config";
 import useTheme from "../../src/hooks/useTheme";
 interface EnterCodeButtonProps {
@@ -44,10 +45,15 @@ const EnterCodeButton: React.FunctionComponent<EnterCodeButtonProps> = (
                     opacity: 0;
                 }
             `}</style>
-            <Link href={appUrls.enterCode}>
+            {/* <Link href={appUrls.enterCode}>
                 <a className={classNames("icon", "not-selectable", {
                     "hidden": isHidden
                 })}>#</a>
+            </Link> */}
+            <Link href={appUrls.enterCode}>
+                <a className={classNames({ hidden: isHidden })}>
+                    <LogIn size={40} strokeWidth={(24 / 40) * 2} />
+                </a>
             </Link>
         </>
     );

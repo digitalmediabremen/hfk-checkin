@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import * as React from "react";
+import { ArrowLeft } from "react-feather";
 import {
     ResultModifierFunction,
     useActiveCheckins,
@@ -16,6 +17,7 @@ import FormElementWrapper from "../../components/common/FormElementWrapper";
 import LastCheckins from "../../components/common/LastCheckinsList";
 import Layout from "../../components/common/Layout";
 import Loading, { LoadingInline } from "../../components/common/Loading";
+import NewButton from "../../components/common/NewButton";
 import Subtitle from "../../components/common/Subtitle";
 import Title from "../../components/common/Title";
 import { appUrls } from "../../config";
@@ -24,6 +26,7 @@ import { useTranslation } from "../../localization";
 import useParam from "../../src/hooks/useParam";
 import { LastCheckin } from "../../src/model/api/Checkin";
 import MyProfile from "../../src/model/api/MyProfile";
+import Error from "../Error";
 
 export const CheckinComponent: React.FunctionComponent<{
     checkin: LastCheckin;
@@ -95,14 +98,15 @@ export const CheckinComponent: React.FunctionComponent<{
                 </Title>
             )}
             <br />
-            <ButtonWithLoading
-                loading={checkoutInProgress}
+            <NewButton
                 onClick={() => doCheckout(code)}
-                withBackIcon
-                {...(!alreadyCheckedIn ? { outline: true } : undefined)}
+                primary
+                iconLeft={<ArrowLeft strokeWidth={1} />}
+                iconRight={<LoadingInline invertColor loading={checkoutInProgress} />}
+                disabled={checkoutInProgress}
             >
                 {t("Auschecken")}
-            </ButtonWithLoading>
+            </NewButton>
             {activeCheckins.length > 0 && (
                 <AlignContent offsetBottomPadding>
                     <FormElementWrapper noBottomMargin>
@@ -200,7 +204,7 @@ const CheckinPage: React.FunctionComponent<CheckinProps> = ({ profile }) => {
                 />
             )}
             {!!activeCheckinData.error || !!data.error && (
-                <Title>Da ist etwas schiefgelaufen.</Title>
+                <Error />
             )}
         </Loading>
     );

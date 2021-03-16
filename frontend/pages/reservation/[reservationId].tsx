@@ -23,7 +23,6 @@ import useParam from "../../src/hooks/useParam";
 import useReservation from "../../src/hooks/useReservation";
 import useStatus from "../../src/hooks/useStatus";
 import Page404 from "../404";
-import Error from "../Error";
 
 interface ReservationPageProps {}
 

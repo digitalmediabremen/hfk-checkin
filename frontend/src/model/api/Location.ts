@@ -4,7 +4,6 @@ export default interface Location {
     code: string;
     org_number: string;
     org_name: string;
-    capacity: number; // -1 if root node. eg: speicher
+    capacity: number | null; // -1 if root node. eg: speicher
     load: number;
-    parent: Location;
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useRouter } from "next/router";
 import * as React from "react";
 import needsProfile from "../components/api/needsProfile";
@@ -7,6 +8,7 @@ import { Button } from "../components/common/Button";
 import LastCheckins from "../components/common/LastCheckinsList";
 import Layout from "../components/common/Layout";
 import { LoadingInline } from "../components/common/Loading";
+import NewButton from "../components/common/NewButton";
 import Notice from "../components/common/Notice";
 import Subtitle from "../components/common/Subtitle";
 import { appUrls } from "../config";
@@ -65,21 +67,15 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
                 <Notice>{t("Noch keine Checkins vorhanden")}</Notice>
             )}
             <AlignContent offsetBottomPadding>
-                {/* <div className="button-group"> */}
-                <Button
-                    noBottomMargin
-                    outline
-                    onClick={() => router.push(appUrls.setprofile)}
-                >
-                    {t("Telefon ändern")}
-                </Button>
-            {/* <Button onClick={} outline>
-                        Ausloggen
-                    </Button> */}
-                {/* </div> */}
+                <Link href={appUrls.setprofile} passHref>
+                    <NewButton noBottomSpacing>{t("Telefon ändern")}</NewButton>
+                </Link>
             </AlignContent>
         </Layout>
     );
 };
 
-export default showIf(() => features.checkin || true, needsProfile(ProfilePage));
+export default showIf(
+    () => features.checkin || true,
+    needsProfile(ProfilePage)
+);

@@ -23,10 +23,10 @@ const DigitInputElement = React.forwardRef<
             <style jsx>{`
                 label {
                     position: relative;
-                    width: 1rem;
-                    height: 1.4rem;
+                    width: 1em;
+                    height: 1.4em;
                     line-height: 1.35em;
-                    font-size: 1rem;
+                    font-size: 1em;
                 }
                 input {
                     position: absolute;

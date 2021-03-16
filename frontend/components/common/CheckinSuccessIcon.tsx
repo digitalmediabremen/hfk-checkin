@@ -59,7 +59,7 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink"
             >
-                    <Clock width="100%" height="100%" strokeWidth=".5" />
+                    <CheckCircle width="100%" height="100%" strokeWidth=".5" />
                         {/* <Airplay width="70%" height="70%" strokeWidth="1" vectorEffect="non-scaling-stroke" x="15%" y="15%" /> */}
                         {/* <polyline
                             strokeWidth="4"

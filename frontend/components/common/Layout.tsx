@@ -1,19 +1,19 @@
 import classNames from "classnames";
-import Link from "next/link";
 import React, {
     FunctionComponent,
     ReactElement,
     ReactNode,
     useLayoutEffect,
-    useRef,
+    useRef
 } from "react";
 import { use100vh } from "react-div-100vh";
-import { Plus, PlusCircle, PlusSquare } from "react-feather";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import css from "styled-jsx/css";
-import { appUrls, isClient, pageTransitionDuration } from "../../config";
+import { isClient, pageTransitionDuration } from "../../config";
+import featureMap from "../../features";
 import useTheme from "../../src/hooks/useTheme";
 import { TransitionDirection } from "../../src/model/AppState";
+import EnterCodeButton from "./EnterCodeButton";
 import Footer from "./Footer";
 import NewRequestButton from "./NewRequestButton";
 import Page from "./Page";
@@ -132,6 +132,12 @@ export interface LayoutProps {
     overrideHeader?: ReactNode;
 }
 
+const getActionButton = () => {
+    if (featureMap.checkin) return <EnterCodeButton />
+    if (featureMap.getin) return <NewRequestButton />
+    return <EnterCodeButton />
+}
+
 const Layout: FunctionComponent<LayoutProps> = ({
     children,
     activeSubPage,
@@ -159,7 +165,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                 scroll
                 noContentMargin={noContentMargin}
                 topBar={
-                    <TopBar key="global-top-bar" actionProvider={() => <NewRequestButton />}>
+                    <TopBar key="global-top-bar" actionProvider={getActionButton}>
                         {overrideHeader || <ProfileBar />}
                     </TopBar>
                 }
