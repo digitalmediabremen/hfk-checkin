@@ -1,13 +1,12 @@
 import classNames from "classnames";
-import React, { ReactNode } from "react";
+import React, { forwardRef, ReactNode } from "react";
 import css from "styled-jsx/css";
 import useTheme from "../../src/hooks/useTheme";
 import EllipseText from "./EllipseText";
-import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import FormElementBase, { FormElementBaseProps, FormElementBaseRefType } from "./FormElementBase";
 
 interface NewButtonProps extends FormElementBaseProps {
     children: string;
-    onClick?: () => void;
     iconRight?: ReactNode;
     iconLeft?: ReactNode;
 }
@@ -18,7 +17,7 @@ const { className, styles } = css.resolve`
     // }
 `;
 
-const NewButton: React.FunctionComponent<NewButtonProps> = ({
+const NewButton = forwardRef<FormElementBaseRefType, NewButtonProps>(({
     children,
     onClick,
     iconLeft,
@@ -26,7 +25,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
     noOutline,
     narrow,
     ...formElementBaseProps
-}) => {
+}, ref) => {
     const theme = useTheme();
     const hasIcon = !!iconLeft || !!iconRight;
     return (
@@ -85,6 +84,7 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
                 {...formElementBaseProps}
                 onClick={onClick}
                 componentType={"button"}
+                ref={ref}
             >
                 {iconLeft && <span className="icon left">{iconLeft}</span>}
                 <div className={classNames({ center: !noOutline })}>
@@ -98,6 +98,6 @@ const NewButton: React.FunctionComponent<NewButtonProps> = ({
             </FormElementBase>
         </>
     );
-};
+});
 
 export default NewButton;

@@ -1,18 +1,16 @@
-import MyProfile from "./api/MyProfile";
 import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
 import Reservation from "./api/Reservation";
 import { Validation } from "../util/ReservationValidationUtil";
 import Theme from "./Theme";
+import Status from "./Status";
+import MyProfile from "./api/MyProfile";
 
 export type TransitionDirection = "left" | "right";
 
 export interface AppState {
     initialized: boolean;
-    status: {
-        message: string;
-        isError: boolean;
-    } | undefined;
+    status: Status | undefined;
     myProfile?: MyProfile;
     disableNextUpdate: boolean;
     highlightCheckinById?: number; // id

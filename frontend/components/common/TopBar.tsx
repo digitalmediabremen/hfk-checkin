@@ -1,12 +1,8 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { AlertCircle } from "react-feather";
-import {
-    CSSTransition,
-    TransitionGroup
-} from "react-transition-group";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import useStatus from "../../src/hooks/useStatus";
 import useTheme from "../../src/hooks/useTheme";
-import Bar from "./Bar";
+import StatusBar from "./StatusBar";
 
 interface TopBarProps {
     actionProvider?: () => ReactNode;
@@ -36,7 +32,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
         if (currentStatus.isError) return;
         const timer = window.setTimeout(() => {
             setCurrentStatus(undefined);
-            console.log("remove")
+            console.log("remove");
         }, 2000);
         return () => {
             clearTimeout(timer);
@@ -66,7 +62,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
     return (
         <>
             <style jsx>{`
-                .status-bar {
+                .app-bar {
                     height: ${theme.topBarHeight() - theme.offsetTopBar}px;
                     color: ${theme.primaryColor};
                     border-bottom: 1px solid ${theme.primaryColor};
@@ -119,30 +115,18 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     }
                 }
 
-                .status {
-                    padding: ${theme.spacing(1)}px ${theme.spacing(1.5)}px;
-                    width: 100%;
-                    border-radius: 5px;
-                    display: flex;
-                    align-items: center;
-                    text-align: left;
-                    box-shadow: ${theme.boxShadow()};
-                }
-
-                .status .text {
-                    white-space: pre-wrap;
-                }
-
-                .status .icon {
-                    padding-right: 8px;
-                }
-
-                .push-right {
-                    margin-left: auto;
+                .action {
                     position: absolute;
+                    top: ${theme.spacing(1.5)}px;
                     right: ${theme.spacing(1.5)}px;
                     line-height: 0;
+                    z-index: 9999;
                     // margin-right: -${theme.spacing(1.5)}px;
+                }
+
+                .action :global(> a > svg) {
+                    box-shadow: ${theme.boxShadow()};
+                    border-radius: 50%;
                 }
 
                 .animation.enter-active {
@@ -164,13 +148,6 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     opacity: 0;
                 }
 
-                .status.error {
-                    background-color: ${theme.primaryColor};
-                    color: ${theme.secondaryColor};
-                    font-weight: bold;
-                    // z-index: 101;
-                }
-
                 :global(.status-wrapper) {
                     position: absolute;
                     top: 0;
@@ -179,13 +156,11 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     width: 100%;
                 }
             `}</style>
-            <header className="status-bar">
-                <Bar extendedWidth>
-                    {children}
-                    {!!actionProvider ? (
-                        <span className="push-right">{actionProvider()}</span>
-                    ) : undefined}
-                </Bar>
+            <header className="app-bar">
+                {children}
+                {!!actionProvider ? (
+                    <span className="action">{actionProvider()}</span>
+                ) : undefined}
                 <TransitionGroup className="status-wrapper">
                     {currentStatus && (
                         <CSSTransition
@@ -195,7 +170,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                             timeout={duration}
                         >
                             <div className="animation" onClick={() => remove()}>
-                                <Bar extendedWidth maxWidth>
+                                {/* <Bar extendedWidth maxWidth>
                                     <div className="status error">
                                         {currentStatus.isError && (
                                             <span className="icon">
@@ -206,7 +181,8 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                                             {currentStatus.message}
                                         </span>
                                     </div>
-                                </Bar>
+                                </Bar> */}
+                                <StatusBar status={currentStatus} />
                                 {/* {JSON.stringify(transitionStyles[state])} */}
                             </div>
                         </CSSTransition>
