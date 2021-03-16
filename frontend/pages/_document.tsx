@@ -5,8 +5,27 @@ import Document, {
     Main,
     NextScript,
 } from "next/document";
-import { getManifestUrl, getPrimaryColorHex, getTitle } from "../features";
+import { getManifestUrl, getName, getPrimaryColorHex, getTitle } from "../features";
 import { getInitialLocale, LocaleConsumer } from "../localization";
+
+const iconSizes = ["512x512", "192x192", "144x144"];
+const applicationName = getName();
+const iconMetaTags = iconSizes.map((size) => (
+    <>
+        <link
+            rel="icon"
+            type="image/png"
+            sizes={size}
+            href={`/icons/${applicationName}/icon-${size}.png`}
+        />
+        <link
+            rel="apple-touch-icon"
+            type="image/png"
+            sizes={size}
+            href={`/icons/${applicationName}/icon-${size}.png`}
+        />
+    </>
+));
 
 class MyDocument extends Document {
     static async getInitialProps(ctx: DocumentContext) {
@@ -43,7 +62,10 @@ class MyDocument extends Document {
                                 name="apple-mobile-web-app-title"
                                 content={getTitle()}
                             />
-                            <meta name="theme-color" content={getPrimaryColorHex()} />
+                            <meta
+                                name="theme-color"
+                                content={getPrimaryColorHex()}
+                            />
 
                             <meta
                                 name="msapplication-navbutton-color"
@@ -55,42 +77,7 @@ class MyDocument extends Document {
                             />
                             <meta name="msapplication-starturl" content="/" />
 
-                            <link
-                                rel="icon"
-                                type="image/png"
-                                sizes="512x512"
-                                href="/icons/icon-512x512.png"
-                            />
-                            <link
-                                rel="apple-touch-icon"
-                                type="image/png"
-                                sizes="512x512"
-                                href="/icons/icon-192x192.png"
-                            />
-                            <link
-                                rel="icon"
-                                type="image/png"
-                                sizes="192x192"
-                                href="/icons/icon-192x192.png"
-                            />
-                            <link
-                                rel="apple-touch-icon"
-                                type="image/png"
-                                sizes="192x192"
-                                href="/icons/icon-192x192.png"
-                            />
-                            <link
-                                rel="icon"
-                                type="image/png"
-                                sizes="144x144"
-                                href="/icons/icon-144x144.png"
-                            />
-                            <link
-                                rel="apple-touch-icon"
-                                type="image/png"
-                                sizes="144x144"
-                                href="/icons/icon-144x144.png"
-                            />
+                            {iconMetaTags}
                         </Head>
                         <body>
                             <Main />

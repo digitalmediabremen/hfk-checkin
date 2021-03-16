@@ -22,15 +22,21 @@ function getTitle () {
     return "HfK-Checkin";
 }
 
+function getName () {
+    if (features.checkin) return "checkin";
+    if (features.getin) return "getin";
+    return "checkin";
+}
+
 function getPrimaryColor() {
     if (features.checkin) return "rgba(216, 24, 48, 100)";
-    if (features.getin) return "rgba(0,0,255, 100)";
+    if (features.getin) return "rgba(0,46,255, 100)";
     return "rgba(0, 24, 48, 100)";
 }
 
 function getPrimaryColorHex() {
     if (features.checkin) return "#D81830";
-    if (features.getin) return "#0000ff";
+    if (features.getin) return "#002EFF";
     return "#D81830";
 }
 
@@ -47,3 +53,4 @@ module.exports.getManifestUrl = getManifestUrl;
 module.exports.envToBoolean = envToBoolean;
 module.exports.getTitle = getTitle;
 module.exports.getPrimaryColorHex = getPrimaryColorHex;
+module.exports.getName = getName;
