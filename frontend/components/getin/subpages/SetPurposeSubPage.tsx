@@ -36,7 +36,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
                 <>
                     {displayedPurposes.map((p, index, arr) => (
                         <FormCheckbox
-                            key={p}
+                            key={p || "normal"}
                             value={purpose === p}
                             onChange={(v) => setPurpose(v ? p : undefined)}
                             label={getPurposeLabel(p, locale)}
