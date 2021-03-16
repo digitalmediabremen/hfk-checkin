@@ -65,7 +65,7 @@ class ProfileSerializer(BaseProfileSerializer):
 
     def validate_phone(self, value):
         return value.strip()
-    
+
 
 class CheckinSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
