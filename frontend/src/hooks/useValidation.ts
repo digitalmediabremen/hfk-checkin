@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useAppState } from "../../components/common/AppStateProvider";
 import {
     getValidationObject,
     hasValidationObject,
     ValidationLevel,
-    ValidationType,
+    ValidationType
 } from "../util/ReservationValidationUtil";
 import useStatus from "./useStatus";
 
