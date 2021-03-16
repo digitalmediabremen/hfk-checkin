@@ -1,13 +1,11 @@
-import MyProfile from "../../src/model/api/MyProfile";
-import React, { useEffect, Component } from "react";
 import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 import { appUrls } from "../../config";
+import Error from "../../pages/Error";
+import MyProfile from "../../src/model/api/MyProfile";
 import { useAppState } from "../common/AppStateProvider";
-import { useUpdateProfileFromAppStateAndUpdate } from "./ApiHooks";
-import { useTranslation } from "../../localization";
-import Title from "../common/Title";
 import Loading from "../common/Loading";
-import Layout from "../common/Layout";
+import { useUpdateProfileFromAppStateAndUpdate } from "./ApiHooks";
 
 interface NeedsProfileProps {
     profile: MyProfile;
@@ -59,7 +57,7 @@ const needsProfile = <P extends NeedsProfileProps, HocProps = Omit<P, keyof Need
     }
 
     if (!profile && error) {
-        return <Layout><Title>Da ist etwas schief gelaufen.</Title></Layout>;
+        return <Error />;
     }
 
     return (
