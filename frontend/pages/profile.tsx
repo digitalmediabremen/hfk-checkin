@@ -76,6 +76,6 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
 };
 
 export default showIf(
-    () => features.checkin || true,
+    () => features.checkin,
     needsProfile(ProfilePage)
 );

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect } from "react";
 import { ArrowRight } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
+import showIf from "../../components/api/showIf";
 import AlignContent from "../../components/common/AlignContent";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
@@ -12,6 +13,7 @@ import Notice from "../../components/common/Notice";
 import Reservation from "../../components/common/Reservation";
 import Subtitle from "../../components/common/Subtitle";
 import { appUrls } from "../../config";
+import features from "../../features";
 import { useTranslation } from "../../localization";
 import useReservations from "../../src/hooks/useReservations";
 import MyProfile from "../../src/model/api/MyProfile";
@@ -120,4 +122,7 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
     );
 };
 
-export default needsProfile<ReservationsPageProps>(ReservationsPage);
+export default showIf(
+    () => features.getin,
+    needsProfile<ReservationsPageProps>(ReservationsPage)
+);

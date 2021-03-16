@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import React, { forwardRef } from "react";
 import { Copy, X, XCircle } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
+import showIf from "../../components/api/showIf";
 import useSubPage from "../../components/api/useSubPage";
 import AlignContent from "../../components/common/AlignContent";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
@@ -18,6 +19,7 @@ import Title from "../../components/common/Title";
 import { AdditionalRequestSubPageProps } from "../../components/getin/subpages/AdditionalRequestSubPage";
 import { createDynamicPage } from "../../components/getin/subpages/SubpageCollection";
 import { appUrls, buildSubPageUrl } from "../../config";
+import features from "../../features";
 import { useTranslation } from "../../localization";
 import useParam from "../../src/hooks/useParam";
 import useReservation from "../../src/hooks/useReservation";
@@ -92,7 +94,10 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                     <style jsx>{``}</style>
                     <Layout
                         overrideHeader={
-                            <SubPageBar title={`#${reservation.identifier}`} onBack={() => router.push(appUrls.reservations)} />
+                            <SubPageBar
+                                title={`#${reservation.identifier}`}
+                                onBack={() => router.push(appUrls.reservations)}
+                            />
                         }
                         direction={direction}
                         activeSubPage={activeSubPage}
@@ -188,4 +193,4 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     );
 };
 
-export default needsProfile(ReservationPage);
+export default showIf(() => features.getin, needsProfile(ReservationPage));
