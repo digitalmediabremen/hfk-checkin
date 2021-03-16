@@ -105,7 +105,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        from checkin.users.api import ProfileSerializer
+        from checkin.users.api import UserProfileSerializer as ProfileSerializer
         # create Profile (attr: user) first, pass user instance to super().create(data)
         user_data = validated_data.pop('user')
         user_data = {**user_data, 'is_external': True}
@@ -337,7 +337,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             return data
 
     def to_internal_value(self, data):
-        from checkin.users.api import UserSerializer
+        from checkin.users.api import UserProfileSerializer as UserSerializer
         user_data = data.copy().pop('user', None)  # handle user manually
         deserialized_data = super().to_internal_value(data)
 
@@ -360,24 +360,25 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         prefetched_user = self.context.get('prefetched_user', None)
         user = prefetched_user or self.context['request'].user
 
-        if self.context['request'].accepted_renderer.format == 'xlsx':
-            # Return somewhat different data in case we are dealing with xlsx.
-            # The excel renderer needs datetime objects, so begin and end are passed as objects
-            # to avoid needing to convert them back and forth.
-            data.update(**{
-                'unit': resource.unit.name,  # additional
-                'resource': resource.name,  # resource name instead of id
-                'begin': instance.begin,  # datetime object
-                'end': instance.end,  # datetime object
-                'user': instance.user.email if instance.user else '',  # just email
-                'created_at': instance.created_at
-            })
+        # if self.context['request'].accepted_renderer.format == 'xlsx':
+        #     # Return somewhat different data in case we are dealing with xlsx.
+        #     # The excel renderer needs datetime objects, so begin and end are passed as objects
+        #     # to avoid needing to convert them back and forth.
+        #     data.update(**{
+        #         'unit': resource.unit.name,  # additional
+        #         'resource': resource.name,  # resource name instead of id
+        #         'begin': instance.begin,  # datetime object
+        #         'end': instance.end,  # datetime object
+        #         'user': instance.user.email if instance.user else '',  # just email
+        #         'created_at': instance.created_at
+        #     })
 
         if 'comments' in data and not resource.can_access_reservation_comments(user):
             del data['comments']
 
-        if 'organizer' in data and not resource.can_view_reservation_user(user):
-            del data['organizer']
+        # FIXME can_view_reservation_user currently not used
+        # if 'organizer' in data and not resource.can_view_reservation_user(user):
+        #     del data['organizer']
 
         # if instance.are_extra_fields_visible(user):
         #     cache = self.context.get('reservation_metadata_set_cache')
