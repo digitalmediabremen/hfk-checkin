@@ -25,6 +25,8 @@ from rest_framework.fields import BooleanField, IntegerField, EmailField
 from rest_framework import renderers
 from rest_framework.exceptions import NotAcceptable, ValidationError
 from rest_framework.settings import api_settings as drf_settings
+from rest_framework import status
+from rest_framework.response import Response
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import localtime
@@ -744,8 +746,10 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         user = self.request.user
 
         # General Administrators can see all reservations
-        if is_staff(user):
-            return queryset
+        # does not make sense for current forntend implementation
+        # FIXME move to filter with query param
+        # if is_staff(user):
+        #     return queryset
 
         # normal users can see only their own reservations and reservations that are confirmed, requested or
         # waiting for payment
@@ -778,6 +782,12 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
                 new_state = Reservation.CONFIRMED
 
         instance.try_to_set_state(new_state, self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def perform_destroy(self, instance):
         instance.set_state(Reservation.CANCELLED, self.request.user)

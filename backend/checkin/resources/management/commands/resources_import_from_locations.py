@@ -16,6 +16,7 @@ def create_resource_from_location(location, using='default'):
     r.name = l.org_name
     if hasattr(l, 'org_alternative_name'):
         r.alternative_names = l.org_alternative_name
+    # FIXME adds "" as number if number is empty. Should be [] or None instead.
     r.numbers = [n.strip() for n in l.org_number.split("/")]
     r.area = l.org_size
     r.people_capacity_default = l.capacity
