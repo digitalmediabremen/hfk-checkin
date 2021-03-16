@@ -6,10 +6,11 @@ import {
 } from "../../components/api/ApiHooks";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
+import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
 import Title from "../../components/common/Title";
-import useParam from "../../src/hooks/useParam";
 import features from "../../features";
+import useParam from "../../src/hooks/useParam";
 import { LastCheckin } from "../../src/model/api/Checkin";
 import MyProfile from "../../src/model/api/MyProfile";
 import { CheckinComponent } from "../checkin/[locationCode]";
@@ -43,21 +44,23 @@ const CheckoutPage: React.FunctionComponent<CheckoutPageProps> = ({
     if (data.state === "error") return <>{data.error}</>;
 
     return (
-        <Loading loading={data.state === "loading"}>
-            {data.result && activeCheckinData.result && (
-                <CheckinComponent
-                    activeCheckins={activeCheckinData.result!}
-                    checkin={data.result!}
-                    alreadyCheckedIn={true}
-                    activeCheckinsUpdating={
-                        activeCheckinData.state === "loading"
-                    }
-                />
-            )}
-            {!!activeCheckinData.error && (
-                <Title>{activeCheckinData.error}</Title>
-            )}
-        </Loading>
+        <Layout>
+            <Loading loading={data.state === "loading"}>
+                {data.result && activeCheckinData.result && (
+                    <CheckinComponent
+                        activeCheckins={activeCheckinData.result!}
+                        checkin={data.result!}
+                        alreadyCheckedIn={true}
+                        activeCheckinsUpdating={
+                            activeCheckinData.state === "loading"
+                        }
+                    />
+                )}
+                {!!activeCheckinData.error && (
+                    <Title>{activeCheckinData.error}</Title>
+                )}
+            </Loading>
+        </Layout>
     );
 };
 

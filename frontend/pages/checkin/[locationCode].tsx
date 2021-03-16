@@ -4,7 +4,7 @@ import {
     ResultModifierFunction,
     useActiveCheckins,
     useDoCheckin,
-    useDoCheckout,
+    useDoCheckout
 } from "../../components/api/ApiHooks";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
@@ -14,13 +14,14 @@ import { ButtonWithLoading } from "../../components/common/Button";
 import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
 import FormElementWrapper from "../../components/common/FormElementWrapper";
 import LastCheckins from "../../components/common/LastCheckinsList";
+import Layout from "../../components/common/Layout";
 import Loading, { LoadingInline } from "../../components/common/Loading";
 import Subtitle from "../../components/common/Subtitle";
 import Title from "../../components/common/Title";
-import useParam from "../../src/hooks/useParam";
 import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
+import useParam from "../../src/hooks/useParam";
 import { LastCheckin } from "../../src/model/api/Checkin";
 import MyProfile from "../../src/model/api/MyProfile";
 
@@ -79,7 +80,7 @@ export const CheckinComponent: React.FunctionComponent<{
     };
 
     return (
-        <>
+        <Layout>
             {!alreadyCheckedIn && <CheckinSucessIcon />}
             {/* {alreadyCheckedIn && (
                 <Notice>{t("Du bist bereits eingecheckt")}.</Notice>
@@ -122,7 +123,7 @@ export const CheckinComponent: React.FunctionComponent<{
                     </FormElementWrapper>
                 </AlignContent>
             )}
-        </>
+        </Layout>
     );
 };
 

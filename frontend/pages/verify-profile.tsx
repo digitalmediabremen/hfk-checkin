@@ -8,6 +8,7 @@ import AlignContent from "../components/common/AlignContent";
 import { useRouter } from "next/router";
 import { appUrls } from "../config";
 import Subtitle from "../components/common/Subtitle";
+import Layout from "../components/common/Layout";
 
 interface VerifyProfilePageProps {}
 
@@ -17,7 +18,7 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
     const { t } = useTranslation("verifyProfile");
     const router = useRouter();
     return (
-        <>
+        <Layout>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <FormGroup>
             <Text paragraph>
@@ -32,7 +33,7 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
             </FormGroup>
             <br />
             <Button outline onClick={() => router.push(appUrls.enterCode)}>{t("Erledigt")}</Button>
-        </>
+        </Layout>
     );
 };
 

@@ -1,19 +1,19 @@
 import { useRouter } from "next/router";
 import * as React from "react";
-import { useAppState } from "../components/common/AppStateProvider";
+import needsProfile from "../components/api/needsProfile";
+import showIf from "../components/api/showIf";
+import AlignContent from "../components/common/AlignContent";
 import { Button } from "../components/common/Button";
 import LastCheckins from "../components/common/LastCheckinsList";
+import Layout from "../components/common/Layout";
+import { LoadingInline } from "../components/common/Loading";
 import Notice from "../components/common/Notice";
-import AlignContent from "../components/common/AlignContent";
 import Subtitle from "../components/common/Subtitle";
 import { appUrls } from "../config";
-import useTheme from "../src/hooks/useTheme";import needsProfile from "../components/api/needsProfile";
-import MyProfile from "../src/model/api/MyProfile";
-import { useTranslation } from "../localization";
-import { DotPulse, LoadingInline } from "../components/common/Loading";
-import showIf from "../components/api/showIf";
 import features from "../features";
-import Layout from "../components/common/Page";
+import { useTranslation } from "../localization";
+import useTheme from "../src/hooks/useTheme";
+import MyProfile from "../src/model/api/MyProfile";
 
 interface ProfilePageProps {
     profile: MyProfile;
@@ -73,7 +73,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
                 >
                     {t("Telefon ändern")}
                 </Button>
-                {/* <Button onClick={} outline>
+            {/* <Button onClick={} outline>
                         Ausloggen
                     </Button> */}
                 {/* </div> */}

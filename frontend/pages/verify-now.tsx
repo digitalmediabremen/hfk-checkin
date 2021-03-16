@@ -11,6 +11,7 @@ import Subtitle from "../components/common/Subtitle";
 import { useUpdateProfileFromAppStateAndUpdate } from "../components/api/ApiHooks";
 import MyProfile from "../src/model/api/MyProfile";
 import useTheme from "../src/hooks/useTheme";
+import Layout from "../components/common/Layout";
 interface VerifyProfilePageProps {}
 
 const ProfileCenterBig = ({ profile }: { profile: MyProfile }) => {
@@ -49,7 +50,7 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
     const { profile, loading } = useUpdateProfileFromAppStateAndUpdate();
     const router = useRouter();
     return (
-        <>
+        <Layout>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <Text paragraph>
                 {t("Bitte zeige diese Angaben dem Personal am Empfang.")}
@@ -69,7 +70,7 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
                     {t("Abschliessen")}
                 </Button>
             </AlignContent>
-        </>
+        </Layout>
     );
 };
 
