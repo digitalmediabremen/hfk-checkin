@@ -1,13 +1,10 @@
 import { CheckCircle, Clock, MinusCircle, UserCheck, UserX, XCircle } from "react-feather";
-import { locale } from "yargs";
 import { _t } from "../../localization";
 import { AttendanceState } from "../model/api/MyProfile";
 import NewReservation from "../model/api/NewReservation";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import { ReservationPurpose, ReservationState } from "../model/api/Reservation";
-import { getFormattedDate } from "./DateTimeUtil";
-import { timeSpan } from "./TimeFormatUtil";
-import { assertNever, empty, notEmpty } from "./TypeUtil";
+import { assertNever } from "./TypeUtil";
 
 export function getIcon(state: ReservationState) {
     if (state === "requested") return Clock;

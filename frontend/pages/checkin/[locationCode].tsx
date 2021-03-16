@@ -12,7 +12,7 @@ import showIf from "../../components/api/showIf";
 import AlignContent from "../../components/common/AlignContent";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../../components/common/Button";
-import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
+import AnimatedIcon from "../../components/common/CheckinSuccessIcon";
 import FormElementWrapper from "../../components/common/FormElementWrapper";
 import LastCheckins from "../../components/common/LastCheckinsList";
 import Layout from "../../components/common/Layout";
@@ -84,7 +84,7 @@ export const CheckinComponent: React.FunctionComponent<{
 
     return (
         <Layout>
-            {!alreadyCheckedIn && <CheckinSucessIcon />}
+            {!alreadyCheckedIn && <AnimatedIcon />}
             {/* {alreadyCheckedIn && (
                 <Notice>{t("Du bist bereits eingecheckt")}.</Notice>
             )} */}

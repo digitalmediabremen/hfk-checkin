@@ -80,8 +80,8 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
             />
             {attendees && attendees.length > 0 && (
                 <>
-                    <SectionTitle bottomSpacing={-0.5}>
-                        {t("Externe Personen")}
+                    <SectionTitle bottomSpacing={.5}>
+                        {Math.random() > 0.5 ? t("Teilnehmerinnen") : t("Teilnehmer")}
                     </SectionTitle>
                     {attendees?.map((attendee) => {
                         const AttendeeStateIcon = getAttendanceStateIcon(
@@ -93,6 +93,8 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                 labelIcon={
                                     <AttendeeStateIcon strokeWidth={1} />
                                 }
+                                noBottomSpacing
+                                superNarrow
                                 {...formElementProps}
                                 value={attendeePresenter(attendee, locale)}
                             />

@@ -1,12 +1,15 @@
 import * as React from "react";
-import { Airplay, Check, Clock, Circle, CheckCircle } from "react-feather";
+import { Airplay, Check, Clock, Circle, CheckCircle, Icon } from "react-feather";
 import useTheme from "../../src/hooks/useTheme";
-interface CheckinSucessIconProps {}
+interface CheckinSucessIconProps {
+    icon?: Icon
+}
 
-const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
-    props
+const AnimatedIcon: React.FunctionComponent<CheckinSucessIconProps> = (
+    {icon: _icon}
 ) => {
     const theme = useTheme();
+    const Icon = _icon || CheckCircle;
     return (
         <>
             <style jsx>{`
@@ -59,7 +62,7 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
                 xmlns="http://www.w3.org/2000/svg"
                 xmlnsXlink="http://www.w3.org/1999/xlink"
             >
-                    <CheckCircle width="100%" height="100%" strokeWidth=".5" />
+                    <Icon width="100%" height="100%" strokeWidth=".5" />
                         {/* <Airplay width="70%" height="70%" strokeWidth="1" vectorEffect="non-scaling-stroke" x="15%" y="15%" /> */}
                         {/* <polyline
                             strokeWidth="4"
@@ -75,4 +78,4 @@ const CheckinSucessIcon: React.FunctionComponent<CheckinSucessIconProps> = (
     );
 };
 
-export default CheckinSucessIcon;
+export default AnimatedIcon;

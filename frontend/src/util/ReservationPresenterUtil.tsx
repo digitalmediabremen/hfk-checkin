@@ -1,4 +1,3 @@
-import { locale } from "yargs";
 import { _t } from "../../localization";
 import { Attendance, AttendanceUpdate } from "../model/api/MyProfile";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
@@ -16,8 +15,17 @@ export const timeFormValuePresenter = (
     return [getFormattedDate(begin, locale) || "", timeSpan(begin, end)];
 };
 
-export const attendeePresenter = (
-    a: Pick<AttendanceUpdate, "last_name" | "first_name">,
+export const attendeePresenter = (a: Attendance, locale: string) => (
+    <>
+        <b>
+            {a.first_name} {a.last_name}
+        </b>
+        {a.is_external && <> {_t(locale, "request-purpose", "Extern")}</>}
+    </>
+);
+
+export const requestedAttendeePresenter = (
+    a: AttendanceUpdate,
     locale: string
 ) => (
     <>
@@ -39,7 +47,7 @@ export const attendeesFormValuePresenter = (
     return show
         ? [
               ...(((attendees as unknown) as AttendanceUpdate[])?.map((a) =>
-                  attendeePresenter(a, locale)
+                requestedAttendeePresenter(a, locale)
               ) || []),
               ...insertIf(
                   [

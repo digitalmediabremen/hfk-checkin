@@ -51,6 +51,8 @@ const translation: Translation = {
         },
         request: {
             "Externe Personen": "External person",
+            "Teilnehmer": "Attendees",
+            "Teilnehmerinnen": "Attendees",
             Buchungsgrund: "Purpose",
             Nachricht: "Message",
             "Datum und Uhrzeit": "Date and time",

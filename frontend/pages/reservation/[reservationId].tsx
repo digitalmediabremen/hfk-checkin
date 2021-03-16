@@ -5,7 +5,7 @@ import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import useSubPage from "../../components/api/useSubPage";
 import AlignContent from "../../components/common/AlignContent";
-import CheckinSucessIcon from "../../components/common/CheckinSuccessIcon";
+import AnimatedIcon from "../../components/common/CheckinSuccessIcon";
 import CompleteReservation from "../../components/common/CompleteReservation";
 import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
@@ -24,6 +24,7 @@ import { useTranslation } from "../../localization";
 import useParam from "../../src/hooks/useParam";
 import useReservation from "../../src/hooks/useReservation";
 import useStatus from "../../src/hooks/useStatus";
+import { getIcon } from "../../src/util/ReservationUtil";
 import Page404 from "../404";
 
 interface ReservationPageProps {}
@@ -122,7 +123,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                         {reservationSuccess && (
                             <>
                                 <>
-                                    <CheckinSucessIcon />
+                                    <AnimatedIcon icon={getIcon(reservation.state)}/>
                                     <Subtitle>
                                         {t("Deine Anfrage ist eingegangen.")}
                                     </Subtitle>
