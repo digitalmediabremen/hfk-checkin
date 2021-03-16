@@ -1,14 +1,14 @@
 import { useFormik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useUpdateProfile } from "../components/api/ApiHooks";
 import { useAppState } from "../components/common/AppStateProvider";
 import { ButtonWithLoading } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import { Input } from "../components/common/Input";
+import Layout from "../components/common/Layout";
 import Notice from "../components/common/Notice";
-import Layout from "../components/common/Page";
 import PhoneInput from "../components/common/PhoneInput";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
@@ -70,7 +70,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             router.push(appUrls.verifyNow);
             return;
         }
-        router.push(appUrls.enterCode);
+        router.push(appUrls.home);
     }, [success]);
 
     const validationErrors = {

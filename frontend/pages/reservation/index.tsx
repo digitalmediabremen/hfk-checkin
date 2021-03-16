@@ -32,18 +32,16 @@ const headerProvider = (groupKey: string, firstValue: MyReservation) => (
 
 const EmptyState = () => {
     const { t } = useTranslation("reservation");
-    const router = useRouter();
-
     return (
         <>
             <Notice bottomSpacing={4}>
-                {t(
-                    "Noch hast du keine Buchungsanfragen gestellt."
-                )}
+                {t("Noch hast du keine Buchungsanfragen gestellt.")}
             </Notice>
-            <NewButton onClick={() => router.push(appUrls.request)}>
-                {t("Neue Buchungsanfrage")}
-            </NewButton>
+            <Link href={appUrls.request} passHref>
+                <NewButton componentType="a">
+                    {t("Neue Buchungsanfrage")}
+                </NewButton>
+            </Link>
         </>
     );
 };

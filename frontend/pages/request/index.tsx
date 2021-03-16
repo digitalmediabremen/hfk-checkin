@@ -10,6 +10,7 @@ import Layout from "../../components/common/Layout";
 import { LoadingInline } from "../../components/common/Loading";
 import NewButton from "../../components/common/NewButton";
 import SectionTitle from "../../components/common/SectionTitle";
+import Subtitle from "../../components/common/Subtitle";
 import SubpageCollection from "../../components/getin/subpages/SubpageCollection";
 import { requestSubpages } from "../../config";
 import features from "../../features";
@@ -59,6 +60,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             activeSubPage={activeSubPage}
             subPages={Subpages}
         >
+            <Subtitle>{t("Neue Anfrage")}</Subtitle>
             <FormElement
                 {...handlerProps("time")}
                 label={t("Datum und Uhrzeit")}

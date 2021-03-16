@@ -124,11 +124,6 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     // margin-right: -${theme.spacing(1.5)}px;
                 }
 
-                .action :global(> a > svg) {
-                    box-shadow: ${theme.boxShadow()};
-                    border-radius: 50%;
-                }
-
                 .animation.enter-active {
                     animation: appear ${duration}ms linear;
                     animation-fill-mode: forwards;

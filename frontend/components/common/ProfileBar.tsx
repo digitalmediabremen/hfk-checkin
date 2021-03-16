@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { Menu } from "react-feather";
 import { appUrls } from "../../config";
+import { getTitle } from "../../features";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
 import { useAppState } from "./AppStateProvider";
@@ -43,15 +44,13 @@ const ProfileBar: React.FunctionComponent<ProfileBarProps> = () => {
 
 const NotLoggedInBar: React.FunctionComponent<{}> = ({}) => {
     return (
-        <>
+        <Bar>
             <Link href={appUrls.home}>
-                <a className="profile">
-                    HfK
-                    <br />
-                    Checkin
+                <a>
+                    <b>{getTitle()}</b>
                 </a>
             </Link>
-        </>
+        </Bar>
     );
 };
 

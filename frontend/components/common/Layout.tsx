@@ -15,6 +15,7 @@ import { appUrls, isClient, pageTransitionDuration } from "../../config";
 import useTheme from "../../src/hooks/useTheme";
 import { TransitionDirection } from "../../src/model/AppState";
 import Footer from "./Footer";
+import NewRequestButton from "./NewRequestButton";
 import Page from "./Page";
 import ProfileBar from "./ProfileBar";
 import TopBar from "./TopBar";
@@ -158,18 +159,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                 scroll
                 noContentMargin={noContentMargin}
                 topBar={
-                    <TopBar
-                        actionProvider={() => (
-                            <Link href={appUrls.request}>
-                                <a>
-                                    <PlusCircle
-                                        size={40}
-                                        strokeWidth={(2 / 40) * 24}
-                                    />
-                                </a>
-                            </Link>
-                        )}
-                    >
+                    <TopBar actionProvider={() => <NewRequestButton />}>
                         {overrideHeader || <ProfileBar />}
                     </TopBar>
                 }
