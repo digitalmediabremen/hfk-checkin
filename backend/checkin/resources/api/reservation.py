@@ -108,8 +108,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
         from checkin.users.api import UserProfileSerializer
         # create Profile (attr: user) first, pass user instance to super().create(data)
         user_data = validated_data.pop('user')
-        user_data = {**user_data, 'is_external': True}
-        user_instance = UserProfileSerializer().create(validated_data={'profile': user_data})
+        user_instance = UserProfileSerializer().create(validated_data={'profile': user_data}, profile_extra={'is_external': True})
         # FIXME Attendance.user is currently a Profile object. Either it should be .user = type(User) or .profile = type(Profile)!
         validated_data['user'] = user_instance.profile
         return super().create(validated_data=validated_data)

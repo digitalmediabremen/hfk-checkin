@@ -90,12 +90,13 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     def validate_phone(self, value):
         return value.strip()
 
-    def create(self, validated_data):
+    def create(self, validated_data, user_extra={}, profile_extra={}):
         userprofile_data = validated_data.pop('profile')
         user = User.objects.create_user(**{
             User.USERNAME_FIELD: generate_username_for_new_user(userprofile_data),
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
+            **user_extra,
         })
         # create profile object
         profile_dict = {
@@ -105,6 +106,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             'phone': userprofile_data['phone'],
             #'email': userprofile_data['email'], # can only be writable if we validate emails
             'verified': True,
+            **profile_extra,
             #'is_external': True,
         }
         try:
