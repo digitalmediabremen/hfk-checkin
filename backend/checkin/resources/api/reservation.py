@@ -105,12 +105,13 @@ class AttendanceSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
-        from checkin.users.api import UserProfileSerializer as ProfileSerializer
+        from checkin.users.api import UserProfileSerializer
         # create Profile (attr: user) first, pass user instance to super().create(data)
         user_data = validated_data.pop('user')
         user_data = {**user_data, 'is_external': True}
-        user_instance = ProfileSerializer().create(validated_data=user_data)
-        validated_data['user'] = user_instance
+        user_instance = UserProfileSerializer().create(validated_data={'profile': user_data})
+        # FIXME Attendance.user is currently a Profile object. Either it should be .user = type(User) or .profile = type(Profile)!
+        validated_data['user'] = user_instance.profile
         return super().create(validated_data=validated_data)
 
 
@@ -774,13 +775,14 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         if not resource.reservable:
             raise ValidationError('Reservations for this resource are disabled.')
 
-        if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
-            new_state = Reservation.REQUESTED
-        else:
-            if instance.get_order():
-                new_state = Reservation.WAITING_FOR_PAYMENT
-            else:
-                new_state = Reservation.CONFIRMED
+        #if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
+        # FIXME auto confirmation
+        new_state = Reservation.REQUESTED
+        #else:
+        #new_state = Reservation.CONFIRMED
+        # else:
+        #     if instance.get_order():
+        #         new_state = Reservation.WAITING_FOR_PAYMENT
 
         instance.try_to_set_state(new_state, self.request.user)
 
