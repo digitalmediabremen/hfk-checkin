@@ -21,15 +21,12 @@ checkin_api_router = routers.SimpleRouter()
 
 if 'checkin.tracking' in settings.INSTALLED_APPS:
     from checkin.tracking.views.location import LocationsPDFView, LocationsView
-    from checkin.tracking.api import LocationViewSet, ProfileViewSet, LogoutViewSet, CheckinViewSet
+    from checkin.tracking.api import LocationViewSet, CheckinViewSet
+    from checkin.users.api import LogoutViewSet
     from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
-    #from checkin.booking.api import RoomViewSet, BookingRequestViewSet
     checkin_api_router.register(r'location', LocationViewSet)
     checkin_api_router.register(r'checkin', CheckinViewSet, basename='checkin')
-    # checkin_api_router.register(r'profile', ProfileViewSet, basename='profile')
-    checkin_api_router.register(r'auth', LogoutViewSet, basename='auth')
-    #checkin_api_router.register(r'room', RoomViewSet, basename='room')
-    #checkin_api_router.register(r'bookingrequest', BookingRequestViewSet, basename='bookingrequest')
+    #checkin_api_router.register(r'auth', LogoutViewSet, basename='auth')
     urlpatterns += [
         path('location/html/', LocationsView.as_view(), name='html-export'),
         path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),

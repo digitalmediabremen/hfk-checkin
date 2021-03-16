@@ -184,8 +184,14 @@ class ProfileAdmin(SimpleHistoryAdmin):
     list_editable = ('verified',)
     list_filter = ('updated_at','created_at','verified')
     search_fields = ['first_name', 'last_name','phone','email']
-    # TODO add user back in to readonly_fields
     readonly_fields = ('created_at', 'updated_at','user')
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser and 'user' in self.readonly_fields:
+            rof = list(self.readonly_fields)
+            rof.remove('user')
+            return rof
+        return self.readonly_fields
 
     def get_list_display(self, request):
         phone = 'phone' if request.user.has_perm('tracking.can_view_full_phone_number') else 'phone_obfuscated'

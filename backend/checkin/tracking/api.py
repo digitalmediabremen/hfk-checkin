@@ -12,12 +12,9 @@ from rest_framework.exceptions import PermissionDenied, NotFound, ValidationErro
 from django.db.utils import IntegrityError
 from django.http import Http404
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from django.contrib.auth import login
-from django.contrib.auth.backends import ModelBackend
 from django.utils.translation import gettext_lazy as _
 from netaddr import IPNetwork, IPAddress
 from django.utils import timezone
-from django.contrib.auth import logout as auth_logout
 
 from .models import Profile
 
@@ -137,77 +134,3 @@ class CheckinViewSet(viewsets.ReadOnlyModelViewSet):
         if filter_active:
             return qs.active()
         return qs
-
-class ProfileViewSet(viewsets.ViewSet):
-    # queryset = Profile.objects.all()
-    # serializer_class = ProfileSerializer
-    # permission_classes = [IsAdminUser]
-    authentication_classes = (CSRFExemptSessionAuthentication,)
-
-    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
-    def me(self, request, pk=None):
-        if request.user.is_anonymous:
-            raise PermissionDenied(ERROR_NO_PROFILE)
-
-        try:
-            serializer = ProfileSerializer(request.user.profile)
-        except AttributeError:
-            raise NotFound(ERROR_NO_PROFILE)
-        return Response(serializer.data)
-
-    @action(url_path="me/save", detail=False, methods=['post','put'], permission_classes=[AllowAny])
-    def save(self, request, pk=None):
-        profile_serializer = ProfileSerializer(data=request.data)
-        if request.user:
-            try:
-                profile = request.user.profile
-                profile_serializer = ProfileSerializer(profile, data=request.data)
-            except AttributeError:
-                pass
-
-        if not profile_serializer.is_valid():
-            return Response({
-                'detail': ERROR_NOT_VALID_WITH_SUMMARY % ", ".join([", ".join(err) for key, err in profile_serializer.errors.items()]) if profile_serializer.errors else ERROR_NOT_VALID,
-                'errors': profile_serializer.errors,
-                'non_field_errors': getattr(profile_serializer, 'non_field_errors', None),
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        # TODO join User + Profile model OR session against Profile OR custom User without username etc. OR subclass User
-        # FIXME unique user will now fail
-
-        # this is basically .create()
-        # see: https://www.django-rest-framework.org/api-guide/serializers/#accessing-the-initial-data-and-instance
-
-        #if new / anonymous user
-        if request.user and request.user.is_anonymous:
-            username = "%s-%s@gast.hfk-bremen.de" % (profile_serializer.validated_data['phone'],timezone.now().strftime("%Y-%m-%d-%H-%M-%S"))
-            username = username.lower()
-            try:
-                user = User.objects.create_user(first_name=profile_serializer.validated_data['first_name'], last_name=profile_serializer.validated_data['last_name'], username=username)
-                # FIXME This is might be crap!
-                login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-            except (ValidationError, IntegrityError) as e:
-                return Response({'detail': ERROR_NOT_VALID}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            user = request.user
-        try:
-            profile = profile_serializer.save()
-            profile.user = user
-            profile.save()
-
-            return Response(profile_serializer.data)
-
-        except (ValidationError, IntegrityError) as e:
-            return Response({'detail': ERROR_PROFILE_NOT_SAVED}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LogoutViewSet(viewsets.ViewSet):
-    """
-    Logout current user and return result.
-    see django/contrib/auth/views.py LogoutView for template.
-    """
-
-    @action(methods=['post','get'], detail=False)
-    def logout(self, request, *args, **kwargs):
-        auth_logout(request)
-        return Response({'detail': SUCCESS_LOGOUT}, status=status.HTTP_200_OK)
