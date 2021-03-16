@@ -243,8 +243,8 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         except KeyError:
             resource = reservation.resource
 
-        if not resource.can_make_reservations(request_user):
-            raise PermissionDenied(_('You are not allowed to make reservations in this resource.'))
+        # if not resource.can_make_reservations(request_user):
+        #     raise PermissionDenied(_('You are not allowed to make reservations in this resource.'))
 
         if 'end' in data and data['end'] < timezone.now():
             raise ValidationError(_('You cannot make a reservation in the past'))

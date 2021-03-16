@@ -435,7 +435,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             # FIXME generate status messages (set_state_verbose) here? or in reservation logic? ... multilang?
             notified_users = self.send_reservation_requested_mail()
             notified_reservation_delegates = self.send_reservation_requested_mail_to_officials()
-            if self.resource.access_restricted and not self.resource.can_make_reservations(user):
+            if not self.resource.can_make_reservations(user):
                 notified_access_delegates = self.send_access_requested_mail_to_officials()
             # notified_external_user_officials = self.send_external_user_requested_mail_to_officials()
             # notify external user confirmation official via Signal m2m_changed attendees_changed
@@ -577,7 +577,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if not user.is_verified:
             raise ValidationError(gettext("Organizer (%s) is not verified. Please verify before making reservations." % user))
 
-        if self.resource.access_restricted and not self.resource.can_make_reservations(user):
+        if not self.resource.can_make_reservations(user):
             warnings.warn(gettext("Organizer (%s) is not to make reservations on this resource." % user), ReservationPermissionWarning)
 
         user_is_admin = user and self.resource.is_admin(user)
