@@ -38,6 +38,10 @@ const { className, styles } = css.resolve`
         display: none;
     }
 
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        display: none;
+    }
+
     input {
         font-weight: bold;
     }
@@ -98,6 +102,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                         </span>
                     )}
                     <TimeInputPolyfill
+                        step={300}
                         title=""
                         aria-label="Close"
                         type="time"

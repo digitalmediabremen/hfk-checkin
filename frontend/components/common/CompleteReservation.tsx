@@ -85,7 +85,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                     </SectionTitle>
                     {attendees?.map((attendee) => {
                         const AttendeeStateIcon = getAttendanceStateIcon(
-                            attendee.state || "requested"
+                            attendee.state || "confirmed"
                         );
                         return (
                             <FormElement

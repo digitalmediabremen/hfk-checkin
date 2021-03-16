@@ -21,18 +21,29 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
         <Layout>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <FormGroup>
-            <Text paragraph>
-                {t("Die Hochschule für Künste ist verpflichtet die Identität aller Personen festzustellen, um im Falle einer Infektion eine Nachverfolgung gewährleisten zu können", {}, "Die Hochschule ist verpflichtet...")}
-            </Text>
-            <Text paragraph>
-            <b>{t("Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor")}.</b>
-            </Text>
-            <Text paragraph>
-            {t("Bevor ihre Identität nicht verifiziert ist, ist die Protokollierung und ein Eintritt nicht möglich.")}
-            </Text>
+                <Text paragraph>
+                    {t(
+                        "Per Verordnung ist die HfK verpflichtet, den Zugang zu den Gebäuden zu kontrollieren, um das Infektionsrisiko zu minimieren."
+                    )}
+                </Text>
+                <Text paragraph>
+                    <b>
+                        {t(
+                            "Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor"
+                        )}
+                        .
+                    </b>
+                </Text>
+                <Text paragraph>
+                    {t(
+                        "Bevor ihre Identität nicht verifiziert ist, ist die Protokollierung und ein Eintritt nicht möglich."
+                    )}
+                </Text>
             </FormGroup>
             <br />
-            <Button outline onClick={() => router.push(appUrls.home)}>{t("Erledigt")}</Button>
+            <Button outline onClick={() => router.push(appUrls.home)}>
+                {t("Erledigt")}
+            </Button>
         </Layout>
     );
 };

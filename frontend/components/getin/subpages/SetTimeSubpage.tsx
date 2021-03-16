@@ -76,7 +76,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
             <style jsx>{``}</style>
 
             <FormDateInput
-                label="Datum"
+                label={t("Datum")}
                 value={date}
                 onChange={setDate}
                 bottomSpacing={2}
@@ -84,14 +84,14 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                 extendedWidth
             />
             <FormTimeInput
-                label="Von"
+                label={t("Von")}
                 value={timeFrom}
                 onChange={setTimeFrom}
                 bottomSpacing={1}
                 extendedWidth
             />
             <FormTimeInput
-                label="Bis"
+                label={t("Bis")}
                 value={timeTo}
                 onChange={setTimeTo}
                 bottomSpacing={4}

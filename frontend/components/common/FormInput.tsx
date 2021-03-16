@@ -55,9 +55,11 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
                     input::-webkit-clear-button,
                     input::-webkit-inner-spin-button {
                         display: none;
+                        background: none;
                     }
     
-                    input[type="date"]::-webkit-calendar-picker-indicator {
+                    input[type="date"]::-webkit-calendar-picker-indicator,
+                    input[type="time"]::-webkit-calendar-picker-indicator {
                         background: transparent;
                         bottom: -24px;
                         color: transparent;

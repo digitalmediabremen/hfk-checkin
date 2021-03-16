@@ -80,7 +80,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const formik = useFormik<ProfileUpdate>({
         initialValues: {
             ...user,
-            email: ""
+            email: "",
         },
         validate: (user) => validate(user, validationErrors),
         enableReinitialize: true,
@@ -149,9 +149,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     {!initialProfile?.phone && (
                         <Notice>
                             {t(
-                                `Deine Angaben werden ausschließlich zur Rückverfolgung im Infektionsfall verwendet. Mit der Registrierung bestätigst Du, die Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein und dass du die geltenden Hygieneregeln gelesen und verstanden hast und sie befolgen wirst.`,
+                                "Deine Daten werden ausschließlich im Falle einer Infektionsnachverfolgung verwendet. Mit der Registrierung bestätigst du, den Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein. Du bestätigst das gültige HfK Hygienekonzept gelesen und verstanden zu haben und es zu befolgen. Die Datenschutzhinweise und die Hygieneregeln der HfK findest du auf Sie auf faq.hfk-bremen.de und https://www.hfk-bremen.de/corona-downloads und im Aushang am Empfang.",
                                 {},
-                                "Deine Angaben werden ausschließlich zur Rückverfolgung..."
+                                "setprofile-accept-legal"
                             )}
                         </Notice>
                     )}

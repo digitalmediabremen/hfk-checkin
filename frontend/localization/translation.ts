@@ -4,33 +4,43 @@ const translation: Translation = {
     en: {
         common: {
             "nicht verifiziert": "not verified",
-            "Seite nicht gefunden": "page not found",
+            "Seite nicht gefunden": "Page not found",
+            "Mist. Da ist was schiefgelaufen.": "Hmm. Something went wrong.",
+            "Melde dich bei": "Report to",
+            "wenn dieser Fehler häufiger auftritt.": "if this error repeats.",
             "+{days} Tag": "+{days} days",
             jetzt: "now",
-            "{fieldName} darf nicht leer sein.": "must be filled out",
-            Vorname: "first name",
-            Nachname: "surname",
-            Telefonnummer: "phone number",
-            "Die Telefonnummer wird ausschließlich im Falle einer  Infektionsnachverfolgung verwendet.":
+            "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
+            Vorname: "First name",
+            Nachname: "Surname",
+            Telefonnummer: "Phone number",
+            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
                 "The phone number will only be used, if an infection occurs.",
-            "Raum übernehmen": "select room",
-            "Zeit übernehmen": "select time",
-            "Neue Anfrage": "new booking request",
+            "Raum übernehmen": "Reuse room",
+            "Zeit übernehmen": "Reuse time",
+            "Neue Anfrage": "New booking request",
             Hilfe: "Help",
-            Datenschutzinformationen: "data privacy",
+            "Du bist offline": "You are officially offline.",
+            Datenschutzinformationen: "Data privacy",
             Protokoll: "Log",
-            "Noch keine Checkins vorhanden": "no checkins available",
+            "Noch keine Checkins vorhanden": "No checkins so far",
             "Telefon ändern": "change phone number",
             Heute: "today",
             Morgen: "tomorrow",
         },
         reservation: {
+            "Noch hast du keine Buchungsanfragen gestellt.":
+                "You haven't made any booking requests yet.",
+            "Neue Buchungsanfrage": "New booking request",
             Buchungen: "Bookings",
+            "Telefon ändern": "Change phone",
+            "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
+                "Are you sure to cancel your booking? This action cannot be reversed.",
             "'Deine Buchung {identifier} wurde storniert.'":
                 "Your booking request {identifier} has been cancelled.",
-            "Weitere Anfrage": "More booking requests",
+            "Weitere Anfrage": "Additional request",
             "Deine Anfrage ist eingegangen.":
-                "Your booking request has been sent.",
+                "Your booking request has been received.",
             Stornieren: "Cancel",
             "weitere Anfrage": "More booking requests",
             angefragt: "requested",
@@ -38,46 +48,41 @@ const translation: Translation = {
             abgelehnt: "denied",
             storniert: "cancelled",
             erstellt: "created",
-            "Noch hast du keine Buchungsanfragen gestellt.":
-                "You haven't made any booking requests yet.",
-            "Neue Buchungsanfrage": "New booking request.",
-            "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
-                "Are you sure to cancel your booking? This action cannot be reversed.",
         },
         request: {
-            "Externe Personen": "external person",
-            Buchungsgrund: "reason for booking",
-            Nachricht: "message",
-            "Datum und Uhrzeit": "date and time",
-            Raum: "room",
-            "Person hinzufügen": "add person",
-            Raumliste: "list of rooms",
-            Grund: "reasin",
-            Telefonkontakt: "phone contact",
-            Alleinnutzung: "exclusive use",
-            "Externe Teilnehmer": "external participant",
-            Anfang: "beginning",
-            Ende: "end",
-            "Weitere Teilnehmer": "other participants",
-            "Du hast keine Berechtigung den Raum \\{resource}\\ zu buchen.":
-                "You don't have permission to book this room \\{resource}\\.",
+            "Externe Personen": "External person",
+            Buchungsgrund: "Purpose",
+            Nachricht: "Message",
+            "Datum und Uhrzeit": "Date and time",
+            Raum: "Room",
+            "Person hinzufügen": "Add person",
+            Raumliste: "Rooms",
+            "Neue Anfrage": "New booking request",
+            Zeit: "time",
+            "optionale angaben": "optional information",
+            "Pers.": "Pers.",
+            Grund: "Purpose",
+            "Nach.": "Msg.",
+            "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
+                "My phone number ({phone}) may be used for queries.",
+            Anfragen: "request",
+            Telefonkontakt: "Phone contact",
+            Alleinnutzung: "Exclusive use",
+            Anfang: "Begin",
+            Ende: "End",
             "Ein Ausnahmegrund muss angegeben werden.":
                 "Please specify an exception.",
             "Du musst noch den Raum auswählen.": "Please select a room.",
-            "Du musst noch eine Zeit angeben.": "Please select a time.",
-            Zeit: "time",
-            "optionale angaben": "optional information",
-            "Pers.": "persons",
-            "Nach.": "message",
-            "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
-                "My phone number ({phone}) may be used for queries.",
-            Anfragen: "requests",
+            "Du musst noch eine Zeit angeben.": "Please select date and time.",
+            "Weitere Personen": "Additional participants",
+            "Du hast keine Berechtigung den Raum \\{resource}\\ zu buchen.":
+                'You don\'t have permission to book this room "{resource}".',
         },
         "request-attendees": {
             "HfK externe Person(en) anmelden": "Register external person(s)",
-            Delete: "delete",
+            Delete: "Delete",
             "Person hinzufügen": "Add person",
-            "Weitere Person hinzufügen": "Add person",
+            "Weitere Person hinzufügen": "Additional person",
             "HfK externe Personen müssen vorab angemeldet werden. Deine Anfrage wird an die Corona-Beauftragte geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern.":
                 "Visits of external persons - non-HfK-members - must be coordinated in advance. Your request will be sent to our staff member tasked with handling issues relating to the pandemic, the Corona-Beauftragte, for review. This process may delay your room request.",
             "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en.":
@@ -106,7 +111,7 @@ const translation: Translation = {
             Begründung: "reason",
             "Normale Buchung": "regular booking",
             "Prüfung bzw. Prüfungsvorbereitung":
-                "exam and/or preparation fo an exam",
+                "exam and/or preparation for an exam",
             Abholung: "pick-up",
             Gremiensitzung: "board meeting",
             "Anderer Grund": "other reasen",
@@ -125,11 +130,14 @@ const translation: Translation = {
                 "Room \\{resource}\\ can only be booked {days} days in advance.",
             "Räume können maximal {days} Tage im Vorraus gebucht werden.":
                 "Rooms can only be booked {days} days in advance.",
+            Datum: "Date",
+            Von: "Begin",
+            Bis: "End",
         },
         createProfile: {
             "Die konsequente Einhaltung des HfK-Hygienekonzepts ist die Voraussetzung für künftige Öffnungsschritte der HfK.":
                 "Our University will only make progress in a gradual reopening, if we all strictly follow the HfK hygiene rules.",
-            "Bitte verwende Checkin zur Selbst-Dokumentation, denn nur die digitale  Dokumentation ermöglicht, dass die Corona-Beauftragte dich schnell informieren kann, wenn in deinem Umfeld  ein konkretes Infektionsrisiko besteht.":
+            "please-use-checkin":
                 "Please do use Checkin to document your stay, as only the digital system enables our staff member tasked with handling issues relating to the pandemic, the Corona-Beauftragte, to inform you quickly if an infection risk arises in your close environ-ment.",
             "HfK-Angehörige": "HfK members",
             Gäste: "guests",
@@ -142,7 +150,7 @@ const translation: Translation = {
             Vorname: "first name",
             Nachname: "surname",
             Telefonnummer: "phone number",
-            "Deine Daten werden ausschließlich im Falle einer Infektionsnachverfolgung verwendet. Mit der Registrierung bestätigst du, den Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein. Du bestätigst das gültige HfK Hygienekonzept gelesen und verstanden zu haben und es zu befolgen. Die Datenschutzhinweise und die Hygieneregeln der HfK findest du auf Sie auf faq.hfk-bremen.de und https://www.hfk-bremen.de/corona-downloads und im Aushang am Empfang.":
+            "setprofile-accept-legal":
                 "Your data will only be used, if an infection occurs. With your registration you agree to the prevailing privacy policy that your data is being collected for tracing purposes in the event of an infection. You confirm to have read and understood the HfK rules of hygiene and to follow these rules during the stay at the HfK Bremen. Please find our prevailing privacy policy and the HfK hygiene rules on faq.hfk-bremen.de or on https://www.hfk-bremen.de/corona-downloads and on display at the front desk.",
             Registrieren: "register",
             Speichern: "save",
@@ -178,7 +186,7 @@ const translation: Translation = {
             "Checkin / Checkout": "Checkin / Checkout",
             "Bitte gib die 4-stellige Nummer des Standortes ein, den du jetzt betrittst oder verlässt.":
                 "Please enter the four-digit code of the location you want to exit or enter.",
-            "oder nutze den QR-Codes des Standorts, um deinen Aufenthalt zu dokumentieren.":
+            "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.":
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
         },

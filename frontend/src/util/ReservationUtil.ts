@@ -58,11 +58,11 @@ const getRequestFieldLabelMap = (
     agreed_to_phone_contact: _t(locale, "request", "Telefonkontakt"),
     resource_uuid: _t(locale, "request", "Raum"),
     exclusive_resource_usage: _t(locale, "request", "Alleinnutzung"),
-    attendees: _t(locale, "request", "Externe Teilnehmer"),
+    attendees: _t(locale, "request", "Externe Personen"),
     begin: _t(locale, "request", "Anfang"),
     end: _t(locale, "request", "Ende"),
     message: _t(locale, "request", "Nachricht"),
-    number_of_extra_attendees: _t(locale, "request", "Weitere Teilnehmer"),
+    number_of_extra_attendees: _t(locale, "request", "Weitere Personen"),
     purpose: _t(locale, "request", "Grund"),
     templateId: ""
 });

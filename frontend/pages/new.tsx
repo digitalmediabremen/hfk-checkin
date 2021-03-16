@@ -36,17 +36,15 @@ const NewProfilePage: NextPage = () => {
             <FormGroup>
                 <Text paragraph>
                     {t(
-                        `Präsenzlehre und ein flexibleres Zugangsverfahren zu den Räumen der HfK sind nur möglich, wenn alle HfK-Mitglieder die Corona-Maßnahmen unterstützen`,
-                        {},
-                        "Halte dich an die Regeln..."
+                        "Die konsequente Einhaltung des HfK-Hygienekonzepts ist die Voraussetzung für künftige Öffnungsschritte der HfK."
                     )}
                     .
                 </Text>
                 <Text paragraph>
                     {t(
-                        `Bitte dokumentiere deinen Aufenthalt in den Gebäuden und Räumen der HfK in eigenverantwortlich und halte dich an die HfK-Hygieneregeln`,
+                        "Bitte verwende Checkin zur Selbst-Dokumentation, denn nur die digitale  Dokumentation ermöglicht, dass die Corona-Beauftragte dich schnell informieren kann, wenn in deinem Umfeld  ein konkretes Infektionsrisiko besteht.",
                         {},
-                        "Dokumentiere deinen Aufenthalt..."
+                        "please-use-checkin"
                     )}
                     .
                 </Text>
