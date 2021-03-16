@@ -219,14 +219,14 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 "django.template.context_processors.i18n",
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 #"nucleus.context_processors.nucleus",
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
             ],
         },
     }
@@ -327,6 +327,7 @@ SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_SECRET = getenv("MICROSOFT_AUTH_CLIENT_SECRET"
 SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_TENANT_ID = '09e769ef-38f0-4cf4-a9e2-194cccd24761'
 LOGIN_URL = "/auth/login/azuread-tenant-oauth2/"
 LOGIN_REDIRECT_URL = "/admin/"
+SOCIAL_AUTH_SANITIZE_REDIRECTS = False
 
 OAUTH2_PROVIDER = {
     'SCOPES': {

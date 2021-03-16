@@ -51,7 +51,7 @@ if 'rest_framework_social_oauth2' in settings.INSTALLED_APPS:
 urlpatterns += [
     path('admin/', admin.site.urls),
     path('impersonate/', include('impersonate.urls')),
-    path('login/redirect/', RedirectView.as_view(url=settings.LOGIN_URL, permanent=False)),
+    path('login/redirect/', RedirectView.as_view(url=settings.LOGIN_URL, permanent=False, query_string=True)),
     path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout
     path('api/', include(respa_router.urls)),
     path('resources/', include('checkin.resources.urls')),
