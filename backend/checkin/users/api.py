@@ -17,6 +17,7 @@ from django.contrib.auth import login
 from django.contrib.auth.backends import ModelBackend
 from django.utils import timezone
 from logging import getLogger
+from django.conf import settings
 
 logger = getLogger(__name__)
 
@@ -68,14 +69,7 @@ def generate_username_for_new_user(validated_userprofile_data):
     ).lower()
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    from django.conf import settings
-    if 'checkin.tracking' in settings.INSTALLED_APPS:
-        from checkin.tracking.serializers import SimpleCheckinSerializer
-        last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
-    if 'checkin.resources' in settings.INSTALLED_APPS:
-        from checkin.resources.api.nested import SimpleReservationSerializer
-        reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
+class BaseUserProfileSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='profile.pk')
     display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
     first_name = serializers.CharField(source='profile.first_name')
@@ -91,7 +85,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins', 'reservations', 'is_external']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'is_external']
 
     def validate_phone(self, value):
         return value.strip()
@@ -111,7 +105,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'phone': userprofile_data['phone'],
             #'email': userprofile_data['email'], # can only be writable if we validate emails
             'verified': True,
-            'is_external': True,
+            #'is_external': True,
         }
         try:
             profile = Profile.objects.get(user=user)
@@ -140,9 +134,25 @@ class UserProfileSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class SimpleUserProfileSerializer(UserProfileSerializer):
-    class Meta(UserProfileSerializer.Meta):
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete',]
+class SimpleUserProfileSerializer(BaseUserProfileSerializer):
+    pass
+    # class Meta(BaseUserProfileSerializer.Meta):
+    #     fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete']
+
+class UserProfileSerializer(BaseUserProfileSerializer):
+    # if 'checkin.tracking' in settings.INSTALLED_APPS:
+    from checkin.tracking.serializers import SimpleCheckinSerializer
+    last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
+    # if 'checkin.resources' in settings.INSTALLED_APPS:
+    from checkin.resources.api.nested import SimpleReservationSerializer
+    reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
+
+    class Meta(BaseUserProfileSerializer.Meta):
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins', 'reservations']
+        # if 'checkin.tracking' in settings.INSTALLED_APPS:
+        #     fields += ['last_checkins']
+        # if 'checkin.resources' in settings.INSTALLED_APPS:
+        #     fields += ['reservations']
 
 
 # class UserSerializer(serializers.ModelSerializer):

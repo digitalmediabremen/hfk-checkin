@@ -3,8 +3,6 @@ from .models import *
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
 
-# TODO does not belong here. Move to checkin.users!
-#from checkin.resources.api.reservation import SimpleReservationSerializer
 
 class ActivityProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +32,14 @@ class LocationSerializer(serializers.ModelSerializer):
         return [CapacityForActivityProfileSerializer(m).data for m in qset]
 
 
+class BaseProfileSerializer(serializers.ModelSerializer):
+    id = ReadOnlyField()
+    display_name = ReadOnlyField(source='get_display_name')
+    class Meta:
+        model = Profile
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email']
+
+
 class SimpleCheckinSerializer(serializers.ModelSerializer):
     location = LocationSerializer(read_only=True)
     id = ReadOnlyField()
@@ -43,16 +49,10 @@ class SimpleCheckinSerializer(serializers.ModelSerializer):
         fields = ['id','time_entered', 'time_left', 'location','is_active']
 
 
-class BaseProfileSerializer(serializers.ModelSerializer):
-    id = ReadOnlyField()
-    display_name = ReadOnlyField(source='get_display_name')
-    class Meta:
-        model = Profile
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email']
-
-
 class ProfileSerializer(BaseProfileSerializer):
-    # last_checkins = SimpleCheckinSerializer(many=True, read_only=True)
+    # This relating to PROFILE and not to USER
+    # FIXME update to new UserProfile / User relations and remove
+    last_checkins = SimpleCheckinSerializer(many=True, read_only=True)
     #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     # reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     verified = ReadOnlyField()
@@ -61,14 +61,14 @@ class ProfileSerializer(BaseProfileSerializer):
 
     class Meta:
         model = Profile
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'student_number', 'verified', 'complete', 'last_checkins']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']
 
     def validate_phone(self, value):
         return value.strip()
-
+    
 
 class CheckinSerializer(serializers.ModelSerializer):
-    profile = BaseProfileSerializer(read_only=True)
+    profile = ProfileSerializer(read_only=True)
     location = LocationSerializer(read_only=True)
     id = ReadOnlyField()
 
