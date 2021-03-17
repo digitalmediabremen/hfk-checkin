@@ -50,6 +50,10 @@ class ReservationCalendarViewSet(ReservationViewSet):
     def get_serializer_class(self):
         return ReservationCalendarEventSerializer
 
+    def get_user_filtered_queryset(self, queryset):
+        # Do not filter Admin Calendar view.
+        return queryset
+
     def get_queryset(self):
         resource = self.kwargs.get('resource', None)
         resources = self.request.query_params.get('resources', None)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-17 18:36+0100\n"
+"POT-Creation-Date: 2021-03-17 18:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1105,19 +1105,25 @@ msgstr ""
 "verifizieren."
 
 #: checkin/resources/models/reservation.py:580
+#, fuzzy
+#| msgid "The resource is reservable only after %(datetime)s"
+msgid "This resource is not reservable. Sorry."
+msgstr "Dieser Bereich ist buchbar nach %(datetime)s"
+
+#: checkin/resources/models/reservation.py:583
 #, python-format
 msgid "Organizer (%s) is not to make reservations on this resource."
 msgstr "Organisator (%s) ist nicht berechtigt Buchungen anzufragen."
 
-#: checkin/resources/models/reservation.py:585
+#: checkin/resources/models/reservation.py:588
 msgid "Begin or end are not valid dates."
 msgstr "Start- oder Endzeit sind nicht korrekt."
 
-#: checkin/resources/models/reservation.py:587
+#: checkin/resources/models/reservation.py:590
 msgid "You must end the reservation after it has begun"
 msgstr "Endzeit der Buchung muss nach der Startzeit liegen."
 
-#: checkin/resources/models/reservation.py:624
+#: checkin/resources/models/reservation.py:627
 #, python-format
 msgid ""
 "The resource is already reserved for some of the period by %(collisions)s."
@@ -1125,7 +1131,7 @@ msgstr ""
 "Der Raum ist bereits für einen Teil der angefragten Zeit durch "
 "%(collisions)s reserviert."
 
-#: checkin/resources/models/reservation.py:630
+#: checkin/resources/models/reservation.py:633
 #, python-format
 msgid ""
 "The resource's capacity (%d) is already exhausted for some of the period. "
@@ -1134,17 +1140,17 @@ msgstr ""
 "Die Raumkapazität (%d) ist für einen Teil der angefragten Zeit bereits "
 "überschritten. Maximale Raumkapazität (inkl. diesem): %d."
 
-#: checkin/resources/models/reservation.py:633
+#: checkin/resources/models/reservation.py:636
 #, python-format
 msgid "Total attendance (incl. this one): %d."
 msgstr "Maximale Raumkapazität (inkl. diesem): %d."
 
-#: checkin/resources/models/reservation.py:637
+#: checkin/resources/models/reservation.py:640
 #, python-format
 msgid "The minimum reservation length is %(min_period)s."
 msgstr "Die minimale Buchungsdauer ist %(min_period)s."
 
-#: checkin/resources/models/reservation.py:641
+#: checkin/resources/models/reservation.py:644
 #, python-format
 msgid ""
 "The reservation duration must fit the slot size of %(slot_size)s or "
@@ -1418,27 +1424,22 @@ msgid "Calendar"
 msgstr "Kalender"
 
 #: checkin/resources/templates/admin/resources/resource_calendar.html:32
-#: checkin/resources/templates/admin/units/import_template.html:10
 msgid "Home"
 msgstr "Home"
 
-#: checkin/resources/templates/admin/units/import_buttons.html:7
-#: checkin/resources/templates/admin/units/import_template.html:20
-msgid "Import Service Map"
-msgstr ""
-
-#: checkin/resources/templates/admin/units/import_buttons.html:10
-#: checkin/resources/templates/admin/units/import_template.html:22
-msgid "Import Kirkanta"
-msgstr "Kirkabte importieren"
+#: checkin/resources/templates/admin/resources/resource_calendar.html:46
+#, fuzzy
+#| msgid "Resource type"
+msgid "+ Add Resource to view"
+msgstr "+ Raum zur Ansicht hinzufügen"
 
 #: checkin/settings/base.py:43
 msgid "Deutsch"
-msgstr "German"
+msgstr ""
 
 #: checkin/settings/base.py:44
 msgid "Englisch"
-msgstr "English"
+msgstr ""
 
 #: checkin/templates/admin/base_site.html:14
 msgid "Welcome,"
@@ -1958,11 +1959,11 @@ msgstr ""
 
 #: checkin/tracking/templates/admin/tracking/checkin/paper_log_entry.html:82
 msgid "Save"
-msgstr "Sichern"
+msgstr ""
 
 #: checkin/tracking/templates/admin/tracking/checkin/paper_log_entry.html:83
 msgid "Save and add another"
-msgstr "Sichern und weiteren Hinzufügen"
+msgstr ""
 
 #: checkin/tracking/templates/admin/tracking/paperlog/change_form.html:81
 msgid "Sichern und zurück zur Liste"
@@ -2151,10 +2152,8 @@ msgid "%s %s (P: %s / E: %s)"
 msgstr ""
 
 #: checkin/users/models.py:185
-#, fuzzy
-#| msgid "Person"
 msgid "Personen"
-msgstr "Personprofile"
+msgstr ""
 
 #: checkin/users/models.py:187
 msgid "Kann alle Personen anzeigen"

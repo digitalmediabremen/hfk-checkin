@@ -742,8 +742,7 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
 
         return context
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
+    def get_user_filtered_queryset(self, queryset):
         user = self.request.user
 
         # General Administrators can see all reservations
@@ -762,6 +761,10 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         queryset = queryset.filter(resource__in=Resource.objects.visible_for(user))
 
         return queryset
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return self.get_user_filtered_queryset(queryset)
 
     def perform_create(self, serializer):
         override_data = {'created_by': self.request.user, 'modified_by': self.request.user}
