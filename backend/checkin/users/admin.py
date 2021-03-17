@@ -9,12 +9,7 @@ from django.utils.translation import gettext, gettext_lazy as _
 from impersonate.admin import UserAdminImpersonateMixin
 from simple_history.admin import SimpleHistoryAdmin
 
-# from checkin.tracking.admin import ProfileAdmin
-# from .models import Profile
-#
-# TODO actually move the profiles model to this app
-# admin.site.register(Profile,ProfileAdmin)
-
+from .models import Profile
 User = get_user_model()
 
 
@@ -22,6 +17,10 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("email",)
+
+
+class UserProfileAdminInline(admin.StackedInline):
+    model = Profile
 
 
 class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
@@ -45,6 +44,7 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
     add_form = UserCreationForm
+    inlines = [UserProfileAdminInline]
 
 #from resources.models import Reservation
 # from allauth.socialaccount.models import SocialAccount, EmailAddress
@@ -170,8 +170,6 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
 
 if not admin.site.is_registered(User):
     admin.site.register(User, UserAdmin)
-
-from .models import Profile
 
 @admin.register(Profile)
 class ProfileAdmin(SimpleHistoryAdmin):
