@@ -2,12 +2,14 @@
 {% load i18n admin_urls guardian_tags %}
 
 {% block object-tools-items %}
+{% if original.reservable %}
 <li>
 {% url 'admin:resources_resource_calendar' original.pk|admin_urlquote as url %}
 <a href="{% add_preserved_filters url is_popup to_field %}">
 {% blocktrans with cl.opts.verbose_name as name %}Calendar{% endblocktrans %}
 </a>
 </li>
+{% endif %}
 {#{% get_obj_perms request.user for original as "resource_perms" %}#}
 {#{% if "resource:can_modify_access" in resource_perms %}#}
 {# TODO permissions to show this button? #}

@@ -379,7 +379,7 @@ msgstr "Exkl."
 
 #: checkin/resources/admin/reservation.py:173
 msgid "Avail."
-msgstr "Verf."
+msgstr "Auslastung"
 
 #: checkin/resources/admin/reservation.py:210
 msgid "Has been cancelled or denied."
@@ -1057,7 +1057,7 @@ msgstr "Buchungen"
 
 #: checkin/resources/models/reservation.py:258
 msgid "Num."
-msgstr "Nummer"
+msgstr "Anzahl"
 
 #: checkin/resources/models/reservation.py:263
 #: checkin/resources/models/reservation.py:269
