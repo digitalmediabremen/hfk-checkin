@@ -87,6 +87,19 @@ EMAIL_SUBJECT_PREFIX = getenv(
     "DJANGO_EMAIL_SUBJECT_PREFIX", default="[checkin]"
 )
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = 'b2cee7906bf6d3'
+EMAIL_HOST_PASSWORD = '652ac5e2aa7142'
+EMAIL_PORT = '2525'
+
+POST_OFFICE.update({
+    'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+    'LOG_LEVEL': 2, # Logs everything
+    #'OVERRIDE_RECIPIENTS': ['organizer@example.com', 'attendant@example.com', 'jarnds@hfk-bremen.de', 'lpuhl@hfk-bremen.de'],
+    'OVERRIDE_RECIPIENTS': ['jarnds@hfk-bremen.de'],
+})
+
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.

@@ -262,6 +262,17 @@ EMAIL_BACKEND = getenv(
 # https://docs.djangoproject.com/en/2.2/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
+POST_OFFICE = {
+    'MESSAGE_ID_ENABLED': True,
+    'MESSAGE_ID_FQDN': 'example.com',
+    'PRIORITY': 'now',
+    'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+}
+
+PREMAILER_OPTIONS = {
+    'base_url': 'https://%s' % getenv('SITE_URL', default='no-site-url.example.com'),
+}
+
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
