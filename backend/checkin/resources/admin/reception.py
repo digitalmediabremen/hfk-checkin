@@ -5,6 +5,7 @@ from rangefilter.filter import DateTimeRangeFilter
 from django.utils.timezone import now
 from django.shortcuts import redirect
 from django.utils.http import urlencode
+from .reservation import Reservation
 
 from django.conf import settings
 if 'checkin.tracking' in settings.INSTALLED_APPS:
@@ -63,7 +64,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         readonly_fields = (*AttendanceAdmin.readonly_fields, 'state','comment')
         list_editable = ()
         #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
-        list_display = ('user', 'resource', 'get_display_duration','enter_action','leave_action','comment','state')
+        list_display = ('user', 'resource','reservation','get_display_duration','enter_action','leave_action','comment','state')
         list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
                        # 'resources', 'start', 'end', 'status', 'is_important',
                        ('reservation__begin', DateTimeRangeFilter),
@@ -74,15 +75,16 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         actions_on_top = True
         #list_display_links = ('user','resource')
 
-        # FIXME improve front desk registration view and methods!
+        def get_queryset(self, request):
+            qs = super().get_queryset(request).prefetch_related('checkin_set')
+            #qs = qs.filter(state='requested')
+            qs = qs.filter(reservation__state__in=(Reservation.CONFIRMED,))
+            return qs
 
         def get_display_duration(self, obj):
             return obj.reservation.display_duration
         get_display_duration.short_description = _("Timespan")
-        get_display_duration.admin_order_field = 'begin'
-
-        def get_queryset(self, request):
-            return super().get_queryset(request).prefetch_related('checkin_set')
+        get_display_duration.admin_order_field = 'reservation__begin'
 
         def get_begin_time(self, obj):
             return format_html("<strong>{}</strong>", make_naive(obj.reservation.begin, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
@@ -150,7 +152,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             # c.save()
             attendance = self.model.objects.get(uuid=uuid)
             # attendance.checkin_set.add(c)
-            location = attendance.reservation.resource.location_set.all()
+            #location = attendance.reservation.resource.location_set.all()
             # FIXME will fail without CheckinLocation
             location = CheckinLocation.objects.get(resource=attendance.reservation.resource)
             checkin, new = attendance.checkin_set.checkin(profile=attendance.user, location=location, origin=CheckinOrigin.FRONTDESK_MANUAL, include_ancestors=False)
