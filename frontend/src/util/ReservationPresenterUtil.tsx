@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { _t } from "../../localization";
 import { Attendance, AttendanceUpdate } from "../model/api/MyProfile";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
@@ -15,14 +16,21 @@ export const timeFormValuePresenter = (
     return [getFormattedDate(begin, locale) || "", timeSpan(begin, end)];
 };
 
-export const attendeePresenter = (a: Attendance, locale: string) => (
-    <>
-        <b>
-            {a.first_name} {a.last_name}
-        </b>
-        {a.is_external && <> {_t(locale, "request-purpose", "Extern")}</>}
-    </>
-);
+export const attendeePresenter = (a: Attendance, locale: string) => {
+    const StrikeIfDenied = a.state === "denied" ? "s" : Fragment;
+    return (
+        <>
+            <StrikeIfDenied>
+                <b>
+                    {a.first_name} {a.last_name}
+                </b>
+                {a.is_external && (
+                    <> {_t(locale, "request-purpose", "Extern")}</>
+                )}
+            </StrikeIfDenied>
+        </>
+    );
+};
 
 export const requestedAttendeePresenter = (
     a: AttendanceUpdate,
@@ -47,7 +55,7 @@ export const attendeesFormValuePresenter = (
     return show
         ? [
               ...(((attendees as unknown) as AttendanceUpdate[])?.map((a) =>
-                requestedAttendeePresenter(a, locale)
+                  requestedAttendeePresenter(a, locale)
               ) || []),
               ...insertIf(
                   [
