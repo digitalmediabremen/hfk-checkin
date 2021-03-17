@@ -382,33 +382,33 @@ TIME_INPUT_FORMATS = [
 
 # THEMING with Nucleus
 # -------------------------------------------------------------------------------
-NUCLEUS = {
-    'sidebar': {
-        # Title
-        'title': _('Custom title'),
-
-        # Footer
-        'footer': {
-            'title': _('Custom title'),
-            'description': _('Longer text displayed below the title'),
-        },
-
-        # Navigation
-        'navigation': {
-            # Application
-            'auth': {
-                'title': _('Accounts'),  # Override title
-                'icon': 'img/custom-icon.svg'  # Optional
-            },
-
-            # Model
-            'auth.User': {
-                'title': _('Users'),
-                'icon': 'img/custom-icon.svg'  # Optional
-            }
-        }
-    }
-}
+# NUCLEUS = {
+#     'sidebar': {
+#         # Title
+#         'title': _('Custom title'),
+#
+#         # Footer
+#         'footer': {
+#             'title': _('Custom title'),
+#             'description': _('Longer text displayed below the title'),
+#         },
+#
+#         # Navigation
+#         'navigation': {
+#             # Application
+#             'auth': {
+#                 'title': _('Accounts'),  # Override title
+#                 'icon': 'img/custom-icon.svg'  # Optional
+#             },
+#
+#             # Model
+#             'auth.User': {
+#                 'title': _('Users'),
+#                 'icon': 'img/custom-icon.svg'  # Optional
+#             }
+#         }
+#     }
+# }
 
 # TESTING
 # -------------------------------------------------------------------------------

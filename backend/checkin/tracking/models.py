@@ -96,11 +96,11 @@ class BookingMethod(models.Model):
 # Getin/Checkin-App Model
 class Location(MPTTModel):
     # FIXME resource needs to be OneToOne (or inheritance)
-    resource = models.OneToOneField(Resource, on_delete=models.PROTECT, null=True, blank=True, related_name='checkinlocation')
+    resource = models.OneToOneField(Resource, verbose_name=_("Resource"), on_delete=models.PROTECT, null=True, blank=True, related_name='checkinlocation')
     code = models.CharField(_("Raumcode"), max_length=4, unique=True, default=pkgen)
     parent = TreeForeignKey('self', verbose_name=_('Teil von'), on_delete=models.CASCADE, null=True, blank=True, related_name='children', default=3)
-    _number = models.CharField(_("Raumnummer"), max_length=24, blank=True, help_text=_("Used if not attached to resource."))
-    _name = models.CharField(_("Raumname / Standort"), max_length=255, help_text=_("Used if not attached to resource."))
+    _number = models.CharField(_("Subtitle / No."), max_length=24, blank=True, help_text=_("Used if not attached to resource."))
+    _name = models.CharField(_("Title"), max_length=255, help_text=_("Used if not attached to resource."))
     # org_responsible = models.CharField(_("Raumverantwortliche(r)"), max_length=255, blank=True, null=True)
     # org_size = models.DecimalField(verbose_name=_("Größe"), help_text=_("in Quadratmetern"), max_digits=8, decimal_places=2, blank=True, null=True)
     # org_comment = models.TextField(verbose_name=_("Anmerkungen"), blank=True, null=True)
@@ -180,11 +180,19 @@ class Location(MPTTModel):
         activities = self.org_activities.through.objects.filter(location=self).all()
         return activities
 
+    def get_local_display_name(self):
+        name = "%s" % self.name
+        if self.number:
+            name += " (%s)" % self.number
+        return name
+
     def __str__(self):
         if self.resource:
             return "%s / %s" % (self.code, self.resource.display_name,)
-        else:
-            return "%s" % (self.code,)
+        local_name = self.get_local_display_name().strip()
+        if len(local_name) > 1:
+            return "%s / %s" % (self.code, local_name,)
+        return "%s" % (self.code,)
 
     # def get_absolute_url(self):
     #     return reverse('pdf-view', kwargs={'pk': self.pk }) + "?as=html"

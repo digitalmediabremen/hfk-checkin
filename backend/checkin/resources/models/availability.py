@@ -130,10 +130,10 @@ class Period(models.Model):
 
     def _validate_belonging(self):
         if not (self.resource_id or self.unit_id):
-            raise ValidationError(_("You must set 'resource' or 'unit'"), code="no_belonging")
+            raise ValidationError(_("You must set 'resource' or 'unit'."), code="no_belonging")
 
         if self.resource_id and self.unit_id:
-            raise ValidationError(_("You must set either 'resource' or 'unit', but not both"), code="invalid_belonging")
+            raise ValidationError(_("You must set either 'resource' or 'unit', but not both."), code="invalid_belonging")
 
     def _check_closed(self):
         # TODO: why is this automagically closing itself upon creation when there's no days added yet

@@ -119,7 +119,7 @@ class User(AbstractUser):
             return True
 
     def __str__(self):
-        return self.get_email_notation()
+        return self.get_display_name()
 
     # def save(self, *args, **kwargs):
     #     # update email on Person as well.

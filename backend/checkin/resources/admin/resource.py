@@ -59,10 +59,10 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Reservation'), {
             #'classes': ('collapse',),
-            'fields': ('reservable', 'reservation_info','need_manual_confirmation',# 'reservation_delegates',
+            'fields': ('reservable', 'need_manual_confirmation', 'reservation_info',# 'reservation_delegates',
                        'min_period','max_period','slot_size','max_reservations_per_user',
-                       'reservation_requested_notification_extra','reservation_confirmed_notification_extra',
                        'reservable_max_days_in_advance','reservable_min_days_in_advance',
+                       'reservation_requested_notification_extra','reservation_confirmed_notification_extra',
                        'external_reservation_url'),
         }),
         (_('Access'), {
@@ -89,7 +89,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
 
     def get_people_capacity(self, obj):
         return obj.people_capacity
-    get_people_capacity.short_description = "Active Capacity"
+    get_people_capacity.short_description = _("Active Capacity")
 
     def get_unit_slug(self, obj):
         if obj.unit:

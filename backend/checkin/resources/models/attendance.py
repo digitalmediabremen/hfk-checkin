@@ -3,7 +3,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from django_better_admin_arrayfield.models.fields import ArrayField
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import gettext
+from django.utils.translation import gettext, gettext_lazy
 import uuid
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -45,6 +45,7 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
         #return self.state == AttendanceStates.REQUESTED or False
         return self.user.is_external
     is_external_user.fget.short_description = _("External")
+    is_external_user.fget.boolean = True
 
     @property
     def is_organizer(self):
@@ -59,9 +60,11 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
     def get_display_name(self):
         name = self.user.get_full_name()
         if self.is_external_user:
-            name += " " + gettext("(External)")
+            return gettext_lazy("%(name)s (External)") % {'name': name}
         if self.is_organizer:
-            name += " " + gettext("(Organizer)")
+            return gettext_lazy("%(name)s (Organizer)") % {'name': name}
+        if self.is_organizer and self.is_external_user:
+            return gettext_lazy("%(name)s (External organizer)") % {'name': name}
         return name
 
     def save(self, *args, **kwargs):
@@ -83,7 +86,8 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         class Meta:
             proxy = True
             verbose_name = _("Attendance registration")
+            verbose_name_plural = _("Attendance registrations")
 
         def __str__(self):
-            return "%(profile)s on %(date)s for reservation %(reservation)s" % \
+            return _("%(profile)s on %(date)s for reservation %(reservation)s") % \
                    { 'profile': self.user, 'date': self.reservation.display_duration, 'reservation': self.reservation }

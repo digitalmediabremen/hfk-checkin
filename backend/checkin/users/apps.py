@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 import logging
 from django.conf import settings
 
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class UsersConfig(AppConfig):
     name = 'checkin.users'
     label = 'users'
-    verbose_name = ugettext_lazy('Users and Profiles')
+    verbose_name = gettext_lazy('Users and Profiles')
 
     # correct site_domain is required for microsoft-auth to work properly.
     # triggered after migration.

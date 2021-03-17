@@ -14,7 +14,7 @@ class AbstractReservableModel(models.Model):
     These fields might be shared between Units and Resources.
     """
 
-    reservable = models.BooleanField(_("Buchbar"), default=True)
+    reservable = models.BooleanField(_("Reservable"), default=True)
     # reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
     #                                                blank=True,
     #                                                related_name='%(app_label)s_%(class)s_reservation_delegated')
@@ -23,7 +23,7 @@ class AbstractReservableModel(models.Model):
     #capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Einschränkungen / Kapazität"), blank=True, null=True)
     # book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True,
     #                              blank=True)
-    reservation_info = models.TextField(verbose_name=_("Instructions / Comments"), blank=True, null=True)
+    reservation_info = models.TextField(verbose_name=_("Instructions / Comments"), help_text=_("For internal use only. Shall not be displayed to users."), blank=True, null=True)
     #specific_terms = models.TextField(verbose_name=_('Specific terms'), blank=True)
 
     # period, slots, limitations
@@ -55,7 +55,7 @@ class AbstractReservableModel(models.Model):
     # third party URL
     external_reservation_url = models.URLField(
         verbose_name=_('External reservation URL'),
-        help_text=_('A link to an external reservation system if this resource is managed elsewhere'),
+        help_text=_('A link to an external reservation system if this resource is managed elsewhere. Can not be combined with reservable.'),
         null=True, blank=True)
 
     class Meta:

@@ -1,20 +1,22 @@
-{% extends "admin/resources/change_form_object_tools.html" %}
+{% extends "admin/change_form_object_tools.html" %}
 {% load i18n admin_urls guardian_tags %}
 
 {% block object-tools-items %}
 <li>
 {% url 'admin:resources_resource_calendar' original.pk|admin_urlquote as url %}
-<a href="{% add_preserved_filters url is_popup to_field %}" class="accesspermissionlink">
+<a href="{% add_preserved_filters url is_popup to_field %}">
 {% blocktrans with cl.opts.verbose_name as name %}Calendar{% endblocktrans %}
 </a>
 </li>
+{#{% get_obj_perms request.user for original as "resource_perms" %}#}
 {#{% if "resource:can_modify_access" in resource_perms %}#}
-<li>
-{% url 'admin:resources_resourceaccess_change' original.pk|admin_urlquote as url %}
-<a href="{% add_preserved_filters url is_popup to_field %}" class="accesspermissionlink">
-  {% blocktrans with cl.opts.verbose_name as name %}Access Permissions{% endblocktrans %}
-</a>
-</li>
+{# TODO permissions to show this button? #}
+    <li>
+    {% url 'admin:resources_resourceaccess_change' original.pk|admin_urlquote as url %}
+    <a href="{% add_preserved_filters url is_popup to_field %}">
+      {% blocktrans with cl.opts.verbose_name as name %}Access Permissions{% endblocktrans %}
+    </a>
+    </li>
 {#{% endif %}#}
 {{ block.super }}
 {% endblock %}

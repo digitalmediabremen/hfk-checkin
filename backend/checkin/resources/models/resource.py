@@ -263,7 +263,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     #public = models.BooleanField(default=True, verbose_name=_('Public'))
     #public = True
     numbers = ArrayField(models.CharField(max_length=24), verbose_name=_("Room number(s)"), blank=True, null=True,
-                         help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: K.XXx"))
+                         help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: X.XX(x)"))
     name = models.CharField(_("Name"), max_length=200)
     alternative_names = ArrayField(models.CharField(max_length=200), verbose_name=_("Alternative names"), blank=True, null=True)
     description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
@@ -279,10 +279,10 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
 
     people_capacity_default = models.PositiveIntegerField(verbose_name=_('Default people capacity'), null=True, blank=True)
     people_capacity_calculation_type = models.CharField(verbose_name=_('Capacity calculation'), max_length=20, choices=CAPACITY_CALCULATION_TYPES, default=CAPACITY_CALCULATION_MIN)
-    area = models.DecimalField(verbose_name=_('Area (m2)'), help_text=_("in Quadratmetern"), max_digits=8,
+    area = models.DecimalField(verbose_name=_('Area (m²)'), help_text=_("in Quadratmetern"), max_digits=8,
                                     decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))],
                                     blank=True, null=True)
-    floor_number = models.IntegerField(verbose_name=_('Floor number'), null=True, blank=True)
+    floor_number = models.IntegerField(verbose_name=_('Floor number'), help_text=_("-1: Basement, 0: Ground Floor, 1: First Floor"), null=True, blank=True)
     floor_name = models.CharField(verbose_name=_('Floor name'), max_length=200, null=True, blank=True)
     #history = HistoricalRecords()
 
@@ -313,11 +313,23 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         DeprecationWarning("Resource do not implement access code types any more.")
         return Resource.ACCESS_CODE_TYPE_NONE
 
+    # @property
+    # def display_name(self):
+    #     name = "%s" % (get_translated(self, 'name'),)
+    #     if self.numbers:
+    #         name += " (%s)" % self.display_numbers
+    #     cap = getattr(self, 'people_capacity', None)
+    #     if cap:
+    #         name += " (%d)" % cap
+    #     return name
+    # display_name.fget.short_description = _('Name')
+
     @property
     def display_name(self):
-        name = "%s" % (get_translated(self, 'name'),)
+        name = str()
         if self.numbers:
-            name += " (%s)" % self.display_numbers
+            name += "%s " % self.display_numbers
+        name += "%s" % (get_translated(self, 'name'),)
         cap = getattr(self, 'people_capacity', None)
         if cap:
             name += " (%d)" % cap
@@ -990,5 +1002,8 @@ class ResourceCapacityPolicy(ModifiableModel, UUIDModelMixin):
     type = models.CharField(choices=CAPACITY_POLICY_TYPES, max_length=20, default='ABS')
     resources = models.ManyToManyField(Resource, related_name='capacity_policies')
 
+    class Meta:
+        verbose_name = _("Capacity policy for resources")
+        verbose_name_plural = _("Capacity policies for resources")
 
 

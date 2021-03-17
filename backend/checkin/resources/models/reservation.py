@@ -11,14 +11,13 @@ from django.conf import settings
 from django.db import models
 from django.utils import translation
 from django.utils.timezone import now
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext as gettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy, gettext, ngettext
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from psycopg2.extras import DateTimeTZRange
 import warnings
 from django.db.models.signals import m2m_changed, post_save, post_delete
-from django.utils.translation import ngettext
 from django.template.defaultfilters import date as datefilter
 from django.utils.timezone import make_naive
 from django.utils.functional import cached_property
@@ -169,11 +168,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     REQUESTED = 'requested'
     WAITING_FOR_PAYMENT = 'waiting_for_payment'
     STATE_CHOICES = (
-        (CREATED, _('◯ newly created')),
-        (REQUESTED, _('◐ requested')),
-        (CONFIRMED, _('◑ confirmed')),
-        (DENIED, _('◓ denied')),
-        (CANCELLED, _('◒ cancelled')),
+        (CREATED, _('newly created')),
+        (REQUESTED, _('requested')),
+        (CONFIRMED, _('confirmed')),
+        (DENIED, _('denied')),
+        (CANCELLED, _('cancelled')),
         #(WAITING_FOR_PAYMENT, _('waiting for payment')), # deactiveted with all other payment methods
     )
 
@@ -230,7 +229,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         ordering = ('begin','end')
 
     def __str__(self):
-        return "%s" % (self.short_uuid,)
+        return "%s (%s)" % (self.short_uuid, self.state)
 
     @property
     def organizer(self):
@@ -576,6 +575,9 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         if not user.is_verified:
             raise ValidationError(gettext("Organizer (%s) is not verified. Please verify before making reservations." % user))
+
+        if not self.resource.reservable:
+            raise ValidationError(gettext("This resource is not reservable. Sorry."))
 
         if not self.resource.can_make_reservations(user):
             warnings.warn(gettext("Organizer (%s) is not to make reservations on this resource." % user), ReservationPermissionWarning)
