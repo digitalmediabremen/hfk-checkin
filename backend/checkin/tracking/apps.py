@@ -1,5 +1,8 @@
 from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 class TrackingConfig(AppConfig):
     name = 'checkin.tracking'
@@ -13,12 +16,12 @@ class TrackingConfig(AppConfig):
         from os import environ
         domain = environ.get("SITE_DOMAIN", default="checkin.hfk-bremen.de")
         site_id = settings.SITE_ID
-        print("Setting Site with SITE_ID (from Settings) == %i to envvar SITE_DOMAIN %s." % (site_id, domain))
+        logger.info("Setting Site with SITE_ID (from Settings) == %i to envvar SITE_DOMAIN %s." % (site_id, domain))
         if settings.DEBUG:
-            print("... Setting to 'localhost:8000' because DEBUG is True.")
+            logger.info("... Setting to 'localhost:8000' because DEBUG is True.")
             domain = 'localhost:8000'
         if 'django.contrib.sites' in settings.INSTALLED_APPS:
             from django.contrib.sites.models import Site
             Site.objects.filter(id=site_id).update(domain=domain)
         else:
-            print("... Skipping because sites framework is not installed.")
+            logger.info("... Skipping because sites framework is not installed.")
