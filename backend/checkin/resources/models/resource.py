@@ -254,9 +254,9 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     CAPACITY_CALCULATION_MIN = 'Min'
     CAPACITY_CALCULATION_MAX = 'Max'
     CAPACITY_CALCULATION_TYPES = (
-        (CAPACITY_CALCULATION_NONE, _('Default')),
-        (CAPACITY_CALCULATION_MIN, _('Minimum')),
-        (CAPACITY_CALCULATION_MAX, _('Maximum')),
+        (CAPACITY_CALCULATION_NONE, _('Default without policies')),
+        (CAPACITY_CALCULATION_MIN, _('Minimum according to policies')),
+        (CAPACITY_CALCULATION_MAX, _('Maximum according to policies')),
     )
 
     #id = models.CharField(primary_key=True, max_length=100)
@@ -944,8 +944,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
 #         return "%s / %s" % (self.equipment, self.resource)
 
 
-class ResourceGroup(ModifiableModel):
-    identifier = models.CharField(verbose_name=_('Identifier'), max_length=100)
+class ResourceGroup(ModifiableModel, UUIDModelMixin):
     name = models.CharField(verbose_name=_('Name'), max_length=200)
     resources = models.ManyToManyField(Resource, verbose_name=_('Resources'), related_name='groups', blank=True)
 
@@ -1005,5 +1004,8 @@ class ResourceCapacityPolicy(ModifiableModel, UUIDModelMixin):
     class Meta:
         verbose_name = _("Capacity policy for resources")
         verbose_name_plural = _("Capacity policies for resources")
+        
+    def __str__(self):
+        return self.name
 
 

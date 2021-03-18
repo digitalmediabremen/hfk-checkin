@@ -1,11 +1,10 @@
 from modeltranslation.translator import TranslationOptions, register
-
 from .models import *
 
 
-# @register(UnitGroup)
-# class UnitGroupTranslationOptions(TranslationOptions):
-#     fields = ['name']
+@register(ResourceGroup)
+class ResourceGroupTranslationOptions(TranslationOptions):
+    fields = ['name']
 
 
 @register(Unit)

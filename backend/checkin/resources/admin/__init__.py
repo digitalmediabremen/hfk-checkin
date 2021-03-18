@@ -9,6 +9,7 @@ from checkin.resources.admin.other import (
     #ReservationAdmin,
     #Day,
     ResourceGroupAdmin,
+    ResourceCapacityPolicyAdmin,
 )
 
 from checkin.resources.admin.reservation import ReservationAdmin
@@ -48,7 +49,7 @@ admin_site.register(Unit, UnitAdmin)
 #admin_site.register(ReservationMetadataField, ReservationMetadataFieldAdmin)
 #admin_site.register(ReservationMetadataSet, ReservationMetadataSetAdmin)
 admin.site.register(ResourceGroup, ResourceGroupAdmin)
-admin.site.register(ResourceCapacityPolicy)
+admin.site.register(ResourceCapacityPolicy, ResourceCapacityPolicyAdmin)
 #if admin.site.is_registered(Municipality):
 #    admin.site.unregister(Municipality)
 #admin.site.register(Municipality, MunicipalityAdmin)

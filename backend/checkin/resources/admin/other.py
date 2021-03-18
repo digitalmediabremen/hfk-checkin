@@ -15,7 +15,7 @@ from django import forms
 from django.template.response import TemplateResponse
 from guardian import admin as guardian_admin
 #from image_cropping import ImageCroppingMixin
-from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
+from modeltranslation.admin import TranslationAdmin, TranslationStackedInline, TranslationTabularInline
 
 #from checkin.resources.models import RESERVATION_EXTRA_FIELDS
 from .mixins import ExtraReadonlyFieldsOnUpdateMixin, CommonExcludeMixin, PopulateCreatedAndModifiedMixin
@@ -183,10 +183,12 @@ class LimitAuthorizedToStaff(admin.ModelAdmin):
 #     form = ReservationMetadataSetForm
 
 
-class ResourceGroupAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, FixedGuardedModelAdminMixin,
-                         admin.ModelAdmin):
+class ResourceGroupAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin,
+                         TranslationAdmin):
     pass
 
+class ResourceCapacityPolicyAdmin(CommonExcludeMixin, admin.ModelAdmin):
+    list_display = ('name','value','type')
 
 # class MunicipalityAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, admin.ModelAdmin):
 #     change_list_template = 'admin/municipalities/import_buttons.html'
