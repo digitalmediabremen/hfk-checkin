@@ -14,23 +14,32 @@ interface ReservationProps extends FormElementProps {
     reservation: Reservation;
     includeState?: boolean;
     includeIndentifier?: boolean;
+    includeDate?: boolean;
+    includeTime?: boolean;
+    includeResourceNumber?: boolean;
 }
 
 const ReservationComponent: React.FunctionComponent<ReservationProps> = ({
     reservation,
     includeState,
     includeIndentifier,
+    includeDate: _includeDate,
+    includeTime: _includeTime,
+    includeResourceNumber: _includeResourceNumber,
     ...formElementBaseProps
 }) => {
     const { resource, begin, end, state, identifier } = reservation;
+    const includeTime = _includeTime ?? true;
+    const includeDate = _includeDate ?? true;
+    const includeResourceNumber = _includeResourceNumber ?? true;
     const { locale } = useTranslation("request");
     const dotted = state !== "confirmed";
     const disabled = state === "cancelled" || state === "denied";
     const value = [
-        resource.display_numbers,
+        ...insertIf([resource.display_numbers], includeResourceNumber),
         <b>{resource.name}</b>,
-        format.date(begin, locale),
-        format.timeSpan(begin, end),
+        ...insertIf([format.date(begin, locale)], includeDate),
+        ...insertIf([format.timeSpan(begin, end)], includeTime),
         ...insertIf(
             [<Label>{getStateLabel(state, locale)}</Label>],
             !!includeState

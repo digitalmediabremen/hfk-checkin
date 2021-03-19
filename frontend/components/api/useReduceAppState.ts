@@ -94,7 +94,7 @@ const useReduceAppState = () =>
                         previousState.currentLocale
                     ),
                 };
-                console.log("updated reservation state", withUpdatedValidation);
+                // console.log("updated reservation state", withUpdatedValidation);
                 return withUpdatedValidation;
             case "updateReservationRequestTemplate":
                 return {

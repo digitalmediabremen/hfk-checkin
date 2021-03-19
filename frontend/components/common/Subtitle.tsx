@@ -2,14 +2,16 @@ import * as React from "react";
 import useTheme from "../../src/hooks/useTheme";
 interface SubtitleProps {
     center?: true;
+    bold?: true;
 }
 
-const Subtitle: React.FunctionComponent<SubtitleProps> = ({ children, center}) => {
+const Subtitle: React.FunctionComponent<SubtitleProps> = ({ children, center, bold: _bold}) => {
+    const bold = !center ? true : _bold;
     const theme = useTheme();
     return (
         <>
             <style jsx>{`
-                font-weight: ${center ? "normal" : "bold"};
+                font-weight: ${bold ? "bold" : "normal"};
                 font-size: 1.0rem;
                 color: ${theme.primaryColor};
                 margin: 0;

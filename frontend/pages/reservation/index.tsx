@@ -34,7 +34,7 @@ const sort = (a: MyReservation, b: MyReservation) =>
     a.begin.getTime() - b.begin.getTime();
 
 const headerProvider = (groupKey: string, firstValue: MyReservation) => (
-    <Subtitle center>{groupKey}</Subtitle>
+    <Subtitle center bold>{groupKey}</Subtitle>
 );
 
 const EmptyState = () => {
@@ -74,7 +74,10 @@ const GroupedReservationList: FunctionComponent<{
                                 isNow(reservation.begin, 60 * 3) &&
                                 reservation.state === "confirmed"
                             }
-                            includeState
+                            includeState={true}
+                            includeDate={false}
+                            includeTime={reservation.state !== "cancelled"}
+                            includeResourceNumber={reservation.state !== "cancelled"}
                             extendedWidth
                             reservation={reservation}
                             bottomSpacing={last ? 2 : 1}

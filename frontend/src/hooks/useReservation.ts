@@ -1,4 +1,6 @@
+import { request } from "http";
 import { useEffect, useLayoutEffect, useState } from "react";
+import { usePageVisibility } from "react-page-visibility";
 import { useApi } from "../../components/api/ApiHooks";
 import {
     cancelReservationRequest,
@@ -28,6 +30,18 @@ export default function useReservation(reservationId?: string) {
             api.request(() => getReservationRequest(reservationId));
         }
     }, [reservationId]);
+
+    const visible = usePageVisibility();
+    useEffect(() => {
+        if (
+            reservationId &&
+            visible &&
+            api.state !== "initial" &&
+            api.state !== "loading"
+        ) {
+            api.request(() => getReservationRequest(reservationId));
+        }
+    }, [visible]);
 
     const cancelReservation = () => {
         if (!reservationId) return;
