@@ -29,7 +29,7 @@ export default function useSubmitReservation() {
             await router.push(...appUrls.reservation(identifier));
             dispatch({
                 type: "reservationSuccessful",
-                reservation: reservationObject,
+                reservationId: reservationObject.uuid,
                 reservationRequestTemplate: validReservationRequest,
             });
             console.log("set to null")

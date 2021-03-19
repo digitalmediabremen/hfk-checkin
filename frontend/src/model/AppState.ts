@@ -14,8 +14,6 @@ export interface AppState {
     myProfile?: MyProfile;
     disableNextUpdate: boolean;
     highlightCheckinById?: number; // id
-    // reservation object returned from api on successful request
-    reservation?: Reservation;
     showReservationSuccessful?: boolean;
     // template object from hich forms retrieve and write data.
     reservationRequest?: NewReservationBlueprint;
@@ -67,14 +65,10 @@ export type AppAction =
     | {
           type: "reservationSuccessful";
           reservationRequestTemplate: NewReservation;
-          reservation: Reservation;
+          reservationId: string;
       }
     | {
           type: "hideReservationSuccessful";
-      }
-    | {
-          type: "updateReservation";
-          reservation: Reservation;
       }
     | {
           type: "subPageTransitionDirection";

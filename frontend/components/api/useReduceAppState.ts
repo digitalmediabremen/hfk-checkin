@@ -105,18 +105,10 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     showReservationSuccessful: true,
-                    reservation: {
-                        ...action.reservation,
-                    },
                     reservationRequestTemplate: {
                         ...action.reservationRequestTemplate,
-                        templateId: action.reservation.uuid
+                        templateId: action.reservationId
                     },
-                };
-            case "updateReservation":
-                return {
-                    ...previousState,
-                    reservation: action.reservation,
                 };
             case "hideReservationSuccessful":
                 return {
