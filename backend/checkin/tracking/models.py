@@ -93,6 +93,26 @@ class BookingMethod(models.Model):
 #     # history = is registered via register_history (see below)
 
 
+class LocationQuerySet(models.QuerySet):
+    def prefetch_activities(self):
+        from django.db.models import Prefetch
+        return self.prefetch_related(
+        Prefetch(
+            'org_activities',
+            queryset=CapacityForActivityProfile.objects.select_related(
+                'profile',
+            ),
+        ),
+    )
+
+
+class LocationManager(models.Manager.from_queryset(LocationQuerySet)):
+    def get_queryset(self):
+        return super(LocationManager, self).get_queryset() \
+            .prefetch_activities() \
+            .select_related('resource')
+
+
 # Getin/Checkin-App Model
 class Location(MPTTModel):
     # FIXME resource needs to be OneToOne (or inheritance)
@@ -131,6 +151,8 @@ class Location(MPTTModel):
     # class MPTTMeta:
     #     order_insertion_by = ['org_numbers']
 
+    objects = LocationManager()
+
     class Meta:
         verbose_name = _("Checkin-Standort")
         verbose_name_plural = _("Checkin-Standorte")
@@ -168,7 +190,7 @@ class Location(MPTTModel):
 
     @property
     def capacity(self):
-        activities = self.org_activities.through.objects.filter(location=self).all()
+        activities = self.org_activities.all()
         if activities:
             max_capacity = max([act.capacity for act in activities])
             return max_capacity

@@ -122,23 +122,6 @@ class ResourceType(ModifiableModel, UUIDModelMixin):
         return "%s" % (get_translated(self, 'name'),)
 
 
-# FIXME not in use
-class Purpose(ModifiableModel, NameIdentifiedModel):
-    id = models.CharField(primary_key=True, max_length=100)
-    parent = models.ForeignKey('Purpose', verbose_name=_('Parent'), null=True, blank=True, related_name="children",
-                               on_delete=models.SET_NULL)
-    name = models.CharField(verbose_name=_('Name'), max_length=200)
-    public = models.BooleanField(default=True, verbose_name=_('Public'))
-
-    class Meta:
-        verbose_name = _("purpose")
-        verbose_name_plural = _("purposes")
-        ordering = ('name',)
-
-    def __str__(self):
-        return "%s (%s)" % (get_translated(self, 'name'), self.pk)
-
-
 class ResourceQuerySet(models.QuerySet):
     def visible_for(self, user):
         # Resource.public is currently not available

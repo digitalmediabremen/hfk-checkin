@@ -29,7 +29,7 @@ from ..models import (
     # AccessibilityValue, AccessibilityViewpoint, Purpose, ResourceAccessibility,
     # ResourceImage, ResourceType, ResourceEquipment, TermsOfUse, Equipment, ReservationMetadataSet,
     # ResourceDailyOpeningHours, UnitAccessibility,
-    Reservation, Resource, ResourceType
+    Reservation, Resource, ResourceType, ReservationPurpose
 )
 # from ...models.accessibility import get_resource_accessibility_url
 from ..models.resource import determine_hours_time_range
@@ -71,26 +71,25 @@ def get_resource_reservations_queryset(begin, end):
     return qs
 
 
-# class PurposeSerializer(TranslatedModelSerializer):
-#     class Meta:
-#         model = Purpose
-#         fields = ['name', 'parent', 'id']
-#
-#
-# class PurposeViewSet(viewsets.ReadOnlyModelViewSet):
-#     queryset = Purpose.objects.all()
-#     serializer_class = PurposeSerializer
-#     pagination_class = PurposePagination
-#
-#     def get_queryset(self):
-#         user = self.request.user
-#         if is_staff(user) or is_general_admin(user):
-#             return self.queryset
-#         else:
-#             return self.queryset.filter(public=True)
+class ReservationPurposeSerializer(TranslatedModelSerializer):
+    class Meta:
+        model = ReservationPurpose
+        fields = ['name', 'id']
 
 
-#register_view(PurposeViewSet, 'purpose')
+class ReservationPurposeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ReservationPurpose.objects.all()
+    serializer_class = ReservationPurposeSerializer
+
+    def get_queryset(self):
+        # user = self.request.user
+        # if is_staff(user) or is_general_admin(user):
+        #     return self.queryset
+        # else:
+        return self.queryset.filter(public=True)
+
+
+register_view(ReservationPurposeViewSet, 'reservationpurpose')
 
 
 class ResourceTypeSerializer(TranslatedModelSerializer):

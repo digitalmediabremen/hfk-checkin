@@ -110,6 +110,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             #'is_external': True,
         }
         try:
+            # FIXME will never exists if the username is time dependent
             profile = Profile.objects.get(user=user)
             profile.__dict__.update(**profile_dict)
             profile.save()
@@ -146,11 +147,11 @@ class UserProfileSerializer(BaseUserProfileSerializer):
     from checkin.tracking.serializers import SimpleCheckinSerializer
     last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
     # if 'checkin.resources' in settings.INSTALLED_APPS:
-    from checkin.resources.api.nested import SimpleReservationSerializer
-    reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
+    # from checkin.resources.api.nested import SimpleReservationSerializer
+    # reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
 
     class Meta(BaseUserProfileSerializer.Meta):
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins', 'reservations']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']
         # if 'checkin.tracking' in settings.INSTALLED_APPS:
         #     fields += ['last_checkins']
         # if 'checkin.resources' in settings.INSTALLED_APPS:
@@ -206,14 +207,14 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
         else:
             return self.queryset.filter(pk=user.pk)
 
-    def get_object(self):
-        username = self.kwargs.get('username', None)
-        if username:
-            qs = self.get_queryset()
-            obj = generics.get_object_or_404(qs, username=username)
-        else:
-            obj = self.request.user
-        return obj
+    # def get_object(self):
+    #     username = self.kwargs.get('username', None)
+    #     if username:
+    #         qs = self.get_queryset()
+    #         obj = generics.get_object_or_404(qs, username=username)
+    #     else:
+    #         obj = self.request.user
+    #     return obj
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def me(self, request, pk=None):

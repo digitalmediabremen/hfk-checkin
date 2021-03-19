@@ -156,8 +156,8 @@ class LimitAuthorizedToStaff(admin.ModelAdmin):
 #     pass
 #
 #
-# class PurposeAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, TranslationAdmin):
-#     pass
+class ReservationPurposeAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, TranslationAdmin):
+    pass
 #
 #
 # class TermsOfUseAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, TranslationAdmin):

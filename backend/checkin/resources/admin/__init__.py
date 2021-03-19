@@ -10,6 +10,7 @@ from checkin.resources.admin.other import (
     #Day,
     ResourceGroupAdmin,
     ResourceCapacityPolicyAdmin,
+    ReservationPurposeAdmin,
 )
 
 from checkin.resources.admin.reservation import ReservationAdmin
@@ -33,13 +34,14 @@ from checkin.resources.models import (
     ResourceFeature,
     ResourceCapacityPolicy
 )
+from checkin.resources.models.reservation import ReservationPurpose
 
 #admin_site.register(ResourceImage, ResourceImageAdmin)
 admin_site.register(Resource, ResourceAdmin)
 admin_site.register(Reservation, ReservationAdmin)
 admin_site.register(ResourceType, ResourceTypeAdmin)
 admin_site.register(ResourceFeature, TranslationAdmin)
-#admin_site.register(Purpose, PurposeAdmin)
+admin_site.register(ReservationPurpose, ReservationPurposeAdmin)
 #admin_site.register(Day)
 admin_site.register(Unit, UnitAdmin)
 #admin_site.register(Equipment, EquipmentAdmin)

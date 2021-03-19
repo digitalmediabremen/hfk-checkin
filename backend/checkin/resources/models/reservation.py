@@ -24,6 +24,8 @@ from django.utils.functional import cached_property
 from django.db.models import Count, Sum, F, ExpressionWrapper
 from django.db.models.functions import Coalesce
 from django.db.models.fields import IntegerField
+from .utils import get_translated
+from .base import NameIdentifiedModel
 
 #from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
 from checkin.notifications.models import NotificationEmailTemplate
@@ -157,6 +159,7 @@ class ReservationQuerySet(models.QuerySet):
 class ReservationManager(models.Manager.from_queryset(ReservationQuerySet)):
     def get_queryset(self):
         return super(ReservationManager, self).get_queryset() \
+            .prefetch_resource_and_unit() \
             .annotate_number_of_attendances() \
             .annotate_total_number_of_attendees()
 
@@ -966,3 +969,17 @@ post_save.connect(Reservation.attendees_post_save_receiver, sender=Reservation.a
 #
 #     def __str__(self):
 #         return '{} ({})'.format(self.category.name, self.reservation.pk)
+
+
+class ReservationPurpose(ModifiableModel, NameIdentifiedModel):
+    id = models.CharField(primary_key=True, max_length=100)
+    name = models.CharField(verbose_name=_('Name'), max_length=200)
+    public = models.BooleanField(default=True, verbose_name=_('Public'))
+
+    class Meta:
+        verbose_name = _("reservation purpose")
+        verbose_name_plural = _("reservation purposes")
+        ordering = ('name',)
+
+    def __str__(self):
+        return "%s (%s)" % (get_translated(self, 'name'), self.pk)

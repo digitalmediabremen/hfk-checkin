@@ -7,7 +7,8 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import RegexValidator
 from simple_history.models import HistoricalRecords
-
+from django.contrib.postgres.search import SearchVector
+from dirtyfields import DirtyFieldsMixin
 
 # set to anonyoumous user
 # def get_sentinel_user():
@@ -18,9 +19,12 @@ from simple_history.models import HistoricalRecords
 #         settings.AUTH_USER_MODEL,
 #         on_delete=models.SET(get_sentinel_user),
 #     )
+class NonAnonyoumusUserManagerMixin():
+    def get_queryset(self):
+        return super().get_queryset().filter(id__gte=0)
 
 
-class UserManager(BaseUserManager):
+class UserManager(NonAnonyoumusUserManagerMixin, BaseUserManager):
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -144,8 +148,15 @@ class User(AbstractUser):
             return self.preferred_language
 
 
+class ProfileQuerySet(models.QuerySet):
+    def annotate_search(self):
+        qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
+        return qs
 
-class Profile(models.Model):
+class ProfileManager(NonAnonyoumusUserManagerMixin, models.Manager.from_queryset(ProfileQuerySet)):
+    pass
+
+class Profile(DirtyFieldsMixin, models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(_("Vorname"), max_length=1000)
     last_name = models.CharField(_("Nachname"), max_length=1000)
@@ -154,11 +165,14 @@ class Profile(models.Model):
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
+    student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
     is_external = models.BooleanField(_("External"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
     # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
     history = HistoricalRecords()
+
+    objects = ProfileManager()
 
     def __str__(self):
         return self.get_display_name()

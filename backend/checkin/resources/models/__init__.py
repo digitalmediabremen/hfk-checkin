@@ -7,7 +7,7 @@ from checkin.resources.models.reservation import (
     Reservation, RESERVATION_EXTRA_FIELDS,
     #ReservationMetadataField, ReservationMetadataSet,
     #ReservationCancelReasonCategory, ReservationCancelReason
-    ReservationWarning
+    ReservationWarning, ReservationPurpose
 )
 from checkin.resources.models.resource import (
     Resource, ResourceType, ResourceGroup, ResourceFeature,

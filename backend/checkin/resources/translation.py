@@ -24,21 +24,23 @@ class ResourceTranslationOptions(TranslationOptions):
 @register(ResourceType)
 class ResourceTypeTranslationOptions(TranslationOptions):
     fields = ('name',)
+    required_languages = ('de', 'en')
 
 
 @register(ResourceFeature)
 class ResourceFeatureTranslationOptions(TranslationOptions):
     fields = ('name',)
+    required_languages = ('de', 'en')
 
 # @register(ResourceImage)
 # class ResourceImageTranslationOptions(TranslationOptions):
 #     fields = ('caption',)
 
 
-# @register(Purpose)
-# class PurposeTranslationOptions(TranslationOptions):
-#     fields = ('name',)
-#     required_languages = ('fi', 'en')
+@register(ReservationPurpose)
+class ReservationPurposeTranslationOptions(TranslationOptions):
+    fields = ('name',)
+    required_languages = ('de', 'en')
 
 
 # @register(Equipment)

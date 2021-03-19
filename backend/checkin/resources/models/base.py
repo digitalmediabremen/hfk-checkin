@@ -59,7 +59,7 @@ class NameIdentifiedModel(models.Model):
                 if self.name_en:
                     self.pk = slugify(self.name_en)
                 else:
-                    self.pk = slugify(self.name_fi)
+                    self.pk = slugify(self.name_de)
         elif pk_type == 'AutoField':
             pass
         else:
