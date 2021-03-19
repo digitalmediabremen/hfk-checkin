@@ -86,7 +86,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                     <SectionTitle bottomSpacing={.5}>
                         {gender.current}
                     </SectionTitle>
-                    {attendees?.map((attendee) => {
+                    {attendees?.map((attendee, index, arr) => {
                         const AttendeeStateIcon = getAttendanceStateIcon(
                             attendee.state || "confirmed"
                         );
@@ -96,7 +96,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                 labelIcon={
                                     <AttendeeStateIcon strokeWidth={1} />
                                 }
-                                noBottomSpacing
+                                bottomSpacing={index === (arr.length - 1) ? 2 : 0}
                                 superNarrow
                                 {...formElementProps}
                                 value={attendeePresenter(attendee, locale)}

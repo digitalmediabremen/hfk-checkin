@@ -6,7 +6,7 @@ export interface FormElementBaseProps {
     children?: ReactNode;
     componentType?: "a" | "div" | "li" | "button";
     primary?: boolean;
-    noBottomSpacing?: true;
+    noBottomSpacing?: boolean;
     bottomSpacing?: number;
     extendedWidth?: boolean;
     noOutline?: boolean;
@@ -80,11 +80,11 @@ const FormElementBase = forwardRef<FormElementBaseRefType, FormElementBaseProps>
 
                         margin-bottom: ${noBottomSpacing
                             ? 0
-                            : theme.spacing(bottomSpacing || 1)}px;
+                            : theme.spacing(bottomSpacing ?? 1)}px;
                         margin-left: ${calculateMargin()}px;
                         margin-right: ${calculateMargin()}px;
 
-                        padding: 0;
+                        padding: 0px;
 
                         min-height: ${theme.spacing(
                             superNarrow ? 4 : narrow ? 5 : 7

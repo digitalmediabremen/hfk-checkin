@@ -1,24 +1,28 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect } from "react";
-import { ArrowRight } from "react-feather";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { ArrowRight, ChevronsDown, ChevronsUp, Divide, EyeOff } from "react-feather";
+import SmoothCollapse from "react-smooth-collapse";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import AlignContent from "../../components/common/AlignContent";
+import Divider from "../../components/common/Divider";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
-import Loading from "../../components/common/Loading";
+import Loading, { LoadingInline } from "../../components/common/Loading";
 import NewButton from "../../components/common/NewButton";
 import Notice from "../../components/common/Notice";
 import Reservation from "../../components/common/Reservation";
 import Subtitle from "../../components/common/Subtitle";
+import Title from "../../components/common/Title";
 import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import useReservations from "../../src/hooks/useReservations";
 import MyProfile from "../../src/model/api/MyProfile";
-import { MyReservation } from "../../src/model/api/Reservation";
-import { isNow, isToday } from "../../src/util/DateTimeUtil";
+import ReservationModel, {
+    MyReservation,
+} from "../../src/model/api/Reservation";
+import { isNow } from "../../src/util/DateTimeUtil";
 import * as format from "../../src/util/TimeFormatUtil";
 
 interface ReservationsPageProps {
@@ -38,14 +42,48 @@ const EmptyState = () => {
     return (
         <>
             <Notice bottomSpacing={4}>
-                {t("Noch hast du keine Buchungsanfragen gestellt.")}
+                {t("Es gibt keine bevorstehenden Buchungen.")}
             </Notice>
-            <Link href={appUrls.request} passHref>
-                <NewButton componentType="a">
-                    {t("Neue Buchungsanfrage")}
-                </NewButton>
-            </Link>
         </>
+    );
+};
+
+const GroupedReservationList: FunctionComponent<{
+    reservations: ReservationModel[];
+}> = ({ reservations }) => {
+    const { t, locale } = useTranslation("reservation");
+
+    const groupBy = (value: MyReservation): string =>
+        format.dateRelative(value.begin, locale);
+
+    return (
+        <GroupedList
+            items={reservations}
+            by={groupBy}
+            headerProvider={headerProvider}
+            sort={sort}
+        >
+            {(reservation, last) => (
+                <Link
+                    href={appUrls.reservation(reservation.identifier)[0]}
+                    as={appUrls.reservation(reservation.identifier)[1]}
+                >
+                    <a>
+                        <Reservation
+                            above={
+                                isNow(reservation.begin, 60 * 3) &&
+                                reservation.state === "confirmed"
+                            }
+                            includeState
+                            extendedWidth
+                            reservation={reservation}
+                            bottomSpacing={last ? 2 : 1}
+                            actionIcon={<ArrowRight strokeWidth={1} />}
+                        />
+                    </a>
+                </Link>
+            )}
+        </GroupedList>
     );
 };
 
@@ -53,63 +91,69 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
     profile,
 }) => {
     const api = useReservations();
-    const { t, locale } = useTranslation("reservation");
+    const apiPast = useReservations(true);
 
-    const groupBy = (value: MyReservation): string =>
-        format.dateRelative(value.begin, locale);
+    const [showPast, toggleShowPast] = useState(false);
+    const { t } = useTranslation("reservation");
 
     useEffect(() => {
         api.request();
     }, []);
 
+    useEffect(() => {
+        if (showPast && !apiPast.result) {
+            apiPast.request();
+        }
+    }, [showPast]);
+
+    const pastIcon = (() => {
+        const loading = apiPast.state === "loading" && (
+            <LoadingInline loading />
+        );
+        const chevron = showPast ? (
+            <EyeOff strokeWidth={1} />
+        ) : (
+            <ChevronsDown strokeWidth={1} />
+        );
+        return loading || chevron;
+    })();
+
+    const pastButton = (
+        <NewButton
+            noOutline
+            noPadding
+            onClick={() => toggleShowPast(!showPast)}
+            iconRight={pastIcon}
+            
+        >
+            {showPast && !!apiPast.result
+                ? t("Vergangene ausblenden")
+                : t("Vergangene einblenden")}
+        </NewButton>
+    );
+
     return (
-        <Layout>
-            <Subtitle>{t("Buchungen")}</Subtitle>
+        <Layout title={t("Buchungsübersicht")}>
             <Loading loading={api.state === "loading"}>
                 {api.state === "success" && (
                     <>
                         {api.result!.length === 0 && <EmptyState />}
-                        <GroupedList
-                            items={api.result!}
-                            by={groupBy}
-                            headerProvider={headerProvider}
-                            sort={sort}
-                        >
-                            {(reservation, last) => (
-                                <Link
-                                    href={
-                                        appUrls.reservation(
-                                            reservation.identifier
-                                        )[0]
-                                    }
-                                    as={
-                                        appUrls.reservation(
-                                            reservation.identifier
-                                        )[1]
-                                    }
-                                >
-                                    <a>
-                                        <Reservation
-                                            above={
-                                                isNow(
-                                                    reservation.begin,
-                                                    60 * 3
-                                                ) &&
-                                                reservation.state ===
-                                                    "confirmed"
-                                            }
-                                            includeState
-                                            extendedWidth
-                                            reservation={reservation}
-                                            bottomSpacing={last ? 2 : 1}
-                                            actionIcon={
-                                                <ArrowRight strokeWidth={1} />
-                                            }
-                                        />
-                                    </a>
-                                </Link>
+                        {api.result!.length > 0 && (
+                            <GroupedReservationList
+                                reservations={api.result!}
+                            />
+                        )}
+                        {showPast &&
+                            apiPast.result &&
+                            apiPast.result.length > 0 && (
+                                <>
+                                    {pastButton}
+                                    <GroupedReservationList
+                                        reservations={apiPast.result!}
+                                    />
+                                </>
                             )}
-                        </GroupedList>
+                        {pastButton}
                     </>
                 )}
             </Loading>

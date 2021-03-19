@@ -38,7 +38,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const router = useRouter();
 
     const {
-        reservation,
+        result: reservation,
         notFound,
         error,
         reservationSuccess,
