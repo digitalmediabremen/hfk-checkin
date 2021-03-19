@@ -74,7 +74,7 @@ class UnitSerializer(ExtraDataMixin, TranslatedModelSerializer, ModifiableModelS
 
 
 class UnitViewSet(viewsets.ReadOnlyModelViewSet): #munigeo_api.GeoModelAPIView
-    queryset = Unit.objects.all() # .prefetch_related('identifiers')
+    queryset = Unit.objects.filter(public=True).all() # .prefetch_related('identifiers')
     serializer_class = UnitSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filterset_class = UnitFilterSet

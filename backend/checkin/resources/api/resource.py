@@ -788,7 +788,7 @@ class ResourceCacheMixin:
 class ResourceListViewSet(mixins.ListModelMixin,
                           viewsets.GenericViewSet, ResourceCacheMixin):
     #queryset = Resource.objects.select_related('generic_terms', 'payment_terms', 'unit', 'type', 'reservation_metadata_set')
-    queryset = Resource.objects.select_related('unit', 'type')
+    queryset = Resource.objects.filter(unit__public=True).select_related('unit', 'type')
     # queryset = queryset.prefetch_related('favorited_by', 'resource_equipment', 'resource_equipment__equipment',
     #                                      'purposes', 'images', 'purposes', 'groups')
     queryset = queryset.prefetch_related('groups')

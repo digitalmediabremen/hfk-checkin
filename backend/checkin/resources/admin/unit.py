@@ -22,7 +22,7 @@ class UnitAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, FixedGuarde
 
     fieldsets = (
         (None, {
-            'fields': ('name', 'slug', 'description','time_zone')
+            'fields': ('name', 'slug', 'public','description','time_zone')
         }),
         # (_('Reservation policy'), {
         #     # 'classes': ('collapse',),
