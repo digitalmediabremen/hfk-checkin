@@ -1,16 +1,17 @@
 import classNames from "classnames";
+import Head from "next/head";
 import React, {
     FunctionComponent,
     ReactElement,
     ReactNode,
     useLayoutEffect,
-    useRef
+    useRef,
 } from "react";
 import { use100vh } from "react-div-100vh";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import css from "styled-jsx/css";
 import { isClient, pageTransitionDuration } from "../../config";
-import featureMap from "../../features";
+import featureMap, { getTitle } from "../../features";
 import useTheme from "../../src/hooks/useTheme";
 import { TransitionDirection } from "../../src/model/AppState";
 import EnterCodeButton from "./EnterCodeButton";
@@ -124,6 +125,7 @@ const PageTransition: FunctionComponent<PageAnimationProps> = ({
 };
 
 export interface LayoutProps {
+    title?: string;
     activeSubPage?: string;
     subPages?: ReactElement;
     direction?: TransitionDirection;
@@ -133,10 +135,10 @@ export interface LayoutProps {
 }
 
 const getActionButton = () => {
-    if (featureMap.checkin) return <EnterCodeButton />
-    if (featureMap.getin) return <NewRequestButton />
-    return <EnterCodeButton />
-}
+    if (featureMap.checkin) return <EnterCodeButton />;
+    if (featureMap.getin) return <NewRequestButton />;
+    return <EnterCodeButton />;
+};
 
 const Layout: FunctionComponent<LayoutProps> = ({
     children,
@@ -145,6 +147,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
     direction,
     noContentMargin,
     overrideHeader,
+    title,
 }) => {
     const theme = useTheme();
     return (
@@ -160,12 +163,20 @@ const Layout: FunctionComponent<LayoutProps> = ({
                     position: relative;
                 }
             `}</style>
+            {title && (
+                <Head>
+                    <title>{`${title} / ${getTitle()}`}</title>
+                </Head>
+            )}
             <Page
                 active={!activeSubPage}
                 scroll
                 noContentMargin={noContentMargin}
                 topBar={
-                    <TopBar key="global-top-bar" actionProvider={getActionButton}>
+                    <TopBar
+                        key="global-top-bar"
+                        actionProvider={getActionButton}
+                    >
                         {overrideHeader || <ProfileBar />}
                     </TopBar>
                 }
