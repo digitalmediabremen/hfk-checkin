@@ -35,7 +35,7 @@ class LocationsView(TemplateResponseMixin, ContextMixin, View):
             locations = Location.objects.filter(code__in=codes)
         else:
             locations = Location.objects.all()
-        locations = locations.order_by('org_number')
+        locations = locations.order_by('resource__numbers')
         for l in locations:
             l.qr_svg_uri = make_qr_code(l.code)
         context['objects'] = locations
