@@ -39,7 +39,7 @@ export const appUrls = {
     verifyProfile: "/verify-profile",
     verifyNow: "/verify-now",
     profile: "/profile",
-    loginMicrosoft: `${authRedirectUrl}/?next=${appBase}/`,
+    loginMicrosoft: `${authRedirectUrl}/?next=${appBase}${getHomeUrl()}/?from-auth=1`,
     createProfile: "/new",
     enterCode: "/checkin",
     checkin: (code: string): [string, string] => [
@@ -59,6 +59,7 @@ export const appUrls = {
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
+    cookieError: "/cookie-error"
 } as const;
 
 export const requestSubpages = {

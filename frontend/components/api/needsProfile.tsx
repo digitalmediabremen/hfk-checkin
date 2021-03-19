@@ -12,7 +12,10 @@ interface NeedsProfileProps {
     profileUpdating: boolean;
 }
 
-const needsProfile = <P extends NeedsProfileProps, HocProps = Omit<P, keyof NeedsProfileProps>>(
+const needsProfile = <
+    P extends NeedsProfileProps,
+    HocProps = Omit<P, keyof NeedsProfileProps>
+>(
     Component: React.ComponentType<P>
 ): React.FC<HocProps> => (props) => {
     const router = useRouter();
@@ -35,19 +38,28 @@ const needsProfile = <P extends NeedsProfileProps, HocProps = Omit<P, keyof Need
             });
     }, [error]);
 
+    const cameFromAuth = !!router.query?.["from-auth"];
+
     useEffect(() => {
         if (!initialized) return;
-
+        if (loading) return;
         if (additionalData?.notAuthorized) {
             dispatch({
                 type: "profile",
                 profile: undefined,
             });
-            router.replace(appUrls.createProfile);
+            if (!!profile || cameFromAuth) {
+                console.log("cookie error");
+                router.replace(appUrls.cookieError);
+            } else {
+                router.replace(appUrls.createProfile);
+            }
         } else if (profile && !profile.phone) {
             router.replace(appUrls.setprofile);
+        } else if (cameFromAuth) {
+            router.replace(router.pathname);
         }
-    }, [initialized, additionalData]);
+    }, [initialized, additionalData, cameFromAuth]);
 
     if (
         !loading &&

@@ -10,6 +10,7 @@ import { useTranslation } from "../localization";
 import Notice from "../components/common/Notice";
 import { useAppState } from "../components/common/AppStateProvider";
 import Layout from "../components/common/Layout";
+import NewButton from "../components/common/NewButton";
 
 const NewProfilePage: NextPage = () => {
     const router = useRouter();
@@ -38,7 +39,6 @@ const NewProfilePage: NextPage = () => {
                     {t(
                         "Die konsequente Einhaltung des HfK-Hygienekonzepts ist die Voraussetzung für künftige Öffnungsschritte der HfK."
                     )}
-                    .
                 </Text>
                 <Text paragraph>
                     {t(
@@ -46,14 +46,13 @@ const NewProfilePage: NextPage = () => {
                         {},
                         "please-use-checkin"
                     )}
-                    .
                 </Text>
             </FormGroup>
             <FormGroup>
                 <Subtitle>{t("HfK-Angehörige")}</Subtitle>
-                <Button outline onClick={handleIntern}>
+                <NewButton onClick={handleIntern} bottomSpacing={3}>
                     HfK-Login
-                </Button>
+                </NewButton>
             </FormGroup>
             <Subtitle>{t("Gäste")}</Subtitle>
             <Notice>
@@ -62,9 +61,9 @@ const NewProfilePage: NextPage = () => {
                 )}
                 .
             </Notice>
-            <Button outline onClick={handleGuest}>
+            <NewButton onClick={handleGuest}>
                 {t("Gastzugang")}
-            </Button>
+            </NewButton>
         </Layout>
     );
 };

@@ -13,7 +13,6 @@
     "dependencies": {
         "classnames": "^2.2.6",
         "date-input-polyfill": "^2.14.0",
-        "formik": "^2.2.0",
         "get-user-locale": "^1.4.0",
         "json.date-extensions": "^1.2.2",
         "libphonenumber-js": "^1.8.4",
