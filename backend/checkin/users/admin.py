@@ -1,6 +1,7 @@
 import random
 import uuid
 from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import Group, GroupAdmin as DjangoGroupAdmin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.forms import UsernameField
 from django.contrib import admin
@@ -21,6 +22,9 @@ class UserCreationForm(forms.ModelForm):
 
 class UserProfileAdminInline(admin.StackedInline):
     model = Profile
+    extra = 0
+    min = 0
+    max = 1
 
 
 class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
@@ -200,7 +204,7 @@ class ProfileAdmin(SimpleHistoryAdmin):
     # TODO hide email in change view or make sure people understand change view will display all fields.
 
     def get_queryset(self, request):
-        qs = super(ProfileAdmin, self).get_queryset(request)
+        qs = super(ProfileAdmin, self).get_queryset(request).exclude_anonymous_users()
         if request.user.has_perm('tracking.can_view_all_users'):
             return qs
         return qs.exclude(verified=True)
@@ -220,3 +224,18 @@ class ProfileAdmin(SimpleHistoryAdmin):
     # def has_add_permission(self, request):
     #     return False
     # Needed to add person in bookingrequests (and paper entry)
+
+class UserGroupInline(admin.StackedInline):
+    model = get_user_model().groups.through
+    autocomplete_fields = ('user',)
+    verbose_name = _("Group membership")
+    verbose_name_plural = _("Group memberships")
+    extra = 1
+
+
+class GroupAdmin(DjangoGroupAdmin):
+    inlines = [UserGroupInline]
+
+
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)

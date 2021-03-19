@@ -19,12 +19,15 @@ from dirtyfields import DirtyFieldsMixin
 #         settings.AUTH_USER_MODEL,
 #         on_delete=models.SET(get_sentinel_user),
 #     )
-class NonAnonyoumusUserManagerMixin():
-    def get_queryset(self):
-        return super().get_queryset().filter(id__gte=0)
 
+class NonAnonyoumusUserQuerySetMixin():
+    def exclude_anonymous_users(self):
+        return self.filter(id__gte=0)
 
-class UserManager(NonAnonyoumusUserManagerMixin, BaseUserManager):
+class UserQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
+    pass
+
+class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -66,7 +69,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = UserManager()
+    objects = UserQuerySet.as_manager()
 
     # def _get_username_val(self):
     #     return getattr(self, self.USERNAME_FIELD)
@@ -148,12 +151,12 @@ class User(AbstractUser):
             return self.preferred_language
 
 
-class ProfileQuerySet(models.QuerySet):
+class ProfileQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
     def annotate_search(self):
         qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
         return qs
 
-class ProfileManager(NonAnonyoumusUserManagerMixin, models.Manager.from_queryset(ProfileQuerySet)):
+class ProfileManager(models.Manager.from_queryset(ProfileQuerySet)):
     pass
 
 class Profile(DirtyFieldsMixin, models.Model):

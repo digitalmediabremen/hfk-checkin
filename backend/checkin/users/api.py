@@ -197,7 +197,7 @@ class UserProfileSerializer(BaseUserProfileSerializer):
 
 class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.CreateModelMixin):
     permission_classes = [permissions.IsAuthenticated]
-    queryset = get_user_model().objects.all()
+    queryset = get_user_model().objects.exclude_anonymous_users().all()
     serializer_class = UserProfileSerializer
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
