@@ -230,7 +230,7 @@ class UserGroupInline(admin.StackedInline):
     autocomplete_fields = ('user',)
     verbose_name = _("Group membership")
     verbose_name_plural = _("Group memberships")
-    extra = 1
+    extra = 0
 
 
 class GroupAdmin(DjangoGroupAdmin):

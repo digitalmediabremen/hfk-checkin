@@ -24,10 +24,13 @@ class NonAnonyoumusUserQuerySetMixin():
     def exclude_anonymous_users(self):
         return self.filter(id__gte=0)
 
-class UserQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
-    pass
 
-class UserManager(BaseUserManager):
+class UserQuerySet(models.QuerySet):
+    def exclude_anonymous_users(self):
+        return self.filter(id__gte=0)
+
+
+class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -69,7 +72,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    objects = UserQuerySet.as_manager()
+    objects = UserManager()
 
     # def _get_username_val(self):
     #     return getattr(self, self.USERNAME_FIELD)

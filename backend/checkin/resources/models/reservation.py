@@ -40,6 +40,7 @@ from .utils import (
     get_dt, save_dt, is_valid_time_slot, humanize_duration, send_template_mail,
     DEFAULT_LANG, localize_datetime, format_dt_range, build_reservations_ical_file
 )
+from .permissions import RESERVATION_PERMISSIONS
 
 DEFAULT_TZ = pytz.timezone(settings.TIME_ZONE)
 AUTH_USER_MODEL = settings.AUTH_USER_MODEL
@@ -230,6 +231,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         verbose_name = _("Reservation")
         verbose_name_plural = _("Reservations")
         ordering = ('begin','end')
+        permissions = RESERVATION_PERMISSIONS
 
     def __str__(self):
         return "%s (%s)" % (self.short_uuid, self.state)

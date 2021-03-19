@@ -189,6 +189,7 @@ class ResourceGroupAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin,
 
 class ResourceCapacityPolicyAdmin(CommonExcludeMixin, admin.ModelAdmin):
     list_display = ('name','value','type')
+    filter_horizontal = ('resources',)
 
 # class MunicipalityAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, admin.ModelAdmin):
 #     change_list_template = 'admin/municipalities/import_buttons.html'
