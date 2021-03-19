@@ -685,7 +685,6 @@ class ReservationCacheMixin:
 
 class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
     queryset = Reservation.objects.select_related('user', 'user__profile')\
-        .prefetch_resource_and_unit()\
         .prefetch_related('resource__groups','attendance_set','attendance_set__user')\
         .order_by('begin', 'resource__unit__name', 'resource__name')
         # .prefetch_related('catering_orders')\
