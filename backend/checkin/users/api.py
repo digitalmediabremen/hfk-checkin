@@ -70,7 +70,8 @@ def generate_username_for_new_user(validated_userprofile_data):
 
 
 class BaseUserProfileSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='profile.pk')
+    id = serializers.ReadOnlyField(source='pk')
+    profile_id = serializers.ReadOnlyField(source='profile.pk')
     display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
     first_name = serializers.CharField(source='profile.first_name')
     last_name = serializers.CharField(source='profile.last_name')
@@ -85,7 +86,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'is_external']
+        fields = ['id','profile_id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'is_external']
 
     def validate_phone(self, value):
         return value.strip()
@@ -207,14 +208,14 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
         else:
             return self.queryset.filter(pk=user.pk)
 
-    # def get_object(self):
-    #     username = self.kwargs.get('username', None)
-    #     if username:
-    #         qs = self.get_queryset()
-    #         obj = generics.get_object_or_404(qs, username=username)
-    #     else:
-    #         obj = self.request.user
-    #     return obj
+    def get_object(self):
+        pk = self.kwargs.get('pk', None)
+        if pk:
+            qs = self.get_queryset()
+            obj = generics.get_object_or_404(qs, pk=pk)
+        else:
+            obj = self.request.user
+        return obj
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def me(self, request, pk=None):
