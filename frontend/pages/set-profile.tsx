@@ -1,53 +1,30 @@
-import { useFormik } from "formik";
+import { isValidNumber } from "libphonenumber-js";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useUpdateProfile } from "../components/api/ApiHooks";
 import { useAppState } from "../components/common/AppStateProvider";
-import { ButtonWithLoading } from "../components/common/Button";
-import FormGroup from "../components/common/FormGroup";
-import { Input } from "../components/common/Input";
+import FormPhoneInput from "../components/common/FormPhoneInput";
+import FormTextInput from "../components/common/FormTextInput";
 import Layout from "../components/common/Layout";
+import { LoadingInline } from "../components/common/Loading";
+import NewButton from "../components/common/NewButton";
 import Notice from "../components/common/Notice";
-import PhoneInput from "../components/common/PhoneInput";
+import SubPageBar from "../components/common/SubPageBar";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
 import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
+import reservation from "./reservation";
 
 interface EditProfileProps {
     profile?: MyProfile;
 }
 
-type Error<T> = {
-    [Key in keyof T]?: string;
-};
-
-const validate = (user: ProfileUpdate, t: { required: string }) => {
-    const errors: Error<ProfileUpdate> = {};
-    if (!user.first_name) {
-        errors.first_name = t.required;
-    }
-
-    if (!user.last_name) {
-        errors.last_name = t.required;
-    }
-
-    if (!user.phone) {
-        errors.phone = t.required;
-    }
-
-    return errors;
-};
-
 const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const { appState, dispatch } = useAppState();
     const { myProfile: initialProfile } = appState;
 
-    const user = initialProfile || {
-        first_name: "",
-        last_name: "",
-        phone: "",
-    };
     const isUserCreation = !initialProfile;
     const {
         loading,
@@ -73,97 +50,108 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         router.push(appUrls.home);
     }, [success]);
 
-    const validationErrors = {
-        required: t("erforderlich"),
-    };
-
-    const formik = useFormik<ProfileUpdate>({
-        initialValues: {
-            ...user,
-            email: "",
-        },
-        validate: (user) => validate(user, validationErrors),
-        enableReinitialize: true,
-        onSubmit: (values) => {
-            updateProfile(formik.values);
+    const { errors, handleSubmit, control } = useForm<ProfileUpdate>({
+        mode: "onTouched",
+        defaultValues: {
+            first_name: initialProfile?.first_name || "",
+            last_name: initialProfile?.last_name || "",
+            phone: initialProfile?.phone || "",
         },
     });
 
-    if (!appState.initialized) return null;
+    const controllerProps = useCallback(
+        (name: keyof ProfileUpdate, translatedName: string, rules?: {}) => ({
+            mode: "onTouched",
+            name,
+            control,
+            rules: {
+                required: t("{fieldName} darf nicht leer sein.", {
+                    fieldName: translatedName,
+                }),
+                ...rules,
+            },
+            error: errors[name]?.message,
+            label: translatedName,
+            key: name,
+        }),
+        [errors, control]
+    );
 
+    const handleProfileUpdate = (value: ProfileUpdate) => {
+        updateProfile(value);
+    };
+
+    const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
+
+    if (!appState.initialized) return null;
     return (
-        <Layout>
+        <Layout
+            title={title}
+            overrideHeader={
+                <SubPageBar
+                    title={title}
+                    onBack={
+                        !!isUserCreation
+                            ? undefined
+                            : () => router.push(appUrls.home)
+                    }
+                />
+            }
+        >
             <form
+                onSubmit={handleSubmit(handleProfileUpdate)}
                 autoComplete="off"
                 autoCorrect="off"
                 spellCheck="false"
-                onSubmit={formik.handleSubmit}
             >
-                <FormGroup>
-                    <Input
-                        name="first_name"
-                        label={t("Vorname")}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.first_name}
-                        disabled={!isUserCreation}
-                        focus={isUserCreation}
-                        error={
-                            formik.touched.first_name &&
-                            formik.errors.first_name
-                                ? formik.errors.first_name
-                                : undefined
-                        }
-                    />
+                <style jsx>{``}</style>
+                <Controller
+                    as={<FormTextInput disabled={!isUserCreation} />}
+                    {...controllerProps("first_name", t("Vorname"))}
+                />
 
-                    <Input
-                        name="last_name"
-                        label={t("Nachname")}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.last_name}
-                        disabled={!isUserCreation}
-                        error={
-                            formik.touched.last_name && formik.errors.last_name
-                                ? formik.errors.last_name
-                                : undefined
-                        }
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <PhoneInput
-                        name="phone"
-                        label={t("Telefonnummer")}
-                        onPhoneNumberChange={(phone) =>
-                            formik.setFieldValue("phone", phone)
-                        }
-                        onBlur={formik.handleBlur}
-                        value={formik.values.phone || ""}
-                        focus={!isUserCreation}
-                        error={
-                            formik.touched.phone && formik.errors.phone
-                                ? formik.errors.phone
-                                : undefined
-                        }
-                    />
-                    {!initialProfile?.phone && (
-                        <Notice>
-                            {t(
-                                "Deine Daten werden ausschließlich im Falle einer Infektionsnachverfolgung verwendet. Mit der Registrierung bestätigst du, den Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein. Du bestätigst das gültige HfK Hygienekonzept gelesen und verstanden zu haben und es zu befolgen. Die Datenschutzhinweise und die Hygieneregeln der HfK findest du auf Sie auf faq.hfk-bremen.de und https://www.hfk-bremen.de/corona-downloads und im Aushang am Empfang.",
-                                {},
-                                "setprofile-accept-legal"
-                            )}
-                        </Notice>
-                    )}
-                </FormGroup>
+                <Controller
+                    as={
+                        <FormTextInput
+                            bottomSpacing={4}
+                            disabled={!isUserCreation}
+                        />
+                    }
+                    {...controllerProps("last_name", t("Nachname"))}
+                />
 
-                <ButtonWithLoading
-                    loading={loading}
-                    disabled={!formik.dirty || !formik.isValid}
-                    onClick={() => {}}
+                <Controller
+                    as={<FormPhoneInput />}
+                    {...controllerProps("phone", t("Telefonnummer"), {
+                        validate: (value: string) =>
+                            !isValidNumber(value, "DE")
+                                ? t("Keine gültige Telefonnummer")
+                                : undefined,
+                    })}
+                />
+                {!initialProfile?.phone && (
+                    <Notice bottomSpacing={2}>
+                        {t(
+                            "Deine Daten werden ausschließlich im Falle einer Infektionsnachverfolgung verwendet. Mit der Registrierung bestätigst du, den Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein. Du bestätigst das gültige HfK Hygienekonzept gelesen und verstanden zu haben und es zu befolgen. Die Datenschutzhinweise und die Hygieneregeln der HfK findest du auf Sie auf faq.hfk-bremen.de und https://www.hfk-bremen.de/corona-downloads und im Aushang am Empfang.",
+                            {},
+                            "setprofile-accept-legal"
+                        )}
+                    </Notice>
+                )}
+                {initialProfile?.phone && (
+                    <Notice bottomSpacing={2}>
+                        {t(
+                            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet."
+                        )}
+                    </Notice>
+                )}
+                <NewButton
+                    disabled={loading}
+                    primary
+                    iconRight={loading ? <LoadingInline loading /> : undefined}
                 >
-                    {isUserCreation ? t("Registrieren") : t("Speichern")}
-                </ButtonWithLoading>
+                    {isUserCreation ? t("Erstellen") : t("Speichern")}
+                </NewButton>
             </form>
         </Layout>
     );

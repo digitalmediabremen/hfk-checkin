@@ -5,7 +5,7 @@ import Bar from "./Bar";
 
 interface SubPageBarProps {
     title: string;
-    onBack: (subPage?: string) => void;
+    onBack?: (subPage?: string) => void;
 }
 
 const SubPageBar: React.FunctionComponent<SubPageBarProps> = ({
@@ -42,10 +42,12 @@ const SubPageBar: React.FunctionComponent<SubPageBarProps> = ({
                 }
             `}</style>
             <Bar extendedWidth>
-                <div className="header" onClick={() => onBack()}>
-                    <span className="back">
-                        <ArrowLeft strokeWidth={2} />
-                    </span>
+                <div className="header" onClick={() => onBack?.()}>
+                    {!!onBack && (
+                        <span className="back">
+                            <ArrowLeft strokeWidth={2} />
+                        </span>
+                    )}
                     <h1 className="title">{title}</h1>
                 </div>
             </Bar>

@@ -44,6 +44,10 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
                         font-weight: normal;
                         font-style: italic;
                     }
+
+                    input[disabled] {
+                        color: ${theme.disabledColor};
+                    }
     
                     // ::-webkit-datetime-edit
                     input::-webkit-datetime-edit-fields-wrapper {

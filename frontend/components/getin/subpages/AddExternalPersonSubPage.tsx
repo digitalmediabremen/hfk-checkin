@@ -1,14 +1,15 @@
+import { isValidNumber } from "libphonenumber-js";
 import React, { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import {
     useReservationArrayState,
-    useSubpageQuery
+    useSubpageQuery,
 } from "../../../src/hooks/useReservationState";
 import { AttendanceUpdate } from "../../../src/model/api/MyProfile";
-import { Writable } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
+import FormPhoneInput from "../../common/FormPhoneInput";
 import FormTextInput from "../../common/FormTextInput";
 import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
@@ -19,13 +20,9 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
     const { t } = useTranslation();
     const index = useSubpageQuery();
     const [attendees, addAttendee] = useReservationArrayState("attendees");
-    // const [person, setPerson, setPersonField] = useAddExternalPersonState();z
-    // useValidation
 
     const { goBack } = useSubPage(requestSubpages);
-    const { errors, handleSubmit, control } = useForm<
-        Writable<AttendanceUpdate>
-    >({
+    const { errors, handleSubmit, control } = useForm<AttendanceUpdate>({
         mode: "onTouched",
         defaultValues: {
             // email: attendees?.[index]?.email || "",
@@ -36,11 +33,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
     });
 
     const controllerProps = useCallback(
-        (
-            name: keyof Writable<AttendanceUpdate>,
-            translatedName: string,
-            rules?: {}
-        ) => ({
+        (name: keyof AttendanceUpdate, translatedName: string, rules?: {}) => ({
             mode: "onTouched",
             name,
             control,
@@ -56,14 +49,19 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
         [errors, control]
     );
 
-    const handleAddAttendee = (value: Writable<AttendanceUpdate>) => {
+    const handleAddAttendee = (value: AttendanceUpdate) => {
         // Todo: validate person
         addAttendee(value, index);
         goBack("attendees");
     };
 
     return (
-        <form onSubmit={handleSubmit(handleAddAttendee)}>
+        <form
+            onSubmit={handleSubmit(handleAddAttendee)}
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck="false"
+        >
             <style jsx>{``}</style>
             <Controller
                 as={<FormTextInput />}
@@ -76,8 +74,13 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
             />
 
             <Controller
-                as={<FormTextInput />}
-                {...controllerProps("phone", t("Telefonnummer"), {})}
+                as={<FormPhoneInput disabled />}
+                {...controllerProps("phone", t("Telefonnummer"), {
+                    validate: (value: string) =>
+                        !isValidNumber(value, "DE")
+                            ? t("Keine gültige Telefonnummer")
+                            : undefined,
+                })}
             />
             {/* <Controller
                 as={<FormTextInput bottomSpacing={2}></FormTextInput>}
@@ -88,7 +91,6 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
                     },
                 })}
             /> */}
-            {/* <PhoneInput value="22" /> */}
             <Notice bottomSpacing={2}>
                 {t(
                     "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet."

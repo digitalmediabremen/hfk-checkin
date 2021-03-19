@@ -1,11 +1,18 @@
 import classNames from "classnames";
-import React, { forwardRef, InputHTMLAttributes, MutableRefObject, useCallback, useRef } from "react";
+import React, {
+    forwardRef,
+    InputHTMLAttributes,
+    MutableRefObject,
+    useCallback,
+    useRef,
+} from "react";
 import { ReferenceEntry } from "ts-morph";
 import { isNullishCoalesce } from "typescript";
-import useTheme from "../../src/hooks/useTheme";import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import useTheme from "../../src/hooks/useTheme";
+import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import FormInput from "./FormInput";
 
-interface FormTextInputProps
+export interface FormTextInputProps
     extends FormElementBaseProps,
         Pick<InputHTMLAttributes<HTMLInputElement>, "name" | "type"> {
     value?: string;
@@ -26,11 +33,12 @@ const FormTextInput = forwardRef<HTMLInputElement, FormTextInputProps>(
             bottomSpacing: _bottomErrorSpacing,
             name,
             type,
+            disabled,
             ...formElementBaseProps
         },
         ref
     ) => {
-    const theme = useTheme();
+        const theme = useTheme();
         const value = _value || "";
         const bottomErrorSpacing = _bottomErrorSpacing || 2;
         const bottomSpacing = error ? 0.5 : bottomErrorSpacing;
@@ -84,12 +92,14 @@ const FormTextInput = forwardRef<HTMLInputElement, FormTextInputProps>(
                 <FormElementBase
                     {...formElementBaseProps}
                     bottomSpacing={bottomSpacing}
+                    disabled={disabled}
                 >
                     <div className={classNames("value-wrapper", { error })}>
                         <span className="pretty-value" key={value}>
                             {value || label || ""}
                         </span>
                         <FormInput
+                            disabled={disabled}
                             onBlur={onBlur}
                             ref={ref}
                             name={name}

@@ -12,7 +12,7 @@ export const initialAppState: AppState = {
     reservationValidation: [],
     currentLocale: "en",
     status: undefined,
-    theme: createTheme()
+    theme: createTheme(),
 };
 
 const useReduceAppState = () =>
@@ -24,17 +24,12 @@ const useReduceAppState = () =>
                     status: action.status,
                 };
             case "profile":
-                if (action.profile) {
-                    return {
-                        ...previousState,
-                        initialized: true,
-                        myProfile: action.profile,
-                    };
-                }
                 return {
                     ...previousState,
                     initialized: true,
+                    myProfile: action.profile,
                 };
+
             case "enableNextUpdate":
                 return {
                     ...previousState,
@@ -99,7 +94,7 @@ const useReduceAppState = () =>
             case "updateReservationRequestTemplate":
                 return {
                     ...previousState,
-                    reservationRequestTemplate: action.reservation
+                    reservationRequestTemplate: action.reservation,
                 };
             case "reservationSuccessful":
                 return {
@@ -107,7 +102,7 @@ const useReduceAppState = () =>
                     showReservationSuccessful: true,
                     reservationRequestTemplate: {
                         ...action.reservationRequestTemplate,
-                        templateId: action.reservationId
+                        templateId: action.reservationId,
                     },
                 };
             case "hideReservationSuccessful":
@@ -135,8 +130,8 @@ const useReduceAppState = () =>
                     ...previousState,
                     theme: {
                         ...previousState.theme,
-                        ...action.theme
-                    }
+                        ...action.theme,
+                    },
                 };
             default:
                 assertNever(action, `Unhandled state change "${action!.type}"`);
