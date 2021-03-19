@@ -54,6 +54,7 @@ const NewButton = forwardRef<FormElementBaseRefType, NewButtonProps>(({
                     width: 100%;
                     text-transform: uppercase;
                     text-decoration: underline;
+                    text-decoration-thickness: 2px;
                 }
 
                 div.center h3 {
