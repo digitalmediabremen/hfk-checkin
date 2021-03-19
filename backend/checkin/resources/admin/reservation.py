@@ -120,8 +120,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     radio_fields = {'state': admin.HORIZONTAL}
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user', 'user__profile')\
-            .prefetch_resource_and_unit()
+        return super().get_queryset(request).select_related('user', 'user__profile')
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # obj is not None, so this is an edit
