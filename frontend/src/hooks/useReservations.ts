@@ -10,7 +10,7 @@ export default function useReservations(pastReservations: boolean = false) {
 
     const req = () => getReservationsRequest({
         requestParameters: {
-            all: pastReservations,
+            past: pastReservations,
             limit: 20
         }
     });
