@@ -794,7 +794,7 @@ class ResourceListViewSet(mixins.ListModelMixin,
     queryset = queryset.prefetch_related('groups')
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('products')
-    filter_backends = (filters.SearchFilter, DjangoFilterBackend) #LocationFilterBackend)
+    filter_backends = (filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend) #LocationFilterBackend)
     filterset_class = ResourceFilterSet
 
     search_fields = append_translated(Resource, ('name', 'numbers', 'description', 'unit__name'))
@@ -802,6 +802,8 @@ class ResourceListViewSet(mixins.ListModelMixin,
     authentication_classes = (
         list(drf_settings.DEFAULT_AUTHENTICATION_CLASSES) +
         [SessionAuthentication])
+    ordering_fields = ['numbers', 'name','unit']
+    ordering = ['numbers','name']
 
     def get_serializer_class(self):
         if settings.RESPA_PAYMENTS_ENABLED:
