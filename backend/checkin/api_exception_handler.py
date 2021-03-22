@@ -56,7 +56,7 @@ def custom_exception_handler(exc, context):
                 else:
                     # general detail error (without field)
                     general_errors.append(str_or_errordetail_to_error_message(value))
-        if isinstance(response.data, list):
+        elif isinstance(response.data, list):
             for value in response.data:
                 general_errors.append(str_or_errordetail_to_error_message(value))
         else:
