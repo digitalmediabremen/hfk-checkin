@@ -14,7 +14,7 @@ const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
     return (
         <Layout>
             <FormGroup>
-                <Title>Willkommen</Title>
+                <Title>Hellow</Title>
                 <Text paragraph>
                     Hier wird dir die App vorgestellt. 
                 </Text>
