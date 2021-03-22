@@ -29,7 +29,7 @@ class ResourceTypeAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Tra
 class SelectResourceForm(forms.Form):
     from ..models import Resource, Reservation
     resource = forms.ModelChoiceField(
-        queryset=Resource.objects.all(),
+        queryset=Resource.objects.filter(reservable=True).all(),
         widget=AutocompleteSelect(Reservation._meta.get_field('resource').remote_field, admin.site)
     )
 
@@ -86,6 +86,11 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     readonly_fields = ('get_people_capacity', *ModifiableModelAdminMixin._fields)
     list_max_show_all = 1000
     filter_horizontal = ('features',)
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = queryset.filter(reservable=True)
+        return queryset, use_distinct
 
     def get_people_capacity(self, obj):
         return obj.people_capacity

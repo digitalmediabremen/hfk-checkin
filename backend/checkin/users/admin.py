@@ -50,6 +50,12 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     add_form = UserCreationForm
     inlines = [UserProfileAdminInline]
 
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        queryset = queryset.exclude(profile__is_external=True)
+        return queryset, use_distinct
+
+
 #from resources.models import Reservation
 # from allauth.socialaccount.models import SocialAccount, EmailAddress
 #
@@ -184,7 +190,7 @@ class ProfileAdmin(SimpleHistoryAdmin):
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified',)
-    list_filter = ('updated_at','created_at','verified')
+    list_filter = ('updated_at','created_at','verified','is_external')
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('created_at', 'updated_at','user')
 
@@ -198,7 +204,7 @@ class ProfileAdmin(SimpleHistoryAdmin):
     def get_list_display(self, request):
         phone = 'phone' if request.user.has_perm('tracking.can_view_full_phone_number') else 'phone_obfuscated'
         email = 'email' if request.user.has_perm('tracking.can_view_full_email') else 'email_obfuscated'
-        list_display = ['id', 'first_name', 'last_name', phone, email, 'verified', 'created_at']
+        list_display = ['id', 'first_name', 'last_name', phone, email, 'verified', 'is_external', 'created_at']
         return list_display
 
     # TODO hide email in change view or make sure people understand change view will display all fields.
