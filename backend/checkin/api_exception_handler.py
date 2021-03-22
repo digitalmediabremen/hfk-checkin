@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 ERROR_BAD_REQUEST = _('An error occurred. Your input might be not correct.')
 ERROR_SERVER_ERROR = _('Sorry. An error occurred.')
 ERROR_VALIDATION_ERROR = _('Please correct your input: %(error_list_str)s')
-ERROR_GENERAL_ERROR = _('Error: %(error_list_str)s')
+ERROR_GENERAL_ERROR = _('%(error_list_str)s')
 ERROR_BLANK_FIELD = _("'%(field_name)s' can not be blank.")
 
 def str_or_errordetail_to_error_message(str_or_error_detail, field_name=None):

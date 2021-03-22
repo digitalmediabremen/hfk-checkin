@@ -292,3 +292,46 @@ class RespaTokenAdmin(admin.ModelAdmin):
     fields = ('user',)
     ordering = ('-created',)
     raw_id_fields = ('user',)
+
+
+## FIELDS and WIDGETS
+
+from django.forms.widgets import ChoiceWidget
+from django.utils.html import format_html
+
+
+class DisableableChoiceWidget(ChoiceWidget):
+    """
+    Subclass of Django's choice widget that allows disabling options.
+    """
+    def __init__(self, disabled_choices=[], *args, **kwargs):
+        self._disabled_choices = disabled_choices
+        super(DisableableChoiceWidget, self).__init__(*args, **kwargs)
+
+    @property
+    def disabled_choices(self):
+        return self._disabled_choices
+
+    @disabled_choices.setter
+    def disabled_choices(self, other):
+        self._disabled_choices = other
+
+    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
+        option_dict = super(DisableableChoiceWidget, self).create_option(
+            name, value, label, selected, index, subindex=subindex, attrs=attrs
+        )
+        # if selected:
+        #     option_dict['label'] = format_html("<strong>{}</strong>" % label)
+        if value in self.disabled_choices:
+            option_dict['attrs']['disabled'] = 'disabled'
+        return option_dict
+
+
+# class DisableableSelectWidget():
+#     pass
+
+
+class DisableableRadioSelect(DisableableChoiceWidget):
+    input_type = 'radio'
+    template_name = 'django/forms/widgets/radio.html'
+    option_template_name = 'django/forms/widgets/radio_option.html'

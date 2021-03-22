@@ -19,6 +19,7 @@ from .list_filters import ResourceFilter, UserFilter
 from django.contrib.admin.utils import format_html
 from ..models.permissions import RESERVATION_VALIDATION_PERMISSIONS
 from ..models.reservation import StaticReservationPurpose
+from .other import DisableableRadioSelect
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +71,7 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
+    state = forms.ChoiceField(required=False, label=_("State"), choices=Reservation.STATE_CHOICES, widget=DisableableRadioSelect(disabled_choices=[Reservation.CREATED, Reservation.REQUESTED, Reservation.CANCELLED]))
     message_state_update = forms.CharField(required=False, label=_('Notification Message'), widget=forms.Textarea(attrs={'cols':80, 'rows':5}),
                                            help_text=_('This message might be used in the notification send to the organizer on this update. The message will not be saved.'))
     class Meta:
