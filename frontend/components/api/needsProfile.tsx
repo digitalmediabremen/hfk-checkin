@@ -27,16 +27,6 @@ const needsProfile = <
         loading,
         additionalData,
     } = useUpdateProfileFromAppStateAndUpdate(true);
-    useEffect(() => {
-        if (error)
-            dispatch({
-                type: "status",
-                status: {
-                    isError: true,
-                    message: error,
-                },
-            });
-    }, [error]);
 
     const cameFromAuth = !!router.query?.["from-auth"];
 

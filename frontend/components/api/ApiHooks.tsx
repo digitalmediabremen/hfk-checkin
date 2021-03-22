@@ -14,7 +14,7 @@ import {
     getLocationRequest,
     getProfileRequest,
     Response,
-    updateProfileRequest
+    updateProfileRequest,
 } from "./ApiService";
 
 type PaginationArrayType<T, P extends boolean> = P extends true
@@ -123,7 +123,10 @@ export const useApi = <RT, Paginate extends boolean = false>(
 
     const _handleError = (error: string, status: number) => {
         setError(error);
-        if (!config.onlyLocalErrorReport) {
+        const reportError = config.onlyLocalErrorReport
+            ? status !== httpStatuses.notAuthorized
+            : true;
+        if (reportError) {
             dispatch({
                 type: "status",
                 status: {
@@ -165,10 +168,10 @@ export const useApi = <RT, Paginate extends boolean = false>(
                 });
             }
         }
-        if (data) { 
-            setResult(data, offset, limit)
+        if (data) {
+            setResult(data, offset, limit);
             return data;
-        };
+        }
         return undefined;
     };
 
@@ -179,8 +182,8 @@ export const useApi = <RT, Paginate extends boolean = false>(
         request: _handleRequest,
         additionalData,
         reset: () => {
-            setResult(undefined)
-        }
+            setResult(undefined);
+        },
     } as UseApiReturnType<RT, Paginate>;
 };
 
