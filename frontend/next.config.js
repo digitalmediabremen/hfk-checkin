@@ -1,8 +1,6 @@
 const withPWA = require("next-pwa");
 const features = require("./features");
 
-const runtimeCaching = require('next-pwa/cache')
-runtimeCaching[0].handler = 'StaleWhileRevalidate'
 
 module.exports = withPWA({
     pwa: {
@@ -10,7 +8,6 @@ module.exports = withPWA({
         swSrc: "service-worker.js",
         register: false,
         disable: process.env.NODE_ENV === "development",
-        runtimeCaching
     },
     generateEtags: false,
     async headers() {
