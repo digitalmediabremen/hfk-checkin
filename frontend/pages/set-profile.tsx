@@ -50,7 +50,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         router.push(appUrls.home);
     }, [success]);
 
-    const { errors, handleSubmit, control } = useForm<ProfileUpdate>({
+    const { errors, handleSubmit, control, setValue } = useForm<ProfileUpdate>({
         mode: "onTouched",
         defaultValues: {
             first_name: initialProfile?.first_name || "",
@@ -58,6 +58,12 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             phone: initialProfile?.phone || "",
         },
     });
+
+    useEffect(() => {
+        setValue("first_name", initialProfile?.first_name || "");
+        setValue("last_name", initialProfile?.last_name || "");
+        setValue("phone", initialProfile?.phone || "");
+    }, [initialProfile]);
 
     const controllerProps = useCallback(
         (name: keyof ProfileUpdate, translatedName: string, rules?: {}) => ({
