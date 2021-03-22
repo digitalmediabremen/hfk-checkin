@@ -129,8 +129,7 @@ export const useApi = <RT, Paginate extends boolean = false>(
             ...insertIf(
                 [httpStatuses.notAuthorized],
                 !!config.onlyLocalErrorReport
-            ),
-            httpStatuses.notFound,
+            )
         ] as number[];
 
         if (!exludedStatuses.includes(status)) {

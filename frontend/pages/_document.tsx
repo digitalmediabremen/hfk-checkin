@@ -5,7 +5,12 @@ import Document, {
     Main,
     NextScript,
 } from "next/document";
-import { getManifestUrl, getName, getPrimaryColorHex, getTitle } from "../features";
+import {
+    getManifestUrl,
+    getName,
+    getPrimaryColorHex,
+    getTitle,
+} from "../features";
 import { getInitialLocale, LocaleConsumer } from "../localization";
 
 const iconSizes = ["512x512", "192x192", "144x144"];
@@ -51,6 +56,34 @@ class MyDocument extends Document {
                                 href="/favicon.ico"
                             ></link>
 
+                            <link
+                                rel="preload"
+                                as="font"
+                                href="/fonts/DINWebPro.woff"
+                                type="font/woff"
+                                crossOrigin="anonymous"
+                            />
+                            <link
+                                rel="preload"
+                                as="font"
+                                href="/fonts/DINWebPro-Bold.woff"
+                                type="font/woff"
+                                crossOrigin="anonymous"
+                            />
+                            <link
+                                rel="preload"
+                                as="font"
+                                href="/fonts/DINWebPro-Ita.woff"
+                                type="font/woff"
+                                crossOrigin="anonymous"
+                            />
+                            <link
+                                rel="preload"
+                                as="font"
+                                href="/fonts/DINWebPro-BoldIta.woff"
+                                type="font/woff"
+                                crossOrigin="anonymous"
+                            />
                             <meta name="mobile-web-app-capable" content="yes" />
                             <meta
                                 name="apple-mobile-web-app-capable"

@@ -14,6 +14,7 @@ export default function useSWRefreshToUpdate() {
             const wb = new Workbox("/sw.js");
             wb.addEventListener("installed", (event) => {
                 if (event.isUpdate) {
+                    console.log("reloaded due to sw update")
                     window.location.reload();
                 }
             });
