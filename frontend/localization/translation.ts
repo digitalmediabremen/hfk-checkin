@@ -4,10 +4,10 @@ const translation: Translation = {
     en: {
         common: {
             "nicht verifiziert": "not verified",
-            "Seite nicht gefunden": "Page not found",
             "Mist. Da ist was schiefgelaufen.": "Hmm. Something went wrong.",
             "Melde dich bei": "Report to",
             "wenn dieser Fehler häufiger auftritt.": "if this error repeats.",
+            "Seite nicht gefunden": "Page not found",
             "+{days} Tag": "+{days} days",
             jetzt: "now",
             "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
@@ -27,12 +27,9 @@ const translation: Translation = {
             "Telefon ändern": "change phone number",
             Heute: "today",
             Morgen: "tomorrow",
+            "Keine gültige Telefonnummer": "NEW",
         },
         reservation: {
-            "Noch hast du keine Buchungsanfragen gestellt.":
-                "You haven't made any booking requests yet.",
-            "Neue Buchungsanfrage": "New booking request",
-            Buchungen: "Bookings",
             "Telefon ändern": "Change phone",
             "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
                 "Are you sure to cancel your booking? This action cannot be reversed.",
@@ -48,15 +45,19 @@ const translation: Translation = {
             abgelehnt: "denied",
             storniert: "cancelled",
             erstellt: "created",
+            "Es gibt keine bevorstehenden Buchungen.": "NEW",
+            "Vergangene ausblenden": "NEW",
+            "Vergangene einblenden": "NEW",
+            Buchungsübersicht: "Bookings",
         },
         request: {
-            "Externe Personen": "External person",
-            "Teilnehmer": "Attendees",
-            "Teilnehmerinnen": "Attendees",
+            Teilnehmerinnen: "Attendees",
+            Teilnehmer: "Attendees",
             Buchungsgrund: "Purpose",
             Nachricht: "Message",
             "Datum und Uhrzeit": "Date and time",
             Raum: "Room",
+            "Externe Personen": "External person",
             "Person hinzufügen": "Add person",
             Raumliste: "Rooms",
             "Neue Anfrage": "New booking request",
@@ -72,13 +73,13 @@ const translation: Translation = {
             Alleinnutzung: "Exclusive use",
             Anfang: "Begin",
             Ende: "End",
+            "Weitere Personen": "Additional participants",
+            "Du hast keine Berechtigung den Raum \\{resource}\\ zu buchen.":
+                'You don\'t have permission to book this room "{resource}".',
             "Ein Ausnahmegrund muss angegeben werden.":
                 "Please specify an exception.",
             "Du musst noch den Raum auswählen.": "Please select a room.",
             "Du musst noch eine Zeit angeben.": "Please select date and time.",
-            "Weitere Personen": "Additional participants",
-            "Du hast keine Berechtigung den Raum \\{resource}\\ zu buchen.":
-                'You don\'t have permission to book this room "{resource}".',
         },
         "request-attendees": {
             "HfK externe Person(en) anmelden": "Register external person(s)",
@@ -112,15 +113,18 @@ const translation: Translation = {
                 "Please complete your request with the following information.",
             Begründung: "reason",
             "Normale Buchung": "regular booking",
-            "Prüfung bzw. Prüfungsvorbereitung":
-                "exam and/or preparation for an exam",
             Abholung: "pick-up",
             Gremiensitzung: "board meeting",
             "Anderer Grund": "other reasen",
             Extern: "external",
             weitere: "other",
+            Prüfung: "exam and/or preparation for an exam",
+            Prüfungsvorbereitung: "NEW",
         },
         "request-time": {
+            Datum: "Date",
+            Von: "Begin",
+            Bis: "End",
             "Bitte wähle ein frühreres Datum aus oder gib einen Buchungsgrund an.":
                 "Please select an earlier date or specify a reason for your booking request.",
             "Buchungsgrund angeben": "specify reason for booking request",
@@ -132,9 +136,6 @@ const translation: Translation = {
                 "Room \\{resource}\\ can only be booked {days} days in advance.",
             "Räume können maximal {days} Tage im Vorraus gebucht werden.":
                 "Rooms can only be booked {days} days in advance.",
-            Datum: "Date",
-            Von: "Begin",
-            Bis: "End",
         },
         createProfile: {
             "Die konsequente Einhaltung des HfK-Hygienekonzepts ist die Voraussetzung für künftige Öffnungsschritte der HfK.":
@@ -143,19 +144,27 @@ const translation: Translation = {
                 "Please do use Checkin to document your stay, as only the digital system enables our staff member tasked with handling issues relating to the pandemic, the Corona-Beauftragte, to inform you quickly if an infection risk arises in your close environ-ment.",
             "HfK-Angehörige": "HfK members",
             Gäste: "guests",
-            "Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig":
-                "The verification with a photo ID at the front desk after registration is mandatory",
             Gastzugang: "guest access",
+            Anmelden: "NEW",
+            "Aktuell ist die Nutzung von Getin nur mit einem HfK-Account möglich.":
+                "NEW",
+            "Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig.":
+                "The verification with a photo ID at the front desk after registration is mandatory",
         },
         setprofile: {
-            erforderlich: "required",
             Vorname: "first name",
             Nachname: "surname",
             Telefonnummer: "phone number",
             "setprofile-accept-legal":
                 "Your data will only be used, if an infection occurs. With your registration you agree to the prevailing privacy policy that your data is being collected for tracing purposes in the event of an infection. You confirm to have read and understood the HfK rules of hygiene and to follow these rules during the stay at the HfK Bremen. Please find our prevailing privacy policy and the HfK hygiene rules on faq.hfk-bremen.de or on https://www.hfk-bremen.de/corona-downloads and on display at the front desk.",
-            Registrieren: "register",
             Speichern: "save",
+            "{fieldName} darf nicht leer sein.": "NEW",
+            "Profil erstellen": "register",
+            "Profil ändern": "NEW",
+            "Keine gültige Telefonnummer": "NEW",
+            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
+                "NEW",
+            Erstellen: "NEW",
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
@@ -191,6 +200,19 @@ const translation: Translation = {
             "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.":
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
+        },
+        "request-resource-list": {
+            Zugang: "Access",
+        },
+        cookieError: {
+            "Es gibt ein Cookie Problem.": "NEW",
+            "Mögliche Fehlerquellen:": "NEW",
+            "Du benutzt den Incognito-Modus deines Browsers:": "NEW",
+            "Aktuell unterstützt {appname} diesen nicht.": "NEW",
+            "Du hast Cookies in deinen Browsereinstellung deaktiviert:": "NEW",
+            "Du musst Cookies zulassen um {appname} nutzen zu können.": "NEW",
+            "Melde dich bei": "NEW",
+            "wenn dieser Fehler häufiger auftritt.": "NEW",
         },
     },
 };
