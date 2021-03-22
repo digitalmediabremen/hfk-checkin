@@ -40,7 +40,7 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
                 .form-value {
                     line-height: 1.25em;
                     display: inline;
-                    width: 100%;
+                    max-width: 100%;
                 }
 
                 .form-value > .bold {
