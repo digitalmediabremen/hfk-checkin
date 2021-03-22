@@ -43,11 +43,12 @@ if 'microsoft_auth' in settings.INSTALLED_APPS:
     fix_microsoft_auth_user_admin()
 
 urlpatterns += [
+    path('', RedirectView.as_view(url='/backend/', permanent=False, query_string=True)),
     path('backend/', admin.site.urls),
     re_path('admin/(?P<rest>.*)', RedirectView.as_view(url='/backend/%(rest)s', permanent=True, query_string=True)),
     path('impersonate/', include('impersonate.urls')),
     path('login/redirect/', to_ms_redirect),
-    path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout
+    path('logout/', LogoutView.as_view(success_url_allowed_hosts=settings.SUCCESS_URLS_ALLOWED)), # deprecated: replaced with API endpoint auth/logout
     path('api/', include(respa_router.urls)),
     path('resources/', include('checkin.resources.urls')),
     path('openapi', get_schema_view(
