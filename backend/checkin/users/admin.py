@@ -27,7 +27,31 @@ class UserProfileAdminInline(admin.StackedInline):
     max = 1
 
 
-class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
+class AdminUserLookupPermissionMixin():
+    # ("can_view_external_users", _("Can view external Users")),
+    # ("can_view_regular_users", _("Can view regular Users")),
+    # ("can_view_unverified_users", _("Can view unverified Users")),
+    # ("can_view_any_user", _("Can view unverified Users")),
+    # ("can_view_real_names", _("Can view full names")),
+    # ("can_view_full_email", _("Can view full e-mail addresses")),
+    # ("can_view_full_phone_number", _("Can view full phone numbers")),
+
+    def get_queryset(self, request, allow_any=False):
+        qs = super().get_queryset(request).exclude_anonymous_users()
+        # TODO qs limits are not working in AdminView, are they?
+        # TODO see fixme on UserAdmin
+        # if allow_any or request.user.is_superuser or request.user.has_perm('users.can_view_any_user'):
+        #     return qs
+        # if not request.user.has_perm('users.can_view_external_users'):
+        #     qs = qs.exclude(profile__is_external=True)
+        # if not request.user.has_perm('users.can_view_regular_users'):
+        #     qs = qs.exclude(profile__is_external=False)
+        # if not request.user.has_perm('users.can_view_unverified_users'):
+        #     qs = qs.exclude(profile__verified=True)
+        return qs
+
+
+class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, DjangoUserAdmin):
     open_new_window = True
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -50,10 +74,19 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     add_form = UserCreationForm
     inlines = [UserProfileAdminInline]
 
-    def get_search_results(self, request, queryset, search_term):
-        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        queryset = queryset.exclude(profile__is_external=True)
-        return queryset, use_distinct
+    # FIXME get_search_results is apparently also used on Admin's changelist view, not only on automplete.
+    # FIXME therefore it is still all or nothing, which will not help if we want to hide / protect user data against lookups.
+    # def get_queryset(self, request, allow_any=False):
+    #     if allow_any: #or request.user.is_superuser: #or request.user.has_perm('users.can_view_any_user'):
+    #         return User.objects.all()
+    #     else:
+    #         return User.objects.none()
+    #
+    # def get_search_results(self, request, queryset, search_term):
+    #     queryset = self.get_queryset(request, allow_any=True)
+    #     queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+    #     queryset = queryset.exclude(profile__is_external=True)
+    #     return queryset, use_distinct
 
 
 #from resources.models import Reservation
@@ -182,7 +215,7 @@ if not admin.site.is_registered(User):
     admin.site.register(User, UserAdmin)
 
 @admin.register(Profile)
-class ProfileAdmin(SimpleHistoryAdmin):
+class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     # TODO: default query set nur nicht Verifiziert
     # TODO: default query set nur neue Nutzer
 
@@ -208,12 +241,6 @@ class ProfileAdmin(SimpleHistoryAdmin):
         return list_display
 
     # TODO hide email in change view or make sure people understand change view will display all fields.
-
-    def get_queryset(self, request):
-        qs = super(ProfileAdmin, self).get_queryset(request).exclude_anonymous_users()
-        if request.user.has_perm('tracking.can_view_all_users'):
-            return qs
-        return qs.exclude(verified=True)
 
     def phone_obfuscated(self, object):
         if object.phone:

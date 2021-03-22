@@ -204,10 +204,13 @@ class Profile(DirtyFieldsMixin, models.Model):
         verbose_name = _("Person")
         verbose_name_plural = _("Personen")
         permissions = [
-            ("can_view_all_users", _("Kann alle Personen anzeigen")),
-            ("can_view_real_names", _("Kann Klarnamen anzeigen")),
-            ("can_view_full_email", _("Kann vollständige E-Mail-Adresse anzeigen")),
-            ("can_view_full_phone_number", _("Kann vollständige Telefonnummer anzeigen")),
+            ("can_view_external_users", _("Can view external Users")),
+            ("can_view_regular_users", _("Can view regular Users")),
+            ("can_view_unverified_users", _("Can view unverified Users")),
+            ("can_view_any_user", _("Can view unverified Users")),
+            ("can_view_real_names", _("Can view full names")),
+            ("can_view_full_email", _("Can view full e-mail addresses")),
+            ("can_view_full_phone_number", _("Can view full phone numbers")),
         ]
 
     @property
