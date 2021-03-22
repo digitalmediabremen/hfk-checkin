@@ -166,7 +166,12 @@ export function getPurposeLabelMap(
         FOR_EXAM: _t(
             locale,
             "request-purpose",
-            "Prüfung bzw. Prüfungsvorbereitung"
+            "Prüfung"
+        ),
+        FOR_EXAM_PREPARATION: _t(
+            locale,
+            "request-purpose",
+            "Prüfungsvorbereitung"
         ),
         FOR_PICKUP: _t(
             locale,

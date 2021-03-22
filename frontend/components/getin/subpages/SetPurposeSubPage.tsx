@@ -26,6 +26,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) 
         undefined,
         "FOR_PICKUP",
         "FOR_EXAM",
+        "FOR_EXAM_PREPARATION",
         "FOR_COUNCIL_MEETING",
         "OTHER",
     ];
