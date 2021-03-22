@@ -98,7 +98,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     title={title}
                     onBack={
                         !!isUserCreation
-                            ? undefined
+                            ? () => router.push(appUrls.createProfile)
                             : () => router.push(appUrls.home)
                     }
                 />
@@ -147,7 +147,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 {initialProfile?.phone && (
                     <Notice bottomSpacing={2}>
                         {t(
-                            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet."
+                            "Die Telefonnummer wird auschliesslich im Falle einer Infektionsnachverfolgung verwendet."
                         )}
                     </Notice>
                 )}

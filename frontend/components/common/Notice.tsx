@@ -41,9 +41,11 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                     width: 100%;
                 }
 
-                .error .text {
+                .error .content {
                     margin-top: ${theme.spacing(0.25)}px;
-                    font-style: normal;
+                    flex: 1;
+                    width: calc(100% - ${theme.spacing(5)}px);
+
                 }
             `}</style>
             <div className={classNames("wrapper", { error })}>

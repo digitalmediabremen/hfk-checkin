@@ -14,10 +14,10 @@ const Text: React.FunctionComponent<TextProps> = ({children, paragraph, secondar
     return <>
         <style jsx>{`
             color: ${theme.primaryColor};
-            display: inline-block;
+            display: block;
             line-height: ${theme.unit > 8 ? 1.5 : 1.25}em;
             margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
-            
+    
             p {
                 margin: 0;
                 margin-bottom: ${theme.spacing(2)}px;

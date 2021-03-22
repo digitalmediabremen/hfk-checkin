@@ -21,23 +21,34 @@ function reapplyDots(text: string) {
 
 function createDefinitionSet() {
     const f = project.getSourceFile("./localization/index.tsx");
-    if (!f) throw "Localization file not found"
+    if (!f) throw "Localization file not found";
 
     const useTFunc = f?.getVariableDeclarationOrThrow("useTranslation");
     const _tFunc = f?.getFunctionOrThrow("_t");
     const tFunc = useTFunc
         ?.getDescendantsOfKind(SyntaxKind.ShorthandPropertyAssignment)
         .pop();
+    const useTFuncRefs = useTFunc?.findReferencesAsNodes();
     const tFuncRefs = tFunc?.findReferencesAsNodes();
     const _tFuncRefs = _tFunc?.findReferencesAsNodes();
     // console.log(tFuncRefs?.[0]);
     const tDefinitionSet = new Set<string>();
 
     const relevantSourceFiles = new Set(
-        [...(tFuncRefs || []), ...(_tFuncRefs || [])]?.map((p) => {
+        [
+            ...(tFuncRefs || []),
+            ...(_tFuncRefs || []),
+            ...(useTFuncRefs || []),
+        ]?.map((p) => {
             return p.getSourceFile();
         })
     );
+
+    // console.log(
+    //     relevantSourceFiles.forEach((s) =>
+    //         console.log(s.getSourceFile().getBaseName())
+    //     )
+    // );
 
     // remove definition file
     relevantSourceFiles.delete(useTFunc!.getSourceFile());
@@ -57,6 +68,7 @@ function createDefinitionSet() {
             // const locale = strip(args[0].getText());
             const inModule = strip(args[1].getText());
             const tString = strip((args[4] || args[2]).getText());
+
             tDefinitionSet.add(`${inModule}.${saveDots(tString)}`);
         };
 

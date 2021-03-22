@@ -8,14 +8,8 @@ const translation: Translation = {
             "Melde dich bei": "Report to",
             "wenn dieser Fehler häufiger auftritt.": "if this error repeats.",
             "Seite nicht gefunden": "Page not found",
-            "+{days} Tag": "+{days} days",
+            "+{days} Tag": "+{days} day",
             jetzt: "now",
-            "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
-            Vorname: "First name",
-            Nachname: "Surname",
-            Telefonnummer: "Phone number",
-            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
-                "The phone number will only be used, if an infection occurs.",
             "Raum übernehmen": "Reuse room",
             "Zeit übernehmen": "Reuse time",
             "Neue Anfrage": "New booking request",
@@ -27,9 +21,14 @@ const translation: Translation = {
             "Telefon ändern": "change phone number",
             Heute: "today",
             Morgen: "tomorrow",
-            "Keine gültige Telefonnummer": "NEW",
+            Datenschutz: "Privacy",
+            Ausloggen: "Logout"
         },
         reservation: {
+            "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
+            "Vergangene ausblenden": "Hide past bookings",
+            "Vergangene einblenden": "Show past bookings",
+            Buchungsübersicht: "Bookings",
             "Telefon ändern": "Change phone",
             "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
                 "Are you sure to cancel your booking? This action cannot be reversed.",
@@ -45,10 +44,6 @@ const translation: Translation = {
             abgelehnt: "denied",
             storniert: "cancelled",
             erstellt: "created",
-            "Es gibt keine bevorstehenden Buchungen.": "NEW",
-            "Vergangene ausblenden": "NEW",
-            "Vergangene einblenden": "NEW",
-            Buchungsübersicht: "Bookings",
         },
         request: {
             Teilnehmerinnen: "Attendees",
@@ -57,7 +52,7 @@ const translation: Translation = {
             Nachricht: "Message",
             "Datum und Uhrzeit": "Date and time",
             Raum: "Room",
-            "Externe Personen": "External person",
+            "Externe Personen": "Attendees",
             "Person hinzufügen": "Add person",
             Raumliste: "Rooms",
             "Neue Anfrage": "New booking request",
@@ -67,7 +62,7 @@ const translation: Translation = {
             Grund: "Purpose",
             "Nach.": "Msg.",
             "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
-                "My phone number ({phone}) may be used for queries.",
+                "Personnel is allowed to contact me by phone ({phone}) in case of questions regarding this booking request.",
             Anfragen: "request",
             Telefonkontakt: "Phone contact",
             Alleinnutzung: "Exclusive use",
@@ -81,6 +76,9 @@ const translation: Translation = {
             "Du musst noch den Raum auswählen.": "Please select a room.",
             "Du musst noch eine Zeit angeben.": "Please select date and time.",
         },
+        "request-resource-list": {
+            Zugang: "Access",
+        },
         "request-attendees": {
             "HfK externe Person(en) anmelden": "Register external person(s)",
             Delete: "Delete",
@@ -90,7 +88,7 @@ const translation: Translation = {
                 "Visits of external persons - non-HfK-members - must be coordinated in advance. Your request will be sent to our staff member tasked with handling issues relating to the pandemic, the Corona-Beauftragte, for review. This process may delay your room request.",
             "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en.":
                 "Please state the purpose of the person's stay.",
-            "Aufenthaltsgrund angeben": "state purpose of stay.",
+            "Aufenthaltsgrund angeben": "State purpose now",
         },
         "request-resource": {
             "Gebäude auswählen": "select building",
@@ -111,23 +109,23 @@ const translation: Translation = {
         "request-purpose": {
             "Bitte ergänze deine Anfrage mit folgender Information.":
                 "Please complete your request with the following information.",
-            Begründung: "reason",
-            "Normale Buchung": "regular booking",
-            Abholung: "pick-up",
-            Gremiensitzung: "board meeting",
-            "Anderer Grund": "other reasen",
-            Extern: "external",
+            Begründung: "Please explain what you are planning to do.",
+            "Normale Buchung": "Regular booking",
+            Prüfung: "Exam",
+            Prüfungsvorbereitung: "Exam preparation",
+            Abholung: "Pick-up",
+            Gremiensitzung: "Board meeting",
+            "Anderer Grund": "Something else",
+            Extern: "External",
             weitere: "other",
-            Prüfung: "exam and/or preparation for an exam",
-            Prüfungsvorbereitung: "NEW",
         },
         "request-time": {
             Datum: "Date",
             Von: "Begin",
             Bis: "End",
             "Bitte wähle ein frühreres Datum aus oder gib einen Buchungsgrund an.":
-                "Please select an earlier date or specify a reason for your booking request.",
-            "Buchungsgrund angeben": "specify reason for booking request",
+                "Please select an earlier date or specify the purpose of your booking request.",
+            "Buchungsgrund angeben": "State booking purpose",
             "Bitte rechne mit einer Bearbeitungszeit von mind. 48 Stunden.":
                 "Please allow at least 48 hours for processing.",
             "Wichtig: Am Wochenende werden in der Regel keine Anfragen bearbeitet. Willst du also eine Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage bis spätestens Donnerstag 10 Uhr.":
@@ -137,34 +135,44 @@ const translation: Translation = {
             "Räume können maximal {days} Tage im Vorraus gebucht werden.":
                 "Rooms can only be booked {days} days in advance.",
         },
+        cookieError: {
+            "Es gibt ein Cookie Problem.": "We have an issue with your cookie settings.",
+            "Mögliche Fehlerquellen:": "Possible issues:",
+            "Du benutzt den Incognito-Modus deines Browsers:": "You are using incognito mode:",
+            "Aktuell unterstützt {appname} diesen nicht.": "{appname} does not support incognito mode.",
+            "Du hast Cookies in deinen Browsereinstellung deaktiviert:": "You deactivated cookies in your browser settings:",
+            "Du musst Cookies zulassen um {appname} nutzen zu können.": "You need to allow cookies to use {appname}.",
+            "Melde dich bei": "Report to",
+            "wenn dieser Fehler häufiger auftritt.": "if this error occurs regularly.",
+        },
         createProfile: {
+            Anmelden: "Sign in",
             "Die konsequente Einhaltung des HfK-Hygienekonzepts ist die Voraussetzung für künftige Öffnungsschritte der HfK.":
                 "Our University will only make progress in a gradual reopening, if we all strictly follow the HfK hygiene rules.",
             "please-use-checkin":
                 "Please do use Checkin to document your stay, as only the digital system enables our staff member tasked with handling issues relating to the pandemic, the Corona-Beauftragte, to inform you quickly if an infection risk arises in your close environ-ment.",
+            "Aktuell ist die Nutzung von Getin nur mit einem HfK-Account möglich.":
+                "Until now Getin is only accessible with an HfK-account",
             "HfK-Angehörige": "HfK members",
             Gäste: "guests",
-            Gastzugang: "guest access",
-            Anmelden: "NEW",
-            "Aktuell ist die Nutzung von Getin nur mit einem HfK-Account möglich.":
-                "NEW",
             "Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig.":
                 "The verification with a photo ID at the front desk after registration is mandatory",
+            Gastzugang: "guest access",
         },
         setprofile: {
-            Vorname: "first name",
-            Nachname: "surname",
-            Telefonnummer: "phone number",
+            "{fieldName} darf nicht leer sein.": "{fieldName} can't be empty.",
+            "Profil erstellen": "Create profile",
+            "Profil ändern": "Change profile",
+            Vorname: "First name",
+            Nachname: "Surname",
+            Telefonnummer: "Phone number",
+            "Keine gültige Telefonnummer": "Not a valid phone number",
             "setprofile-accept-legal":
                 "Your data will only be used, if an infection occurs. With your registration you agree to the prevailing privacy policy that your data is being collected for tracing purposes in the event of an infection. You confirm to have read and understood the HfK rules of hygiene and to follow these rules during the stay at the HfK Bremen. Please find our prevailing privacy policy and the HfK hygiene rules on faq.hfk-bremen.de or on https://www.hfk-bremen.de/corona-downloads and on display at the front desk.",
-            Speichern: "save",
-            "{fieldName} darf nicht leer sein.": "NEW",
-            "Profil erstellen": "register",
-            "Profil ändern": "NEW",
-            "Keine gültige Telefonnummer": "NEW",
-            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
-                "NEW",
-            Erstellen: "NEW",
+            "Die Telefonnummer wird auschliesslich im Falle einer Infektionsnachverfolgung verwendet.":
+                "Your phone number is only used in case of an infection.",
+            Erstellen: "Create",
+            Speichern: "Save",
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
@@ -201,18 +209,14 @@ const translation: Translation = {
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
         },
-        "request-resource-list": {
-            Zugang: "Access",
-        },
-        cookieError: {
-            "Es gibt ein Cookie Problem.": "NEW",
-            "Mögliche Fehlerquellen:": "NEW",
-            "Du benutzt den Incognito-Modus deines Browsers:": "NEW",
-            "Aktuell unterstützt {appname} diesen nicht.": "NEW",
-            "Du hast Cookies in deinen Browsereinstellung deaktiviert:": "NEW",
-            "Du musst Cookies zulassen um {appname} nutzen zu können.": "NEW",
-            "Melde dich bei": "NEW",
-            "wenn dieser Fehler häufiger auftritt.": "NEW",
+        "request-attendee-set": {
+            "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
+            Vorname: "First name",
+            Nachname: "Surname",
+            Telefonnummer: "Phone number",
+            "Keine gültige Telefonnummer": "Not a valid phone number",
+            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
+                "Your phone number is only used in case of infection.",
         },
     },
 };

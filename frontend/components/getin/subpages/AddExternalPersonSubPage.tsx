@@ -17,7 +17,7 @@ import Notice from "../../common/Notice";
 interface AddExternalPersonSubPageProps {}
 
 const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPageProps> = ({}) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("request-attendee-set");
     const index = useSubpageQuery();
     const [attendees, addAttendee] = useReservationArrayState("attendees");
 

@@ -76,8 +76,9 @@ export type TranslationFunction = (
 
 export const useTranslation = (inModule: TranslationModules = "common") => {
     let { locale } = useContext(localeContext);
-    if (![baseLocale, ...Object.keys(translation)].includes(locale))
+    if (![baseLocale, ...Object.keys(translation)].includes(locale)) {
         locale = defaultLocale;
+    }
     const t: TFunction = useCallback(
         (s, data?, alternativeId?) =>
             _t(locale, inModule, s, data, alternativeId),

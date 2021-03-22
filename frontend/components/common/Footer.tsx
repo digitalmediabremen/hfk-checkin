@@ -9,7 +9,7 @@ interface IFooterProps {}
 
 const Footer: React.FunctionComponent<IFooterProps> = (props) => {
     const theme = useTheme();
-    const { t } = useTranslation();
+    const { t } = useTranslation("common");
     const { appState } = useAppState();
     const { myProfile: profile } = appState;
 
