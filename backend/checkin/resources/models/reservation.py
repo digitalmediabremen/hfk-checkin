@@ -194,7 +194,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     duration = pgfields.DateTimeRangeField(verbose_name=_('Length of reservation'), null=True,
                                            blank=True, db_index=True, editable=False)
     message = models.TextField(null=True, blank=True, verbose_name=_('Message'))
-    # reason or usage
+    # purpose: not using choices= here (for now), to allow all purposes during API validation etc.
+    # FIXME shall be repalced with Purpose() model, loosly coupled through strings not FKs.
     purpose = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Purpose'))
     user = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('Organizer'), db_index=True, on_delete=models.PROTECT)
     state = models.CharField(max_length=32, choices=STATE_CHOICES, verbose_name=_('State'), default=CREATED)
@@ -985,3 +986,11 @@ class ReservationPurpose(ModifiableModel, NameIdentifiedModel):
 
     def __str__(self):
         return "%s (%s)" % (get_translated(self, 'name'), self.pk)
+
+
+class StaticReservationPurpose(models.TextChoices):
+    FOR_EXAM = 'FOR_EXAM', _("Exam")
+    FOR_EXAM_PREPARATION = 'FOR_EXAM_PREPARATION', _("Exam preperation")
+    FOR_COUNCIL_MEETING = 'FOR_COUNCIL_MEETING', _("Council meeting")
+    FOR_PICKUP = 'FOR_PICKUP', _("Pickup")
+    OTHER = 'OTHER', _("Other purpose")

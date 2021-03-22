@@ -18,6 +18,7 @@ from .resource import ResourceAdmin
 from .list_filters import ResourceFilter, UserFilter
 from django.contrib.admin.utils import format_html
 from ..models.permissions import RESERVATION_VALIDATION_PERMISSIONS
+from ..models.reservation import StaticReservationPurpose
 
 logger = logging.getLogger(__name__)
 
@@ -95,8 +96,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                    )
     search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
-    readonly_fields = ('uuid','approver','agreed_to_phone_contact','number_of_attendees','get_reservation_info','get_phone_number')
-    extra_readonly_fields_edit = ('organizer_is_attending','type','message','purpose',) # 'user',
+    readonly_fields = ('uuid','approver','agreed_to_phone_contact','number_of_attendees','get_reservation_info','get_phone_number','get_purpose_display')
+    extra_readonly_fields_edit = ('organizer_is_attending','type','message','purpose') # 'user', 'purpose',
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
     date_hierarchy = 'begin'
@@ -105,14 +106,15 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     fieldsets = (
         (None, {
-            'fields': ('resource', 'user',  'begin', 'end')# 'short_uuid')
+            'fields': ( 'user','resource', 'begin','end','number_of_attendees','exclusive_resource_usage', 'get_purpose_display','message')# 'short_uuid')
         }),
         (_('State'), {
             'fields': ('state','message_state_update','approver','get_reservation_info'),
         }),
         (_('Request details'), {
             #'classes': ('collapse',),
-            'fields': ('message', 'purpose', 'has_priority', 'exclusive_resource_usage', 'number_of_extra_attendees', 'number_of_attendees', 'agreed_to_phone_contact', 'get_phone_number','organizer_is_attending', 'type', 'uuid'),
+            #'has_priority', 'number_of_extra_attendees','organizer_is_attending',
+            'fields': ('agreed_to_phone_contact', 'get_phone_number', 'type', 'uuid'),
         }),
         # (_('Creation and modifications'), {
         #     'classes': ('collapse',),
@@ -154,6 +156,11 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     get_exclusive.short_description = _("Excl.")
     get_exclusive.admin_order_field = 'exclusive_resource_usage'
     get_exclusive.boolean = True
+
+    def get_purpose_display(self, obj):
+        return getattr(StaticReservationPurpose, obj.purpose).label if hasattr(StaticReservationPurpose, obj.purpose) else obj.purpose
+    get_purpose_display.short_description = _("Purpose")
+    get_purpose_display.admin_order_field = 'purpose'
 
     def get_display_duration(self, obj):
         return obj.display_duration
