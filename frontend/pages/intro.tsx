@@ -16,7 +16,7 @@ const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
             <FormGroup>
                 <Title>Hellow</Title>
                 <Text paragraph>
-                    Hier wird dir die App vorgestellt. 
+                    Hier wird dir die App vorgestellt. kkk
                 </Text>
             </FormGroup>
             <Button outline onClick={() => router.push(appUrls.createProfile)}>
