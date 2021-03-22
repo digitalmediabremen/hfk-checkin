@@ -470,16 +470,22 @@ class UserFilterBackend(filters.BaseFilterBackend):
         return queryset
 
 
-class ExcludePastFilterBackend(filters.BaseFilterBackend):
+class PastFilterBackend(filters.BaseFilterBackend):
     """
-    Exclude reservations in the past.
+    Default: Exclude reservations in the past. (future only)
+    With past=True, show past only.
+    With all=True, show all.
     """
 
     def filter_queryset(self, request, queryset, view):
-        past = request.query_params.get('all', 'false')
+        all = request.query_params.get('all', 'false')
+        all = BooleanField().to_internal_value(all)
+        past = request.query_params.get('past', 'false')
         past = BooleanField().to_internal_value(past)
-        if not past:
-            now = timezone.now()
+        now = timezone.now()
+        if past:
+            return queryset.filter(end__lte=now)
+        elif not all:
             return queryset.filter(end__gte=now)
         return queryset
 
@@ -493,6 +499,7 @@ class ReservationFilterBackend(filters.BaseFilterBackend):
         params = request.query_params
         times = {}
         past = False
+
         for name in ('start', 'end'):
             if name not in params:
                 continue
@@ -503,12 +510,13 @@ class ReservationFilterBackend(filters.BaseFilterBackend):
             except ParserError:
                 raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % name)
         is_detail_request = 'pk' in request.parser_context['kwargs']
-        if not past and not is_detail_request:
-            past = params.get('all', 'false')
-            past = BooleanField().to_internal_value(past)
-            if not past:
-                now = timezone.now()
-                queryset = queryset.filter(end__gte=now)
+        # moved to PastFilterBackend
+        # if not past and not is_detail_request:
+        #     past = params.get('all', 'false')
+        #     past = BooleanField().to_internal_value(past)
+        #     if not past:
+        #         now = timezone.now()
+        #         queryset = queryset.filter(end__gte=now)
         if times.get('start', None):
             queryset = queryset.filter(end__gte=times['start'])
         if times.get('end', None):
@@ -690,7 +698,7 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
         # .prefetch_related('catering_orders')\
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('order', 'order__order_lines', 'order__order_lines__product')
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, UserFilterBackend, ReservationFilterBackend, ExcludePastFilterBackend,
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, UserFilterBackend, ReservationFilterBackend, PastFilterBackend, \
                        NeedManualConfirmationFilterBackend, StateFilterBackend, CanApproveFilterBackend)
     filterset_class = ReservationFilterSet
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, ReservationPermission)

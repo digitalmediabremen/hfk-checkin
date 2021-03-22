@@ -3,7 +3,7 @@ from .base import register_view
 from rest_framework import serializers
 from rest_framework.permissions import IsAdminUser
 from .reservation import ReservationSerializer, ReservationViewSet, Reservation, DjangoFilterBackend, \
-    ReservationFilterBackend, ExcludePastFilterBackend, \
+    ReservationFilterBackend, PastFilterBackend, \
     NeedManualConfirmationFilterBackend, StateFilterBackend, CanApproveFilterBackend
 from django_filters import filters
 from .resource import ResourceSerializer, ResourceListViewSet, Resource
