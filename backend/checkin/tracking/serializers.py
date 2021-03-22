@@ -16,7 +16,7 @@ class CapacityForActivityProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CapacityForActivityProfile
-        fields = ['capacity', 'profile']
+        fields = ['capacity','profile']
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = ['id', 'code', 'org_number', 'org_name', 'capacity', 'load', 'parent', 'capacities']
 
     def get_capacities(self, obj):
-        qset = obj.org_activities.all()
+        qset = obj.capacityforactivityprofile_set.all()
         return [CapacityForActivityProfileSerializer(m).data for m in qset]
 
 
