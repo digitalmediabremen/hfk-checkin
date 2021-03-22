@@ -21,7 +21,7 @@ import {
 } from "workbox-precaching";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
-// skipWaiting();
+skipWaiting();
 clientsClaim();
 
 // must include following lines when using inject manifest module from workbox
@@ -156,6 +156,23 @@ registerRoute(
     }),
     "GET"
 );
+
+// ToDo: remove last checkins from profile
+registerRoute(
+    ({ request }) => request.url.match(/api\/profile\/me\/$/i) !== null,
+    new StaleWhileRevalidate({
+        cacheName: "api-cached",
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxEntries: 1,
+                purgeOnQuotaError: true,
+            }),
+        ],
+    })
+)
 
 // cache location requests
 registerRoute(
