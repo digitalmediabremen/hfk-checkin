@@ -77,7 +77,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
             if (error) return;
             await router.push(appUrls.reservations);
             setNotice(
-                t('Deine Buchung "{identifier}" wurde storniert.', {
+                t("Deine Buchung {identifier} wurde storniert.", {
                     identifier: reservation.identifier,
                 })
             );

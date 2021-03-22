@@ -32,7 +32,7 @@ const translation: Translation = {
             "Telefon ändern": "Change phone",
             "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
                 "Are you sure to cancel your booking? This action cannot be reversed.",
-            "Deine Buchung \"{identifier}\" wurde storniert.":
+            "Deine Buchung {identifier} wurde storniert.":
                 "Your booking request {identifier} has been cancelled.",
             "Weitere Anfrage": "Additional request",
             "Deine Anfrage ist eingegangen.":
