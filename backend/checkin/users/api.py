@@ -106,7 +106,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             'last_name': userprofile_data['last_name'],
             'phone': userprofile_data['phone'],
             #'email': userprofile_data['email'], # can only be writable if we validate emails
-            'verified': True,
+            'verified': False,
             **profile_extra,
             #'is_external': True,
         }
