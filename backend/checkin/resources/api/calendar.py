@@ -32,8 +32,13 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
 
     # FIXME remove render-specific attributes form representation!
     def get_classNames(self, obj):
+        class_names = []
         if obj.state not in [Reservation.CONFIRMED]:
-            return 'inactive'
+            class_names.append('inactive')
+        current_uuid = self.context['request'].query_params.get('current_uuid', None)
+        if current_uuid and str(obj.uuid) == current_uuid:
+            class_names.append('current')
+        return " ".join(class_names)
 
     class Meta:
         model = Reservation
@@ -54,6 +59,9 @@ class ReservationCalendarViewSet(ReservationListViewSet):
         # Do not filter Admin Calendar view.
         return queryset
 
+    # def get_serializer_context(self, *args, **kwargs):
+    #     return {**super().get_serializer_context(*args, **kwargs), **self.request.query_params}
+
     def get_queryset(self):
         resource = self.kwargs.get('resource', None)
         resources = self.request.query_params.get('resources', None)
@@ -69,8 +77,8 @@ class ReservationCalendarViewSet(ReservationListViewSet):
             raise Http404
         return qs
 
-register_view(ReservationCalendarViewSet, 'calendar/event', base_name='calendarevent')
 
+register_view(ReservationCalendarViewSet, 'calendar/event', base_name='calendarevent')
 
 
 class CalendarResourceSerializer(ResourceSerializer):
@@ -112,13 +120,14 @@ class ResourceCalendarViewSet(ResourceListViewSet):
         return None
 
     def get_queryset(self):
+        qs = super().get_queryset().filter(reservable=True)
         resources = self.get_resources_from_query_params()
         if resources:
             try:
-                return super().get_queryset().filter(uuid__in=resources)
+                return qs.filter(uuid__in=resources)
             except (ValidationError, Resource.DoesNotExist):
                 raise Http404
-        return super().get_queryset()
+        return qs
 
     # def get_object(self, *args, **kwargs):
     #     print(self.queryset)

@@ -1,6 +1,7 @@
 var resources_fullcalendar = {
     parameters: {
         resources_uuids: [],
+        current_uuid: null,
         last_added_resource: null,
     },
     init: function(parameters, config_overwrite) {
@@ -19,6 +20,9 @@ var resources_fullcalendar = {
                 eventSources: [{
                     url: '/api/calendar/event/?all=true',
                     method: 'GET',
+                    extraParams: function () {
+                        return {current_uuid: resources_fullcalendar.parameters.current_uuid}
+                    },
                     failure: function () {
                         resources_fullcalendar.parameters.resources_uuids.pop(resources_fullcalendar.parameters.last_added_resource);
                         resources_fullcalendar.parameters.last_added_resource = null;
@@ -44,7 +48,9 @@ var resources_fullcalendar = {
                     url: '/api/calendar/resource/',
                     method: 'GET',
                     extraParams: function () {
-                        return {resources: resources_fullcalendar.parameters.resources_uuids.join('.')}
+                        return {
+                            resources: resources_fullcalendar.parameters.resources_uuids.join('.')
+                        }
                     },
                 },
                 resourceOrder: 'index,title,id',

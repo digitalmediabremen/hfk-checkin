@@ -11,3 +11,11 @@
 .fc-event.inactive .fc-event-main {
     color: var(--theme-color-primary);
 }
+.fc-event.current {
+    /*background: rgba(255,255,255,0.5);*/
+    /*border-color: var(--theme-color-primary);*/
+}
+.fc-event.current .fc-event-main {
+    /*color: var(--theme-color-primary);*/
+    font-weight: bold;
+}
