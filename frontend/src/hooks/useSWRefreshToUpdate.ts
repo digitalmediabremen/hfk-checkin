@@ -52,12 +52,12 @@ export default function useSWRefreshToUpdate() {
                 // }
 
                 wb.addEventListener("controlling", (event) => {
-                    console.log("reload caused by service worker update")
+                    console.log("reload caused by service worker update");
                     window.location.reload();
                 });
 
                 // Send a message to the waiting service worker, instructing it to activate.
-                wb.messageSW({ type: "SKIP_WAITING" });
+                wb.messageSkipWaiting();
             };
 
             wb.addEventListener("waiting", promptNewVersionAvailable);

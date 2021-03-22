@@ -10,6 +10,7 @@
         "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.ts -",
         "gen": "run-for-every-file --src 'src/model/api/' --file '*.ts' --not-file '*.validator.ts'  --run 'typescript-json-validator {{src-file}} && replace \"^export [{].*$\" \"\" src/model/api/{{file-name}}.validator.ts'"
     },
+    "cacheDirectories": [".next/cache"],
     "dependencies": {
         "classnames": "^2.2.6",
         "date-input-polyfill": "^2.14.0",
