@@ -130,14 +130,14 @@ registerRoute(
     "GET"
 );
 ///_next\/data\/(.*)\.json/i
-registerRoute(
-    /_next\/data\/(.*)\.json/i,
-    ({ url, event, params }) => {
-        const strategy = new NetworkOnly();
-        return strategy.handle(event).catch(() => matchPrecache("/offline-props.json"));
-    },
-    "GET"
-);
+// registerRoute(
+//     /_next\/data\/(.*)\.json/i,
+//     ({ url, event, params }) => {
+//         const strategy = new NetworkOnly();
+//         return strategy.handle(event).catch(() => matchPrecache("/offline-props.json"));
+//     },
+//     "GET"
+// );
 
 registerRoute(
     /\.(?:json|xml|csv)$/i,
