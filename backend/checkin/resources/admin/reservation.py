@@ -20,6 +20,8 @@ from django.contrib.admin.utils import format_html
 from ..models.permissions import RESERVATION_VALIDATION_PERMISSIONS
 from ..models.reservation import StaticReservationPurpose
 from .other import DisableableRadioSelect
+from ..auth import is_general_admin
+from guardian.shortcuts import get_objects_for_user
 
 logger = logging.getLogger(__name__)
 
@@ -27,15 +29,16 @@ logger = logging.getLogger(__name__)
 class AttendanceInline(admin.TabularInline):
     autocomplete_fields = ('user',)
     model = Attendance
-    fields = ('get_organizer','user','state','comment','modified_at')
-    #readonly_fields = ('get_organizer', 'modified_at','modified_by')
-    readonly_fields = ('modified_at','modified_by','get_organizer')
+    fields = ('get_organizer', 'user', 'state', 'comment', 'modified_at')
+    # readonly_fields = ('get_organizer', 'modified_at','modified_by')
+    readonly_fields = ('modified_at', 'modified_by', 'get_organizer')
     extra = 0
 
     def get_organizer(self, obj):
         return _('🎩') if obj.is_organizer else ''
+
     get_organizer.short_description = ''
-    #get_organizer.boolean = True
+    # get_organizer.boolean = True
 
 
 class RelatedEmailInline(admin.TabularInline):
@@ -58,6 +61,7 @@ class RelatedEmailInline(admin.TabularInline):
         url = reverse("admin:%s_%s_change" % (instance.email._meta.app_label, instance.email._meta.module_name),
                       args=(instance.email.pk,))
         return '<a href="%s">%s</a>' % (url, instance.email.message_id)
+
     message_id_link.allow_tags = True
 
     def has_change_permission(self, request, obj=None):
@@ -71,9 +75,14 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
-    state = forms.ChoiceField(required=False, label=_("State"), choices=Reservation.STATE_CHOICES, widget=DisableableRadioSelect(disabled_choices=[Reservation.CREATED, Reservation.REQUESTED, Reservation.CANCELLED]))
-    message_state_update = forms.CharField(required=False, label=_('Notification Message'), widget=forms.Textarea(attrs={'cols':80, 'rows':5}),
-                                           help_text=_('This message might be used in the notification send to the organizer on this update. The message will not be saved.'))
+    state = forms.ChoiceField(required=False, label=_("State"), choices=Reservation.STATE_CHOICES,
+                              widget=DisableableRadioSelect(
+                                  disabled_choices=[Reservation.CREATED]))
+    message_state_update = forms.CharField(required=False, label=_('Notification Message'),
+                                           widget=forms.Textarea(attrs={'cols': 80, 'rows': 5}),
+                                           help_text=_(
+                                               'This message might be used in the notification send to the organizer on this update. The message will not be saved.'))
+
     class Meta:
         model = Reservation
         fields = ('__all__')
@@ -85,10 +94,13 @@ class ReservationAdminForm(forms.ModelForm):
         return value
 
 
-class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin, admin.ModelAdmin):
-    #extra_readonly_fields_on_update = ('access_code',)
-    list_display = ('get_state_colored','user','resource','get_display_duration','number_of_attendees','get_collisions','get_priority','get_exclusive')
-    list_filter = (ResourceFilter,'resource__unit','state','has_priority','exclusive_resource_usage','purpose',
+class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin,
+                       admin.ModelAdmin):
+    # extra_readonly_fields_on_update = ('access_code',)
+    list_display = (
+    'get_state_colored', 'user', 'resource', 'get_display_duration', 'number_of_attendees', 'get_collisions',
+    'get_priority', 'get_exclusive')
+    list_filter = (ResourceFilter, 'resource__unit', 'state', 'has_priority', 'exclusive_resource_usage', 'purpose',
                    UserFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('begin', DateTimeRangeFilter),
@@ -96,26 +108,32 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                    'type',
                    ('modified_at', DateTimeRangeFilter),
                    )
-    search_fields = ('uuid','resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
+    search_fields = (
+    'uuid', 'resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
-    readonly_fields = ('uuid','approver','agreed_to_phone_contact','number_of_attendees','get_reservation_info','get_phone_number','get_purpose_display')
-    extra_readonly_fields_edit = ('organizer_is_attending','type','message','purpose') # 'user', 'purpose',
+    readonly_fields = (
+    'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_phone_number',
+    'get_purpose_display')
+    extra_readonly_fields_edit = ('user', 'purpose','organizer_is_attending', 'type', 'message', 'purpose')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
     date_hierarchy = 'begin'
     actions_on_top = True
-    list_display_links = ('user','resource')
+    list_display_links = ('user', 'resource')
+    list_max_show_all = 50
+    list_per_page = 30
 
     fieldsets = (
         (None, {
-            'fields': ( 'user','resource', 'begin','end','number_of_attendees','exclusive_resource_usage', 'get_purpose_display','message')# 'short_uuid')
+            'fields': ('user', 'resource', 'begin', 'end', 'number_of_attendees', 'exclusive_resource_usage',
+                       'get_purpose_display', 'message')  # 'short_uuid')
         }),
         (_('State'), {
-            'fields': ('state','message_state_update','approver','get_reservation_info'),
+            'fields': ('state', 'message_state_update', 'approver', 'get_reservation_info','comment'),
         }),
         (_('Request details'), {
-            #'classes': ('collapse',),
-            #'has_priority', 'number_of_extra_attendees','organizer_is_attending',
+            # 'classes': ('collapse',),
+            # 'has_priority', 'number_of_extra_attendees','organizer_is_attending',
             'fields': ('agreed_to_phone_contact', 'get_phone_number', 'type', 'uuid'),
         }),
         # (_('Creation and modifications'), {
@@ -124,9 +142,16 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # }),
     )
     radio_fields = {'state': admin.HORIZONTAL}
-    
+
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('user', 'user__profile')
+        qs = super().get_queryset(request).select_related('user', 'user__profile')
+        if is_general_admin(request.user):
+            return qs
+        resources = get_objects_for_user(request.user, 'resources.resource:can_modify_reservations')
+        qs = qs.filter(resource__in=resources)
+        units = get_objects_for_user(request.user, 'resources.unit:can_modify_reservations')
+        qs |= qs.filter(resource__unit__in=units)
+        return qs
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # obj is not None, so this is an edit
@@ -138,6 +163,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         if obj and obj.resource:
             return obj.resource.reservation_info
         return self.get_empty_value_display()
+
     get_reservation_info.short_description = _("Resource instructions")
 
     def get_phone_number(self, obj):
@@ -145,16 +171,19 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         if obj.agreed_to_phone_contact:
             return obj.organizer.phone
         return _('(phone contact not allowed)')
+
     get_phone_number.short_description = _("Phone number")
 
     def get_priority(self, obj):
         return obj.has_priority
+
     get_priority.short_description = _("Prio.")
     get_priority.admin_order_field = 'has_priority'
     get_priority.boolean = True
 
     def get_exclusive(self, obj):
         return obj.exclusive_resource_usage
+
     get_exclusive.short_description = _("Excl.")
     get_exclusive.admin_order_field = 'exclusive_resource_usage'
     get_exclusive.boolean = True
@@ -171,10 +200,12 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     def get_display_duration(self, obj):
         return obj.display_duration
+
     get_display_duration.short_description = _("Timespan")
     get_display_duration.admin_order_field = 'begin'
 
     def get_collisions(self, obj):
+        # FIXME this causes an extra query for each reservation displayed. optimize!
         all_attendees_count = obj.resource.get_total_number_of_attendees_for_period(obj.begin, obj.end)
         if not obj.resource.people_capacity:
             return "%d / ?" % (all_attendees_count,)
@@ -185,11 +216,12 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             )
         else:
             return "%d / %d" % (all_attendees_count, obj.resource.people_capacity)
+
     get_collisions.short_description = _("Avail.")
 
     def get_state_colored(self, obj):
         colors = {
-            Reservation.CREATED: '#555',#('green', ''),
+            Reservation.CREATED: '#555',  # ('green', ''),
             Reservation.CANCELLED: '#E2574C',
             Reservation.CONFIRMED: '#58AD69',
             Reservation.DENIED: '#E2574C',
@@ -201,6 +233,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             colors[obj.state],
             obj.state,
         )
+
     get_state_colored.short_description = _("State")
 
     _original_state = None
@@ -229,18 +262,22 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                 messages.add_message(request, messages.WARNING, _("Uses space exclusively."))
             if not obj.organizer_is_attending:
                 if obj.organizer in obj.attendees.all():
-                    messages.add_message(request, messages.WARNING, _("Organizer does not want to attend. Yet the organizer is in the attendance list."))
+                    messages.add_message(request, messages.WARNING, _(
+                        "Organizer does not want to attend. Yet the organizer is in the attendance list."))
                 else:
                     messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
             if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
                 messages.add_message(request, messages.WARNING, _("The organizer is missing from attendance list."))
             organizer_reservation_validation_permissions = obj.user.get_all_permissions()
-            validation_permissions = {'%s.%s' % (Reservation._meta.app_label, perm_codename): label for perm_codename, label in RESERVATION_VALIDATION_PERMISSIONS}
-            #assigned_permission_labelsassigned_permission = {key: validation_permissions[key] for key in organizer_reservation_validation_permissions}
+            validation_permissions = {'%s.%s' % (Reservation._meta.app_label, perm_codename): label for
+                                      perm_codename, label in RESERVATION_VALIDATION_PERMISSIONS}
+            # assigned_permission_labelsassigned_permission = {key: validation_permissions[key] for key in organizer_reservation_validation_permissions}
             # FIXME str() fails to translate label?
-            assigned_permission_labels = [str(validation_permissions[key]) for key in organizer_reservation_validation_permissions if key in validation_permissions]
+            assigned_permission_labels = [str(validation_permissions[key]) for key in
+                                          organizer_reservation_validation_permissions if key in validation_permissions]
             if len(assigned_permission_labels) > 0:
-                message = gettext("The organizer has one or more validation permissions: %(assigned_permissions)s") % {'assigned_permissions': ", ".join(assigned_permission_labels)}
+                message = gettext("The organizer has one or more validation permissions: %(assigned_permissions)s") % {
+                    'assigned_permissions': ", ".join(assigned_permission_labels)}
                 messages.add_message(request, messages.INFO, message)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -264,7 +301,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             self._original_state = obj.state
         return super().get_form(request, obj, **kwargs)
 
-    def process_state_change_and_warn(self,request,obj,form,change):
+    def process_state_change_and_warn(self, request, obj, form, change):
         # FIXME what if no _original_state. New object?
         if not self._original_state:
             self._original_state = Reservation.CREATED
@@ -277,11 +314,12 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             for w in warns:
                 messages.add_message(request, messages.INFO, str(w.message))
         # show resulted (new state verbose) state as message
-        messages.add_message(request, messages.INFO, _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
+        # messages.add_message(request, messages.INFO,
+        #                      _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
         # actually save obj
 
     def save_model(self, request, obj, form, change):
-        self.process_state_change_and_warn(request,obj,form,change)
+        self.process_state_change_and_warn(request, obj, form, change)
         super().save_model(request, obj, form, change)
 
     def save_related(self, request, form, formsets, change):
@@ -306,4 +344,3 @@ class ReservationCancelReasonCategoryAdmin(PopulateCreatedAndModifiedMixin, Comm
 class ReservationCancelReasonAdmin(PopulateCreatedAndModifiedMixin, admin.ModelAdmin):
     raw_id_fields = ('reservation',)
     readonly_fields = ('created_by', 'modified_by')
-
