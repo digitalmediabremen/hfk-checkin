@@ -96,6 +96,9 @@ class ReservationQuerySet(models.QuerySet):
     def current(self):
         return self.exclude(state__in=(Reservation.CANCELLED, Reservation.DENIED))
 
+    def confirmed(self):
+        return self.filter(state__in=[Reservation.CONFIRMED])
+
     def active(self):
         return self.filter(end__gte=timezone.now()).current()
 

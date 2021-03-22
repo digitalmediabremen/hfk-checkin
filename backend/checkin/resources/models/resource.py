@@ -414,7 +414,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
 
     def get_reservation_collisions_qs(self, begin, end, reservation=None):
         # only collide with current() reservations (!)
-        overlapping = self.reservations.current().overlaps(begin, end)
+        overlapping = self.reservations.current().confirmed().overlaps(begin, end)
         if reservation:
             overlapping = overlapping.exclude(pk=reservation.pk)
         return overlapping
