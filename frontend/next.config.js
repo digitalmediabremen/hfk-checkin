@@ -5,7 +5,9 @@ module.exports = withPWA({
     pwa: {
         dest: "public",
         swSrc: "service-worker.js",
+        register: false,
         disable: process.env.NODE_ENV === "development",
+        runtimeCaching
     },
     generateEtags: false,
     async headers() {
