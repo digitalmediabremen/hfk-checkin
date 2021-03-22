@@ -158,21 +158,21 @@ registerRoute(
 );
 
 // ToDo: remove last checkins from profile
-registerRoute(
-    ({ request }) => request.url.match(/api\/profile\/me\/$/i) !== null,
-    new StaleWhileRevalidate({
-        cacheName: "api-cached",
-        plugins: [
-            new CacheableResponsePlugin({
-                statuses: [0, 200],
-            }),
-            new ExpirationPlugin({
-                maxEntries: 1,
-                purgeOnQuotaError: true,
-            }),
-        ],
-    })
-)
+// registerRoute(
+//     ({ request }) => request.url.match(/api\/profile\/me\/$/i) !== null,
+//     new StaleWhileRevalidate({
+//         cacheName: "api-cached",
+//         plugins: [
+//             new CacheableResponsePlugin({
+//                 statuses: [0, 200],
+//             }),
+//             new ExpirationPlugin({
+//                 maxEntries: 1,
+//                 purgeOnQuotaError: true,
+//             }),
+//         ],
+//     })
+// )
 
 // cache location requests
 registerRoute(
