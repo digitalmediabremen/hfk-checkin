@@ -1,13 +1,24 @@
 import React from "react";
-import { CheckCircle, Circle, Key, Lock, Unlock, User, UserPlus } from "react-feather";
+import {
+    CheckCircle,
+    Circle,
+    Key,
+    Lock,
+    Unlock,
+    User,
+    UserPlus,
+    Users,
+} from "react-feather";
 import { useTranslation } from "../../localization";
 import Resource from "../../src/model/api/Resource";
 import { notEmpty } from "../../src/util/TypeUtil";
-import useTheme from "../../src/hooks/useTheme";import FormMultilineValue from "../FormMultilineValue";
+import useTheme from "../../src/hooks/useTheme";
+import FormMultilineValue from "../FormMultilineValue";
 import Divider from "./Divider";
 import FormElement from "./FormElement";
 import FormElementBase from "./FormElementBase";
 import { LoadingInline } from "./Loading";
+import classNames from "classnames";
 
 interface ResourceListItemProps {
     resource: Resource;
@@ -25,51 +36,54 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     showMeta,
 }) => {
     const theme = useTheme();
+    const { t } = useTranslation("request-resource-list");
     const handleSelect = () => {
         onSelect?.(!selected);
     };
 
     return (
-        <>
+        <div className="wrapper">
             <style jsx>{`
+                .wrapper {
+                    max-width: ${theme.desktopWidth}px;
+                    margin: 0 auto;
+                }
                 li {
                     margin: 0;
                     padding: 0;
                 }
-
                 .icon {
                     flex: 0 0 ${theme.spacing(5)}px;
+                    line-height: 0;
                 }
 
                 .icon.right {
-                    flex: 0 0 ${theme.spacing(4)}px;
-                    text-align: right;
+                    flex: 1;
+                    // flex: 1 0 ${theme.spacing(8)}px;
                     margin-right: ${-theme.spacing(0)}px;
+                    margin-left: auto;
                     color: ${theme.primaryColor};
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-end;
-                }
-
-                .capacity {
-                    text-transform: uppercase;
-                    font-size: 0.75rem;
-                    font-weight: normal;
-                    display: flex;
+                    flex-direction: row;
                     align-items: center;
-                    justify-content: flex-end;
-                }
-
-                .capacity :global(svg) {
-                    margin-left: ${theme.spacing(0.5)}px;
+                    text-align: right;
+                    white-space: nowrap;
                 }
 
                 .icon.left {
                     text-align: left;
                     margin-left: ${-theme.spacing(0)}px;
                 }
-                .text {
-                    flex: 1;
+
+                .meta-element {
+                    margin-right: ${theme.spacing(2)}px;
+                }
+
+                .meta-element:last-child {
+                    margin-right: 0;
+                }
+
+                .meta-element > :global(svg) {
+                    vertical-align: text-bottom;
                 }
             `}</style>
             <FormElementBase
@@ -96,27 +110,48 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
 
                 <span className="icon right">
                     {resource.access_restricted && (
-                        <span>
+                        <span
+                            className={classNames("meta-element")}
+                        >
                             {resource.access_allowed_to_current_user ? (
-                                <Unlock strokeWidth={1} />
+                                <>
+                                    <Unlock
+                                        strokeWidth={1 / 20 * 24}
+                                        height={20}
+                                        width={18}
+                                        preserveAspectRatio="none"
+                                    />{" "}
+                                    {t("Zugang")}
+                                </>
                             ) : (
-                                <Lock strokeWidth={1} />
+                                <>
+                                    <Lock
+                                        strokeWidth={1 / 20 * 24}
+                                        height={20}
+                                        width={18}
+                                        preserveAspectRatio="none"
+                                    />{" "}
+                                    {t("Zugang")}
+                                </>
                             )}
                         </span>
                     )}
                     {resource.capacity && showMeta && (
-                        <span className="capacity">
-                            {resource.capacity} <UserPlus width={12} height={12} />
+                        <span className="meta-element">
+                            {resource.capacity}{" "}
+                            <Users strokeWidth={1} size={20} />
                         </span>
                     )}
                 </span>
             </FormElementBase>
             {!last && <Divider noSpacing />}
-        </>
+        </div>
     );
 };
 
-export const LoadingListItem: React.FunctionComponent<{index?: number}> = ({index}) => {
+export const LoadingListItem: React.FunctionComponent<{ index?: number }> = ({
+    index,
+}) => {
     const theme = useTheme();
     return (
         <>
@@ -127,16 +162,16 @@ export const LoadingListItem: React.FunctionComponent<{index?: number}> = ({inde
                     align-items: center;
                     text-align: center;
                     justify-content: center;
-                    animation: load .5s infinite alternate;
+                    animation: load 0.5s infinite alternate;
                     animation-delay: ${((index || 0) % 10) / 10}s;
                 }
 
                 @keyframes load {
                     from {
-                        background-color: ${theme.shadePrimaryColor(0)}
+                        background-color: ${theme.shadePrimaryColor(0)};
                     }
                     to {
-                        background-color: ${theme.shadePrimaryColor(0.1)}
+                        background-color: ${theme.shadePrimaryColor(0.1)};
                     }
                 }
             `}</style>

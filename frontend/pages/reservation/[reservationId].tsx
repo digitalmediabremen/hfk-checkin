@@ -168,7 +168,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                         {showCancelButton && (
                                             <NewButton
                                                 iconRight={
-                                                    <XCircle strokeWidth={1} />
+                                                    <X strokeWidth={1} />
                                                 }
                                                 bottomSpacing={2}
                                                 onClick={handleCancel}

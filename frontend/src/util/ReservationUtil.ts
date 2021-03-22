@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, MinusCircle, UserCheck, UserX, XCircle } from "react-feather";
+import { CheckCircle, Clock, MinusCircle, UserCheck, UserX, Watch, XCircle } from "react-feather";
 import { _t } from "../../localization";
 import { AttendanceState } from "../model/api/MyProfile";
 import NewReservation from "../model/api/NewReservation";
@@ -30,15 +30,6 @@ export function getStateLabel(state: ReservationState, locale: string) {
     if (state === "created") return _t(locale, "reservation", "erstellt");
     assertNever(state);
 }
-
-type AdditionalReservationRequestFields = Omit<
-    NewReservation,
-    | "begin"
-    | "end"
-    | "resource_uuid"
-    | "exclusive_resource_usage"
-    | "agreed_to_phone_contact"
->;
 
 type MapToStringRecord<T> = Record<Exclude<keyof T, undefined>, string>;
 type Entries<T extends {}> = {

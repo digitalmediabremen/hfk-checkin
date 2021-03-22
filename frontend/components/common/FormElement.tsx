@@ -59,6 +59,7 @@ const FormElement = forwardRef<FormElementBaseRefType, FormElementProps>(
                         position: relative;
                         padding: ${theme.spacing(2)}px;
                         margin: -${theme.spacing(2)}px;
+                        margin-left: auto;
                         border-radius: ${theme.borderRadius * 2}px;
                         display: inline-block;
                         width: ${24 + theme.spacing(2 * 2)}px;

@@ -74,7 +74,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
             />
 
             <Controller
-                as={<FormPhoneInput disabled />}
+                as={<FormPhoneInput />}
                 {...controllerProps("phone", t("Telefonnummer"), {
                     validate: (value: string) =>
                         !isValidNumber(value, "DE")

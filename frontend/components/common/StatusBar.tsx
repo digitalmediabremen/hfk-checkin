@@ -14,6 +14,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = ({ status }) => {
             <style jsx>{``}</style>
             <Bar extendedWidth maxWidth>
                 <FormElement
+                    above
                     primary
                     componentType="a"
                     value={<b>{status.message}</b>}

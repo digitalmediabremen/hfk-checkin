@@ -10,7 +10,7 @@ export const Content: React.FunctionComponent = ({ children }) => {
             {`
                 .content {
                     margin: ${theme.spacing(2)}px ${theme.spacing(3)}px;
-                    max-width: 500px;
+                    max-width: ${theme.desktopWidth}px;
                 }
 
                 @media screen and (min-width: 500px) {

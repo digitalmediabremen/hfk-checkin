@@ -34,8 +34,9 @@ const createTheme = (unit: number = 8, fontSize: number = 16): Theme => ({
     secondaryColor: "rgba(255, 255, 255, 1)",
     disabledColor: "rgba(102,102,102,1)",
     footerHeight: function () {
-        return this.unit * 7;
+        return this.unit * 10;
     },
+    desktopWidth: 600,
     topBarHeight: function () {
         return this.unit * 8 + this.offsetTopBar;
     },

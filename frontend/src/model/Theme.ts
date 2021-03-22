@@ -12,6 +12,7 @@ interface Theme {
     borderRadius: number;
     footerHeight: () => number;
     topBarHeight: () => number;
+    desktopWidth: number;
     offsetTopBar: number;
     boxShadow: () => string;
 }

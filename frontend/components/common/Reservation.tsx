@@ -45,7 +45,7 @@ const ReservationComponent: React.FunctionComponent<ReservationProps> = ({
             !!includeState
         ),
         ...insertIf(
-            [<Label>{`Nr: ${identifier}`}</Label>],
+            [<Label>{`#${identifier}`}</Label>],
             !!includeIndentifier
         ),
     ];

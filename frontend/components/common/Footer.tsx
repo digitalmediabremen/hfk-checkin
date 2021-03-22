@@ -1,5 +1,6 @@
 import Link from "next/link";
 import * as React from "react";
+import { HelpCircle } from "react-feather";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
@@ -17,18 +18,29 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
             <style jsx>
                 {`
                     .footer {
-                        margin-top: ${-theme.footerHeight()}px;
-                        height: ${theme.footerHeight()}px;
+                        margin-top: ${-theme.footerHeight() +
+                        theme.spacing(3)}px;
+                        height: ${theme.footerHeight() - theme.spacing(3)}px;
                         display: flexbox;
                         align-items: center;
                         padding: 0 ${theme.spacing(3)}px;
                         color: ${theme.primaryColor};
                         position: relative;
                         z-index: 2;
+                        overflow: auto;
                     }
 
-                    .footer a {
-                        margin-right: ${theme.spacing(4)}px;
+                    .footer > a {
+                        margin-right: ${theme.spacing(3)}px;
+                    }
+
+                    .footer > a > span {
+                        white-space: nowrap;
+                        line-height: 0;
+                    }
+
+                    .footer > a > span > :global(svg) {
+                        vertical-align: text-bottom;
                     }
 
                     .footer a:hover {
@@ -37,11 +49,16 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                 `}
             </style>
             <div className="footer">
-                <Link href={appUrls.privacy}>
-                    <a>{t("Datenschutzinformationen")}</a>
-                </Link>
                 <Link href={appUrls.help}>
-                    <a>{t("Hilfe")}</a>
+                    <a>
+                        <span>
+                            {t("Hilfe")}{" "}
+                            <HelpCircle strokeWidth={(1 / 20) * 24} size={20} />{" "}
+                        </span>
+                    </a>
+                </Link>
+                <Link href={appUrls.privacy}>
+                    <a>{t("Datenschutz")}</a>
                 </Link>
                 {profile && (
                     <Link href={appUrls.logout}>

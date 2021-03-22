@@ -46,7 +46,7 @@ const ProfileBar: React.FunctionComponent<ProfileBarProps> = () => {
 const NotLoggedInBar: React.FunctionComponent<{}> = ({}) => {
     return (
         <Bar>
-            <Link href={appUrls.home}>
+            <Link href={appUrls.createProfile}>
                 <a>
                     <b>{getTitle()}</b>
                 </a>

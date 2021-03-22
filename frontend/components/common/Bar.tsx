@@ -16,7 +16,7 @@ const Bar: React.FunctionComponent<{
                 }
 
                 .bar.max-width {
-                    max-width: ${500 + theme.spacing(3) - 4}px;
+                    max-width: ${theme.desktopWidth + theme.spacing(3) - 2}px;
                 }
 
                 @media screen and (min-width: 500px) {
