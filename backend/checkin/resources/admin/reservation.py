@@ -233,7 +233,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             validation_permissions = {'%s.%s' % (Reservation._meta.app_label, perm_codename): label for perm_codename, label in RESERVATION_VALIDATION_PERMISSIONS}
             #assigned_permission_labelsassigned_permission = {key: validation_permissions[key] for key in organizer_reservation_validation_permissions}
             # FIXME str() fails to translate label?
-            assigned_permission_labels = [str(validation_permissions[key]) for key in organizer_reservation_validation_permissions]
+            assigned_permission_labels = [str(validation_permissions[key]) for key in organizer_reservation_validation_permissions if key in validation_permissions]
             if len(assigned_permission_labels) > 0:
                 message = gettext("The organizer has one or more validation permissions: %(assigned_permissions)s") % {'assigned_permissions': ", ".join(assigned_permission_labels)}
                 messages.add_message(request, messages.INFO, message)
