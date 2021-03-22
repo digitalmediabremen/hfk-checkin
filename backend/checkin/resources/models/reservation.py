@@ -205,6 +205,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     approver = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('Approver'),
                                  related_name='approved_reservations', null=True, blank=True,
                                  on_delete=models.SET_NULL)
+    comment = models.TextField(null=True, blank=True, verbose_name=_('Comment'), help_text=_("For internal use only."))
     #staff_event = models.BooleanField(verbose_name=_('Is staff event'), default=False)
     type = models.CharField(
         blank=False, verbose_name=_('Type'), max_length=32, choices=TYPE_CHOICES, default=TYPE_NORMAL)
@@ -264,7 +265,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if hasattr(self,'number_of_attendances'): # from DB with annotation
             return self.number_of_attendances + extra
         return len(self.attendees.all()) + extra
-    number_of_attendees.fget.short_description = _("Num.")
+    number_of_attendees.fget.short_description = _("Number of attendees")
 
     @property
     def is_inactive(self):
@@ -283,7 +284,6 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if self.resource:
             return make_naive(self.begin, timezone=self.resource.get_tz())
         return self.begin
-
 
     @cached_property
     def end_in_resource_tz_naive(self):
@@ -589,7 +589,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             raise ValidationError(gettext("This resource is not reservable. Sorry."))
 
         if not self.resource.can_make_reservations(user):
-            warnings.warn(gettext("Organizer (%s) is not to make reservations on this resource." % user), ReservationPermissionWarning)
+            warnings.warn(gettext("Organizer (%s) is not explicitly permitted to make reservations on this resource." % user), ReservationPermissionWarning)
 
         user_is_admin = user and self.resource.is_admin(user)
 
@@ -631,15 +631,19 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             self.resource.can_create_overlapping_reservations(user)
         ):
             original_reservation = self if self.pk else kwargs.get('original_reservation', None)
-            collisions = self.resource.get_reservation_collisions_qs(self.begin, self.end, original_reservation)
-            if collisions:
-                warnings.warn(gettext("The resource is already reserved for some of the period by %(collisions)s.") % {
-                    'collisions': ", ".join([c.identifier for c in collisions])
-                }, ReservationCollisionWarning)
+            # collisions = self.resource.get_reservation_collisions_qs(self.begin, self.end, original_reservation)
+            # if collisions:
+            #     warnings.warn(gettext("The resource is already reserved for some of the period by %(collisions)s.") % {
+            #         'collisions': ", ".join([c.identifier for c in collisions])
+            #     }, ReservationCollisionWarning)
 
             total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end)
             if self.resource.people_capacity and total_number_of_attendees > self.resource.people_capacity:
-                warnings.warn(gettext("The resource's capacity (%d) is already exhausted for some of the period. Total attendance (incl. this one): %d." % (self.resource.people_capacity, total_number_of_attendees)), ReservationCapacityCriticalWarning)
+                warnings.warn(gettext("The resource's capacity (%(resource_capacity)d) is already exhausted for some of the period." \
+                                      "Total attendance (incl. this one): %(attendance_sum)d." % {
+                    'resource_capacity': self.resource.people_capacity,
+                    'attendance_sum': total_number_of_attendees
+                }), ReservationCapacityCriticalWarning)
             elif total_number_of_attendees > 0:
                 warnings.warn(gettext(
                     "Total attendance (incl. this one): %d." % (total_number_of_attendees)), ReservationCapacityNotice)
