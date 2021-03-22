@@ -190,7 +190,7 @@ class Location(MPTTModel):
 
     @property
     def capacity(self):
-        activities = self.org_activities.all()
+        activities = self.capacityforactivityprofile_set.all()
         if activities:
             max_capacity = max([act.capacity for act in activities])
             return max_capacity
@@ -199,7 +199,7 @@ class Location(MPTTModel):
 
     @property
     def capacities(self):
-        activities = self.org_activities.through.objects.filter(location=self).all()
+        activities = self.capacityforactivityprofile_set.all()
         return activities
 
     def get_local_display_name(self):
