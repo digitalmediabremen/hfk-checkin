@@ -42,6 +42,7 @@ export const appUrls = {
     loginMicrosoft: `${authRedirectUrl}/?next=${appBase}${getHomeUrl()}/?from-auth=1`,
     createProfile: "/new",
     enterCode: "/checkin",
+    logout: `${uri}/logout/?next=${appBase}${getHomeUrl()}`,
     checkin: (code: string): [string, string] => [
         "/checkin/[locationCode]",
         `/checkin/${code}`,

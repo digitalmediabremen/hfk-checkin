@@ -3,11 +3,14 @@ import * as React from "react";
 import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
+import { useAppState } from "./AppStateProvider";
 interface IFooterProps {}
 
 const Footer: React.FunctionComponent<IFooterProps> = (props) => {
     const theme = useTheme();
     const { t } = useTranslation();
+    const { appState } = useAppState();
+    const { myProfile: profile } = appState;
 
     return (
         <>
@@ -40,6 +43,11 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                 <Link href={appUrls.help}>
                     <a>{t("Hilfe")}</a>
                 </Link>
+                {profile && (
+                    <Link href={appUrls.logout}>
+                        <a>{t("Ausloggen")}</a>
+                    </Link>
+                )}
             </div>
         </>
     );
