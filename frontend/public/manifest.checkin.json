@@ -18,7 +18,7 @@
 			"type": "image/png"
 		}
 	],
-	"start_url": "/",
+	"start_url": "/profile",
 	"display": "standalone",
 	"orientation": "portrait",
 	"background_color": "#fff",
