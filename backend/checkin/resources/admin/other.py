@@ -188,8 +188,12 @@ class ResourceGroupAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin,
     pass
 
 class ResourceCapacityPolicyAdmin(CommonExcludeMixin, admin.ModelAdmin):
-    list_display = ('name','value','type')
+    list_display = ('name','value','type','get_resources_count')
     filter_horizontal = ('resources',)
+
+    def get_resources_count(self, obj):
+        return obj.resources.count()
+    get_resources_count.short_description = _("Number of assigned resources")
 
 # class MunicipalityAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, admin.ModelAdmin):
 #     change_list_template = 'admin/municipalities/import_buttons.html'
