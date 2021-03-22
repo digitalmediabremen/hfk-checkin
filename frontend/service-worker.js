@@ -21,7 +21,7 @@ import {
 } from "workbox-precaching";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
-skipWaiting();
+// skipWaiting();
 clientsClaim();
 
 // must include following lines when using inject manifest module from workbox
