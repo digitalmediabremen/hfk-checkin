@@ -13,12 +13,14 @@ ERROR_VALIDATION_ERROR = _('Please correct your input: %(error_list_str)s')
 ERROR_GENERAL_ERROR = _('%(error_list_str)s')
 ERROR_BLANK_FIELD = _("'%(field_name)s' can not be blank.")
 
+
 def str_or_errordetail_to_error_message(str_or_error_detail, field_name=None):
     if isinstance(str_or_error_detail, ErrorDetail) and str_or_error_detail.code == 'blank' and field_name:
         # blank field
         return ERROR_BLANK_FIELD % {'field_name': field_name}
     else:
         return str_or_error_detail
+
 
 def custom_exception_handler(exc, context):
     # Call REST framework's default exception handler first,
@@ -43,17 +45,22 @@ def custom_exception_handler(exc, context):
         #i = 0
         validation_errors = []
         general_errors = []
-        print(response.data)
-        for key, value in response.data.items():
-            error = {key: value}
-            customized_response['errors'].append(error)
-            if isinstance(value, list):
-                # list of errors on field
-                for single_error in value:
-                    validation_errors.append(str_or_errordetail_to_error_message(single_error, key))
-            else:
-                # general detail error (without field)
+        if isinstance(response.data, dict):
+            for key, value in response.data.items():
+                error = {key: value}
+                customized_response['errors'].append(error)
+                if isinstance(value, list):
+                    # list of errors on field
+                    for single_error in value:
+                        validation_errors.append(str_or_errordetail_to_error_message(single_error, key))
+                else:
+                    # general detail error (without field)
+                    general_errors.append(str_or_errordetail_to_error_message(value))
+        if isinstance(response.data, list):
+            for value in response.data:
                 general_errors.append(str_or_errordetail_to_error_message(value))
+        else:
+            general_errors.append(str_or_errordetail_to_error_message(response.data))
 
         if len(validation_errors) > 0:
 

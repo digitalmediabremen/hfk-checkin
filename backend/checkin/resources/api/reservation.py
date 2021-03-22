@@ -19,7 +19,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, serializers, filters, exceptions, permissions
+from rest_framework import viewsets, serializers, filters, exceptions, permissions, mixins
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.fields import BooleanField, IntegerField, EmailField
 from rest_framework import renderers
@@ -691,7 +691,7 @@ class ReservationCacheMixin:
         return context
 
 
-class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
+class ReservationViewSetMixin(ReservationCacheMixin):
     queryset = Reservation.objects.select_related('user', 'user__profile')\
         .prefetch_related('resource__groups','attendance_set','attendance_set__user')\
         .order_by('begin', 'resource__unit__name', 'resource__name')
@@ -799,6 +799,8 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        if instance.end < timezone.now():
+            raise ValidationError(_("Can not cancel event in the past."))
         self.perform_destroy(instance)
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -848,5 +850,14 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
 #     pagination_class = None
 
 
-register_view(ReservationViewSet, 'reservation')
+class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class ReservationDetailViewSet(ReservationViewSetMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    filter_backends = (DjangoFilterBackend, ReservationFilterBackend,)
+
+
+register_view(ReservationDetailViewSet, 'reservation')
+register_view(ReservationListViewSet, 'reservation')
 # register_view(ReservationCancelReasonCategoryViewSet, 'cancel_reason_category')

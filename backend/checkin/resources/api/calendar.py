@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from .base import register_view
 from rest_framework import serializers
 from rest_framework.permissions import IsAdminUser
-from .reservation import ReservationSerializer, ReservationViewSet, Reservation, DjangoFilterBackend, \
+from .reservation import ReservationSerializer, ReservationListViewSet, Reservation, DjangoFilterBackend, \
     ReservationFilterBackend, PastFilterBackend, \
     NeedManualConfirmationFilterBackend, StateFilterBackend, CanApproveFilterBackend
 from django_filters import filters
@@ -40,7 +40,7 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
         fields = ['url', 'id', 'identifier', 'start', 'end', 'title','resourceId','classNames']
 
 
-class ReservationCalendarViewSet(ReservationViewSet):
+class ReservationCalendarViewSet(ReservationListViewSet):
     pagination_class = None
     http_method_names = ['get', 'head']
     permission_classes = (IsAdminUser,)

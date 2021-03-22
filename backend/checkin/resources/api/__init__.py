@@ -4,7 +4,7 @@
 from .base import all_views
 from checkin.users.api import all_views as users_views
 from checkin.resources.api.resource import ResourceListViewSet, ResourceViewSet#, PurposeViewSet
-from checkin.resources.api.reservation import ReservationViewSet
+from checkin.resources.api.reservation import ReservationListViewSet
 from checkin.resources.api.unit import UnitViewSet
 from checkin.resources.api.search import TypeaheadViewSet
 from checkin.resources.api.calendar import ReservationCalendarViewSet, ResourceCalendarViewSet
