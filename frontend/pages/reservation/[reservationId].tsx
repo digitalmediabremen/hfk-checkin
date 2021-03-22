@@ -94,6 +94,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                 <>
                     <style jsx>{``}</style>
                     <Layout
+                        title={`#${reservation.identifier} / Buchung`}
                         overrideHeader={
                             <SubPageBar
                                 title={`#${reservation.identifier}`}

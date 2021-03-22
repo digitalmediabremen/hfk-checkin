@@ -53,14 +53,16 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     });
 
     const LoadingIcon = <LoadingInline invertColor loading={loading} />;
+    const title = t("Neue Anfrage")
 
     return (
         <Layout
             direction={direction}
             activeSubPage={activeSubPage}
             subPages={Subpages}
+            title={title}
         >
-            <Subtitle>{t("Neue Anfrage")}</Subtitle>
+            <Subtitle>{title}</Subtitle>
             <FormElement
                 {...handlerProps("time")}
                 label={t("Datum und Uhrzeit")}

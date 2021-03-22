@@ -9,6 +9,8 @@ import { useRouter } from "next/router";
 import { appUrls } from "../config";
 import Subtitle from "../components/common/Subtitle";
 import Layout from "../components/common/Layout";
+import NewButton from "../components/common/NewButton";
+import Link from "next/link";
 
 interface VerifyProfilePageProps {}
 
@@ -18,7 +20,7 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
     const { t } = useTranslation("verifyProfile");
     const router = useRouter();
     return (
-        <Layout>
+        <Layout title={t("Identitätsprüfung")}>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <FormGroup>
                 <Text paragraph>
@@ -41,9 +43,11 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
                 </Text>
             </FormGroup>
             <br />
-            <Button outline onClick={() => router.push(appUrls.home)}>
-                {t("Erledigt")}
-            </Button>
+            <Link href={appUrls.home} passHref>
+                <NewButton componentType="a">
+                    {t("Erledigt")}
+                </NewButton>
+            </Link>
         </Layout>
     );
 };

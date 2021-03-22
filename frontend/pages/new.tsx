@@ -48,12 +48,11 @@ const NewProfilePage: NextPage = () => {
                     )}
                 </Text>
             </FormGroup>
-            <FormGroup>
-                <Subtitle>{t("HfK-Angehörige")}</Subtitle>
-                <NewButton onClick={handleIntern} bottomSpacing={3}>
-                    HfK-Login
-                </NewButton>
-            </FormGroup>
+            <Subtitle>{t("HfK-Angehörige")}</Subtitle>
+            <NewButton onClick={handleIntern} bottomSpacing={3}>
+                HfK-Login
+            </NewButton>
+
             <Subtitle>{t("Gäste")}</Subtitle>
             <Notice>
                 {t(
@@ -61,9 +60,7 @@ const NewProfilePage: NextPage = () => {
                 )}
                 .
             </Notice>
-            <NewButton onClick={handleGuest}>
-                {t("Gastzugang")}
-            </NewButton>
+            <NewButton onClick={handleGuest}>{t("Gastzugang")}</NewButton>
         </Layout>
     );
 };

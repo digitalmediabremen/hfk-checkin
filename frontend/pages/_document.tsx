@@ -13,12 +13,14 @@ const applicationName = getName();
 const iconMetaTags = iconSizes.map((size) => (
     <>
         <link
+            key={`${applicationName}-icon-${size}`}
             rel="icon"
             type="image/png"
             sizes={size}
             href={`/icons/${applicationName}/icon-${size}.png`}
         />
         <link
+            key={`${applicationName}-icon-${size}-apple`}
             rel="apple-touch-icon"
             type="image/png"
             sizes={size}

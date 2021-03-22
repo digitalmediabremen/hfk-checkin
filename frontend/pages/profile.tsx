@@ -42,7 +42,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
     };
 
     return (
-        <Layout>
+        <Layout title={t("Protokoll")}>
             <style jsx>{`
                 .button-group {
                     margin-top: ${theme.spacing(2)}px;

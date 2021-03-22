@@ -12,6 +12,8 @@ import { useUpdateProfileFromAppStateAndUpdate } from "../components/api/ApiHook
 import MyProfile from "../src/model/api/MyProfile";
 import useTheme from "../src/hooks/useTheme";
 import Layout from "../components/common/Layout";
+import NewButton from "../components/common/NewButton";
+import Link from "next/link";
 interface VerifyProfilePageProps {}
 
 const ProfileCenterBig = ({ profile }: { profile: MyProfile }) => {
@@ -50,7 +52,7 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
     const { profile, loading } = useUpdateProfileFromAppStateAndUpdate();
     const router = useRouter();
     return (
-        <Layout>
+        <Layout title={t("Identitätsprüfung")}>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <Text paragraph>
                 {t("Bitte zeige diese Angaben dem Personal am Empfang.")}
@@ -62,13 +64,11 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
                 )}
             </Text>
             <AlignContent offsetBottomPadding>
-                <Button
-                    noBottomMargin
-                    outline
-                    onClick={() => router.push(appUrls.home)}
-                >
-                    {t("Abschliessen")}
-                </Button>
+                <Link href={appUrls.home} passHref>
+                    <NewButton componentType="a" noBottomSpacing>
+                        {t("Abschliessen")}
+                    </NewButton>
+                </Link>
             </AlignContent>
         </Layout>
     );

@@ -12,9 +12,10 @@ interface PrivacyPageProps {}
 
 const PrivacyPage: React.FunctionComponent<PrivacyPageProps> = (props) => {
     const { t, locale } = useTranslation();
+    const title = t("Datenschutzinformationen");
     return (
-        <Layout>
-            <Title>{t("Datenschutzinformationen")}</Title>
+        <Layout title={title}>
+            <Title>{title}</Title>
             {locale === "de" && <PrivacyContentDe />}
             {locale === "en" && <PrivacyContentEn />}
         </Layout>
