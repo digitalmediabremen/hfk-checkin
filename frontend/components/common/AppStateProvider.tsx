@@ -2,6 +2,7 @@ import React, { FunctionComponent, useContext, useEffect } from "react";
 import useMedia from "use-media";
 import { isClient } from "../../config";
 import useLocalStorage from "../../src/hooks/useLocalStorage";
+import useSWRefreshToUpdate from "../../src/hooks/useSWRefreshToUpdate";
 import validateRequestTemplate from "../../src/model/api/NewReservation.validator";
 import validate from "../../src/model/api/NewReservationBlueprint.validator";
 import { AppAction, AppState } from "../../src/model/AppState";
@@ -55,6 +56,8 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
                 reservation: r,
             })
     );
+
+    useSWRefreshToUpdate();
 
     return <Provider value={{ appState, dispatch }}>{children}</Provider>;
 };
