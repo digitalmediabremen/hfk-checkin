@@ -1,15 +1,14 @@
 from django.contrib import admin
 from ..models import Resource
-from dal_admin_filters import AutocompleteFilter
+from django.utils.translation import gettext_lazy as _
+from admin_auto_filters.filters import AutocompleteFilter
+
 
 class ResourceFilter(AutocompleteFilter):
-    title = 'Resource'
+    title = _("Space")
     field_name = 'resource'
-    autocomplete_url = 'resource-autocomplete'
-    #is_placeholder_title = True
+
 
 class UserFilter(AutocompleteFilter):
-    title = 'User'
+    title = _("User")
     field_name = 'user'
-    autocomplete_url = 'user-autocomplete'
-    #is_placeholder_title = True

@@ -67,7 +67,7 @@ pyyaml = "*"
 uritemplate = "*"
 django-premailer = "*"
 django-redis = "*"
-dal-admin-filters = "*"
+django-admin-autocomplete-filter = "*"
 
 [requires]
 python_version = "3.7.10"
