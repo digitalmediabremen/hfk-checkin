@@ -4,6 +4,7 @@ from guardian.utils import get_user_obj_perms_model as get_guardian_user_obj_per
 from django import forms
 from ..models.unit import Unit
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth import get_permission_codename
 
 
 # Generic Object Permissions (django-guardian) Inlines
@@ -49,7 +50,7 @@ class _SingleUserPermissionInlineForm(_UserPermissionInlineForm):
         # set permission before saving
         self.instance.permission = self.available_permissions_qs.get()
         return super().save(commit)
-#
+
 
 def permission_inlineform_factory(model, permission_codenames, form=_UserPermissionInlineForm):
     class_name = model.__name__ + 'Form'
@@ -86,23 +87,23 @@ class UserPermissionInline(GenericTabularInline):
         qs = super().get_queryset(request)
         return qs.filter(permission__codename__in=self.permission_codenames)
 
-    def has_permission(self, request, obj):
+    def has_permission(self, request, obj, codename='change'):
         """
-        Should be implemented by subclass.
-        :param request:
-        :param obj:
-        :return:
+        Can be implemented by subclass.
         """
-        return False
+        opts = self.model_for_permissions._meta
+        codename = get_permission_codename(codename, opts)
+        # FIXME add , obj=obj to check object specific permission?
+        return request.user.has_perm("%s.%s" % (opts.app_label, codename))
 
     def has_change_permission(self, request, obj=None):
-        return self.has_permission(request, obj) or super().has_change_permission(request, obj)
+        return self.has_permission(request, obj) #or obj.has_change_permission(request, obj)
 
     def has_add_permission(self, request, obj=None):
-        return self.has_permission(request, obj) or super().has_add_permission(request, obj)
+        return self.has_permission(request, obj) #or obj.has_add_permission(request, obj)
 
     def has_delete_permission(self, request, obj=None):
-        return self.has_permission(request, obj) or super().has_delete_permission(request, obj)
+        return self.has_permission(request, obj) #or obj.has_delete_permission(request, obj)
 
 
 class SingleUserPermissionInline(UserPermissionInline):
