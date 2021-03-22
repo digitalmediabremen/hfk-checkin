@@ -4,6 +4,7 @@ from microsoft_auth.views import to_ms_redirect
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views import defaults as default_views
+from django.views.generic import RedirectView
 
 from rest_framework import routers
 from rest_framework.schemas import get_schema_view
@@ -42,7 +43,8 @@ if 'microsoft_auth' in settings.INSTALLED_APPS:
     fix_microsoft_auth_user_admin()
 
 urlpatterns += [
-    path('admin/', admin.site.urls),
+    path('backend/', admin.site.urls),
+    re_path('admin/(?P<rest>.*)', RedirectView.as_view(url='/backend/%(rest)s', permanent=True, query_string=True)),
     path('impersonate/', include('impersonate.urls')),
     path('login/redirect/', to_ms_redirect),
     path('logout/', LogoutView.as_view()), # deprecated: replaced with API endpoint auth/logout
