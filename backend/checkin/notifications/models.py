@@ -71,7 +71,7 @@ class NotificationEmailTemplate(EmailTemplate):
     """ Similar to respa's NotificationTemplate, different with name and type"""
 
     type = models.CharField(
-        verbose_name=_('Type'), choices=NotificationType.choices, max_length=100, unique=True, db_index=True,
+        verbose_name=_('Type'), choices=NotificationType.choices, max_length=100, unique=True, db_index=True, blank=True, null=True,
     )
     #template = TemplateField(match='^notifications/.+\.html$', blank=True)
 

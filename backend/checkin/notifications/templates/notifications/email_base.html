@@ -426,9 +426,7 @@
                                     <tr>
                                         <td>
                                         {% block reservation %}
-                                            {% block reservation_status %}
-                                            <p class="primary bold box">Deine Buchung wurde bestätigt.</p>
-                                            {% endblock %}
+                                            <p class="primary bold box">{% block reservation_status %}Update zu einer Buchung.{% endblock %}</p>
                                             <br/><br/>
                                             {% block reservation_info %}
                                             <h2 class="secondary">H4676H</h2>

@@ -2,9 +2,8 @@
 {% load i18n %}
 {% block preheader %}{% blocktranslate %}Es liegt ein Update für Deine Reservierungsanfrage für {{ reservation.resource.display_name }} vor.{% endblocktranslate %}{% endblock %}
 {% block reservation %}
-    {% translate 'Update zu Deiner Reservierungsanfrage' as default_verbose_status %}
     <p class="primary bold box">
-    {% block reservation_status %}{{ reservation.get_state_verbose|default:default_verbose_status }}{% endblock %}</p>
+    {% block reservation_status %}Update zu einer Buchung.{% endblock %}</p>
     <br/><br/><br/>
     {% if update_message %}
         <p class="primary"><i>{{ update_message }}</i></p>

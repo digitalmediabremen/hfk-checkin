@@ -41,7 +41,7 @@ class NotificationEmailTemplateAdmin(EmailTemplateAdmin):
             'fields': ('subject', 'content', 'html_content'),
         }),
     ]
-    inlines = []
+    #inlines = []
 
     class Meta:
         section = 'post_office'

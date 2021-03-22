@@ -13,6 +13,8 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('-r', '--recipient', type=str, required=True, help='Address of recipient.')
+        parser.add_argument('-t', '--template', type=str, default='test_notification', help='Name of the template to use.')
+        parser.add_argument('-l', '--language', type=str, default='de', help='Language to use.')
 
     @classmethod
     def get_context(cls):
@@ -26,8 +28,9 @@ class Command(BaseCommand):
         return context
 
     @classmethod
-    def get_template_object(cls):
-        return NotificationEmailTemplate.objects.get(name='Eingangsbestätigung einer Anfrage')
+    #def get_template_object(cls, name='test_notification'):
+    def get_template_object(cls, name='test_notification'):
+        return NotificationEmailTemplate.objects.get(name=name)
 
     def handle(self, *args, **options):
 
@@ -38,6 +41,11 @@ class Command(BaseCommand):
             recipients,
             sender,
             priority = 'now',
-            template=self.get_template_object(),
-            context=self.get_context()
+            template=self.get_template_object(options['template']),
+            context=self.get_context(),
+            language=options['language'],
+            headers={
+                'Sender': 'getin@hfk-bremen.de',
+                'Reply-To': 'reply-to@hfk-bremen.de',
+            }
         )

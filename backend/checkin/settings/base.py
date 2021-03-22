@@ -256,21 +256,30 @@ SESSION_COOKIE_AGE = 15780000 # 6 month
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = getenv(
-    "DJANGO_EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend"
-)
+EMAIL_BACKEND = 'post_office.EmailBackend'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
+DEFAULT_FROM_EMAIL = "Sender <sender@example.com>"
+# https://docs.djangoproject.com/en/dev/ref/settings/#server-email
+SERVER_EMAIL = getenv("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+# https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
+EMAIL_SUBJECT_PREFIX = ""
+
+RESOURCES_FROM_ADDRESS = "no-reply@getin.hfk-bremen.de"
+NOTIFICATION_SENDER_ADDRESS = "getin@hfk-bremen.de"
+NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
+SUPPORT_EMAIL = "getin@hfk-bremen.de"
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
-    'MESSAGE_ID_FQDN': 'example.com',
+    'MESSAGE_ID_FQDN': 'getin.hfk-bremen.de',
     'PRIORITY': 'now',
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
 }
 
 PREMAILER_OPTIONS = {
     'base_url': 'https://%s' % getenv('SITE_URL', default='no-site-url.example.com'),
+    'cssutils_logging_level': logging.FATAL,
 }
 
 # ADMIN
