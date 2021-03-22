@@ -743,6 +743,8 @@ class ReservationViewSet(viewsets.ModelViewSet, ReservationCacheMixin):
 
     def get_user_filtered_queryset(self, queryset):
         user = self.request.user
+        if not user or not user.is_authenticated:
+            return queryset.none()
 
         # General Administrators can see all reservations
         # does not make sense for current forntend implementation
