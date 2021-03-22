@@ -16,7 +16,7 @@ const Divider: React.FunctionComponent<DividerProps> = ({ noSpacing }) => {
                         ${theme.spacing(noSpacing ? 0 : -3)}px;
                 }
 
-                @media screen and (min-width: 500px) {
+                @media screen and (min-width: ${theme.desktopWidth}px) {
                     hr {
                         margin: ${theme.spacing(noSpacing ? 0 : 2)}px
                         -50vw;

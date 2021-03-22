@@ -2,6 +2,7 @@ import classNames from "classnames";
 import * as React from "react";
 import { AlertCircle } from "react-feather";
 import useTheme from "../../src/hooks/useTheme";
+import Text from "./Text";
 interface NoticeProps {
     error?: true;
     title?: string;
@@ -36,14 +37,12 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                     line-height: 0px;
                 }
 
-                .text {
-                    font-style: italic;
-                    line-height: 1.25em;
+                .content {
                     width: 100%;
                 }
 
                 .error .text {
-                    margin-top: 0.2rem;
+                    margin-top: ${theme.spacing(0.25)}px;
                     font-style: normal;
                 }
             `}</style>
@@ -53,9 +52,9 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                         <AlertCircle />
                     </span>
                 )}
-                <div className="text">
+                <div className="content">
                     {title && <h3>{title}</h3>}
-                    {children}
+                    <Text secondary={!error}>{children}</Text>
                 </div>
             </div>
         </>

@@ -1,28 +1,33 @@
+import classNames from "classnames";
 import * as React from "react";
 import useTheme from "../../src/hooks/useTheme";
 interface TextProps {
     paragraph?: true;
-    emphasis?: true;
+    secondary?: boolean;
     bottomSpacing?: number
 }
 
-const Text: React.FunctionComponent<TextProps> = ({children, paragraph, emphasis, bottomSpacing}) => {
+const Text: React.FunctionComponent<TextProps> = ({children, paragraph, secondary, bottomSpacing}) => {
     const theme = useTheme();
     const Element = paragraph ? "p" : "span";
     
     return <>
         <style jsx>{`
-            color: ${emphasis ? "black" : theme.primaryColor};
+            color: ${theme.primaryColor};
             display: inline-block;
-            line-height: 1.25em;
+            line-height: ${theme.unit > 8 ? 1.5 : 1.25}em;
             margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
             
             p {
                 margin: 0;
                 margin-bottom: ${theme.spacing(2)}px;
             }
+
+            .secondary {
+                font-style: italic;
+            }
         `}</style>
-        <Element>{children}</Element>
+        <Element className={classNames({ secondary })}>{children}</Element>
     </>;
 };
 

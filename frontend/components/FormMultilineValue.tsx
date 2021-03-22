@@ -21,10 +21,6 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
     return (
         <>
             <style jsx>{`
-                .form-value.multiline {
-                    line-height: 1.25em;
-                }
-
                 .form-value.max-rows {
                     display: -webkit-box;
                     -webkit-line-clamp: ${maxRows};
@@ -38,7 +34,7 @@ const FormMultilineValue: React.FunctionComponent<FormMultilineValueProps> = ({
                 }
 
                 .form-value {
-                    line-height: 1.25em;
+                    line-height: ${theme.unit > 8 ? 1.4 : 1.25}em;
                     display: inline;
                     max-width: 100%;
                 }

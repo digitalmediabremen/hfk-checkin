@@ -20,7 +20,7 @@ const { Provider } = appStateContext;
 export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();
 
-    const isWide = useMedia({ minWidth: 500 });
+    const isDesktop = useMedia({ minWidth: 600 });
     const isPwa =
         useMedia({ displayMode: "standalone" }) ||
         // @ts-ignore
@@ -30,13 +30,13 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
         dispatch({
             type: "updateTheme",
             theme: {
-                fontSize: isWide ? 18 : 16,
-                unit: isWide ? 9 : 8,
-                borderRadius: isWide ? 6 : 5,
+                fontSize: isDesktop ? 18 : 16,
+                unit: isDesktop ? 9 : 8,
+                borderRadius: isDesktop ? 6 : 5,
                 offsetTopBar: isPwa ? 0 : 0,
             },
         });
-    }, [isWide]);
+    }, [isDesktop]);
 
     useLocalStorage("rr", appState.reservationRequest, validate, (r) =>
         dispatch({

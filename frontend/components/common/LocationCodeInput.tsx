@@ -143,7 +143,7 @@ const LocationCodeInput: FunctionComponent<LocationCodeInputProps> = (props) => 
                     border: 4px solid ${theme.primaryColor};
                     border-radius: ${theme.borderRadius}px;
                 }
-                @media screen and (min-width: 500px) {
+                @media screen and (min-width: ${theme.desktopWidth}px) {
                     div {
                         font-size: 7rem;
                         // margin-left: -.15rem;

@@ -13,7 +13,7 @@ export const Content: React.FunctionComponent = ({ children }) => {
                     max-width: ${theme.desktopWidth}px;
                 }
 
-                @media screen and (min-width: 500px) {
+                @media screen and (min-width: ${theme.desktopWidth + theme.spacing(6)}px) {
                     .content {
                         margin: ${theme.spacing(2)}px auto;
                     }
