@@ -4,6 +4,7 @@ import { httpStatuses } from "../../config";
 import Checkin, { LastCheckin } from "../../src/model/api/Checkin";
 import Location from "../../src/model/api/Location";
 import MyProfile, { ProfileUpdate } from "../../src/model/api/MyProfile";
+import { insertIf } from "../../src/util/ReservationUtil";
 import { empty, notEmpty } from "../../src/util/TypeUtil";
 import { useAppState } from "../common/AppStateProvider";
 import {
@@ -123,10 +124,16 @@ export const useApi = <RT, Paginate extends boolean = false>(
 
     const _handleError = (error: string, status: number) => {
         setError(error);
-        const reportError = config.onlyLocalErrorReport
-            ? status !== httpStatuses.notAuthorized
-            : true;
-        if (reportError) {
+
+        const exludedStatuses = [
+            ...insertIf(
+                [httpStatuses.notAuthorized],
+                !!config.onlyLocalErrorReport
+            ),
+            httpStatuses.notFound,
+        ] as number[];
+
+        if (!exludedStatuses.includes(status)) {
             dispatch({
                 type: "status",
                 status: {
