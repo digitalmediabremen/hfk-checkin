@@ -160,7 +160,10 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     get_exclusive.boolean = True
 
     def get_purpose_display(self, obj):
-        return getattr(StaticReservationPurpose, obj.purpose).label if hasattr(StaticReservationPurpose, obj.purpose) else obj.purpose
+        if obj and obj.purpose is not None:
+            return getattr(StaticReservationPurpose, obj.purpose).label if hasattr(StaticReservationPurpose,
+                                                                                   obj.purpose) else obj.purpose
+
     get_purpose_display.short_description = _("Purpose")
     get_purpose_display.admin_order_field = 'purpose'
 
