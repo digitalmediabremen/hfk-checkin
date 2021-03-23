@@ -15,7 +15,7 @@ export default function useSWRefreshToUpdate() {
             wb.addEventListener("installed", (event) => {
                 if (event.isUpdate) {
                     console.log("reloaded due to sw update")
-                    window.location.reload();
+                    window.location.reload(true);
                 }
             });
             // const promptNewVersionAvailable = (
