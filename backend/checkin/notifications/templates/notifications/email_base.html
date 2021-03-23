@@ -1,11 +1,13 @@
-{% load premailer %}
+{% load premailer i18n %}
 {% premailer %}
     <!doctype html>
-    <html>
+    <html lang="{{ LANGUAGE_CODE }}">
     <head>
         <meta name="viewport" content="width=device-width"/>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>{{ subject }}</title>
+        {% get_current_language as LANGUAGE_CODE %}
+        <!-- Current language: {{ LANGUAGE_CODE }} -->
         <style>
             /* -------------------------------------
                 GLOBAL RESETS

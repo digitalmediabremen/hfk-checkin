@@ -2,11 +2,15 @@
 {% load i18n admin_urls guardian_tags %}
 
 {% block object-tools-items %}
+    {% get_available_languages as LANGUAGES %}
+    {% for lang in LANGUAGES %}
     <li>
-    {% url 'admin:notifications_template_preview' original.pk|admin_urlquote as url %}
-    <a href="{% add_preserved_filters url is_popup to_field %}?_popup=1" class="related-widget-wrapper-link">
-      {% blocktrans with cl.opts.verbose_name as name %}Preview Template{% endblocktrans %}
-    </a>
+        {% url 'admin:notifications_template_preview' original.pk|admin_urlquote as url %}
+        <a href="{% add_preserved_filters url is_popup to_field %}?_popup=1&language={{ lang.0 }}" class="related-widget-wrapper-link">
+          {% blocktrans with cl.opts.verbose_name as name %}Preview Template in{% endblocktrans %} {{ lang.1 }}
+        </a>
     </li>
+    {% endfor %}
+
     {{ block.super }}
 {% endblock %}

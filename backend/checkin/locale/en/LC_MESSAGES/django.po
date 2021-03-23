@@ -96,28 +96,32 @@ msgstr ""
 msgid "Preview Template"
 msgstr ""
 
+
+
 #: checkin/notifications/templates/notifications/email_reservation.html:3
 #, python-format
 msgid ""
 "Es liegt ein Update für Deine Reservierungsanfrage für "
 "%(reservation.resource.display_name)s vor."
 msgstr ""
+"An update for your reservation request for "
+"%(reservation.resource.display_name)s is available."
 
 #: checkin/notifications/templates/notifications/email_reservation.html:5
 msgid "Update zu Deiner Reservierungsanfrage"
-msgstr ""
+msgstr "Update on your booking request"
 
 #: checkin/notifications/templates/notifications/email_reservation.html:21
 msgid "Angemeldete Personen"
-msgstr ""
+msgstr "Registered persons"
 
 #: checkin/notifications/templates/notifications/email_reservation.html:23
 msgid "Grund"
-msgstr ""
+msgstr "reason"
 
 #: checkin/notifications/templates/notifications/email_reservation.html:26
 msgid "Nachricht"
-msgstr ""
+msgstr "message"
 
 #: checkin/notifications/templates/notifications/email_reservation.html:31
 #, python-format
@@ -127,6 +131,9 @@ msgid ""
 "notwendig. Die Bearbeitung\n"
 "        kann bis zu 48 Stunden dauern."
 msgstr ""
+"Please always quote the reservation number\n"
+" %(reservation.identifier)s in case of queries. Currently no further action "
+"is necessary. Processing can take up to 48 hours."
 
 #: checkin/notifications/templates/notifications/email_reservation.html:41
 #, python-format
@@ -137,6 +144,10 @@ msgid ""
 "Reservierungsverfahren und Benachrichtigungen sind auf der <a\n"
 "                    href=\"%(url_root)s/help\">Hilfeseite</a> zu finden."
 msgstr ""
+"This mail was sent due to a booking.</span>\n"
+"            <span class=\"apple-link\">For information regardingthe room-"
+"booking process please visit<a\n"
+"                    href=\"%(url_root)s/help\">Help</a>."
 
 #: checkin/notifications/templates/notifications/email_reservation.html:51
 #, python-format
@@ -146,6 +157,10 @@ msgid ""
 "%(support_email|default:\"support@example.com\")s\">"
 "%(support_email|default:\"support@example.com\")s</a>."
 msgstr ""
+"If you have questions of problems please contact<a\n"
+"                    href=\"mailto:"
+"%(support_email|default:\"support@example.com\")s\">"
+"%(support_email|default:\"support@example.com\")s</a>."
 
 #: checkin/notifications/types.py:5
 msgid "Reservation requested"
@@ -2093,3 +2108,4 @@ msgstr "Show complete email adress"
 #: checkin/users/models.py:190
 msgid "Kann vollständige Telefonnummer anzeigen"
 msgstr "Show complete phone number"
+

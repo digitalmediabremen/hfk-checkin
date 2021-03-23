@@ -2,8 +2,7 @@
 {% load i18n %}
 {% block preheader %}{% blocktranslate %}Es liegt ein Update für Deine Reservierungsanfrage für {{ reservation.resource.display_name }} vor.{% endblocktranslate %}{% endblock %}
 {% block reservation %}
-    <p class="primary bold box">
-    {% block reservation_status %}Update zu einer Buchung.{% endblock %}</p>
+    <p class="primary bold box">{% block reservation_status %}Update zu einer Buchung.{% endblock %}</p>
     <br/><br/><br/>
     {% if update_message %}
         <p class="primary"><i>{{ update_message }}</i></p>
@@ -37,8 +36,8 @@
     <tr>
         <td class="content-block">
             {% block footer_reason %}
-            <span class="apple-link">{% blocktranslate %}Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.</span>
-            <span class="apple-link">Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a
+            <span class="apple-link">{% blocktranslate %}Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.{% endblocktranslate %}</span>
+            <span class="apple-link">{% blocktranslate %}Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a
                     href="{{ url_root }}/help">Hilfeseite</a> zu finden.{% endblocktranslate %}</span>
             {% endblock %}
         </td>

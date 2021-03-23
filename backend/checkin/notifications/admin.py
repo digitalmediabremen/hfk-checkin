@@ -28,9 +28,13 @@ from .models import NotificationEmailTemplate
 #
 #
 # admin_site.register(NotificationTemplate, NotificationTemplateAdmin)
-from post_office.admin import EmailTemplateAdmin, EmailTemplate
+from post_office.admin import EmailTemplateAdmin, EmailTemplate, EmailTemplateInline
 from .views import TemplatePreviewView
 from django.urls import path
+from django.conf import settings
+
+class AllLanguagesEmailTemplateInline(EmailTemplateInline):
+    min_num = len(settings.LANGUAGES)
 
 class NotificationEmailTemplateAdmin(EmailTemplateAdmin):
     fieldsets = [
@@ -41,7 +45,7 @@ class NotificationEmailTemplateAdmin(EmailTemplateAdmin):
             'fields': ('subject', 'content', 'html_content'),
         }),
     ]
-    #inlines = []
+    inlines = (AllLanguagesEmailTemplateInline,) if settings.USE_I18N else ()
 
     class Meta:
         section = 'post_office'
