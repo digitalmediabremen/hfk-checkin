@@ -122,6 +122,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     list_display_links = ('user', 'resource')
     list_max_show_all = 50
     list_per_page = 30
+    save_on_top = True
 
     fieldsets = (
         (None, {
@@ -231,9 +232,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         return format_html(
             '<b style="color:{};">{}</b>',
             colors[obj.state],
-            obj.state,
+            gettext(obj.get_state_display()),
         )
-
     get_state_colored.short_description = _("State")
 
     _original_state = None

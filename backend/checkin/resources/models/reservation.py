@@ -239,7 +239,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         permissions = RESERVATION_PERMISSIONS
 
     def __str__(self):
-        return "%s (%s)" % (self.short_uuid, self.state)
+        return "%s (%s)" % (self.short_uuid, gettext(self.get_state_display()))
 
     @property
     def organizer(self):
