@@ -22,7 +22,7 @@ const translation: Translation = {
             Heute: "Today",
             Morgen: "Tomorrow",
             Datenschutz: "Privacy",
-            Ausloggen: "Logout"
+            Ausloggen: "Logout",
         },
         reservation: {
             "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
@@ -136,14 +136,20 @@ const translation: Translation = {
                 "Rooms can only be booked {days} days in advance.",
         },
         cookieError: {
-            "Es gibt ein Cookie Problem.": "We have an issue with your cookie settings.",
+            "Es gibt ein Cookie Problem.":
+                "We have an issue with your cookie settings.",
             "Mögliche Fehlerquellen:": "Possible issues:",
-            "Du benutzt den Incognito-Modus deines Browsers:": "You are using incognito mode:",
-            "Aktuell unterstützt {appname} diesen nicht.": "{appname} does not support incognito mode.",
-            "Du hast Cookies in deinen Browsereinstellung deaktiviert:": "You deactivated cookies in your browser settings:",
-            "Du musst Cookies zulassen um {appname} nutzen zu können.": "You need to allow cookies to use {appname}.",
+            "Du benutzt den Incognito-Modus deines Browsers:":
+                "You are using incognito mode:",
+            "Aktuell unterstützt {appname} diesen nicht.":
+                "{appname} does not support incognito mode.",
+            "Du hast Cookies in deinen Browsereinstellung deaktiviert:":
+                "You deactivated cookies in your browser settings:",
+            "Du musst Cookies zulassen um {appname} nutzen zu können.":
+                "You need to allow cookies to use {appname}.",
             "Melde dich bei": "Report to",
-            "wenn dieser Fehler häufiger auftritt.": "if this error occurs regularly.",
+            "wenn dieser Fehler häufiger auftritt.":
+                "if this error occurs regularly.",
         },
         createProfile: {
             Anmelden: "Sign in",
@@ -217,6 +223,7 @@ const translation: Translation = {
             "Keine gültige Telefonnummer": "Not a valid phone number",
             "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
                 "Your phone number is only used in case of infection.",
+            Hinzufügen: "Add",
         },
     },
 };

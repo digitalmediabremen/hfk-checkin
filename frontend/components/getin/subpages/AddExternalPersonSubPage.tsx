@@ -96,7 +96,7 @@ const AddExternalPersonSubPage: React.FunctionComponent<AddExternalPersonSubPage
                     "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet."
                 )}
             </Notice>
-            <NewButton primary>Hinzufügen</NewButton>
+            <NewButton primary>{t("Hinzufügen")}</NewButton>
         </form>
     );
 };
