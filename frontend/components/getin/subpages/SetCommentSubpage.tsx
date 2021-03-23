@@ -22,7 +22,9 @@ const SetCommentSubpage: React.FunctionComponent<SetCommentSubpageProps> = ({}) 
                     onChange: handleChange,
                     minRows: 7,
                     placeholder: t(
-                        "Bitte erläutere Deine Anfrage nach Bedarf. \n\nZum Beispiel kannst Du hier Angaben für die Werkstattleitung machen oder dem Raumteam wichtige Informationen übermitteln."
+                        "Bitte erläutere Deine Anfrage nach Bedarf. \n\nZum Beispiel kannst Du hier Angaben für die Werkstattleitung machen oder dem Raumteam wichtige Informationen übermitteln.",
+                        {},
+                        "message-placeholder"
                     ),
                 }}
             />

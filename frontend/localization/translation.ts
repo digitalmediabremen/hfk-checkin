@@ -103,7 +103,7 @@ const translation: Translation = {
                 "I want to use the room alone.",
         },
         "request-message": {
-            "Bitte erläutere Deine Anfrage nach Bedarf. \\n\\nZum Beispiel kannst Du hier Angaben für die Werkstattleitung machen oder dem Raumteam wichtige Informationen übermitteln.":
+            "message-placeholder":
                 "Please explain you request if needed. \\n\\nFor example you can add relevant information for workshop leaders or teh room-booking-team.",
         },
         "request-purpose": {
