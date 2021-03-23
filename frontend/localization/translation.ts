@@ -33,7 +33,7 @@ const translation: Translation = {
             "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
                 "Are you sure to cancel your booking? This action cannot be reversed.",
             "Deine Buchung {identifier} wurde storniert.":
-                "Your booking request {identifier} has been cancelled.",
+                "Your booking request {identifier} has been canceled.",
             "Weitere Anfrage": "Additional request",
             "Deine Anfrage ist eingegangen.":
                 "Your booking request has been received.",
@@ -42,7 +42,7 @@ const translation: Translation = {
             angefragt: "requested",
             bestätigt: "confirmed",
             abgelehnt: "denied",
-            storniert: "cancelled",
+            storniert: "canceled",
             erstellt: "created",
         },
         request: {
@@ -115,7 +115,7 @@ const translation: Translation = {
             Prüfungsvorbereitung: "Exam preparation",
             Abholung: "Pick-up",
             Gremiensitzung: "Board meeting",
-            "Anderer Grund": "Something else",
+            "Anderer Grund": "Other",
             Extern: "External",
             weitere: "other",
         },
