@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-22 23:41+0100\n"
+"POT-Creation-Date: 2021-03-23 02:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,18 +46,130 @@ msgstr ""
 msgid "Es ist ein Fehler aufgetreten."
 msgstr ""
 
-#: checkin/notifications/admin.py:40
-msgid "Default Content"
-msgstr "Standardwert"
-
-#: checkin/notifications/apps.py:7
+#: checkin/notifications-respa/apps.py:7 checkin/notifications/apps.py:7
 msgid "Notifications"
 msgstr "E-Mail-Benachrichtigungen"
 
-#: checkin/notifications/models.py:74
+#: checkin/notifications-respa/models.py:50 checkin/notifications/types.py:5
+msgid "Reservation requested"
+msgstr "Buchung angefragt"
+
+#: checkin/notifications-respa/models.py:51
+#, fuzzy
+#| msgid "Reservation requested"
+msgid "Reservation requested official"
+msgstr "Buchung angefragt"
+
+#: checkin/notifications-respa/models.py:52 checkin/notifications/types.py:9
+msgid "Reservation cancelled"
+msgstr "Buchungsanfrage storniert"
+
+#: checkin/notifications-respa/models.py:53 checkin/notifications/types.py:10
+msgid "Reservation confirmed"
+msgstr "Buchungs bestätigt"
+
+#: checkin/notifications-respa/models.py:54 checkin/notifications/types.py:12
+msgid "Reservation created"
+msgstr "Buchungsanfrage erstellt"
+
+#: checkin/notifications-respa/models.py:55 checkin/notifications/types.py:11
+msgid "Reservation denied"
+msgstr "Buchungsanfrage abgelehnt"
+
+#: checkin/notifications-respa/models.py:56
+msgid "Reservation created with access code"
+msgstr "Buchung erstellt mit Code"
+
+#: checkin/notifications-respa/models.py:57
+#, fuzzy
+#| msgid "Attendance list for reservation"
+msgid "Access code was created for a reservation"
+msgstr "Teilnehmerliste für Buchungen"
+
+#: checkin/notifications-respa/models.py:58
+#, fuzzy
+#| msgid "Reservation was confirmed."
+msgid "Reservation waiting for payment"
+msgstr "Buchung wurde bestätigt."
+
+#: checkin/notifications-respa/models.py:60
+#, fuzzy
+#| msgid "Reservation comment created"
+msgid "Catering order created"
+msgstr "Buchungsanfrage Nachricht erstellt"
+
+#: checkin/notifications-respa/models.py:61
+msgid "Catering order modified"
+msgstr ""
+
+#: checkin/notifications-respa/models.py:62
+msgid "Catering order deleted"
+msgstr ""
+
+#: checkin/notifications-respa/models.py:63
+msgid "Reservation comment created"
+msgstr "Buchungsanfrage Nachricht erstellt"
+
+#: checkin/notifications-respa/models.py:64
+#, fuzzy
+#| msgid "Reservation comment created"
+msgid "Catering order comment created"
+msgstr "Buchungsanfrage Nachricht erstellt"
+
+#: checkin/notifications-respa/models.py:68 checkin/notifications/models.py:74
 #: checkin/resources/models/reservation.py:211
 msgid "Type"
 msgstr "Typ"
+
+#: checkin/notifications-respa/models.py:73
+#, fuzzy
+#| msgid "Message"
+msgid "Short message"
+msgstr "Nachricht"
+
+#: checkin/notifications-respa/models.py:73
+msgid "Short notification text for e.g. SMS messages"
+msgstr ""
+
+#: checkin/notifications-respa/models.py:76
+msgid "Subject"
+msgstr ""
+
+#: checkin/notifications-respa/models.py:76
+msgid "Subject for email notifications"
+msgstr ""
+
+#: checkin/notifications-respa/models.py:78
+msgid "Body"
+msgstr ""
+
+#: checkin/notifications-respa/models.py:78
+#, fuzzy
+#| msgid "Time of modification"
+msgid "Text body for email notifications"
+msgstr "Zeitpunkt der Änderung"
+
+#: checkin/notifications-respa/models.py:80
+msgid "HTML body"
+msgstr ""
+
+#: checkin/notifications-respa/models.py:80
+#, fuzzy
+#| msgid "Time of modification"
+msgid "HTML body for email notifications"
+msgstr "Zeitpunkt der Änderung"
+
+#: checkin/notifications-respa/models.py:85 checkin/notifications/models.py:98
+msgid "Notification template"
+msgstr "Nachrichten-Vorlage"
+
+#: checkin/notifications-respa/models.py:86 checkin/notifications/models.py:99
+msgid "Notification templates"
+msgstr "Nachrichten-Vorlage"
+
+#: checkin/notifications/admin.py:44
+msgid "Default Content"
+msgstr "Standardwert"
 
 #: checkin/notifications/models.py:81
 msgid "Email Template"
@@ -66,14 +178,6 @@ msgstr "E-Mail-Vorlage"
 #: checkin/notifications/models.py:82
 msgid "Email Templates"
 msgstr "E-Mail-Vorlage"
-
-#: checkin/notifications/models.py:98
-msgid "Notification template"
-msgstr "Nachrichten-Vorlage"
-
-#: checkin/notifications/models.py:99
-msgid "Notification templates"
-msgstr "Nachrichten-Vorlage"
 
 #: checkin/notifications/template_field.py:38
 #, python-format
@@ -95,13 +199,63 @@ msgstr ""
 "display_name= Muss ein Aufrufelement sein, das eine einzelne Zeichenfolge "
 "akzeptiert"
 
-#: checkin/notifications/templates/admin/notifications/notificationemailtemplate/change_form_object_tools.html:8
-msgid "Preview Template"
-msgstr "Vorschau"
+#: checkin/notifications/templates/admin/notifications/notificationemailtemplate/change_form_object_tools.html:10
+msgid "Preview Template in"
+msgstr "Vorschau auf"
 
-#: checkin/notifications/types.py:5
-msgid "Reservation requested"
-msgstr "Buchung angefragt"
+#: checkin/notifications/templates/notifications/email_base.html:451
+#, python-format
+msgid ""
+"Bitte wenden Sie sich bei Fragen oder Problemen an <a\n"
+"                                        href=\"mailto:%(support_email)s\">"
+"%(support_email)s</a>."
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:3
+#, python-format
+msgid ""
+"Es liegt ein Update für Deine Reservierungsanfrage für "
+"%(reservation.resource.display_name)s vor."
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:28
+msgid "Angemeldete Personen"
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:30
+msgid "Grund"
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:33
+msgid "Nachricht"
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:42
+#, python-format
+msgid "Reservierung %(reservation.identifier)s öffnen"
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:51
+#, python-format
+msgid ""
+"Gebe bitte bei Rückfragen immer die Reservierungsnummer\n"
+"                        %(reservation.identifier)s an. Aktuell ist keine "
+"weitere Aktion notwendig. Die Bearbeitung\n"
+"                        kann bis zu 48 Stunden dauern."
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:71
+msgid ""
+"Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt."
+msgstr ""
+
+#: checkin/notifications/templates/notifications/email_reservation.html:72
+#, python-format
+msgid ""
+"Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der "
+"<a\n"
+"                    href=\"%(url_root)s/help\">Hilfeseite</a> zu finden."
+msgstr ""
 
 #: checkin/notifications/types.py:6
 msgid "Reservation requested to delegtes"
@@ -114,38 +268,6 @@ msgstr "Externe Person bei zuständigen Personen angefragt"
 #: checkin/notifications/types.py:8
 msgid "Resource access requested to access delegtes"
 msgstr "Zugangsberechtigung bei zuständigen Personen angefragt"
-
-#: checkin/notifications/types.py:9
-msgid "Reservation cancelled"
-msgstr "Buchungsanfrage storniert"
-
-#: checkin/notifications/types.py:10
-msgid "Reservation confirmed"
-msgstr "Buchungs bestätigt"
-
-#: checkin/notifications/types.py:11
-msgid "Reservation denied"
-msgstr "Buchungsanfrage abgelehnt"
-
-#: checkin/notifications/types.py:12
-msgid "Reservation created"
-msgstr "Buchungsanfrage erstellt"
-
-#: checkin/notifications/types.py:15
-msgid "Reservation created with access code"
-msgstr "Buchung erstellt mit Code"
-
-#: checkin/notifications/types.py:20
-msgid "Reservation reservation_access_code_created"
-msgstr ""
-
-#: checkin/notifications/types.py:21
-msgid "Reservation reservation_waiting_for_payment"
-msgstr ""
-
-#: checkin/notifications/types.py:22
-msgid "Reservation comment created"
-msgstr "Buchungsanfrage Nachricht erstellt"
 
 #: checkin/resources/admin/list_filters.py:8
 #: checkin/resources/admin/reception.py:27
@@ -1036,7 +1158,7 @@ msgstr ""
 
 #: checkin/resources/models/reservation.py:589
 msgid "This resource is not reservable. Sorry."
-msgstr "Dieser Bereich ist buchbar nach %(datetime)s"
+msgstr "Dieser Raum ist nicht reservierbar."
 
 #: checkin/resources/models/reservation.py:592
 #, python-format
@@ -1057,9 +1179,6 @@ msgstr "Endzeit der Buchung muss nach der Startzeit liegen."
 
 #: checkin/resources/models/reservation.py:642
 #, python-format
-#| msgid ""
-#| "The resource's capacity (%(resource_capacity)d) is already exhausted for "
-#| "some of the period. Total attendance (incl. this one): %(attendance_sum)d."
 msgid ""
 "The resource's capacity (%(resource_capacity)d) is already exhausted for "
 "some of the period.Total attendance (incl. this one): %(attendance_sum)d."
