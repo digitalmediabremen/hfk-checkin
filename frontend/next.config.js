@@ -8,7 +8,7 @@ module.exports = withPWA({
         dest: "public",
         swSrc: 'service-worker.js',
         register: false,
-        skipWaiting: false,
+        skipWaiting: true,
         disable: process.env.NODE_ENV === "development",
     },
     generateEtags: false,

@@ -104,7 +104,7 @@ const translation: Translation = {
         },
         "request-message": {
             "message-placeholder":
-                "Please explain you request if needed. \\n\\nFor example you can add relevant information for workshop leaders or teh room-booking-team.",
+                "Please explain you request if needed. \n\nFor example you can add relevant information for workshop leaders or teh room-booking-team.",
         },
         "request-purpose": {
             "Bitte ergänze deine Anfrage mit folgender Information.":
