@@ -291,7 +291,7 @@ msgstr "Raumgruppen"
 
 #: checkin/resources/admin/other.py:196
 msgid "Number of assigned resources"
-msgstr "Anzahl zusätzlicher Teilnehmer"
+msgstr "Anzahl zugeordneter Resourcen"
 
 #: checkin/resources/admin/period_inline.py:38
 msgid "HH:mm"
@@ -1067,10 +1067,6 @@ msgstr "Nachricht"
 msgid "Approver"
 msgstr "Bestätigt durch"
 
-#: checkin/resources/models/reservation.py:208
-msgid "For internal use only."
-msgstr ""
-
 #: checkin/resources/models/reservation.py:217
 msgid "Attendees"
 msgstr "Teilnehmer"
@@ -1314,7 +1310,7 @@ msgstr "Resourcentyp"
 
 #: checkin/resources/models/resource.py:263
 msgid "Default people capacity"
-msgstr "Standard personelle Kapazität"
+msgstr "Standard Personenkapazizät"
 
 #: checkin/resources/models/resource.py:264
 msgid "Capacity calculation"
