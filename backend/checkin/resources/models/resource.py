@@ -288,8 +288,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
 
     @property
     def public(self):
-        DeprecationWarning("Resource has no attribute 'public' any more.")
-        return True
+        return self.unit.public
 
     @property
     def access_code_type(self):
@@ -318,6 +317,13 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             name += " (%d)" % cap
         return name
     display_name.fget.short_description = _('Name')
+
+    @property
+    def email_sender_name(self):
+        name = "%s" % (get_translated(self, 'name'),)
+        if self.numbers:
+            name += " (%s)" % self.display_numbers
+        return name
 
     @property
     def display_numbers(self):

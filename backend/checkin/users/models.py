@@ -20,6 +20,7 @@ from dirtyfields import DirtyFieldsMixin
 #         on_delete=models.SET(get_sentinel_user),
 #     )
 
+
 class NonAnonyoumusUserQuerySetMixin():
     def exclude_anonymous_users(self):
         return self.filter(id__gte=0)
@@ -128,6 +129,13 @@ class User(AbstractUser):
         else:
             return True
 
+    @property
+    def is_external(self):
+        if hasattr(self, 'profile'):
+            return self.profile.is_external
+        else:
+            return False
+
     def __str__(self):
         return self.get_display_name()
 
@@ -146,12 +154,11 @@ class User(AbstractUser):
     #         self.ical_token = get_random_string(length=16)
     #         self.save()
     #     return self.ical_token
-    #
+
     def get_preferred_language(self):
         if not self.preferred_language:
             return settings.LANGUAGES[0][0]
-        else:
-            return self.preferred_language
+        return self.preferred_language
 
 
 class ProfileQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):

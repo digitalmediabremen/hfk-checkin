@@ -205,7 +205,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     approver = models.ForeignKey(AUTH_USER_MODEL, verbose_name=_('Approver'),
                                  related_name='approved_reservations', null=True, blank=True,
                                  on_delete=models.SET_NULL)
-    comment = models.TextField(null=True, blank=True, verbose_name=_('Comment'), help_text=_("For internal use only."))
+    comment = models.TextField(null=True, blank=True, verbose_name=_('Comment'), help_text=_("For internal use only. Shall not be displayed to users."))
     #staff_event = models.BooleanField(verbose_name=_('Is staff event'), default=False)
     type = models.CharField(
         blank=False, verbose_name=_('Type'), max_length=32, choices=TYPE_CHOICES, default=TYPE_NORMAL)
@@ -774,32 +774,69 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         :returns list of recipient emails
         """
 
+        from django.core.mail.message import sanitize_address, formataddr, forbid_multi_line_headers
+        encoding = 'utf-8'
+        recipient = user
+
         try:
             notification_template = NotificationEmailTemplate.objects.get(type=notification_type)
+            # reduce to post-office's template
+            # FIXME
+            notification_template = notification_template.emailtemplate_ptr
         except NotificationEmailTemplate.DoesNotExist:
             logger.warning("DoesNotExists: NotificationEmailTemplate for type %s" % str(notification_type))
             return
 
-        if getattr(self, 'order', None) and self.billing_email_address:
-            email_address = self.billing_email_address
-        elif user:
-            email_address = user.email
-        else:
-            if not (self.organizer.email or self.user):
-                return
-            email_address = self.organizer.email or self.user.email
-            user = self.user
+        # if getattr(self, 'order', None) and self.billing_email_address:
+        #     email_address = self.billing_email_address
+        # elif user:
+        #     email_address = user.email
+        # else:
+        if not (self.organizer.email or user):
+            return
 
-        language = user.get_preferred_language() if user else DEFAULT_LANG
+        # take organizer as user
+        if not recipient:
+            recipient = self.user # which is the same as organizer.user
+
+        email_address = recipient.email
+        if recipient.is_external:
+            # FIXME emails for external users
+            raise ValueError("Can not send emails to external Users. External users do not have valid e-mail addresses.")
+        email_address = sanitize_address((recipient.get_display_name(), email_address), encoding)
+
+        language = recipient.get_preferred_language() if recipient else DEFAULT_LANG
         context = self.get_notification_context(language, notification_type=notification_type, extra_context=extra_context)
 
-        logger.debug("Sending notification to %s" % str(email_address))
+        from_address = getattr(settings, 'RESOURCES_FROM_ADDRESS', None)
+        if from_address:
+            from_address = sanitize_address((self.resource.email_sender_name, from_address), encoding)
+
+        reply_to_users = self.resource.get_reservation_delegates()
+        if not reply_to_users:
+            reply_to_users = self.resource.unit.get_reservation_delegates()
+        for u in reply_to_users:
+            if u.is_external:
+                # FIXME emails for external users
+                # fail silently
+                logger.warning(
+                    "Skipping %s. Can not send emails to external Users. External users do not have valid e-mail addresses." % u)
+                reply_to_users.remove(u)
+        reply_to_address = ", ".join([formataddr((u.get_display_name(), u.email)) for u in reply_to_users])
+
+        h, from_address = forbid_multi_line_headers('From', from_address, encoding)
+        h, reply_to_address = forbid_multi_line_headers('Reply-To', reply_to_address, encoding)
+
+        logger.debug("Trying to send notification to %s in language %s" % (str(email_address), language))
 
         email = send_template_mail(
             email_address,
             notification_template,
             context,
             attachments,
+            from_address=from_address,
+            reply_to_address=reply_to_address,
+            language=language
         )
 
         self.related_emails.add(email)

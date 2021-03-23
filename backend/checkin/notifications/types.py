@@ -12,11 +12,11 @@ class NotificationType(models.TextChoices):
     RESERVATION_CREATED = 'reservation_created', _('Reservation created')
     # If the access code is known at reservation time, this notification
     # type is used.
-    RESERVATION_CREATED_WITH_ACCESS_CODE = 'reservation_created_with_access_code', _('Reservation created with access code')
+    # RESERVATION_CREATED_WITH_ACCESS_CODE = 'reservation_created_with_access_code', _('Reservation created with access code')
     # In some cases, the access code is known only some time after the
     # reservation is made. A separate notification type is used so that
     # we don't confuse the user with "new reservation created"-style
     # messaging.
-    RESERVATION_ACCESS_CODE_CREATED = 'reservation_access_code_created', _('Reservation reservation_access_code_created')
-    RESERVATION_WAITING_FOR_PAYMENT = 'reservation_waiting_for_payment', _('Reservation reservation_waiting_for_payment')
-    RESERVATION_COMMENT_CREATED = 'reservation_comment_created', _('Reservation comment created')
+    # RESERVATION_ACCESS_CODE_CREATED = 'reservation_access_code_created', _('Reservation reservation_access_code_created')
+    # RESERVATION_WAITING_FOR_PAYMENT = 'reservation_waiting_for_payment', _('Reservation reservation_waiting_for_payment')
+    # RESERVATION_COMMENT_CREATED = 'reservation_comment_created', _('Reservation comment created')

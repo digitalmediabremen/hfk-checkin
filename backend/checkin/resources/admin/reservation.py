@@ -160,6 +160,10 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         else:  # This is an addition
             return self.readonly_fields
 
+    def has_delete_permission(self, request, obj=None):
+        # all reservations are soft deletable via state
+        return False
+
     def get_reservation_info(self, obj):
         if obj and obj.resource:
             return obj.resource.reservation_info
@@ -254,6 +258,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # give some info
         # TODO move all warnings to validate_reservation()
         if obj:
+            if obj.user:
+                messages.add_message(request, messages.INFO, _("Organizers preferred language is: %s" % obj.user.get_preferred_language()))
             if obj.is_inactive:
                 messages.add_message(request, messages.ERROR, _("Has been cancelled or denied."))
             if obj.has_priority:

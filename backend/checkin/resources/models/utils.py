@@ -18,6 +18,7 @@ from rest_framework.reverse import reverse
 #from icalendar import Calendar, Event, vDatetime, vText, vGeo
 #import xlsxwriter
 import warnings
+from django.utils import translation
 
 DEFAULT_LANG = settings.LANGUAGES[0][0]
 
@@ -107,16 +108,30 @@ class EmailInformation(UserWarning):
     pass
 
 
-def send_template_mail(recipients, template, context, attachments=None, priority=mail.PRIORITY.now):
+def send_template_mail(recipients, template, context, attachments=None, from_address=None, reply_to_address=None, language=settings.LANGUAGES[0][0], priority=mail.PRIORITY.now):
     if not getattr(settings, 'NOTIFICATION_MAILS_ENABLED', True):
         notification_logger.debug('Notifications are disabled by NOTIFICATION_MAILS_ENABLED.')
         return
 
-    default_domain = Site.objects.get_current().domain.split(':')[0] # remove port if present
-    from_address = (getattr(settings, 'NOTIFICATION_MAILS_FROM_ADDRESS', None) or
-                    'noreply@%s' % default_domain)
+    if not from_address:
+        default_domain = Site.objects.get_current().domain.split(':')[0] # remove port if present
+        from_address = (getattr(settings, 'NOTIFICATION_MAILS_FROM_ADDRESS', None) or
+                        'noreply@%s' % default_domain)
 
-    notification_logger.info('Sending notification email from %s to %s using template %s' % (from_address, recipients, template))
+    notification_logger.info('Sending notification email from %s to %s using template %s in language %s' % (from_address, recipients, template, language))
+
+    headers = {}
+    if reply_to_address:
+        headers['Reply-To'] = reply_to_address
+
+    # Sender is not really helpful. Outlook: "Sender on behalf of From"
+    # sender = getattr(settings, 'NOTIFICATION_SENDER_ADDRESS', None)
+    # if sender:
+    #     headers['Sender'] = sender
+
+    # post_office's render does not switch to the passed langugage
+    # let's help 'em out
+    translation.activate(language)
 
     email = mail.send(
         recipients,
@@ -124,14 +139,18 @@ def send_template_mail(recipients, template, context, attachments=None, priority
         priority=priority,
         template=template,
         context=context,
-        attachments=attachments
+        attachments=attachments,
+        headers=headers,
+        language=language
     )
+
+    translation.deactivate()
 
     to_display = ", ".join(email.to)
     if priority == mail.PRIORITY.now:
-        warnings.warn(_("Send email to %s with subject '%s'.") % (to_display, email.subject), EmailInformation)
+        warnings.warn(_("Send email to %s with subject '%s' (%s).") % (to_display, email.subject, language), EmailInformation)
     else:
-        warnings.warn(_("Queued email to %s with subject '%s'.") % (to_display, email.subject), EmailInformation)
+        warnings.warn(_("Queued email to %s with subject '%s' (%s).") % (to_display, email.subject, language), EmailInformation)
 
     return email
 
