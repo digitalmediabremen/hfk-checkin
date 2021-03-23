@@ -32,7 +32,6 @@
 {% endblock %}
 
 {% block footer %}
-<table role="presentation" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td class="content-block">
             {% block footer_reason %}
@@ -42,15 +41,5 @@
             {% endblock %}
         </td>
     </tr>
-    <tr>
-        <td class="content-block">
-            {% block footer_legal %}
-{#            {% if support_email %}#}
-            <span class="apple-link">{% blocktranslate %}Bitte wenden Sie sich bei Fragen oder Problemen an <a
-                    href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.{% endblocktranslate %}</span>
-{#            {% endif %}#}
-            {% endblock %}
-        </td>
-    </tr>
-</table>
+    {{ block.super }}
 {% endblock %}

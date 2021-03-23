@@ -483,27 +483,20 @@
 
                     <!-- START FOOTER -->
                     <div class="footer">
-                        {% block footer %}
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                            <tr>
-                                <td class="content-block">
-                                    {% block footer_reason %}
-                                    <span class="apple-link">Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.</span>
-                                    <span class="apple-link">Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a
-                                            href="{{ url_root }}/help">Hilfeseite</a> zu finden.</span>
-                                    {% endblock %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="content-block">
-                                    {% block footer_legal %}
-                                    <span class="apple-link">Bitte wenden Sie sich bei Fragen oder Problemen an <a
-                                            href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.</span>
-                                    {% endblock %}
-                                </td>
-                            </tr>
-                        </table>
+                        {% block footer %}
+                        <tr>
+                            <td class="content-block">
+                                {% block footer_legal %}
+                    {#            {% if support_email %}#}
+                                <span class="apple-link">{% blocktranslate %}Bitte wenden Sie sich bei Fragen oder Problemen an <a
+                                        href="mailto:{{ support_email|default:"support@example.com" }}">{{ support_email|default:"support@example.com" }}</a>.{% endblocktranslate %}</span>
+                    {#            {% endif %}#}
+                                {% endblock %}
+                            </td>
+                        </tr>
                         {% endblock %}
+                    </table>
                     </div>
                     <!-- END FOOTER -->
 

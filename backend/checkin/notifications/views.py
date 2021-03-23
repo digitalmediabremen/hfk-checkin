@@ -22,7 +22,7 @@ class TemplatePreviewView(View):
         #     'message': "If you receive this message your settings might be correct.",
         #     'subject': "Test Notification from management command",
         # }
-        template_id = request.GET.get('template', default=NotificationEmailTemplate.objects.last().pk)
+        template_id = kwargs.get('object_id')
         language = request.GET.get('language', default=settings.LANGUAGE_CODE)
         if language not in [l[0] for l in settings.LANGUAGES]:
             raise Http404("Language '%s' not in settings.LANGUAGES." % language)
@@ -32,7 +32,6 @@ class TemplatePreviewView(View):
         #tt = get_email_template(tt.name)
         email = Email(template=tt, context=context)
         # message = message.email_message()
-        # print(message)
         translation.activate(language)
         engine = get_template_engine()
         subject = engine.from_string(email.template.subject).render(context)
