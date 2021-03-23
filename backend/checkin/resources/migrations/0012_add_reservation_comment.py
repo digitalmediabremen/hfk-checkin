@@ -8,7 +8,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0012_auto_20210315_1803'),
         ('resources', '0011_auto_20210322_2119'),
     ]
 
