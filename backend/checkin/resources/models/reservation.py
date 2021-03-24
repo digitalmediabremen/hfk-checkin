@@ -741,8 +741,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                         self.cancel_reason.category.description_fi,
                         self.cancel_reason.category.description_en,
                         self.cancel_reason.category.description_sv)
-            elif notification_type in [NotificationType.RESERVATION_WAITING_FOR_PAYMENT]:
-                context['payment_url'] = self.order.payment_url
+            # elif notification_type in [NotificationType.RESERVATION_WAITING_FOR_PAYMENT]:
+            #     context['payment_url'] = self.order.payment_url
 
             # Get last main and ground plan images. Normally there shouldn't be more than one of each
             # of those images.
