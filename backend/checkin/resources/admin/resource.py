@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
-from .other import FixedGuardedModelAdminMixin
+from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from django.urls import reverse, path
 from django.template.response import TemplateResponse
 from django import forms
@@ -20,6 +20,8 @@ from .permission_inlines import (
     ReservationDelegatesForResourceUserPermissionInline,
 )
 
+from .autocomplete_views import *
+
 
 class ResourceTypeAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, TranslationAdmin):
     list_display = ('name', 'main_type','pk')
@@ -35,7 +37,7 @@ class SelectResourceForm(forms.Form):
 
 
 class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, DynamicArrayMixin, ModifiableModelAdminMixin,
-                       FixedGuardedModelAdminMixin, admin.ModelAdmin):
+                       FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin, admin.ModelAdmin):
     inlines = [
         # PeriodInline,
         # ResourceEquipmentInline,
@@ -106,6 +108,9 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
         form.instance.update_opening_hours()
+
+    def autocomplete_view(self, request):
+        return ResourceAutocompleteJsonView.as_view(model_admin=self)(request)
 
     def get_urls(self):
         # get the default urls

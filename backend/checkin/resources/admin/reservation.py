@@ -13,12 +13,13 @@ from django.core.exceptions import ValidationError
 from django import forms
 from post_office.models import Email
 from django.urls import reverse
-from .other import FixedGuardedModelAdminMixin
+from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from .resource import ResourceAdmin
 from .list_filters import ResourceFilter, UserFilter
 from django.contrib.admin.utils import format_html
 from ..models.permissions import RESERVATION_VALIDATION_PERMISSIONS
 from ..models.reservation import StaticReservationPurpose
+from ..models.resource import Resource
 from .other import DisableableRadioSelect
 from ..auth import is_general_admin
 from guardian.shortcuts import get_objects_for_user
@@ -144,14 +145,21 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     )
     radio_fields = {'state': admin.HORIZONTAL}
 
+    def get_permitted_resources_qs(self, request):
+        resources_qs = get_objects_for_user(request.user, 'resources.resource:can_modify_reservations')
+        units_qs = get_objects_for_user(request.user, 'resources.unit:can_modify_reservations')
+        # return all resources with permission on Resource or on Resource.unit
+        resources_qs |= Resource.objects.filter(unit__in=units_qs)
+        return resources_qs
+
+    # def get_list_filter(self, request):
+    #     return map(lambda x: x if x != ResourceFilter else 'resource', self.list_filter)
+
     def get_queryset(self, request):
         qs = super().get_queryset(request).select_related('user', 'user__profile')
         if is_general_admin(request.user):
             return qs
-        resources = get_objects_for_user(request.user, 'resources.resource:can_modify_reservations')
-        qs = qs.filter(resource__in=resources)
-        units = get_objects_for_user(request.user, 'resources.unit:can_modify_reservations')
-        qs |= qs.filter(resource__unit__in=units)
+        qs = qs.filter(resource__in=self.get_permitted_resources_qs(request))
         return qs
 
     def get_readonly_fields(self, request, obj=None):

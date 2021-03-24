@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.admin.utils import unquote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.contrib.admin.options import get_permission_codename
 #from django.contrib.gis.admin import OSMGeoAdmin
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
@@ -16,6 +17,7 @@ from django.template.response import TemplateResponse
 from guardian import admin as guardian_admin
 #from image_cropping import ImageCroppingMixin
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline, TranslationTabularInline
+from guardian.shortcuts import get_objects_for_user
 
 #from checkin.resources.models import RESERVATION_EXTRA_FIELDS
 from .mixins import ExtraReadonlyFieldsOnUpdateMixin, CommonExcludeMixin, PopulateCreatedAndModifiedMixin
@@ -58,6 +60,39 @@ class CustomUserManage(forms.Form):
 
 class CustomGroupManage(forms.Form):
     group = forms.ModelChoiceField(Group.objects.all())
+
+
+class ExtendedGuardedModelAdminMixin():
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Check global permission
+        if super().has_change_permission(request): #\
+            # or (not self.list_editable and self.has_view_permission(request)):
+                return qs
+        # No global, filter by row-level permissions. also use view permission if the changelist is not editable
+        if self.list_editable:
+            return get_objects_for_user(request.user, [get_permission_codename('change', self.opts)], qs)
+        else:
+            return get_objects_for_user(request.user, [get_permission_codename('change', self.opts),
+                                                       get_permission_codename('view', self.opts)], qs, any_perm=True, accept_global_perms=False)
+
+    def has_change_permission(self, request, obj=None):
+        if super().has_change_permission(request, obj):
+            return True
+        if obj is None:
+            # Here check global 'view' permission or if there is any changeable items
+            return self.has_view_permission(request) or self.get_queryset(request).exists()
+        else:
+            # Row-level checking
+            return request.user.has_perm(get_permission_codename('change', self.opts), obj)
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.has_perm(get_permission_codename('view', self.opts), obj)
+
+    def has_delete_permission(self, request, obj=None):
+        return super().has_delete_permission(request, obj) \
+                or (obj is not None and request.user.has_perm(get_permission_codename('delete', self.opts), obj))
 
 
 class FixedGuardedModelAdminMixin(guardian_admin.GuardedModelAdminMixin):
