@@ -31,7 +31,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
 
 
     class AttendanceAdmin(admin.ModelAdmin):
-        list_display = ('user', 'reservation', 'is_external_user', 'state', 'comment')
+        list_display = ('user', 'reservation', 'get_is_external_user', 'state', 'comment')
         list_filter = ('state',)
         list_editable = ('state','comment')
         readonly_fields = ('user', 'reservation', 'get_reservation_organizer','get_reservation_resource',)
@@ -44,6 +44,11 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         def get_reservation_resource(self, obj):
             return obj.reservation.resource
         get_reservation_resource.short_description = _("Space")
+
+        def get_is_external_user(self, obj):
+            return obj.reservation.user.is_external
+        get_is_external_user.short_description = _("External")
+        get_is_external_user.boolean = True
 
 
     class ExternalAttendanceAdmin(AttendanceAdmin):
