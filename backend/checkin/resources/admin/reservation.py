@@ -28,6 +28,13 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 logger = logging.getLogger(__name__)
 
 
+# model-wide filter on Users that can be assigned to reservations.
+# use as qs.filter(**USERS_IN_RESERVATIONS_QS_FILTER)
+USERS_IN_RESERVATIONS_QS_FILTER = {
+    'profile__is_external': False,
+}
+
+
 class AttendanceInline(admin.TabularInline):
     autocomplete_fields = ('user',)
     model = Attendance
@@ -335,7 +342,11 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     def get_form(self, request, obj=None, **kwargs):
         if obj:
             self._original_state = obj.state
-        return super().get_form(request, obj, **kwargs)
+        form = super().get_form(request, obj, **kwargs)
+        # limit users to non-external users only
+        # FIXME does not work if user is autocomplete field
+        # form.base_fields['user'].queryset = form.base_fields['user'].queryset.filter(**USERS_IN_RESERVATIONS_QS_FILTER)
+        return form
 
     def process_state_change_and_warn(self, request, obj, form, change):
         # FIXME what if no _original_state. New object?

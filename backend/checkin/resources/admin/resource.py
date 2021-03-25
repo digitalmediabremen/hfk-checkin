@@ -91,7 +91,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        # TODO filter to resourced request.user has "access" to.
+        # queryset is already filtered based on permissions of request.user in get_queryset (see ExtendedGuardedModelAdminMixin)
         queryset = queryset.filter(reservable=True)
         return queryset, use_distinct
 

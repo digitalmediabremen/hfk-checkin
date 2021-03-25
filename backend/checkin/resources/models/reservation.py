@@ -573,8 +573,9 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         return format_dt_range(translation.get_language(), begin, end)
 
     def clean(self, **kwargs):
+        super().clean(**kwargs)
         try:
-                self.validate_reservation(**kwargs)
+            self.validate_reservation(**kwargs)
         except ReservationWarning:
             # non critical warnings will be skipped when saving.
             pass
@@ -591,6 +592,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         Data integrity failures shall raise ValidationErrors instead.
         """
 
+        # Model.clean() is run even if clean_fields() has raised exceptions.
+        # Skip further validation if required fields are missing.
+        if not hasattr(self, 'user') or not hasattr(self, 'resource'):
+            return
+
         if 'user' in kwargs:
             user = kwargs['user']
         else:
@@ -601,7 +607,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         #     raise ValidationError("You must specify a organizer.")
 
         if not user.is_verified:
-            raise ValidationError(gettext("Organizer (%s) is not verified. Please verify before making reservations." % user))
+            raise ValidationError(gettext("%s is not verified. Please verify before making reservations." % user))
+
+        if not user.is_external:
+            # external users currently can not make reservations because we do not have e-mail addresses for them :/
+            raise ValidationError(gettext("%s is an external user. External users can not make reservations." % user))
 
         if not self.resource.reservable:
             raise ValidationError(gettext("This resource is not reservable. Sorry."))

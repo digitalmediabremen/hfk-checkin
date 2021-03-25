@@ -75,6 +75,15 @@ class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, Djang
     add_form = UserCreationForm
     inlines = [UserProfileAdminInline]
 
+    # All staff users need view permission on Users to successfully use autocomplete fields.
+    # Still UserAdmin shall be hidden from admin list for regular (non admin / manager) users.
+    def has_view_permission(self, request, obj=None):
+        return request.user.is_staff or super().has_view_permission(request, obj)
+
+    # protect user data by not allowing viewing changelist / changeform without explicit permission
+    def has_view_or_change_permission(self, request, obj=None):
+        return super().has_view_permission(request, obj) or self.has_change_permission(request, obj)
+
     # FIXME get_search_results is apparently also used on Admin's changelist view, not only on automplete.
     # FIXME therefore it is still all or nothing, which will not help if we want to hide / protect user data against lookups.
     # def get_queryset(self, request, allow_any=False):
