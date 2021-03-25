@@ -300,17 +300,6 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                     messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
             if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
                 messages.add_message(request, messages.WARNING, _("The organizer is missing from attendance list."))
-            # organizer_reservation_validation_permissions = obj.user.get_all_permissions()
-            # validation_permissions = {'%s.%s' % (Reservation._meta.app_label, perm_codename): label for
-            #                           perm_codename, label in RESERVATION_VALIDATION_PERMISSIONS}
-            # assigned_permission_labelsassigned_permission = {key: validation_permissions[key] for key in organizer_reservation_validation_permissions}
-            # FIXME str() fails to translate label?
-            # assigned_permission_labels = [str(validation_permissions[key]) for key in
-            #                               organizer_reservation_validation_permissions if key in validation_permissions]
-            # if len(assigned_permission_labels) > 0:
-            #     message = gettext("The organizer has one or more validation permissions: %(assigned_permissions)s") % {
-            #         'assigned_permissions': ", ".join(assigned_permission_labels)}
-            #     messages.add_message(request, messages.INFO, message)
 
             groups_to_display = ReservationUserGroup.objects.filter(visible_in_reservation=True)
             assigned_groups = obj.user.groups.filter(pk__in=groups_to_display).all()
