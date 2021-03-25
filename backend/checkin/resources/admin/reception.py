@@ -7,6 +7,8 @@ from django.shortcuts import redirect
 from django.utils.http import urlencode
 from .reservation import Reservation
 from django.core.exceptions import PermissionDenied
+from urllib.parse import urlparse
+from django.shortcuts import redirect
 
 from django.conf import settings
 if 'checkin.tracking' in settings.INSTALLED_APPS:
@@ -159,8 +161,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         def process_checkin(self, request, uuid, *args, **kwargs):
             if not request.user.has_perm('attendance_can_register_attendance'):
                 raise PermissionDenied
-            from django.shortcuts import redirect
-            # FIXME back-relation zwischen Resource und Location/Checkin fehlt.
+            # FIXME reverse-relation zwischen Resource und Location/Checkin fehlt.
             # c = Checkin(location_id=5, origin=Checkin.FRONTDESK_MANUAL)
             # c.save()
             attendance = self.model.objects.get(uuid=uuid)
@@ -171,20 +172,25 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             checkin, new = attendance.checkin_set.checkin(profile=attendance.user, location=location, origin=CheckinOrigin.FRONTDESK_MANUAL, include_ancestors=False)
             checkin = attendance.checkin_set.add(checkin)
             attendance.save()
-            info = self.model._meta.app_label, self.model._meta.model_name
-            return redirect(reverse('admin:%s_%s_changelist' % info))
+            return self._redirect_after_record(request)
 
         def process_checkout(self, request, uuid, *args, **kwargs):
             if not request.user.has_perm('attendance_can_register_attendance'):
                 raise PermissionDenied
-            from django.shortcuts import redirect
             attendance = self.model.objects.get(uuid=uuid)
             try:
                 last_checkin = attendance.checkin_set.order_by('time_entered')[0]
                 last_checkin.checkout(origin=CheckinOrigin.FRONTDESK_MANUAL, include_descendants=False)
             except (IndexError, KeyError):
                 pass
+            return self._redirect_after_record(request)
+
+        def _redirect_after_record(self, request):
             info = self.model._meta.app_label, self.model._meta.model_name
+            if 'HTTP_REFERER' in request.META:
+                query_params = urlparse(request.META['HTTP_REFERER']).query
+                if query_params:
+                    return redirect(reverse('admin:%s_%s_changelist' % info) + '?' + query_params)
             return redirect(reverse('admin:%s_%s_changelist' % info))
 
         def changelist_view(self, request, extra_context=None):
