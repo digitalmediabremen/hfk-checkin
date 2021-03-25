@@ -610,7 +610,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if not user.is_verified:
             raise ValidationError(gettext("%s is not verified. Please verify before making reservations." % user))
 
-        if not user.is_external:
+        if user.is_external:
             # external users currently can not make reservations because we do not have e-mail addresses for them :/
             raise ValidationError(gettext("%s is an external user. External users can not make reservations." % user))
 
