@@ -11,6 +11,8 @@ from post_office.models import Email, get_template_engine, EmailTemplate
 from django.conf import settings
 from django.http import Http404
 from django.utils import translation
+from django.template import RequestContext, Template
+from .context_processors import email_notifications as email_notifications_processor
 
 class TemplatePreviewView(View):
 
@@ -26,7 +28,9 @@ class TemplatePreviewView(View):
         language = request.GET.get('language', default=settings.LANGUAGE_CODE)
         if language not in [l[0] for l in settings.LANGUAGES]:
             raise Http404("Language '%s' not in settings.LANGUAGES." % language)
-        context = SendTestEmailCommand.get_context()
+        context = RequestContext(request, SendTestEmailCommand.get_context(), processors=[
+            email_notifications_processor,
+        ])
         # EmailTemplate != NotificationEmailTemplate
         tt = EmailTemplate.objects.get(default_template_id=template_id, language=language)
         #tt = get_email_template(tt.name)
@@ -34,8 +38,8 @@ class TemplatePreviewView(View):
         # message = message.email_message()
         translation.activate(language)
         engine = get_template_engine()
-        subject = engine.from_string(email.template.subject).render(context)
+        subject = Template(email.template.subject).render(context)
         context['subject'] = subject
-        html_message = engine.from_string(email.template.html_content).render(context)
+        html_message = Template(email.template.html_content).render(context)
         translation.deactivate()
         return HttpResponse(content=html_message)

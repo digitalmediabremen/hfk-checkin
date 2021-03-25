@@ -221,7 +221,8 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                #"nucleus.context_processors.nucleus",
+                #"checkin.notifications.context_processors.email_notifications",
+                # "nucleus.context_processors.nucleus",
                 'microsoft_auth.context_processors.microsoft',
             ],
         },
@@ -269,6 +270,7 @@ RESOURCES_FROM_ADDRESS = "no-reply@getin.hfk-bremen.de"
 NOTIFICATION_SENDER_ADDRESS = "getin@hfk-bremen.de"
 NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
+FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL')
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
@@ -278,7 +280,8 @@ POST_OFFICE = {
 }
 
 PREMAILER_OPTIONS = {
-    'base_url': 'https://%s' % getenv('SITE_URL', default='no-site-url.example.com'),
+    # FIXME base_url could be taken from context / request
+    'base_url': 'https://%s' % getenv('SITE_DOMAIN'),
     'cssutils_logging_level': logging.FATAL,
 }
 

@@ -19,6 +19,8 @@ from rest_framework.reverse import reverse
 #import xlsxwriter
 import warnings
 from django.utils import translation
+from checkin.notifications.context_processors import email_notifications as email_notifications_processor
+from django.template import Context
 
 DEFAULT_LANG = settings.LANGUAGES[0][0]
 
@@ -123,6 +125,8 @@ def send_template_mail(recipients, template, context, attachments=None, from_add
     headers = {}
     if reply_to_address:
         headers['Reply-To'] = reply_to_address
+
+    context = Context({**context, **email_notifications_processor()})
 
     # Sender is not really helpful. Outlook: "Sender on behalf of From"
     # sender = getattr(settings, 'NOTIFICATION_SENDER_ADDRESS', None)

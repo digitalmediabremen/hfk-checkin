@@ -448,7 +448,7 @@
                             <td class="content-block">
                                 {% block footer_legal %}
                     {#            {% if support_email %}#}
-                                <span class="apple-link">{% blocktranslate with support_email=support_email|default:"support@example.com" %}Bitte wenden Sie sich bei Fragen oder Problemen an <a
+                                <span class="apple-link">{% blocktranslate with support_email=SUPPORT_EMAIL %}Bitte wenden Sie sich bei Problemen an <a
                                         href="mailto:{{ support_email }}">{{ support_email }}</a>.{% endblocktranslate %}</span>
                     {#            {% endif %}#}
                                 {% endblock %}
