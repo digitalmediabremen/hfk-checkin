@@ -350,8 +350,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             for w in warns:
                 messages.add_message(request, messages.INFO, str(w.message))
         # show resulted (new state verbose) state as message
-        # messages.add_message(request, messages.INFO,
-        #                      _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
+        messages.add_message(request, messages.INFO,
+                             _("New state: %(state_verbose)s" % {'state_verbose': str(obj.get_state_verbose())}))
         # actually save obj
 
     def save_model(self, request, obj, form, change):

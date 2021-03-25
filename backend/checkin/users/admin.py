@@ -232,7 +232,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','is_external','user','created_at')
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
-    list_editable = ('verified',)
+    list_editable = ('verified','is_external')
     list_filter = ('updated_at','created_at','verified','is_external')
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('created_at', 'updated_at','user')

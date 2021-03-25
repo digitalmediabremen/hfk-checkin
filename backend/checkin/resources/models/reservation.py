@@ -504,7 +504,9 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def get_state_verbose(self):
         # TODO add this verbose state in modelhistory details?
         if self._state_verbose is None:# or not isinstance(self._state_verbose, str):
-            return _("Reservation %s: %s" % (self.identifier, self.state))
+            # default state has not been useful in Frontend so far. Return no state at all.
+            # return _("Reservation %s: %s" % (self.identifier, self.state))
+            return ""
         else:
             return self._state_verbose
 
