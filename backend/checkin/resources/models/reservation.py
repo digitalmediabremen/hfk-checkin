@@ -27,6 +27,8 @@ from django.db.models.fields import IntegerField
 from .utils import get_translated
 from .base import NameIdentifiedModel
 
+from django.contrib.humanize.templatetags.humanize import naturalday, naturaltime
+
 #from checkin.notifications.models import NotificationTemplate, NotificationTemplateException, NotificationType
 from checkin.notifications.models import NotificationEmailTemplate
 from checkin.notifications.types import NotificationType
@@ -299,6 +301,22 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         str_begin = datefilter(self.begin_in_resource_tz_naive, 'D j.n. H:i')
         str_end = datefilter(self.end_in_resource_tz_naive, 'H:i')
         str_days = ngettext('%d day','%d days',timedelta.days) % timedelta.days
+        if timedelta.days > 0:
+            str_end += " (+%s)" % str_days
+        return "%s – %s" % (str_begin, str_end)
+
+    def get_display_duration_date(self, humanize=False):
+        str_begin = datefilter(self.begin_in_resource_tz_naive, 'D j.n.')
+        if humanize:
+            return naturalday(self.begin)
+        return str_begin
+
+    def get_display_duration_time(self):
+        timedelta = self.end_in_resource_tz_naive - self.begin_in_resource_tz_naive
+        # this is not strftime formatters but django's localized template formatters using https://php.net/date
+        str_begin = datefilter(self.begin_in_resource_tz_naive, 'H:i')
+        str_end = datefilter(self.end_in_resource_tz_naive, 'H:i')
+        str_days = ngettext('%d day', '%d days', timedelta.days) % timedelta.days
         if timedelta.days > 0:
             str_end += " (+%s)" % str_days
         return "%s – %s" % (str_begin, str_end)

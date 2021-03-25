@@ -23,6 +23,7 @@ from ..models.users import ReservationUserGroup
 from .other import DisableableRadioSelect
 from ..auth import is_general_admin
 from guardian.shortcuts import get_objects_for_user
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 logger = logging.getLogger(__name__)
 
@@ -99,8 +100,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                        admin.ModelAdmin):
     # extra_readonly_fields_on_update = ('access_code',)
     list_display = (
-    'get_state_colored', 'user', 'resource', 'get_display_duration', 'number_of_attendees', 'get_collisions',
-    'get_priority', 'get_exclusive')
+    'get_state_colored', 'user', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'get_collisions',
+    'get_exclusive', 'get_created_at_display') #'get_priority',
     list_filter = (ResourceFilter, 'resource__unit', 'state', 'has_priority', 'exclusive_resource_usage', 'purpose',
                    UserFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
@@ -124,6 +125,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     list_max_show_all = 50
     list_per_page = 30
     save_on_top = True
+    ordering = ['-created_at']
 
     fieldsets = (
         (None, {
@@ -176,7 +178,6 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         if obj and obj.resource:
             return obj.resource.reservation_info
         return self.get_empty_value_display()
-
     get_reservation_info.short_description = _("Resource instructions")
 
     def get_phone_number(self, obj):
@@ -184,19 +185,16 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         if obj.agreed_to_phone_contact:
             return obj.organizer.phone
         return _('(phone contact not allowed)')
-
     get_phone_number.short_description = _("Phone number")
 
     def get_priority(self, obj):
         return obj.has_priority
-
     get_priority.short_description = _("Prio.")
     get_priority.admin_order_field = 'has_priority'
     get_priority.boolean = True
 
     def get_exclusive(self, obj):
         return obj.exclusive_resource_usage
-
     get_exclusive.short_description = _("Excl.")
     get_exclusive.admin_order_field = 'exclusive_resource_usage'
     get_exclusive.boolean = True
@@ -207,15 +205,28 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             return getattr(StaticReservationPurpose, purpose).label if hasattr(StaticReservationPurpose,
                                                                                    purpose) else obj.purpose
         return '-'
-
     get_purpose_display.short_description = _("Purpose")
     get_purpose_display.admin_order_field = 'purpose'
 
     def get_display_duration(self, obj):
         return obj.display_duration
-
     get_display_duration.short_description = _("Timespan")
     get_display_duration.admin_order_field = 'begin'
+
+    def get_date_display(self, obj):
+        return obj.get_display_duration_date(humanize=True)
+    get_date_display.short_description = _("Date")
+    get_date_display.admin_order_field = 'begin'
+
+    def get_time_display(self, obj):
+        return obj.get_display_duration_time()
+    get_time_display.short_description = _("Time")
+    get_time_display.admin_order_field = 'begin'
+
+    def get_created_at_display(self, obj):
+        return naturaltime(obj.created_at)
+    get_created_at_display.short_description = _("Created at")
+    get_created_at_display.admin_order_field = 'created_at'
 
     def get_collisions(self, obj):
         # FIXME this causes an extra query for each reservation displayed. optimize!
