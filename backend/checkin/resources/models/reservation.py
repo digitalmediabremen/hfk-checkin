@@ -807,6 +807,9 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         encoding = 'utf-8'
         recipient = user
 
+        if recipient.has_perm('reservation_skip_notification'):
+            logger.debug('Skipping to send notification to %s because permission reservation_skip_notification is set.' % str(recipient))
+
         try:
             notification_template = NotificationEmailTemplate.objects.get(type=notification_type)
             # reduce to post-office's template

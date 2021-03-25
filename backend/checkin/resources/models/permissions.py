@@ -4,7 +4,9 @@ from guardian.core import ObjectPermissionChecker
 
 # Always update permissions.rst documentation accordingly after modifying this file!
 
-RESERVATION_PERMISSIONS = tuple()
+RESERVATION_PERMISSIONS = (
+    ('skip_notification', _('Do not send notifications for reservations')),
+)
 
 SHARED_PERMISSIONS = (
     ('can_modify_reservations', _('Can modify reservations')),
