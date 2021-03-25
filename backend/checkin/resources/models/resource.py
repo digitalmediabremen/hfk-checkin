@@ -444,7 +444,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     def check_capacity_exhausted(self, begin, end, reservation=None):
         if not self.people_capacity:
             return False
-        if self.get_total_number_of_attendees_for_period(begin, end, reservation) > self.people_capacity:
+        if self.get_total_number_of_attendees_for_period(begin, end, reservation) >= self.people_capacity:
             return True
         return False
 
