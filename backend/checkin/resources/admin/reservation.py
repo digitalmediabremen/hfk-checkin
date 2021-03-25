@@ -154,13 +154,6 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     )
     radio_fields = {'state': admin.HORIZONTAL}
 
-    def get_permitted_resources_qs(self, request):
-        resources_qs = get_objects_for_user(request.user, 'resources.resource:can_modify_reservations')
-        units_qs = get_objects_for_user(request.user, 'resources.unit:can_modify_reservations')
-        # return all resources with permission on Resource or on Resource.unit
-        resources_qs |= Resource.objects.filter(unit__in=units_qs)
-        return resources_qs
-
     # def get_list_filter(self, request):
     #     return map(lambda x: x if x != ResourceFilter else 'resource', self.list_filter)
 
@@ -168,7 +161,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         qs = super().get_queryset(request).select_related('user', 'user__profile')
         if is_general_admin(request.user):
             return qs
-        qs = qs.filter(resource__in=self.get_permitted_resources_qs(request))
+        qs = qs.filter(resource__in=Resource.objects.get_resources_reservation_delegated_to_user(request.user))
         return qs
 
     def get_readonly_fields(self, request, obj=None):

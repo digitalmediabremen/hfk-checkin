@@ -45,6 +45,10 @@ UNIT_PERMISSIONS = [
     (
         *SHARED_PERMISSIONS,
         ('can_confirm_users', _('Can confirm (external) users')),
+        ('view_resource', _('Can view Spaces within Unit')),
+        ('change_resource', _('Can change Spaces within Unit')),
+        ('delete_resource', _('Can delete Spaces within Unit')),
+        ('add_resource', _('Can add Spaces within Unit')),
     )
 ]
 

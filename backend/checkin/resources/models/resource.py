@@ -200,6 +200,13 @@ class ResourceManager(models.Manager.from_queryset(ResourceQuerySet)):
         return super(ResourceManager, self).get_queryset() \
             .annotate_capacity_calculation()
 
+    def get_resources_reservation_delegated_to_user(self, user):
+        resources_qs = get_objects_for_user(user, ['resource:can_modify_reservations'], klass=self.model)
+        units_qs = get_objects_for_user(user, 'unit:can_modify_reservations', klass=Unit)
+        # return all resources with permission 'can_modify_reservations' on Resource or on Resource.unit
+        resources_qs |= self.get_queryset().filter(unit__in=units_qs)
+        return resources_qs
+
 
 def get_default_unit():
     unit = Unit.objects.first()
@@ -687,8 +694,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         if checker.has_perm('resource:%s' % perm, self):
             return True
         # Permissions can be given per-unit
-        # if checker.has_perm('unit:%s' % perm, self.unit):
-        #     return True
+        if checker.has_perm('unit:%s' % perm, self.unit):
+            return True
         # # ... or through Resource Groups
         # resource_group_perms = [checker.has_perm('group:%s' % perm, rg) for rg in self.groups.all()]
         # return any(resource_group_perms)

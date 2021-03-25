@@ -9,6 +9,7 @@ from django.template.response import TemplateResponse
 from django import forms
 from django.contrib.admin.widgets import AutocompleteSelect
 from django.contrib.admin.options import get_content_type_for_model, unquote, capfirst, PermissionDenied, IS_POPUP_VAR
+from django.contrib.admin.options import get_permission_codename
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +90,10 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     list_max_show_all = 1000
     filter_horizontal = ('features',)
 
+    def get_queryset(self, request):
+        # overwriting get_queryset from ExtendedGuardedModelAdminMixin and ModelAdmin
+        return self.model.objects.get_resources_reservation_delegated_to_user(request.user)
+
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         # queryset is already filtered based on permissions of request.user in get_queryset (see ExtendedGuardedModelAdminMixin)
@@ -123,6 +128,12 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         # Make sure here you place your added urls first than the admin default urls
         return custom_urls + urls
 
+    # "inherit" permissions from unit (and resourcegrups) via permission checker on Resource instance
+    def has_view_permission(self, request, obj=None):
+        if obj:
+            return obj._has_perm(request.user, perm=get_permission_codename('view', self.opts))
+        return super().has_view_permission(request, obj)
+
     @staticmethod
     def get_resource_calendar_extra_context(object_id=None):
         return dict(
@@ -136,8 +147,6 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     #         **self.get_resource_calendar_extra_context(uuid)
     #     )
     #     return TemplateResponse(request, "admin/resources/resource_calendar.html", context)
-
-
 
     def calendar_view(self, request, object_id, extra_context=None):
         "The 'history' admin view for this model."

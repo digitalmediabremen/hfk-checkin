@@ -4,6 +4,7 @@ from ..models.resource import Resource
 from ..models.reservation import Reservation
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from .other import ExtendedGuardedModelAdminMixin
 
 
 class ResourceAccess(Resource):
@@ -12,6 +13,7 @@ class ResourceAccess(Resource):
         managed = False
         verbose_name = _("Access Permissions")
         verbose_name_plural = _("Access Permissions for Spaces")
+        default_permissions = ()
 
 
 class ResourceAccessAdmin(ResourceAdmin):
@@ -39,6 +41,7 @@ class ReservationAttendance(Reservation):
         managed = False
         verbose_name = _("Attendance list for reservation")
         verbose_name_plural = _("Attendance list for reservations")
+        default_permissions = ()
 
 
 class ReservationAttendanceAdmin(ReservationAdmin):

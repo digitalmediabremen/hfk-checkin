@@ -90,6 +90,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             proxy = True
             verbose_name = _("Attendance registration")
             verbose_name_plural = _("Attendance registrations")
+            default_permissions = ()
 
         def __str__(self):
             return _("%(profile)s on %(date)s for reservation %(reservation)s") % \
