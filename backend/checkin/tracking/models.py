@@ -335,6 +335,10 @@ class CheckinQuerySet(models.QuerySet):
 
         return checkin, True
 
+    def only_user_generated(self):
+        exclude_types = (Origin.ADMIN_MANUAL, Origin.FRONTDESK_MANUAL, Origin.IMPORT)
+        return self.exclude(origin_entered__in=exclude_types).exclude(origin_left__in=exclude_types)
+
 
 class LimitedCheckinManager(models.Manager):
 

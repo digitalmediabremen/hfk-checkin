@@ -146,10 +146,16 @@ class SimpleUserProfileSerializer(BaseUserProfileSerializer):
 class UserProfileSerializer(BaseUserProfileSerializer):
     # if 'checkin.tracking' in settings.INSTALLED_APPS:
     from checkin.tracking.serializers import SimpleCheckinSerializer
-    last_checkins = SimpleCheckinSerializer(many=True, read_only=True, source='profile.checkin_set')
+    last_checkins = serializers.SerializerMethodField('get_last_checkins')
     # if 'checkin.resources' in settings.INSTALLED_APPS:
     # from checkin.resources.api.nested import SimpleReservationSerializer
     # reservations = SimpleReservationSerializer(many=True, read_only=True, source='reservation_set')
+
+    def get_last_checkins(self, obj):
+        from checkin.tracking.serializers import SimpleCheckinSerializer
+        items = obj.profile.checkin_set.only_user_generated()[:30]
+        serializer = SimpleCheckinSerializer(many=True, instance=items)
+        return serializer.data
 
     class Meta(BaseUserProfileSerializer.Meta):
         fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']

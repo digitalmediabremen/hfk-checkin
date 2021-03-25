@@ -130,7 +130,7 @@ class CheckinViewSet(viewsets.ReadOnlyModelViewSet):
         profile = self.request.user.profile
         filter_active = self.request.query_params.get('active', None)
         filter_active = filter_active == "True" or filter_active == ""
-        qs = Checkin.objects.filter(profile=profile)
+        qs = Checkin.objects.only_user_generated().filter(profile=profile)
         if filter_active:
             return qs.active()
         return qs
