@@ -68,8 +68,6 @@ uritemplate = "*"
 django-premailer = "*"
 django-redis = "*"
 django-admin-autocomplete-filter = "*"
-jinja2 = "*"
-django-parler = "*"
 
 [requires]
 python_version = "3.7.10"
