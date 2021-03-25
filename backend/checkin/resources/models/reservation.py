@@ -806,7 +806,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         return context
 
-    def send_reservation_mail(self, notification_type, user=None, attachments=None, extra_context={}):
+    def send_reservation_mail(self, notification_type, user=None, reply_to_users=None, attachments=None, extra_context={}):
         """
         Stuff common to all reservation related mails.
 
@@ -855,9 +855,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if from_address:
             from_address = sanitize_address((self.resource.email_sender_name, from_address), encoding)
 
-        reply_to_users = self.resource.get_reservation_delegates()
         if not reply_to_users:
-            reply_to_users = self.resource.unit.get_reservation_delegates()
+            reply_to_users = self.resource.get_reservation_delegates()
         for u in reply_to_users:
             if u.is_external:
                 # FIXME emails for external users
@@ -896,7 +895,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
         for user in notify_users:
-            return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user, **kwargs)
+            return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user, reply_to_users=self.user, **kwargs)
         return []
 
     def send_access_requested_mail_to_officials(self, **kwargs):
@@ -918,7 +917,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         elif len(notify_users) < 1:
             raise ValueError("Can not notify user confirmation delegate because no delegate was set.")
         for user in notify_users:
-            return self.send_reservation_mail(NotificationType.RESERVATION_EXTERNAL_USER_REQUESTED_OFFICIAL, user=user, extra_context={
+            return self.send_reservation_mail(NotificationType.RESERVATION_EXTERNAL_USER_REQUESTED_OFFICIAL, user=user, reply_to_users=self.user, extra_context={
                 'external_attendee': external_attendee,
                 **extra_context
             }, **kwargs)
@@ -941,14 +940,14 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def send_reservation_cancelled_mail(self, **kwargs):
         return self.send_reservation_mail(NotificationType.RESERVATION_CANCELLED, **kwargs)
 
-    def send_reservation_created_mail(self, **kwargs):
-        reservations = [self]
-        ical_file = build_reservations_ical_file(reservations)
-        ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
-        attachments = [ics_attachment] + self.get_resource_email_attachments()
-
-        return self.send_reservation_mail(NotificationType.RESERVATION_CREATED,
-                                   attachments=attachments, **kwargs)
+    # def send_reservation_created_mail(self, **kwargs):
+    #     reservations = [self]
+    #     ical_file = build_reservations_ical_file(reservations)
+    #     ics_attachment = ('reservation.ics', ical_file, 'text/calendar')
+    #     attachments = [ics_attachment] + self.get_resource_email_attachments()
+    #
+    #     return self.send_reservation_mail(NotificationType.RESERVATION_CREATED,
+    #                                attachments=attachments, **kwargs)
 
     # def send_reservation_created_with_access_code_mail(self):
     #     reservations = [self]
