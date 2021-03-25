@@ -121,7 +121,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     autocomplete_fields = ('user', 'resource')
     readonly_fields = (
     'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_phone_number',
-    'get_purpose_display')
+    'get_purpose_display', 'created_at','created_by','modified_at','modified_by')
     extra_readonly_fields_edit = ('user', 'purpose','organizer_is_attending', 'type', 'message', 'purpose')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
@@ -146,10 +146,10 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             # 'has_priority', 'number_of_extra_attendees','organizer_is_attending',
             'fields': ('agreed_to_phone_contact', 'get_phone_number', 'type', 'uuid'),
         }),
-        # (_('Creation and modifications'), {
-        #     'classes': ('collapse',),
-        #     'fields': ('created_at','created_by','modified_at','modified_by'),
-        # }),
+        (_('Creation and modifications'), {
+            'classes': ('collapse',),
+            'fields': ('created_at','created_by','modified_at','modified_by'),
+        }),
     )
     radio_fields = {'state': admin.HORIZONTAL}
 
