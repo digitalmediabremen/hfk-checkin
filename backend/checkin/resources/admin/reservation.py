@@ -17,9 +17,9 @@ from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from .resource import ResourceAdmin
 from .list_filters import ResourceFilter, UserFilter
 from django.contrib.admin.utils import format_html
-from ..models.permissions import RESERVATION_VALIDATION_PERMISSIONS
 from ..models.reservation import StaticReservationPurpose
 from ..models.resource import Resource
+from ..models.users import ReservationUserGroup
 from .other import DisableableRadioSelect
 from ..auth import is_general_admin
 from guardian.shortcuts import get_objects_for_user
@@ -282,17 +282,28 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                     messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
             if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
                 messages.add_message(request, messages.WARNING, _("The organizer is missing from attendance list."))
-            organizer_reservation_validation_permissions = obj.user.get_all_permissions()
-            validation_permissions = {'%s.%s' % (Reservation._meta.app_label, perm_codename): label for
-                                      perm_codename, label in RESERVATION_VALIDATION_PERMISSIONS}
+            # organizer_reservation_validation_permissions = obj.user.get_all_permissions()
+            # validation_permissions = {'%s.%s' % (Reservation._meta.app_label, perm_codename): label for
+            #                           perm_codename, label in RESERVATION_VALIDATION_PERMISSIONS}
             # assigned_permission_labelsassigned_permission = {key: validation_permissions[key] for key in organizer_reservation_validation_permissions}
             # FIXME str() fails to translate label?
-            assigned_permission_labels = [str(validation_permissions[key]) for key in
-                                          organizer_reservation_validation_permissions if key in validation_permissions]
-            if len(assigned_permission_labels) > 0:
-                message = gettext("The organizer has one or more validation permissions: %(assigned_permissions)s") % {
-                    'assigned_permissions': ", ".join(assigned_permission_labels)}
+            # assigned_permission_labels = [str(validation_permissions[key]) for key in
+            #                               organizer_reservation_validation_permissions if key in validation_permissions]
+            # if len(assigned_permission_labels) > 0:
+            #     message = gettext("The organizer has one or more validation permissions: %(assigned_permissions)s") % {
+            #         'assigned_permissions': ", ".join(assigned_permission_labels)}
+            #     messages.add_message(request, messages.INFO, message)
+
+            groups_to_display = ReservationUserGroup.objects.filter(visible_in_reservation=True)
+            assigned_groups = obj.user.groups.filter(pk__in=groups_to_display).all()
+            if len(assigned_groups) > 0:
+                message = gettext("The organizer has one or more group assignments: %(assigned_groups)s") % {
+                    'assigned_groups': ", ".join([g.name for g in assigned_groups])}
                 messages.add_message(request, messages.INFO, message)
+
+
+
+
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         # add extra content for resource calendar

@@ -11,6 +11,7 @@ from checkin.resources.admin.other import (
     ResourceGroupAdmin,
     ResourceCapacityPolicyAdmin,
     ReservationPurposeAdmin,
+    ReservationUserGroupAdmin
 )
 
 from checkin.resources.admin.reservation import ReservationAdmin
@@ -32,9 +33,10 @@ from checkin.resources.models import (
     #Day,
     ResourceGroup,
     ResourceFeature,
-    ResourceCapacityPolicy
+    ResourceCapacityPolicy,
 )
 from checkin.resources.models.reservation import ReservationPurpose
+from checkin.resources.models.users import ReservationUserGroup
 
 #admin_site.register(ResourceImage, ResourceImageAdmin)
 admin_site.register(Resource, ResourceAdmin)
@@ -58,6 +60,7 @@ admin.site.register(ResourceCapacityPolicy, ResourceCapacityPolicyAdmin)
 #admin.site.register(AccessibilityViewpoint, AccessibilityViewpointAdmin)
 #admin.site.register(AccessibilityValue)
 #admin.site.register(ResourceAccessibility, ResourceAccessibilityAdmin)
+admin.site.register(ReservationUserGroup, ReservationUserGroupAdmin)
 
 # if admin.site.is_registered(Token):
 #     admin.site.unregister(Token)

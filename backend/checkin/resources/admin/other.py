@@ -17,6 +17,7 @@ from django.template.response import TemplateResponse
 from guardian import admin as guardian_admin
 #from image_cropping import ImageCroppingMixin
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline, TranslationTabularInline
+from checkin.users.admin import GroupAdmin
 from guardian.shortcuts import get_objects_for_user
 
 #from checkin.resources.models import RESERVATION_EXTRA_FIELDS
@@ -331,6 +332,10 @@ class RespaTokenAdmin(admin.ModelAdmin):
     fields = ('user',)
     ordering = ('-created',)
     raw_id_fields = ('user',)
+    
+    
+class ReservationUserGroupAdmin(GroupAdmin):
+    pass
 
 
 ## FIELDS and WIDGETS

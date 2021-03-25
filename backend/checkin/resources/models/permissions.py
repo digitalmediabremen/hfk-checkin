@@ -4,12 +4,7 @@ from guardian.core import ObjectPermissionChecker
 
 # Always update permissions.rst documentation accordingly after modifying this file!
 
-# FIXME alternatively move all of this to DB by subclassing Permission to ReservationValidationPermission
-RESERVATION_VALIDATION_PERMISSIONS = (
-    ('is_hardship_case', _('Hardship treatment')),
-)
-
-RESERVATION_PERMISSIONS = (*RESERVATION_VALIDATION_PERMISSIONS,)
+RESERVATION_PERMISSIONS = tuple()
 
 SHARED_PERMISSIONS = (
     ('can_modify_reservations', _('Can modify reservations')),
