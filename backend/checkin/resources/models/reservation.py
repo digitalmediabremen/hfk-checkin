@@ -573,7 +573,6 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         return format_dt_range(translation.get_language(), begin, end)
 
     def clean(self, **kwargs):
-        super().clean(**kwargs)
         try:
             self.validate_reservation(**kwargs)
         except ReservationWarning:
