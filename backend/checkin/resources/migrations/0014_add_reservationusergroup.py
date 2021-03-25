@@ -8,7 +8,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0012_auto_20210315_1803'),
+        ('auth', '0012_alter_user_first_name_max_length'),
         ('resources', '0013_update_permissions'),
     ]
 
