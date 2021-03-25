@@ -293,7 +293,6 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             return make_naive(self.end, timezone=self.resource.get_tz())
         return self.end
 
-
     @property
     def display_duration(self):
         timedelta = self.end_in_resource_tz_naive - self.begin_in_resource_tz_naive
@@ -304,6 +303,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if timedelta.days > 0:
             str_end += " (+%s)" % str_days
         return "%s – %s" % (str_begin, str_end)
+
+    # def get_state_display(self):
+    #     if self.type == self.TYPE_BLOCKED:
+    #         return _("BLOCKED")
+    #     return self.TYPE_CHOICES[self.state][1]
 
     def get_display_duration_date(self, humanize=False):
         str_begin = datefilter(self.begin_in_resource_tz_naive, 'D j.n.')
@@ -617,6 +621,14 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if not self.resource.reservable:
             raise ValidationError(gettext("This resource is not reservable. Sorry."))
 
+        original_reservation = self if self.pk else kwargs.get('original_reservation', None)
+
+        collisions_type_blocked = self.resource.reservations.current().overlaps(self.begin, self.end).filter(type=Reservation.TYPE_BLOCKED)
+        # if original_reservation:
+        #     collisions_type_blocked = collisions_type_blocked.exclude(pk=original_reservation)
+        if collisions_type_blocked.exists():
+            raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
+
         if not self.resource.can_make_reservations(user):
             warnings.warn(gettext("Organizer (%s) is not explicitly permitted to make reservations on this resource." % user), ReservationPermissionWarning)
 
@@ -659,7 +671,6 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             self.resource.disallow_overlapping_reservations and not
             self.resource.can_create_overlapping_reservations(user)
         ):
-            original_reservation = self if self.pk else kwargs.get('original_reservation', None)
             # collisions = self.resource.get_reservation_collisions_qs(self.begin, self.end, original_reservation)
             # if collisions:
             #     warnings.warn(gettext("The resource is already reserved for some of the period by %(collisions)s.") % {

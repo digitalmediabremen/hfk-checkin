@@ -248,6 +248,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     get_collisions.short_description = _("Avail.")
 
     def get_state_colored(self, obj):
+        if obj.type == obj.TYPE_BLOCKED:
+            return _("BLOCKED")
         colors = {
             Reservation.CREATED: '#555',  # ('green', ''),
             Reservation.CANCELLED: '#E2574C',

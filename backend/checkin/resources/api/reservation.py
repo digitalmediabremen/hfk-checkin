@@ -291,8 +291,6 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             if access_code_enabled and reservation and data['access_code'] != reservation.access_code:
                 raise ValidationError(dict(access_code=_('This field cannot be changed')))
 
-        data
-
         # remove attendances for Reservation validation
         # Reservation.attendees.set() or add() must be called explicitly and can not validate form **data
         # TODO validate attendances ?
