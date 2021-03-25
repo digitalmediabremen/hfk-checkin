@@ -40,6 +40,14 @@ class ReservationDelegatesForResourceUserPermissionInline(SingleUserPermissionIn
     verbose_name_plural = _("Reservation delegates")
     base_form = MakeDelegateStaffUserInlineFormBase
 
+class AccessDelegatesForUnitUserPermissionInline(SingleUserPermissionInline):
+    permission_codenames = ['unit:can_modify_access']
+    model_for_permissions = Unit
+    verbose_name = _("Unit access delegate")
+    verbose_name_plural = _("Unit access delegates")
+    base_form = MakeDelegateStaffUserInlineFormBase
+    min_num = 1
+
 class ReservationDelegatesForUnitUserPermissionInline(SingleUserPermissionInline):
     permission_codenames = ['unit:can_modify_reservations']
     model_for_permissions = Unit

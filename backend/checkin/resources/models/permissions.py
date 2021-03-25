@@ -13,13 +13,13 @@ RESERVATION_PERMISSIONS = (*RESERVATION_VALIDATION_PERMISSIONS,)
 
 SHARED_PERMISSIONS = (
     ('can_modify_reservations', _('Can modify reservations')),
+    ('can_modify_access', _('Can modify access')),
 )
 
 RESOURCE_PERMISSIONS = (
     *SHARED_PERMISSIONS,
     ('can_make_reservations', _('Can make reservations')),
     #('can_approve_reservations', _('Can approve reservations')),
-    ('can_modify_access', _('Can modify access')),
     ('has_permanent_access', _('Has permanent access')),
     #('can_ignore_opening_hours', _('Can make reservations outside opening hours')),
     #('can_view_reservation_access_code', _('Can view reservation access code')),

@@ -7,6 +7,7 @@ from .other import FixedGuardedModelAdminMixin
 from .permission_inlines import (
     ReservationDelegatesForUnitUserPermissionInline,
     UserConfirmationDelegatesForUnitUserPermissionInline,
+    AccessDelegatesForUnitUserPermissionInline,
 )
 
 
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 class UnitAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, FixedGuardedModelAdminMixin, TranslationAdmin):
     inlines = [
         # PeriodInline,
+        AccessDelegatesForUnitUserPermissionInline,
         ReservationDelegatesForUnitUserPermissionInline,
         UserConfirmationDelegatesForUnitUserPermissionInline,
     ]
