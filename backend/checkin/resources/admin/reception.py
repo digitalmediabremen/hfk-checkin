@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from django.shortcuts import redirect
 from django.utils.http import urlencode
 from .reservation import Reservation
+from django.core.exceptions import PermissionDenied
 
 from django.conf import settings
 if 'checkin.tracking' in settings.INSTALLED_APPS:
@@ -64,7 +65,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         readonly_fields = (*AttendanceAdmin.readonly_fields, 'state','comment')
         list_editable = ()
         #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
-        list_display = ('user', 'resource','reservation','get_display_duration','enter_action','leave_action','comment','state')
+        list_display = ['user', 'resource','reservation','get_display_duration','enter_action','leave_action','comment','state']
         list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
                        # 'resources', 'start', 'end', 'status', 'is_important',
                        ('reservation__begin', DateTimeRangeFilter),
@@ -115,6 +116,16 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             ]
             return custom_urls + urls
 
+        def get_list_display(self, request):
+            # remove registration fields from list_display for users without permission
+            list_display = list(self.list_display)
+            if not request.user.has_perm('attendance_can_register_attendance'):
+                if 'enter_action' in list_display:
+                    list_display.remove('enter_action')
+                if 'leave_action' in list_display:
+                    list_display.remove('leave_action')
+            return list_display
+
         def enter_leave_action(self, obj, checkin_field, btn_label, url):
             try:
                 # FIXME optimize query on db level
@@ -146,6 +157,8 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         leave_action.allow_tags = True
 
         def process_checkin(self, request, uuid, *args, **kwargs):
+            if not request.user.has_perm('attendance_can_register_attendance'):
+                raise PermissionDenied
             from django.shortcuts import redirect
             # FIXME back-relation zwischen Resource und Location/Checkin fehlt.
             # c = Checkin(location_id=5, origin=Checkin.FRONTDESK_MANUAL)
@@ -162,6 +175,8 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             return redirect(reverse('admin:%s_%s_changelist' % info))
 
         def process_checkout(self, request, uuid, *args, **kwargs):
+            if not request.user.has_perm('attendance_can_register_attendance'):
+                raise PermissionDenied
             from django.shortcuts import redirect
             attendance = self.model.objects.get(uuid=uuid)
             try:

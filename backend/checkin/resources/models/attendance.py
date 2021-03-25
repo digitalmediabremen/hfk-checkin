@@ -32,6 +32,9 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
         verbose_name = _("Attendance")
         verbose_name_plural = _("Attendances")
         unique_together = ('reservation', 'user') # a user can only attend the same reservation once
+        permissions = (
+            ('can_register_attendance', _('Can register attendances')),
+        )
 
     def __str__(self):
         return "%s %s @ %s %s" % (self._meta.verbose_name, self.get_display_name(), self.reservation._meta.verbose_name, self.reservation)
