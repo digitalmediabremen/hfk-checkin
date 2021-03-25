@@ -308,14 +308,12 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                     'assigned_groups': ", ".join([g.name for g in assigned_groups])}
                 messages.add_message(request, messages.INFO, message)
 
-
-
-
-
     def change_view(self, request, object_id, form_url='', extra_context=None):
         # add extra content for resource calendar
         # FIXME move to template tag
         extra_context = ResourceAdmin.get_resource_calendar_extra_context()
+        # hide 'show_save_and_add_another' from submit_row
+        extra_context['show_save_and_add_another'] = False
         return super().change_view(
             request, object_id, form_url, extra_context=extra_context,
         )
