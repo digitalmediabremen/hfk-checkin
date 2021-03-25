@@ -45,7 +45,6 @@ class AttendanceInline(admin.TabularInline):
 
     def get_organizer(self, obj):
         return _('🎩') if obj.is_organizer else ''
-
     get_organizer.short_description = ''
     # get_organizer.boolean = True
 
@@ -157,6 +156,15 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     # def get_list_filter(self, request):
     #     return map(lambda x: x if x != ResourceFilter else 'resource', self.list_filter)
 
+    def has_change_permission(self, request, obj=None):
+        if obj:
+            return super().has_change_permission(request, obj) or obj.resource._has_perm(request.user, perm='can_modify_reservations')
+        return super().has_change_permission(request, obj)
+
+    def has_delete_permission(self, request, obj=None):
+        # all reservations are soft deletable via state
+        return False
+
     def get_queryset(self, request):
         qs = super().get_queryset(request).select_related('user', 'user__profile')
         if is_general_admin(request.user):
@@ -169,10 +177,6 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             return self.readonly_fields + self.extra_readonly_fields_edit
         else:  # This is an addition
             return self.readonly_fields
-
-    def has_delete_permission(self, request, obj=None):
-        # all reservations are soft deletable via state
-        return False
 
     def get_reservation_info(self, obj):
         if obj and obj.resource:
