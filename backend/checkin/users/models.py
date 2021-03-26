@@ -139,6 +139,14 @@ class User(AbstractUser):
     def __str__(self):
         return self.get_display_name()
 
+    @property
+    def username(self):
+        return self.email
+
+    @username.setter
+    def username(self, value):
+        pass
+
     # def save(self, *args, **kwargs):
     #     # update email on Person as well.
     #     # FIXME we could do this with loose coupling through signals.
