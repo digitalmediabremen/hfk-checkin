@@ -208,11 +208,13 @@ class ResourceManager(models.Manager.from_queryset(ResourceQuerySet)):
         return resources_qs
 
 
-def get_default_unit():
-    unit = Unit.objects.first()
-    if not unit:
-        unit, created = Unit.objects.get_or_create(slug='default', name="Default Unit")
-    return unit.pk
+# def get_default_unit():
+    # FIXME this fill fail in mirgations, because the migration will then referance the wrong version
+    # use apps.get_model() to use the version from app registry
+    # unit_pk = Unit.objects.order_by('pk').values('pk')[:1]
+    # if not unit_pk:
+    #     unit, created = Unit.objects.get_or_create(slug='default', name="Default Unit")
+    # return unit.pk
 
 
 class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, AbstractAccessRestrictedModel):
@@ -258,7 +260,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     alternative_names = ArrayField(models.CharField(max_length=200), verbose_name=_("Alternative names"), blank=True, null=True)
     description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
 
-    unit = models.ForeignKey('Unit', verbose_name=_('Unit'), db_index=True, default=get_default_unit,
+    unit = models.ForeignKey('Unit', verbose_name=_('Unit'), db_index=True,
                              related_name="resources", on_delete=models.PROTECT)
     type = models.ForeignKey(ResourceType, verbose_name=_('Resource type'), db_index=True, null=True, blank=True,
                              on_delete=models.PROTECT)

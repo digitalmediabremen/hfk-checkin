@@ -275,6 +275,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resource',
             name='unit',
-            field=models.ForeignKey(default=checkin.resources.models.resource.get_default_unit, on_delete=django.db.models.deletion.PROTECT, related_name='resources', to='resources.unit', verbose_name='Unit'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='resources', to='resources.unit', verbose_name='Unit'),
         ),
     ]
