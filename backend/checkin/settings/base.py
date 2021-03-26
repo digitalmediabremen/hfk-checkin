@@ -388,9 +388,11 @@ CSRF_TRUSTED_ORIGINS = [
 
 SUCCESS_URLS_ALLOWED = [
     'staging.getin.hfk-bremen.de',
+    'staging.checkin.hfk-bremen.de',
+    'staging.checkin.uiuiui.digital',
     'getin.hfk-bremen.de',
     'checkin.hfk-bremen.de',
-    #'*.uiuiui.digital',
+    'localhost',
 ]
 
 # user impersination
