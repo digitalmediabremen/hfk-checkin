@@ -15,7 +15,7 @@ from post_office.models import Email
 from django.urls import reverse
 from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from .resource import ResourceAdmin
-from .list_filters import ResourceFilter, UserFilter
+from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter
 from django.contrib.admin.utils import format_html
 from ..models.reservation import StaticReservationPurpose
 from ..models.resource import Resource
@@ -108,8 +108,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     list_display = (
     'get_state_colored', 'user', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'get_collisions',
     'get_exclusive', 'get_created_at_display') #'get_priority',
-    list_filter = (ResourceFilter, 'resource__unit', 'state', 'has_priority', 'exclusive_resource_usage', 'purpose',
-                   UserFilter,
+    list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', 'purpose',
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('begin', DateTimeRangeFilter),
                    ('end', DateTimeRangeFilter),
