@@ -7,6 +7,7 @@ from django import template
 from datetime import datetime
 from checkin.resources.models.reservation import Reservation
 from checkin.resources.api.reservation import ReservationSerializer
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Send test Email notification.'
@@ -34,7 +35,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        sender = '"Testraum (0.00.000)" <noreply@getin.hfk-bremen.de>'
+        sender = '"Testraum (0.00.000)" <%s>' % settings.RESOURCES_FROM_ADDRESS
         recipients = [options['recipient']]
 
         mail.send(

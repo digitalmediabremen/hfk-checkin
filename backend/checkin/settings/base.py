@@ -267,12 +267,12 @@ SERVER_EMAIL = getenv("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
 EMAIL_SUBJECT_PREFIX = ""
 
-RESOURCES_FROM_ADDRESS = "noreply@getin.hfk-bremen.de"
-NOTIFICATION_SENDER_ADDRESS = "getin@hfk-bremen.de"
+MESSAGE_FQDN = getenv('MESSAGE_FQDN', default='mail.example.com')
+RESOURCES_FROM_ADDRESS = "noreply@%s" % MESSAGE_FQDN
+NOTIFICATION_SENDER_ADDRESS = "getin@%s" % MESSAGE_FQDN
 NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
 FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL', default='http://frontend.example.com')
-MESSAGE_FQDN = getenv('MESSAGE_FQDN', default='mail.example.com')
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
