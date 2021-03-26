@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        sender = '"Glasurlabor (1.16.030)" <noreply@checkin.hfk-bremen.de>'
+        sender = '"Testraum (0.00.000)" <noreply@getin.hfk-bremen.de>'
         recipients = [options['recipient']]
 
         mail.send(
@@ -45,7 +45,7 @@ class Command(BaseCommand):
             context=self.get_context(),
             language=options['language'],
             headers={
-                'Sender': 'getin@hfk-bremen.de',
-                'Reply-To': 'reply-to@hfk-bremen.de',
+                #'Sender': 'getin@hfk-bremen.de',
+                'Reply-To': 'replyto@hfk-bremen.de',
             }
         )
