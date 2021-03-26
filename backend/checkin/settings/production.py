@@ -104,14 +104,22 @@ POST_OFFICE.update({
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
     'LOG_LEVEL': 2, # Logs everything
 })
-
-if getenv('MAIL_MAILGUN_KEY'):
+if getenv('MAILJET_API_KEY'):
+    # FIXME Single reply_to: Mailjet’s API only supports a single Reply-To email address.
     ANYMAIL = {
-        'MAILGUN_API_KEY': getenv('MAIL_MAILGUN_KEY'),
-        'MAILGUN_SENDER_DOMAIN': MESSAGE_FQDN,
-        'MAILGUN_API_URL': getenv('MAIL_MAILGUN_API'),
+        'MAILJET_API_KEY': getenv('MAILJET_API_KEY'),
+        'MAILJET_SECRET_KEY': getenv('MAILJET_SECRET_KEY'),
     }
-    EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+    POST_OFFICE.update({
+        'BACKEND': 'anymail.backends.mailjet.EmailBackend',
+    })
+
+elif getenv('MAILGUN_API_KEY'):
+    ANYMAIL = {
+        'MAILGUN_API_KEY': getenv('MAILGUN_API_KEY'),
+        'MAILGUN_SENDER_DOMAIN': MESSAGE_FQDN,
+        "MAILGUN_API_URL": "https://api.eu.mailgun.net/v3",
+    }
     POST_OFFICE.update({
         'BACKEND': 'anymail.backends.mailgun.EmailBackend',
     })
