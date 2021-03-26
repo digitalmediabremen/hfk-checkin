@@ -101,7 +101,9 @@ EMAIL_SUBJECT_PREFIX = getenv(
 )
 
 POST_OFFICE.update({
-    'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
+    'BACKENDS': {
+        'default': 'django.core.mail.backends.smtp.EmailBackend',
+    },
     'LOG_LEVEL': 2, # Logs everything
 })
 if getenv('MAILJET_API_KEY'):
@@ -111,7 +113,9 @@ if getenv('MAILJET_API_KEY'):
         'MAILJET_SECRET_KEY': getenv('MAILJET_SECRET_KEY'),
     }
     POST_OFFICE.update({
-        'BACKEND': 'anymail.backends.mailjet.EmailBackend',
+        'BACKENDS': {
+            'default': 'anymail.backends.mailjet.EmailBackend',
+        },
     })
 
 elif getenv('MAILGUN_API_KEY'):
@@ -121,7 +125,9 @@ elif getenv('MAILGUN_API_KEY'):
         "MAILGUN_API_URL": "https://api.eu.mailgun.net/v3",
     }
     POST_OFFICE.update({
-        'BACKEND': 'anymail.backends.mailgun.EmailBackend',
+        'BACKENDS': {
+            'default': 'anymail.backends.mailgun.EmailBackend',
+        },
     })
 else:
     EMAIL_HOST = getenv("EMAIL_HOST")
