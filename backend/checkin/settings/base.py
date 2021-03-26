@@ -270,7 +270,7 @@ RESOURCES_FROM_ADDRESS = "no-reply@getin.hfk-bremen.de"
 NOTIFICATION_SENDER_ADDRESS = "getin@hfk-bremen.de"
 NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
-FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL')
+FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL', default='http://frontend.example.com')
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
@@ -279,9 +279,11 @@ POST_OFFICE = {
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
 }
 
+SITE_DOMAIN = getenv('SITE_DOMAIN', default='example.com')
+
 PREMAILER_OPTIONS = {
     # FIXME base_url could be taken from context / request
-    'base_url': 'https://%s' % getenv('SITE_DOMAIN'),
+    'base_url': 'https://%s' % SITE_DOMAIN,
     'cssutils_logging_level': logging.FATAL,
 }
 
