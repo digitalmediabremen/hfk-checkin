@@ -382,6 +382,13 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def is_active(self):
         return self.end >= timezone.now() and self.state not in (Reservation.CANCELLED, Reservation.DENIED)
 
+    def get_purpose_display(self):
+        if self.purpose is not None:
+            purpose = str(self.purpose)
+            return getattr(StaticReservationPurpose, purpose).label if hasattr(StaticReservationPurpose,
+                                                                                   purpose) else self.purpose
+        return '-'
+
     def is_own(self, user):
         if not (user and user.is_authenticated):
             return False
