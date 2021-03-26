@@ -8,7 +8,7 @@ const project = new Project({
 });
 
 function strip(t: string) {
-    return t.replace(/"/g, "");
+    return t.replace(/^[\"\']|[\"\']$/g, "");
 }
 
 function saveDots(text: string) {
