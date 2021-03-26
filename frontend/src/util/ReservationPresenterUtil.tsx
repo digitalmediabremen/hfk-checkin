@@ -1,8 +1,11 @@
-import { Fragment } from "react";
+import React, { Fragment } from "react";
+import { Lock, Unlock } from "react-feather";
 import { _t } from "../../localization";
+import useTheme from "../hooks/useTheme";
 import { Attendance, AttendanceUpdate } from "../model/api/MyProfile";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import Reservation from "../model/api/Reservation";
+import Resource from "../model/api/Resource";
 import { getFormattedDate } from "./DateTimeUtil";
 import { getPurposeLabel, insertIf } from "./ReservationUtil";
 import { timeSpan } from "./TimeFormatUtil";
@@ -70,10 +73,34 @@ export const attendeesFormValuePresenter = (
         : undefined;
 };
 
-export const resourceFormValuePresenter = (r: NewReservationBlueprint) =>
-    r.resource
-        ? [r.resource.display_numbers || "", <b>{r.resource.name}</b>]
-        : undefined;
+export const resourceFormValuePresenter = (
+    resource: Resource,
+    locale: string
+) => {
+    const theme = useTheme();
+
+    const PermissionIcon = resourcePermissionIcon(resource);
+    return [
+        resource.display_numbers || "",
+        <b>
+            {resource.name}{" "}
+            {resource.access_restricted && (
+                <PermissionIcon
+                    strokeWidth={(2 / 20) * 24}
+                    height={theme.fontSize * 1.111}
+                    width={theme.fontSize}
+                    preserveAspectRatio="none"
+                    style={{
+                        verticalAlign: "text-bottom",
+                        transform: "translateY(-2px)",
+                    }}
+                />
+            )}
+        </b>,
+    ];
+};
+export const resourcePermissionIcon = (r: Resource) =>
+    r.access_allowed_to_current_user ? Unlock : Lock;
 
 export const purposeFormValuePresenter = (
     r: NewReservationBlueprint | Reservation,

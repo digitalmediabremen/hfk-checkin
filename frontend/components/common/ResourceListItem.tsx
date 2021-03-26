@@ -19,6 +19,7 @@ import FormElement from "./FormElement";
 import FormElementBase from "./FormElementBase";
 import { LoadingInline } from "./Loading";
 import classNames from "classnames";
+import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
 
 interface ResourceListItemProps {
     resource: Resource;
@@ -40,6 +41,8 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     const handleSelect = () => {
         onSelect?.(!selected);
     };
+
+    const PermissionIcon = resourcePermissionIcon(resource);
 
     return (
         <div className="wrapper">
@@ -110,30 +113,14 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
 
                 <span className="icon right">
                     {resource.access_restricted && (
-                        <span
-                            className={classNames("meta-element")}
-                        >
-                            {resource.access_allowed_to_current_user ? (
-                                <>
-                                    <Unlock
-                                        strokeWidth={1 / 20 * 24}
-                                        height={20}
-                                        width={18}
-                                        preserveAspectRatio="none"
-                                    />{" "}
-                                    {t("Zugang")}
-                                </>
-                            ) : (
-                                <>
-                                    <Lock
-                                        strokeWidth={1 / 20 * 24}
-                                        height={20}
-                                        width={18}
-                                        preserveAspectRatio="none"
-                                    />{" "}
-                                    {t("Zugang")}
-                                </>
-                            )}
+                        <span className={classNames("meta-element")}>
+                            <PermissionIcon
+                                strokeWidth={(1 / 20) * 24}
+                                height={20}
+                                width={18}
+                                preserveAspectRatio="none"
+                            />{" "}
+                            {t("Zugang")}
                         </span>
                     )}
                     {resource.capacity && showMeta && (

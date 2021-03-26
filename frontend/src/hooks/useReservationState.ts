@@ -62,10 +62,10 @@ export default function useReservationState<
                 },
             });
         },
-        [value, appState]
+        [value, appState, reservation]
     );
 
-    return [value, setHandler, reservation] as const;
+    return [value, setHandler, reservation || {}] as const;
 }
 
 type ArrayOnly<T> = {

@@ -113,7 +113,7 @@ function _validateReservation(
 
     if (vHasMissingResourcePermissions) {
         v.push({
-            level: "error",
+            level: "notice",
             type: "missingResourcePermissions",
             group: "resource",
             message: _t(
@@ -127,7 +127,7 @@ function _validateReservation(
 
     if (
         !vHasExceptionReason &&
-        (vHasMissingResourcePermissions || vExceedsBookingRange)
+        (vExceedsBookingRange)
     ) {
         v.push({
             level: "error",

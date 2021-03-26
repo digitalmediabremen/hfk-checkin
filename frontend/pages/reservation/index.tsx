@@ -101,13 +101,8 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
 
     useEffect(() => {
         api.request();
+        apiPast.request();
     }, []);
-
-    useEffect(() => {
-        if (showPast && !apiPast.result) {
-            apiPast.request();
-        }
-    }, [showPast]);
 
     const pastIcon = (() => {
         const loading = apiPast.state === "loading" && (
@@ -156,7 +151,7 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
                                     />
                                 </>
                             )}
-                        {pastButton}
+                        {!!apiPast.result && apiPast.result.length > 0 && <>{pastButton}</>}
                     </>
                 )}
             </Loading>

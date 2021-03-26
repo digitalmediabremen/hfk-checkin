@@ -183,7 +183,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                             iconRight={<Copy strokeWidth={2} />}
                                             {...handlerProps("additional")}
                                         >
-                                            {t("Weitere aus Kopie")}
+                                            {t("Anfrage kopieren")}
                                         </NewButton>
                                     </div>
                                 </AlignContent>

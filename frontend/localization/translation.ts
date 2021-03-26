@@ -40,7 +40,7 @@ const translation: Translation = {
             "Deine Anfrage ist eingegangen.":
                 "Your booking request has been received.",
             Stornieren: "Cancel",
-            "Weitere aus Kopie": "Additional from copy",
+            "Anfrage kopieren": "Copy request",
             angefragt: "requested",
             bestätigt: "confirmed",
             abgelehnt: "denied",
@@ -113,8 +113,8 @@ const translation: Translation = {
             "Kommentar hinzufügen": "add message",
             "Ich möchte den Raum allein nutzen.":
                 "I want to use the room alone.",
-            'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Weitere aus Kopie"':
-                'Rooms can\’t be booked over continuous dates. If you want to request the same booking over a number of days, you may transfer the information from your previous booking under "Additional from copy.',
+            'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Anfrage kopieren"':
+                'Rooms can\’t be booked over continuous dates. If you want to request the same booking over a number of days, you may transfer the information from your previous booking under "Copy request".',
         },
         "request-message": {
             "message-placeholder":
@@ -143,7 +143,7 @@ const translation: Translation = {
             "Bitte rechne mit einer Bearbeitungszeit von mind. 48 Stunden.":
                 "Please allow at least 48 hours for processing.",
             "Wichtig: Am Wochenende werden in der Regel keine Anfragen bearbeitet. Willst du also eine Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage bis spätestens Donnerstag 10 Uhr.":
-                "Important: Requests are not processed on weekends. If you want to book a workshop for Monday at 10 a.m., you should submit your request by Thursday at 10 a.m. at the latest.",
+                "Important: Requests are not processed on weekends. If you want to book a workshop on Monday at 10 a.m., you should submit your request by Thursday at 10 a.m. at the latest.",
             'Der Raum "{resource}" kann maximal {days} Tage im Voraus gebucht werden.':
                 'Room "{resource}" can only be booked {days} days in advance.',
             "Räume können maximal {days} Tage im Vorraus gebucht werden.":

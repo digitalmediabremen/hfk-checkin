@@ -10,6 +10,7 @@ import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
 import { scrollIntoView } from "../../../src/util/DomUtil";
+import { resourceFormValuePresenter } from "../../../src/util/ReservationPresenterUtil";
 import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
 import Fade from "../../common/Fade";
@@ -28,11 +29,11 @@ interface SetRoomSubpageProps {}
 
 const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const [searchValue, setSearchValue] = useState("");
-    const { t } = useTranslation("request-resource");
+    const { t, locale } = useTranslation("request-resource");
     const queryResourceRequest = useResources(false);
     const unitsApi = useUnits();
     const { goForward } = useSubPage(requestSubpages);
-    const [selectedResource, setSelectedResource] = useReservationState(
+    const [selectedResource, setSelectedResource, reservation] = useReservationState(
         "resource"
     );
     const [units, setUnits] = useReservationState("units");
@@ -165,10 +166,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                     {selectedResource ? (
                         <FormElement
                             bottomSpacing={2}
-                            value={[
-                                selectedResource.display_numbers || "",
-                                <b>{selectedResource.name}</b>,
-                            ]}
+                            value={resourceFormValuePresenter(selectedResource, locale)}
                             actionIcon={<X />}
                             onIconClick={handleDeselectResource}
                         />
@@ -286,7 +284,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         <>
                             <Notice>
                                 {t(
-                                    'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Weitere aus Kopie"'
+                                    'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Anfrage kopieren"'
                                 )}
                             </Notice>
                         </>

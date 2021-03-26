@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "../../localization";
 import Reservation from "../../src/model/api/Reservation";
+import { resourceFormValuePresenter } from "../../src/util/ReservationPresenterUtil";
 import {
     getIcon,
     getStateLabel,
@@ -36,8 +37,7 @@ const ReservationComponent: React.FunctionComponent<ReservationProps> = ({
     const dotted = state !== "confirmed";
     const disabled = state === "cancelled" || state === "denied";
     const value = [
-        ...insertIf([resource.display_numbers], includeResourceNumber),
-        <b>{resource.name}</b>,
+        ...insertIf(resourceFormValuePresenter(resource, locale), includeResourceNumber),
         ...insertIf([format.date(begin, locale)], includeDate),
         ...insertIf([format.timeSpan(begin, end)], includeTime),
         ...insertIf(

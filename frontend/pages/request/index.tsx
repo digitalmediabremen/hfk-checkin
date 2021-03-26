@@ -53,7 +53,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     });
 
     const LoadingIcon = <LoadingInline invertColor loading={loading} />;
-    const title = t("Neue Anfrage")
+    const title = t("Neue Anfrage");
 
     return (
         <Layout
@@ -74,7 +74,14 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             />
             <FormElement
                 {...handlerProps("resource")}
-                value={resourceFormValuePresenter(reservation)}
+                value={
+                    reservation?.resource
+                        ? resourceFormValuePresenter(
+                              reservation.resource,
+                              locale
+                          )
+                        : undefined
+                }
                 label={t("Raum")}
                 shortLabel={t("Raum")}
                 arrow
