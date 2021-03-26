@@ -24,10 +24,11 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
         return reverse('admin:{0}_{1}_change'.format(obj._meta.app_label, obj._meta.model_name), args=(obj.pk,))
 
     def get_title(self, obj):
-        return "%(user)s (%(attendees)d) (%(id)s)" % {
+        return "%(user)s (%(attendees)d) #%(id)s (%(state)s)" % {
             'user':obj.organizer,
             'attendees':obj.number_of_attendees,
-            'id': obj.identifier
+            'id': obj.identifier,
+            'state': obj.get_state_display(),
         }
 
     # FIXME remove render-specific attributes form representation!
@@ -35,6 +36,8 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
         class_names = []
         if obj.state not in [Reservation.CONFIRMED]:
             class_names.append('inactive')
+        if obj.state in [Reservation.DENIED, Reservation.CANCELLED]:
+            class_names.append('canceled')
         current_uuid = self.context['request'].query_params.get('current_uuid', None)
         if current_uuid and str(obj.uuid) == current_uuid:
             class_names.append('current')
@@ -66,7 +69,7 @@ class ReservationCalendarViewSet(ReservationListViewSet):
         resource = self.kwargs.get('resource', None)
         resources = self.request.query_params.get('resources', None)
         # only display current reservations
-        qs = super().get_queryset().current()
+        qs = super().get_queryset()
         try:
             if resource and resource != 'all':
                 return qs.filter(resource__pk=resource)

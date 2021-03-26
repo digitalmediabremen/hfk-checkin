@@ -17,8 +17,10 @@
     border-width: 2px;
 }
 .fc-event.current .fc-event-main {
-    /*color: var(--theme-color-primary);*/
     font-weight: bold;
+}
+.fc-event.canceled .fc-event-title {
+    text-decoration: line-through;
 }
 
 @media (max-width: 767px) {

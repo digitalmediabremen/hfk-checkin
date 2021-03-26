@@ -633,7 +633,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
 
         if not self.resource.can_make_reservations(user):
-            warnings.warn(gettext("Organizer (%s) is not explicitly permitted to make reservations on this resource." % user), ReservationPermissionWarning)
+            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource." % user), ReservationPermissionWarning)
 
         user_is_admin = user and self.resource.is_admin(user)
 
