@@ -55,9 +55,7 @@ export function getValidationObject(
 
 function exceedsBookingRange(reservation: NewReservationBlueprint) {
     if (reservation.begin && reservation.end) {
-        const { range: bookableRange } = calculateBookableRange(
-            reservation
-        );
+        const { range: bookableRange } = calculateBookableRange(reservation);
         return smallerThan(
             addDates(createDateNow(), duration.days(bookableRange)),
             reservation.end
@@ -96,7 +94,7 @@ function _validateReservation(
                 ? _t(
                       locale,
                       "request-time",
-                      "Der Raum \"{resource}\" kann maximal {days} Tage im Voraus gebucht werden.",
+                      'Der Raum "{resource}" kann maximal {days} Tage im Voraus gebucht werden.',
                       {
                           resource: resource.name,
                           days: bookableRange,
@@ -121,7 +119,7 @@ function _validateReservation(
             message: _t(
                 locale,
                 "request",
-                "Du hast keine Berechtigung den Raum \"{resource}\" zu buchen.",
+                'Du hast keine Berechtigung den Raum "{resource}" zu buchen.',
                 { resource: resource!.name }
             ),
         });

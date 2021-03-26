@@ -12,13 +12,15 @@ const translation: Translation = {
             jetzt: "now",
             "Raum übernehmen": "Reuse room",
             "Zeit übernehmen": "Reuse time",
-            "Neue Anfrage": "New booking request",
+            "Wähle die Angaben aus, die du aus der Buchung #{identifier} übernehmen möchtest.":
+                "Select information to reuse from booking #{identifier}.",
             Hilfe: "Help",
             "Du bist offline": "You are officially offline.",
             Datenschutzinformationen: "Data privacy",
             Protokoll: "Log",
             "Noch keine Checkins vorhanden": "No checkins so far",
             "Telefon ändern": "change phone number",
+            "sowie {fields}": "and also {fields}",
             Heute: "Today",
             Morgen: "Tomorrow",
             Datenschutz: "Privacy",
@@ -34,11 +36,11 @@ const translation: Translation = {
                 "Are you sure to cancel your booking? This action cannot be reversed.",
             "Deine Buchung {identifier} wurde storniert.":
                 "Your booking request {identifier} has been canceled.",
-            "Weitere Anfrage": "Additional request",
+            "aus Anfrage übernehmen": "Additional from copy",
             "Deine Anfrage ist eingegangen.":
                 "Your booking request has been received.",
             Stornieren: "Cancel",
-            "weitere Anfrage": "More booking requests",
+            "Weitere aus Kopie": "Additional from copy",
             angefragt: "requested",
             bestätigt: "confirmed",
             abgelehnt: "denied",
@@ -62,14 +64,14 @@ const translation: Translation = {
             Grund: "Purpose",
             "Nach.": "Msg.",
             "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
-                "Personnel is allowed to contact me by phone ({phone}) in case of questions regarding this booking request.",
+                "I allow my phone number ({phone}) to be used for queries.",
             Anfragen: "request",
             Telefonkontakt: "Phone contact",
             Alleinnutzung: "Exclusive use",
             Anfang: "Begin",
             Ende: "End",
             "Weitere Personen": "Additional participants",
-            "Du hast keine Berechtigung den Raum \\{resource}\\ zu buchen.":
+            'Du hast keine Berechtigung den Raum "{resource}" zu buchen.':
                 'You don\'t have permission to book this room "{resource}".',
             "Ein Ausnahmegrund muss angegeben werden.":
                 "Please specify an exception.",
@@ -90,10 +92,20 @@ const translation: Translation = {
                 "Please state the purpose of the person's stay.",
             "Aufenthaltsgrund angeben": "State purpose now",
         },
+        "request-attendee-set": {
+            "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
+            Vorname: "First name",
+            Nachname: "Surname",
+            Telefonnummer: "Phone number",
+            "Keine gültige Telefonnummer": "Not a valid phone number",
+            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
+                "Your phone number is only used in case of infection.",
+            Hinzufügen: "Add",
+        },
         "request-resource": {
             "Gebäude auswählen": "select building",
             "Raum suchen": "search room",
-            "Name oder Nummer eingeben...": "enter room or room number...",
+            "Name oder Nummer eingeben...": "Enter room name or number...",
             "Keine Ergebnisse": "no results",
             "Aus Liste wählen": "select from list",
             "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern.":
@@ -101,6 +113,8 @@ const translation: Translation = {
             "Kommentar hinzufügen": "add message",
             "Ich möchte den Raum allein nutzen.":
                 "I want to use the room alone.",
+            'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Weitere aus Kopie"':
+                'Rooms can\’t be booked over continuous dates. If you want to request the same booking over a number of days, you may transfer the information from your previous booking under "Additional from copy.',
         },
         "request-message": {
             "message-placeholder":
@@ -121,7 +135,7 @@ const translation: Translation = {
         },
         "request-time": {
             Datum: "Date",
-            Von: "Begin",
+            Von: "Start",
             Bis: "End",
             "Bitte wähle ein frühreres Datum aus oder gib einen Buchungsgrund an.":
                 "Please select an earlier date or specify the purpose of your booking request.",
@@ -130,8 +144,8 @@ const translation: Translation = {
                 "Please allow at least 48 hours for processing.",
             "Wichtig: Am Wochenende werden in der Regel keine Anfragen bearbeitet. Willst du also eine Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage bis spätestens Donnerstag 10 Uhr.":
                 "Important: Requests are not processed on weekends. If you want to book a workshop for Monday at 10 a.m., you should submit your request by Thursday at 10 a.m. at the latest.",
-            "Der Raum \\{resource}\\ kann maximal {days} Tage im Voraus gebucht werden.":
-                "Room \\{resource}\\ can only be booked {days} days in advance.",
+            'Der Raum "{resource}" kann maximal {days} Tage im Voraus gebucht werden.':
+                'Room "{resource}" can only be booked {days} days in advance.',
             "Räume können maximal {days} Tage im Vorraus gebucht werden.":
                 "Rooms can only be booked {days} days in advance.",
         },
@@ -214,16 +228,6 @@ const translation: Translation = {
             "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.":
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
-        },
-        "request-attendee-set": {
-            "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
-            Vorname: "First name",
-            Nachname: "Surname",
-            Telefonnummer: "Phone number",
-            "Keine gültige Telefonnummer": "Not a valid phone number",
-            "Die Telefonnummer wird auschliesslich im Falle einer  Infektionsnachverfolgung verwendet.":
-                "Your phone number is only used in case of infection.",
-            Hinzufügen: "Add",
         },
     },
 };

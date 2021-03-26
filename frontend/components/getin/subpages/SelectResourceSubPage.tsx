@@ -276,7 +276,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                     </Fade>
 
                     <FormCheckbox
-                        value={notEmpty(checked) ? checked : true}
+                        value={checked ?? false}
                         label={t("Ich möchte den Raum allein nutzen.")}
                         onChange={setChecked}
                         bottomSpacing={2}
