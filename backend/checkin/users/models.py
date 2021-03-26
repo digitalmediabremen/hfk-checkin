@@ -208,8 +208,8 @@ class Profile(DirtyFieldsMixin, models.Model):
         return (bool(self.first_name) and bool(self.last_name) and bool(self.phone))
 
     class Meta:
-        verbose_name = _("Person")
-        verbose_name_plural = _("Personen")
+        verbose_name = _("Userprofile")
+        verbose_name_plural = _("Userprofiles")
         permissions = [
             ("can_view_external_users", _("Can view external Users")),
             ("can_view_regular_users", _("Can view regular Users")),

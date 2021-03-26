@@ -22,7 +22,7 @@ class AttendanceStates(models.TextChoices):
 class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
 
     reservation = models.ForeignKey(Reservation, verbose_name=_("Reservation"), on_delete=models.CASCADE, editable=False)
-    user = models.ForeignKey(PROFILE_MODEL, verbose_name=_("Person"), on_delete=models.PROTECT)
+    user = models.ForeignKey(PROFILE_MODEL, verbose_name=_("Userprofile"), on_delete=models.PROTECT)
     state = models.CharField(choices=AttendanceStates.choices, verbose_name=_("State"), blank=True, null=True, max_length=25)
     comment = models.CharField(_("Comment"), blank=True, null=True, max_length=255)
 

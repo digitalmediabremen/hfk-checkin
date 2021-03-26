@@ -362,7 +362,7 @@ class Origin(models.TextChoices):
 
 
 class Checkin(models.Model):
-    profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT, null=True)
+    profile = models.ForeignKey(Profile, verbose_name=_("Userprofile"), on_delete=models.PROTECT, null=True)
     location = models.ForeignKey(Location, verbose_name=_("Standort"), on_delete=models.PROTECT, null=True)
     time_entered = models.DateTimeField(_("Eingang"))
     time_left = models.DateTimeField(_("Ausgang"), blank=True, null=True)
@@ -423,7 +423,7 @@ class Checkin(models.Model):
 
 
 class PaperLog(models.Model):
-    profile = models.ForeignKey(Profile, verbose_name=_("Person"), on_delete=models.PROTECT, null=True)
+    profile = models.ForeignKey(Profile, verbose_name=_("Userprofile"), on_delete=models.PROTECT, null=True)
     first_name = models.CharField(verbose_name=_("Vorname"), max_length=255, blank=True)
     last_name = models.CharField(verbose_name=_("Nachname"), max_length=255, blank=True)
     # TODO add email (is currently not on paper form)
