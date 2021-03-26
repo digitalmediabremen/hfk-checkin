@@ -623,11 +623,13 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         original_reservation = self if self.pk else kwargs.get('original_reservation', None)
 
-        collisions_type_blocked = self.resource.reservations.current().overlaps(self.begin, self.end).filter(type=Reservation.TYPE_BLOCKED)
-        # if original_reservation:
-        #     collisions_type_blocked = collisions_type_blocked.exclude(pk=original_reservation)
-        if collisions_type_blocked.exists():
-            raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
+        if not self.resource.can_modify_reservations(user):
+            # allow do make collision bookings for resource "manager"
+            collisions_type_blocked = self.resource.reservations.current().overlaps(self.begin, self.end).filter(type=Reservation.TYPE_BLOCKED)
+            # if original_reservation:
+            #     collisions_type_blocked = collisions_type_blocked.exclude(pk=original_reservation)
+            if collisions_type_blocked.exists():
+                raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
 
         if not self.resource.can_make_reservations(user):
             warnings.warn(gettext("Organizer (%s) is not explicitly permitted to make reservations on this resource." % user), ReservationPermissionWarning)
