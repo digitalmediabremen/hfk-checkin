@@ -860,6 +860,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         if not reply_to_users:
             reply_to_users = self.resource.get_reservation_delegates()
+        if not isinstance(reply_to_users, list):
+            reply_to_users = [reply_to_users]
         for u in reply_to_users:
             if u.is_external:
                 # FIXME emails for external users

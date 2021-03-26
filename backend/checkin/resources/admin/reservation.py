@@ -283,7 +283,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # TODO move all warnings to validate_reservation()
         if obj:
             if obj.user:
-                messages.add_message(request, messages.INFO, _("Organizers preferred language is: %s" % obj.user.get_preferred_language()))
+                messages.add_message(request, messages.INFO, _("%s preferred language is: %s" % (obj.user, obj.user.get_preferred_language())))
             if obj.is_inactive:
                 messages.add_message(request, messages.ERROR, _("Has been cancelled or denied."))
             if obj.has_priority:
@@ -297,13 +297,14 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                 else:
                     messages.add_message(request, messages.WARNING, _("Organizer does not want to attend."))
             if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
-                messages.add_message(request, messages.WARNING, _("The organizer is missing from attendance list."))
+                messages.add_message(request, messages.WARNING, _("Organizer is missing from attendance list."))
 
             groups_to_display = ReservationUserGroup.objects.filter(visible_in_reservation=True)
             assigned_groups = obj.user.groups.filter(pk__in=groups_to_display).all()
             if len(assigned_groups) > 0:
-                message = gettext("The organizer has one or more group assignments: %(assigned_groups)s") % {
-                    'assigned_groups': ", ".join([g.name for g in assigned_groups])}
+                message = gettext("%(user)s has one or more group assignments: %(assigned_groups)s") % {
+                    'assigned_groups': ", ".join([g.name for g in assigned_groups]),
+                    'user': obj.user}
                 messages.add_message(request, messages.INFO, message)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
