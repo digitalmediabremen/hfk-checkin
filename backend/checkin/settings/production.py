@@ -91,7 +91,7 @@ TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = getenv(
-    "DJANGO_DEFAULT_FROM_EMAIL", default="checkin <noreply@checkin.hfk-bremen.de>"
+    "DJANGO_DEFAULT_FROM_EMAIL", default="checkin <noreply@getin.hfk-bremen.de>"
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = getenv("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)

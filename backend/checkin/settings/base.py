@@ -266,7 +266,7 @@ SERVER_EMAIL = getenv("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
 EMAIL_SUBJECT_PREFIX = ""
 
-RESOURCES_FROM_ADDRESS = "no-reply@getin.hfk-bremen.de"
+RESOURCES_FROM_ADDRESS = "noreply@getin.hfk-bremen.de"
 NOTIFICATION_SENDER_ADDRESS = "getin@hfk-bremen.de"
 NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
