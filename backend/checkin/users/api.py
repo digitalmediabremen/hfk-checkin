@@ -242,7 +242,7 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def me(self, request, pk=None):
-        if request.user.is_anonymous:
+        if request.user.is_anonymous or not hasattr(request.user, 'profile'):
             raise PermissionDenied(ERROR_NO_PROFILE)
         return self.retrieve(self, request)
 
