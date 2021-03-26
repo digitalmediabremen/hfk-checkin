@@ -69,6 +69,7 @@ django-premailer = "*"
 django-redis = "*"
 django-admin-autocomplete-filter = "*"
 rollbar = "*"
+django-anymail = "*"
 
 [requires]
 python_version = "3.7.10"

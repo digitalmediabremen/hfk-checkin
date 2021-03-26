@@ -96,6 +96,7 @@ THIRD_PARTY_APPS = [
     'guardian',
     'django_filters',
     'django_premailer',
+    'anymail',
 ]
 
 LOCAL_APPS = [
@@ -271,10 +272,11 @@ NOTIFICATION_SENDER_ADDRESS = "getin@hfk-bremen.de"
 NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
 FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL', default='http://frontend.example.com')
+MESSAGE_FQDN = getenv('MESSAGE_FQDN', default='mail.example.com')
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
-    'MESSAGE_ID_FQDN': 'getin.hfk-bremen.de',
+    'MESSAGE_ID_FQDN': MESSAGE_FQDN,
     'PRIORITY': 'now',
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
 }

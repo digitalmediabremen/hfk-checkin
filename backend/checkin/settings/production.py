@@ -100,16 +100,26 @@ EMAIL_SUBJECT_PREFIX = getenv(
     "DJANGO_EMAIL_SUBJECT_PREFIX", default="[checkin]"
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = getenv("EMAIL_HOST")
-EMAIL_HOST_USER = getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = getenv("EMAIL_PORT")
-
 POST_OFFICE.update({
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
     'LOG_LEVEL': 2, # Logs everything
 })
+
+if getenv('MAIL_MAILGUN_KEY'):
+    ANYMAIL = {
+        'MAILGUN_API_KEY': getenv('MAIL_MAILGUN_KEY'),
+        'MAILGUN_SENDER_DOMAIN': MESSAGE_FQDN,
+        'MAILGUN_API_URL': getenv('MAIL_MAILGUN_API'),
+    }
+    EMAIL_BACKEND = 'anymail.backends.mailgun.EmailBackend'
+    POST_OFFICE.update({
+        'BACKEND': 'anymail.backends.mailgun.EmailBackend',
+    })
+else:
+    EMAIL_HOST = getenv("EMAIL_HOST")
+    EMAIL_HOST_USER = getenv("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = getenv("EMAIL_HOST_PASSWORD")
+    EMAIL_PORT = getenv("EMAIL_PORT")
 
 override_recipients = getenv("EMAIL_HOST_OVERRIDE_RECIPIENTS", default=None)
 if override_recipients:
