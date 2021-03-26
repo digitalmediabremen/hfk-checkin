@@ -120,7 +120,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     top: ${theme.spacing(1.5)}px;
                     right: ${theme.spacing(1.5)}px;
                     line-height: 0;
-                    z-index: 1000;
+                    z-index: 2001;
                     // margin-right: -${theme.spacing(1.5)}px;
                 }
 
