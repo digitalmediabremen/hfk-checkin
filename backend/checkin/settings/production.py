@@ -54,6 +54,19 @@ SECURE_CONTENT_TYPE_NOSNIFF = getenv(
     "DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", default=True
 )
 
+MIDDLEWARE += [
+    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
+]
+
+ROLLBAR = {
+    'access_token': getenv('ROLLBAR_ACCESS_TOKEN'),
+    #'environment': 'development' if DEBUG else 'production',
+    'environment': getenv("ROLLBAR_ENVIRONMENT", default="production"),
+    'root': BASE_DIR,
+}
+import rollbar
+rollbar.init(**ROLLBAR)
+
 # STATIC
 # ------------------------
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
