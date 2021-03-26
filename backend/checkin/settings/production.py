@@ -109,8 +109,13 @@ EMAIL_PORT = getenv("EMAIL_PORT")
 POST_OFFICE.update({
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
     'LOG_LEVEL': 2, # Logs everything
-    'OVERRIDE_RECIPIENTS': getenv("EMAIL_HOST_OVERRIDE_RECIPIENTS", default="").split(",") or None,
 })
+
+override_recipients = getenv("EMAIL_HOST_OVERRIDE_RECIPIENTS", default=None)
+if override_recipients:
+    POST_OFFICE.update({
+        'OVERRIDE_RECIPIENTS': override_recipients.split(","),
+    })
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -180,7 +185,9 @@ LOGGING = {
 
 SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_DOMAIN = getenv("SESSION_COOKIE_DOMAIN", default="checkin.hfk-bremen.de")
-CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS + [getenv("CORS_ALLOWED_ORIGINS", default="checkin.hfk-bremen.de").split(",")]
+extra_cors = getenv("CORS_ALLOWED_ORIGINS", default=None)
+if extra_cors:
+    CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS + extra_cors.split(",")
 
 # TODO remove together with microsoft_auth
 # for now we need this. see tracking.users.apps.fix_microsoft_auth_user_admin() for details
