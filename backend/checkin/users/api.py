@@ -18,6 +18,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.utils import timezone
 from logging import getLogger
 from django.conf import settings
+from django.utils.translation import get_language_from_request
 
 logger = getLogger(__name__)
 
@@ -78,6 +79,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(source='profile.phone')
     email = serializers.EmailField(source='profile.email', read_only=True) # can only be writable if we validate emails
     is_external = serializers.BooleanField(source='profile.is_external', read_only=True)
+    preferred_language = serializers.ChoiceField(choices=settings.LANGUAGES, required=False, read_only=True)
     #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     # TODO limited qs on reservations etc. ListField to ReservationsViewSet?
     #reservations = serializers.ListField(serializers=)
@@ -86,17 +88,31 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id','profile_id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'is_external']
+        fields = ['id','profile_id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'preferred_language', 'is_external']
 
     def validate_phone(self, value):
         return value.strip()
 
+    def get_preferred_language(self, validated_data):
+        request = self.context.get("request")
+        # take language from serializer data if exists
+        # FIXME 'preferred_language' is not in validated_data. why?
+        # if 'preferred_language' in validated_data:
+        #     return {'preferred_language': validated_data['preferred_language']}
+        # take language form request otherwise
+        if request and hasattr(request, "user"):
+            preferred_language = get_language_from_request(request)
+            return{'preferred_language': preferred_language}
+        return {}
+
     def create(self, validated_data, user_extra={}, profile_extra={}):
         userprofile_data = validated_data.pop('profile')
+
         user = User.objects.create_user(**{
             User.USERNAME_FIELD: generate_username_for_new_user(userprofile_data),
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
+            **self.get_preferred_language(userprofile_data),
             **user_extra,
         })
         # create profile object
@@ -126,6 +142,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
         instance.__dict__.update(**{
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
+            **self.get_preferred_language(userprofile_data),
         })
         # update profile object
         instance.profile.__dict__.update(**{
@@ -158,7 +175,7 @@ class UserProfileSerializer(BaseUserProfileSerializer):
         return serializer.data
 
     class Meta(BaseUserProfileSerializer.Meta):
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'preferred_language', 'last_checkins']
         # if 'checkin.tracking' in settings.INSTALLED_APPS:
         #     fields += ['last_checkins']
         # if 'checkin.resources' in settings.INSTALLED_APPS:
