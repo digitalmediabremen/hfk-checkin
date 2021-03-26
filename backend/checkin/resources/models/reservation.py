@@ -26,6 +26,7 @@ from django.db.models.functions import Coalesce
 from django.db.models.fields import IntegerField
 from .utils import get_translated
 from .base import NameIdentifiedModel
+from ..auth import is_general_admin, is_staff, is_superuser
 
 from django.contrib.humanize.templatetags.humanize import naturalday, naturaltime
 
@@ -623,7 +624,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         original_reservation = self if self.pk else kwargs.get('original_reservation', None)
 
-        if not self.resource.can_modify_reservations(user):
+        if not (self.resource.can_modify_reservations(user) or is_general_admin(user)):
             # allow do make collision bookings for resource "manager"
             collisions_type_blocked = self.resource.reservations.current().overlaps(self.begin, self.end).filter(type=Reservation.TYPE_BLOCKED)
             # if original_reservation:
