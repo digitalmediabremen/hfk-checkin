@@ -68,9 +68,8 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                 <FormElement
                     labelIcon={<Icon />}
                     {...formElementBaseProps}
-                    primary={isConfirmed}
                     narrow
-                    noOutline={!isConfirmed}
+                    noOutline
                     value={getStateLabel(state, locale).toUpperCase()}
                 />
             )}

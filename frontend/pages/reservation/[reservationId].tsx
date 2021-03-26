@@ -106,7 +106,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                         subPages={
                             <>
                                 <SubPage
-                                    title={t("Weitere Anfrage")}
+                                    title={t("aus Anfrage übernehmen")}
                                     {...subPageProps("additional")}
                                     // todo: hack callback state is not updated
                                     // use state directly and not via subpageprops
@@ -179,10 +179,11 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                         )}
                                         <NewButton
                                             noBottomSpacing
-                                            iconRight={<Copy strokeWidth={1} />}
+                                            primary
+                                            iconRight={<Copy strokeWidth={2} />}
                                             {...handlerProps("additional")}
                                         >
-                                            {t("weitere Anfrage")}
+                                            {t("Weitere aus Kopie")}
                                         </NewButton>
                                     </div>
                                 </AlignContent>

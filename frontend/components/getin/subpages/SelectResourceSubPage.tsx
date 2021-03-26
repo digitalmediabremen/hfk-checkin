@@ -285,10 +285,9 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                     {!hasError("missingResourcePermissions") && (
                         <>
                             <Notice>
-                                Jeder Raum muss einzeln angefragt werden. Wenn
-                                du mehrere Räume für den gleichen Zeitraum
-                                anfragen möchtest, kommst du nach Absenden
-                                dieser Anfrage mit einem Klick wieder hierhin.
+                                {t(
+                                    'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Weitere aus Kopie"'
+                                )}
                             </Notice>
                         </>
                     )}

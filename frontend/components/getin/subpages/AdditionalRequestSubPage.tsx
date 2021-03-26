@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React from "react";
-import { Copy, PlusSquare } from "react-feather";
+import { Copy, PlusCircle, PlusSquare } from "react-feather";
 import { appUrls } from "../../../config";
 import { useTranslation } from "../../../localization";
 import NewReservationBlueprint from "../../../src/model/api/NewReservationBlueprint";
@@ -15,6 +15,7 @@ import * as format from "../../../src/util/TimeFormatUtil";
 import { useAppState } from "../../common/AppStateProvider";
 import FormElement from "../../common/FormElement";
 import NewButton from "../../common/NewButton";
+import Notice from "../../common/Notice";
 import SectionTitle from "../../common/SectionTitle";
 
 export interface AdditionalRequestSubPageProps {
@@ -161,14 +162,17 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
 
     return (
         <>
-            <NewButton
+            {/* <FormElement
                 extendedWidth
-                iconRight={<PlusSquare />}
+                actionIcon={<PlusCircle />}
                 bottomSpacing={4}
                 onClick={() => handleNewReservationRequest(undefined)}
-            >
-                {t("Neue Anfrage")}
-            </NewButton>
+                value={[t("Neue Anfrage")]}
+                narrow
+            /> */}
+            <Notice>
+                {t("Wähle die Angaben aus, die du aus der Buchung #{identifier} übernehmen möchtest.", {identifier: reservation.identifier})}
+            </Notice>
 
             <NewRequestFromTemplate
                 onSubmit={handleNewReservationRequest}

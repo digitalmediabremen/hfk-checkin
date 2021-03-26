@@ -108,7 +108,7 @@ export function additionalFilledReservationRequestFieldsString(
 
     if (!labels) return "";
 
-    return `sowie ${labels}`;
+    return _t(locale, "common", "sowie {fields}", { fields: labels });
 }
 
 export const insertIf = <Type extends any>(arr: Array<Type>, bool: boolean) =>
