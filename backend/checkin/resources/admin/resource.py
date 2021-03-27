@@ -10,6 +10,7 @@ from django import forms
 from django.contrib.admin.widgets import AutocompleteSelect
 from django.contrib.admin.options import get_content_type_for_model, unquote, capfirst, PermissionDenied, IS_POPUP_VAR
 from django.contrib.admin.options import get_permission_codename
+from checkin.tracking.models import Location as CheckinLocation
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,17 @@ class SelectResourceForm(forms.Form):
         widget=AutocompleteSelect(Reservation._meta.get_field('resource').remote_field, admin.site)
     )
 
+class CheckinLocationInline(admin.StackedInline):
+    model = CheckinLocation
+    fields = ('code','parent','removed')
+    readonly_fields = ('code',)
+    verbose_name = _('Checkin location')
+    verbose_name_plural = _('Checkin locations')
+    extra = 0
+    max = 1
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, DynamicArrayMixin, ModifiableModelAdminMixin,
                        FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin, admin.ModelAdmin):
@@ -47,6 +59,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         AccessDelegatesForResourceUserPermissionInline,
         ReservationDelegatesForResourceUserPermissionInline,
         AccessAllowedToResourceUserPermissionInline,
+        CheckinLocationInline,
     ]
 
     fieldsets = (
@@ -89,6 +102,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     readonly_fields = ('get_people_capacity', *ModifiableModelAdminMixin._fields)
     list_max_show_all = 1000
     filter_horizontal = ('features',)
+    save_on_top = True
 
     def get_queryset(self, request):
         # overwriting get_queryset from ExtendedGuardedModelAdminMixin and ModelAdmin

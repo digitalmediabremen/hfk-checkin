@@ -131,7 +131,7 @@ class Location(MPTTModel):
     org_activities = models.ManyToManyField(ActivityProfile, through='CapacityForActivityProfile', verbose_name=_("Aktivitätsprofile und Kapazitäten"))
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     hide_load = models.BooleanField(verbose_name=_("Anzahl der Anwesenden verstecken"), default=False, help_text=_("Anzahl der aktuell eingecheckten Personen den Nutzern nicht anzeigen. z.B. für Gebäude etc."))
-    removed = models.BooleanField(verbose_name=_("Entfernt"), default=False, help_text=_("Diese Raum ist deaktiviert oder entfernt. Eine Löschung ist jedoch noch nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"))
+    removed = models.BooleanField(verbose_name=_("Entfernt"), default=False, help_text=_("Diese Checkin-Standort ist deaktiviert oder entfernt. Eine Löschung ist jedoch noch nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"))
     # history = is registered via register_history (see below)
 
     # random name for data migration from v1 to v2 only
