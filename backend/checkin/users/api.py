@@ -122,7 +122,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             #'email': userprofile_data['email'], # can only be writable if we validate emails
             'verified': False,
             **profile_extra,
-            #'is_external': True,
+            'is_external': None,
         }
         try:
             # FIXME will never exists if the username is time dependent

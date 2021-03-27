@@ -137,7 +137,7 @@ class User(AbstractUser):
             return False
 
     def __str__(self):
-        return self.get_display_name()
+        return self.get_email_notation()
 
     @property
     def username(self):

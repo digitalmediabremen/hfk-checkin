@@ -69,7 +69,7 @@ class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, Djang
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'disable_notifications', 'preferred_language', 'profile__is_external', 'profile__verified')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
     add_form = UserCreationForm
@@ -233,7 +233,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified','is_external')
-    list_filter = ('updated_at','created_at','verified','is_external')
+    list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('created_at', 'updated_at','user')
 
