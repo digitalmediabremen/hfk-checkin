@@ -64,11 +64,10 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 
 class User(AbstractUser):
-    # removing things we don't need
-    username = None
     #first_name = None # usually blank=True
     #last_name = None # usually blank=True
     email = models.EmailField(_('email address'), unique=True)
+    #username = email # FIXME needed for microsoft_auth.admin.UserAdmin
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -89,6 +88,7 @@ class User(AbstractUser):
     preferred_language = models.CharField(max_length=8, null=True, blank=True,
                                           verbose_name="Preferred UI language",
                                           choices=settings.LANGUAGES)
+    disable_notifications = models.BooleanField(verbose_name=_("Do not send email notifciations to this user"), default=False)
     # favorite_resources = models.ManyToManyField(Resource, blank=True, verbose_name=_('Favorite resources'),
     #                                             related_name='favorited_by')
     #

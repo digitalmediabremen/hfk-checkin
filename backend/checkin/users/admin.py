@@ -56,7 +56,7 @@ class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, Djang
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}),
-        (_('Additional info'), {'fields': ('preferred_language', )}),
+        (_('Additional info'), {'fields': ('preferred_language', 'disable_notifications')}),
         (_('Permissions'), {
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),

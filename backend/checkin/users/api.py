@@ -19,6 +19,7 @@ from django.utils import timezone
 from logging import getLogger
 from django.conf import settings
 from django.utils.translation import get_language_from_request
+import uuid
 
 logger = getLogger(__name__)
 
@@ -63,11 +64,7 @@ class CSRFExemptSessionAuthentication(SessionAuthentication):
 #         fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email']
 
 def generate_username_for_new_user(validated_userprofile_data):
-    # should return a email address "lookalike", since our user model has no explicit username field
-    # FIXME move this to settings
-    return ("%s-%s@gast.hfk-bremen.de" % (\
-        validated_userprofile_data['phone'], timezone.now().strftime("%Y-%m-%d-%H-%M-%S"))\
-    ).lower()
+    return ("gast-%s" % uuid.uuid4())
 
 
 class BaseUserProfileSerializer(serializers.ModelSerializer):
@@ -112,6 +109,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             User.USERNAME_FIELD: generate_username_for_new_user(userprofile_data),
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
+            'disable_notifications': True,
             **self.get_preferred_language(userprofile_data),
             **user_extra,
         })
