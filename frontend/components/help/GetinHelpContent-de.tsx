@@ -60,18 +60,30 @@ const GetinHelpContentDe: React.FunctionComponent<GetinHelpContentDeProps> = ({}
                 {...openPropsProvider(4)}
                 title="4. Warum wurde meine Buchung abgelehnt?"
             >
-                <Text paragraph></Text>
-            </HelpSection>
-            <HelpSection
-                {...openPropsProvider(5)}
-                title="5. Wie kann ich Raumanfragen und Raumbuchungen ändern?"
-            >
                 <Text paragraph>
+                    {" "}
                     Buchungen werden immer dann abgelehnt, wenn der gewünscht
                     Zeitraum schon belegt ist, oder weil deine Anfrage nicht zu
                     dem Raum passt. In der Regel solltest du bei einer Ablehnung
                     eine entsprechende Rückmeldung von der raumverantwortlichen
                     Person erhalten.{" "}
+                </Text>
+            </HelpSection>
+            <HelpSection
+                {...openPropsProvider(5)}
+                title="5. Kann ich Raumanfragen und Raumbuchungen nachträglich ändern?"
+            >
+                <Text paragraph>
+                    Ja und nein.
+                    <br />
+                    <br />
+                    Einmal abgeschickt oder bestätigt, sind deine Raumanfrage
+                    und deine Raumbuchung in Bearbeitung und können über die
+                    Getin nur von dir storniert werden. Du kannst Raumanfragen
+                    und Raumbuchungen stornieren und neu beantragen. Aber, du
+                    kannst zum Beispiel die Uhrzeit von Anfragen oder Buchungen
+                    im Kontakt mit den buchungsverantwortlichen Personen ändern,
+                    bitte verwende hierfür die Getin-Mails.
                 </Text>
             </HelpSection>
             <HelpSection
