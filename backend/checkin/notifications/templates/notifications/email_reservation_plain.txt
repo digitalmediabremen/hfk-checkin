@@ -23,7 +23,7 @@
             {{ reservation.begin_in_resource_tz_naive.date|date:"D. d.m.Y" }}
             {{ reservation.begin_in_resource_tz_naive|time:"H:i" }} – {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}
         {% endblock %}
-        
+
         {% block reservation_details %}
             {% translate 'Angemeldete Personen' %}: {{ reservation.organizer|default:"Du" }}
             {% if reservation.number_of_attendees|add:"-1" > 1 %} 
@@ -58,8 +58,7 @@
         {% endblocktranslate %}
         
         {% blocktranslate with help_link="/help" %}
-            Informationen zum Reservierungsverfahren und 
-            Benachrichtigungen sind auf der {{ url_root }}/help">
+            Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der {{ url_root }}/help"> zu finden.
         {% endblocktranslate %}
     {% endblock %}
 
