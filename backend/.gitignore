@@ -128,3 +128,4 @@ migrations-dev
 tests-disabled
 users-old
 requirements.txt
+fixtures-sensitive/
