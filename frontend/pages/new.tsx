@@ -53,10 +53,21 @@ const NewProfilePage: NextPage = () => {
                     </Text>
                 )}
                 {featureMap.getin && (
-                    <Text paragraph>{t("Aktuell ist die Nutzung von Getin nur mit einem HfK-Account möglich.")}</Text>
+                    <>
+                        <Text paragraph>
+                            {t(
+                                "Aktuell ist die Nutzung von Getin nur mit einem HfK-Account möglich."
+                            )}
+                        </Text>
+                        <Notice
+                            bottomSpacing={4}
+                            error
+                            title="Buchungen können erst ab dem 06.04.2021 - 08:00 getätigt werden."
+                        />
+                    </>
                 )}
             </FormGroup>
-            <Subtitle>{t("HfK-Angehörige")}</Subtitle>
+            {featureMap.checkin && <Subtitle>{t("HfK-Angehörige")}</Subtitle>}
             <NewButton onClick={handleIntern} bottomSpacing={3}>
                 HfK-Login
             </NewButton>
