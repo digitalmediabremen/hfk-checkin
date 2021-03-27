@@ -16,7 +16,7 @@ module.exports = withPWA({
         return [
             {
                 source: "/:slug*",
-                headers: [{ key: "Cache-Control", value: "max-age=3600" }],
+                headers: [{ key: "Cache-Control", value: "max-age=0" }],
             },
         ];
     },
