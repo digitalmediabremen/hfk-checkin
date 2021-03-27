@@ -5,7 +5,8 @@ from guardian.core import ObjectPermissionChecker
 # Always update permissions.rst documentation accordingly after modifying this file!
 
 RESERVATION_PERMISSIONS = (
-    ('skip_reservation_notification', _('Do not send notifications for reservations')),
+    # will cause superusers to "have" the permission and thus not receive notifications
+    # ('skip_reservation_notification', _('Do not send notifications for reservations')),
 )
 
 SHARED_PERMISSIONS = (

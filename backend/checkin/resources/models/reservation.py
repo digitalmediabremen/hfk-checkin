@@ -849,8 +849,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         if not recipient:
             recipient = self.user # which is the same as organizer.user
 
-        if recipient.disable_notifications or recipient.has_perm('resources.skip_reservation_notification'):
-            logger.debug('Skipping to send notification to %s because user.disable_notifications or permission skip_reservation_notification is set.' % str(recipient))
+        if recipient.disable_notifications:
+            logger.debug('Skipping to send notification to %s because user.disable_notifications is set.' % str(recipient))
             return []
 
         email_address = recipient.email
