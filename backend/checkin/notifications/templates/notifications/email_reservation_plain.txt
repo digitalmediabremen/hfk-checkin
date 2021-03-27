@@ -9,14 +9,13 @@
 
 {% block main_table_inner %}
     {% block reservation %}
-        {% block reservation_status %}Update zu einer Buchung.{% endblock %}
         {% if update_message %}
             {{ update_message }}
         {% endif %}
+
+        ==== {% block reservation_status %}{% blocktranslate %}ANFRAGE AKTUALISIERT{% endblocktranslate %}{% endblock %} ================
     
         {% block reservation_info %}
-        ==== {% block reservation_status %}{% blocktranslate %}ANFRAGE AKTUALISIERT{% endblocktranslate %}{%endblock %} ================
-
             #{{ reservation.identifier }}
 
             {{ reservation.resource.display_numbers }}
@@ -24,6 +23,7 @@
             {{ reservation.begin_in_resource_tz_naive.date|date:"D. d.m.Y" }}
             {{ reservation.begin_in_resource_tz_naive|time:"H:i" }} – {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}
         {% endblock %}
+        
         {% block reservation_details %}
             {% translate 'Angemeldete Personen' %}: {{ reservation.organizer|default:"Du" }}
             {% if reservation.number_of_attendees|add:"-1" > 1 %} 
@@ -37,19 +37,13 @@
 
             {% if reservation.message %}
                 {% translate 'Nachricht' %}: {{ reservation.message }}
-            {% endif %}
-
-            ========================================
-
-            Open booking request: {{ reservation.get_absolute_url }}
+            {% endif %}        
         {% endblock %}
 
+        ========================================
+
         {% block call_to_action %}
-            {% blocktranslate asvar cta_label %}
-                Reservierung {{ reservation.identifier }} öffnen
-            {% endblocktranslate %}
-            
-            {{ reservation.get_absolute_url }}
+            {% blocktranslate %}Anfrage aufrufen{% endblocktranslate %}: {{ reservation.get_absolute_url }}
         {% endblock %}
      
         {% block reservation_instruction %}
