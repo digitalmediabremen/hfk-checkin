@@ -57,8 +57,8 @@
             Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.
         {% endblocktranslate %}
         
-        {% blocktranslate with help_link="/help" %}
-            Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der {{ url_root }}/help"> zu finden.
+        {% blocktranslate with base_url=url_root %}
+            Informationen zum Reservierungsverfahren und Benachrichtigungen sind unter {{ base_url }}/help zu finden.
         {% endblocktranslate %}
     {% endblock %}
 

@@ -122,8 +122,8 @@
                     {% endblocktranslate %}
                 </span>
                 <span class="apple-link">
-                    {% blocktranslate with help_link="/help" %}
-                        Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a href="{{ url_root }}/help">Hilfeseite</a> zu finden.
+                    {% blocktranslate with base_url=url_root %}
+                        Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a href="{{ base_url }}/help">Hilfeseite</a> zu finden.
                     {% endblocktranslate %}
                 </span>
             {% endblock %}
