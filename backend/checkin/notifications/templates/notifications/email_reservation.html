@@ -32,19 +32,16 @@
                                     {{ reservation.identifier }}
                                 </h2>
                                 <h2 class="primary">
-                                    {{ reservation.resource.display_numbers }}<br /><span
-                                        class="bold"
-                                        >{{ reservation.resource.name }}</span
-                                    >
+                                    {{ reservation.resource.display_numbers }}<br />
+                                    <span class="bold">
+                                        {{ reservation.resource.name }}
+                                    </span>
                                 </h2>
-                                <h2
-                                    class="primary{% if reservation.is_inactive %} strike{% endif %}"
-                                >
-                                    {{ reservation.begin_in_resource_tz_naive.date|date:"D.
-                                    d.m.Y" }}<br />{{
-                                    reservation.begin_in_resource_tz_naive|time:"H:i" }} –
-                                    {{ reservation.end_in_resource_tz_naive.time|time:"H:i"
-                                    }}
+                                <h2 class="primary{% if reservation.is_inactive %} strike{% endif %}">
+                                    {{ reservation.begin_in_resource_tz_naive.date|date:"D.d.m.Y" }}
+                                    <br />
+                                    {{reservation.begin_in_resource_tz_naive|time:"H:i" }} –
+                                    {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}
                                 </h2>
                             {% endblock %}
                             <br /><br />
