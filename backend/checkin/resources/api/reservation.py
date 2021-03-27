@@ -249,6 +249,14 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         if 'end' in data and data['end'] < timezone.now():
             raise ValidationError(_('You cannot make a reservation in the past'))
 
+        if not (resource.can_modify_reservations(request_user)):# or is_general_admin(request_user)):
+            # allow do make collision bookings for resource "manager"
+            collisions_type_blocked = resource.reservations.current().overlaps(data['begin'], data['end']).filter(type=Reservation.TYPE_BLOCKED)
+            # if original_reservation:
+            #     collisions_type_blocked = collisions_type_blocked.exclude(pk=original_reservation)
+            if collisions_type_blocked.exists():
+                raise ValidationError(_("This resource is blocked during this time. Sorry."))
+
         if not resource.can_ignore_opening_hours(request_user):
             reservable_before = resource.get_reservable_before()
             if reservable_before and data['begin'] >= reservable_before:
