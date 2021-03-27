@@ -1,7 +1,7 @@
 import Link from "next/link";
 import * as React from "react";
 import { HelpCircle } from "react-feather";
-import { appUrls } from "../../config";
+import { appUrls, backendUrl } from "../../config";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
 import { useAppState } from "./AppStateProvider";

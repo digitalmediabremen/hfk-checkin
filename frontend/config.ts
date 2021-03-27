@@ -18,10 +18,11 @@ export function buildSubPageUrl(
     return url;
 }
 
-const uri = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
+export const backendBase = presentOrThrow(process.env.NEXT_PUBLIC_API_URL);
 
-export const authRedirectUrl = `${uri}/login/redirect`;
-export const apiUrl = `${uri}/api`;
+export const authRedirectUrl = `${backendBase}/login/redirect`;
+export const apiUrl = `${backendBase}/api`;
+export const backendUrl = `${backendBase}/backend`;
 export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
 export const bookingDisabled = envToBoolean(process.env.BOOKING_DISABLED);
 
@@ -42,7 +43,7 @@ export const appUrls = {
     loginMicrosoft: `${authRedirectUrl}/?next=${appBase}${getHomeUrl()}/?from-auth=1`,
     createProfile: "/new",
     enterCode: "/checkin",
-    logout: `${uri}/logout/?next=${appBase}${getHomeUrl()}`,
+    logout: `${backendBase}/logout/?next=${appBase}${getHomeUrl()}`,
     checkin: (code: string): [string, string] => [
         "/checkin/[locationCode]",
         `/checkin/${code}`,
