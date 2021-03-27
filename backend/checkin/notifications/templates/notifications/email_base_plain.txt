@@ -1,0 +1,15 @@
+{% load premailer i18n %}
+
+{% block preheader %}
+    Benachrichtigung zu einer Reservierung:
+{% endblock %}
+
+{% block main_table_inner %}{% endblock %}
+
+{% block footer %}
+    {% block footer_legal %}
+        {% blocktranslate with support_email=SUPPORT_EMAIL %} 
+            Bitte wenden Sie sich bei Problemen an {{ support_email }}
+        {% endblocktranslate %}
+    {% endblock %}
+{% endblock %}

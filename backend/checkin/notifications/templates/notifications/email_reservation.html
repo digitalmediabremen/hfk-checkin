@@ -1,8 +1,6 @@
-{% extends "notifications/email_base.html" %}
-{% load i18n %}
-{% block preheader %}{% blocktranslate %}Es liegt ein Update für Deine Reservierungsanfrage für {{ reservation.resource.display_name }} vor.{% endblocktranslate %}{% endblock %}
-
-
+{% extends "notifications/email_base.html" %} {% load i18n %} {% block preheader
+%}{% blocktranslate %}Es liegt ein Update für Deine Reservierungsanfrage für {{
+reservation.resource.display_name }} vor.{% endblocktranslate %}{% endblock %}
 {% block main_table_inner %}
 <!-- START MAIN CONTENT AREA -->
 <tr>
@@ -10,67 +8,100 @@
         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <td>
-                {% block reservation %}
-                    <p class="primary bold box">{% block reservation_status %}Update zu einer Buchung.{% endblock %}</p>
-                    <br/><br/><br/>
+                    {% block reservation %}
+                    <p class="primary bold box">
+                        {% block reservation_status %}Update zu einer Buchung.{%
+                        endblock %}
+                    </p>
+                    <br /><br /><br />
                     {% if update_message %}
-                        <p class="primary"><i>{{ update_message }}</i></p>
-                        <br/>
-                        <br/>
-                    {% endif %}
-                    {% block reservation_info %}
-                    <h2 class="secondary{% if reservation.is_inactive %} strike{% endif %}">{{ reservation.identifier }}</h2>
-                    <h2 class="primary ">{{ reservation.resource.display_numbers }}<br/><span class="bold">{{ reservation.resource.name }}</span></h2>
-                    <h2 class="primary{% if reservation.is_inactive %} strike{% endif %}">{{ reservation.begin_in_resource_tz_naive.date|date:"D. d.m.Y" }}<br/>{{ reservation.begin_in_resource_tz_naive|time:"H:i" }} – {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}</h2>
+                    <p class="primary"><i>{{ update_message }}</i></p>
+                    <br />
+                    <br />
+                    {% endif %} {% block reservation_info %}
+                    <h2
+                        class="secondary{% if reservation.is_inactive %} strike{% endif %}"
+                    >
+                        {{ reservation.identifier }}
+                    </h2>
+                    <h2 class="primary">
+                        {{ reservation.resource.display_numbers }}<br /><span
+                            class="bold"
+                            >{{ reservation.resource.name }}</span
+                        >
+                    </h2>
+                    <h2
+                        class="primary{% if reservation.is_inactive %} strike{% endif %}"
+                    >
+                        {{ reservation.begin_in_resource_tz_naive.date|date:"D.
+                        d.m.Y" }}<br />{{
+                        reservation.begin_in_resource_tz_naive|time:"H:i" }} –
+                        {{ reservation.end_in_resource_tz_naive.time|time:"H:i"
+                        }}
+                    </h2>
                     {% endblock %}
-                    <br/><br/>
+                    <br /><br />
                     {% block reservation_details %}
-                            <p class="primary"><span class="bold">{% translate 'Angemeldete Personen' %}:</span> {{ reservation.organizer|default:"Du" }}{% if reservation.number_of_attendees|add:"-1" > 1 %} und {{ reservation.number_of_attendees|add:"-1" }} weitere Personen{% endif %}</p>
-                        {% if reservation.purpose %}
-                            <p class="primary"><span class="bold">{% translate 'Grund' %}:</span> {{ reservation.purpose }}</p>
-                        {% endif %}
-                        {% if reservation.message %}
-                            <p class="primary"><span class="bold">{% translate 'Nachricht' %}:</span> <i>{{ reservation.message }}</i></p>
-                        {% endif %}
+                    <p class="primary">
+                        <span class="bold"
+                            >{% translate 'Angemeldete Personen' %}:</span
+                        >
+                        {{ reservation.organizer|default:"Du" }}{% if
+                        reservation.number_of_attendees|add:"-1" > 1 %} und {{
+                        reservation.number_of_attendees|add:"-1" }} weitere
+                        Personen{% endif %}
+                    </p>
+                    {% if reservation.purpose %}
+                    <p class="primary">
+                        <span class="bold">{% translate 'Grund' %}:</span> {{
+                        reservation.purpose }}
+                    </p>
+                    {% endif %} {% if reservation.message %}
+                    <p class="primary">
+                        <span class="bold">{% translate 'Nachricht' %}:</span>
+                        <i>{{ reservation.message }}</i>
+                    </p>
+                    {% endif %} {% endblock %}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% block call_to_action %}
+                    <br /><br />
+                    {% blocktranslate asvar cta_label %}Reservierung {{
+                    reservation.identifier }} öffnen{% endblocktranslate %} {%
+                    include "notifications/email_call_to_action_include.html"
+                    with url=reservation.get_absolute_url label=cta_label %} {%
+                    endblock %}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br /><br />
+                    <p class="secondary">
+                        {% block reservation_instruction %}
+                        {% endblock %}
+                    </p>
                     {% endblock %}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                {% block call_to_action %}
-                    <br/><br/>
-                    {% blocktranslate asvar cta_label %}Reservierung {{ reservation.identifier }} öffnen{% endblocktranslate %}
-                    {% include "notifications/email_call_to_action_include.html" with url=reservation.get_absolute_url label=cta_label %}
-
-                {% endblock %}
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <br/><br/>
-                    <p class="secondary">{% block reservation_instruction %}{% blocktranslate %}Gebe bitte bei Rückfragen immer die Reservierungsnummer
-                        {{ reservation.identifier }} an. Aktuell ist keine weitere Aktion notwendig. Die Bearbeitung
-                        kann bis zu 48 Stunden dauern.{% endblocktranslate %}{% endblock %}</p>
-                {% endblock %}
                 </td>
             </tr>
         </table>
     </td>
 </tr>
-{% endblock %}
-
-{#{% block call_to_action %}#}
-{#    {% trans "Reservierung öffnen" as cta_label %}#}
-{#    {% include "notifications/email_call_to_action_include.html" with url=reservation.get_absolute_url label=cta_label %}#}
-{#{% endblock %}#}
-
 {% block footer %}
     <tr>
         <td class="content-block">
             {% block footer_reason %}
-            <span class="apple-link">{% blocktranslate %}Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.{% endblocktranslate %}</span>
-            <span class="apple-link">{% blocktranslate with help_link="/help" %}Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a
-                    href="{{ url_root }}/help">Hilfeseite</a> zu finden.{% endblocktranslate %}</span>
+            <span class="apple-link"
+                >{% blocktranslate %}Diese E-Mail-Benachrichtigung wurde auf Grund
+                einer Reservierung versandt.{% endblocktranslate %}</span
+            >
+            <span class="apple-link"
+                >{% blocktranslate with help_link="/help" %}Informationen zum
+                Reservierungsverfahren und Benachrichtigungen sind auf der
+                <a href="{{ url_root }}/help">Hilfeseite</a> zu finden.{%
+                endblocktranslate %}</span
+            >
             {% endblock %}
         </td>
     </tr>
