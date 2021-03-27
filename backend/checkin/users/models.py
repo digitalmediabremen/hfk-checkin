@@ -185,7 +185,7 @@ class Profile(DirtyFieldsMixin, models.Model):
                                  message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
-    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
+    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=True)
     student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
     is_external = models.BooleanField(_("External"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
@@ -246,7 +246,6 @@ def create_profile(sender, instance, created, **kwargs):
     profile.first_name = instance.first_name
     profile.last_name = instance.last_name
     profile.email = instance.email
-    profile.verified = True
     profile.save()
 
 
