@@ -62,7 +62,7 @@ const NewProfilePage: NextPage = () => {
                         <Notice
                             bottomSpacing={4}
                             error
-                            title="Buchungen können erst ab dem 06.04.2021 - 08:00 getätigt werden."
+                            title={t("Buchungen können erst mit einem Startzeitpunkt beginnend ab dem 06.04.2021 - 08:00 getätigt werden.")}
                         />
                     </>
                 )}
