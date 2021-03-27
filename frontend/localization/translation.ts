@@ -178,6 +178,7 @@ const translation: Translation = {
             "Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig.":
                 "The verification with a photo ID at the front desk after registration is mandatory",
             Gastzugang: "guest access",
+            "Buchungen können erst mit einem Startzeitpunkt beginnend ab dem 06.04.2021 - 08:00 getätigt werden.": "Booking request can be made with a starting date beginning of 04/06/2021 - 8am."
         },
         setprofile: {
             "{fieldName} darf nicht leer sein.": "{fieldName} can't be empty.",

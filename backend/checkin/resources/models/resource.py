@@ -677,16 +677,22 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             return False
         return self.unit.is_viewer(user)
 
-    def _has_perm(self, user, perm, allow_admin=False):
+    def _has_perm(self, user, perm, allow_admin=False, allow_global=False):
         if not is_authenticated_user(user):
             return False
 
         # if (self.is_admin(user) and allow_admin) or user.is_superuser:
         #     return True
 
-        return self._has_explicit_perm(user, perm, allow_admin)
+        return self._has_explicit_perm(user, perm, allow_admin, allow_global)
 
-    def _has_explicit_perm(self, user, perm, allow_admin=True):
+    def _has_explicit_perm(self, user, perm, allow_admin=False, allow_global=False):
+        if allow_admin and is_general_admin(user):
+            return True
+
+        if allow_global and (user.has_perm('resource:%s' % perm) or user.has_perm('unit:%s' % perm)):
+            return True
+
         if hasattr(self, '_permission_checker'):
             checker = self._permission_checker
         else:
@@ -715,7 +721,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         return not self.access_restricted or self._has_perm(user, 'has_permanent_access')
 
     def can_modify_access(self, user):
-        return self._has_perm(user, 'can_modify_access')
+        return self._has_perm(user, 'can_modify_access', allow_global=True, allow_admin=True)
 
     def can_make_reservations(self, user):
         return self.reservable and self.has_access(user)

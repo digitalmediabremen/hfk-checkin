@@ -36,12 +36,12 @@ generate_pdfs_for_selected_objects.short_description = _("PDF-Raumkarten für au
 
 class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin, DynamicArrayMixin):
     readonly_fields = ('code',)
-    list_display = ('get_name', 'display_numbers', 'area', 'capacity', 'capacity_1', 'capacity_2', 'capacity_3', 'code', 'updated_at')
-    list_display_with_loads = ('get_name', 'display_numbers', 'area', 'capacity', 'capacity_1', 'capacity_2', 'capacity_3', 'code',  'checkins_sum', 'real_load', 'updated_at')
+    list_display = ('get_name', 'display_numbers', 'area', 'capacity', 'code', 'updated_at')
+    list_display_with_loads = ('get_name', 'display_numbers', 'area', 'capacity', 'code',  'checkins_sum', 'real_load', 'updated_at')
     inlines = [CapacityForActivityProfileInline]
     actions = [generate_pdfs_for_selected_objects]
     list_filter = ('updated_at','removed')
-    search_fields = ['resource.name', 'resource.numbers','code']
+    search_fields = ['_number', '_number', 'resource__name', 'resource__numbers','code']
     list_max_show_all = 1000
     mptt_indent_field = "get_name"
 
@@ -62,20 +62,22 @@ class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin, DynamicArrayMixin):
 
     # TODO: do not repeat yourself.
 
-    def capacity_1(self, obj):
-        activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
-        return activities[0].capacity if len(activities) > 0 else None
-    capacity_1.short_description = _("K 1")
+    # FIXME: these make too many queries
 
-    def capacity_2(self, obj):
-        activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
-        return activities[1].capacity if len(activities) > 1 else None
-    capacity_2.short_description = _("K 2")
-
-    def capacity_3(self, obj):
-        activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
-        return activities[2].capacity if len(activities) > 2 else None
-    capacity_3.short_description = _("K 3")
+    # def capacity_1(self, obj):
+    #     activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
+    #     return activities[0].capacity if len(activities) > 0 else None
+    # capacity_1.short_description = _("K 1")
+    #
+    # def capacity_2(self, obj):
+    #     activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
+    #     return activities[1].capacity if len(activities) > 1 else None
+    # capacity_2.short_description = _("K 2")
+    #
+    # def capacity_3(self, obj):
+    #     activities = obj.org_activities.through.objects.filter(location=obj).order_by('capacity').all()
+    #     return activities[2].capacity if len(activities) > 2 else None
+    # capacity_3.short_description = _("K 3")
 
 
 class CheckinAdmin(admin.ModelAdmin):

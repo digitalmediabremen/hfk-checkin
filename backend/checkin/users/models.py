@@ -137,7 +137,7 @@ class User(AbstractUser):
             return False
 
     def __str__(self):
-        return self.get_display_name()
+        return self.get_email_notation()
 
     @property
     def username(self):
@@ -185,7 +185,7 @@ class Profile(DirtyFieldsMixin, models.Model):
                                  message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
     phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
-    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=False)
+    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=True)
     student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
     is_external = models.BooleanField(_("External"),blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
@@ -219,10 +219,10 @@ class Profile(DirtyFieldsMixin, models.Model):
         verbose_name = _("Userprofile")
         verbose_name_plural = _("Userprofiles")
         permissions = [
-            ("can_view_external_users", _("Can view external Users")),
-            ("can_view_regular_users", _("Can view regular Users")),
-            ("can_view_unverified_users", _("Can view unverified Users")),
-            ("can_view_any_user", _("Can view unverified Users")),
+            ("can_view_any_user", _("Can view any user")),
+            ("can_view_external_users", _("Can view external user")),
+            ("can_view_regular_users", _("Can view regular user")),
+            ("can_view_unverified_users", _("Can view unverified users")),
             ("can_view_real_names", _("Can view full names")),
             ("can_view_full_email", _("Can view full e-mail addresses")),
             ("can_view_full_phone_number", _("Can view full phone numbers")),
@@ -246,7 +246,6 @@ def create_profile(sender, instance, created, **kwargs):
     profile.first_name = instance.first_name
     profile.last_name = instance.last_name
     profile.email = instance.email
-    profile.verified = True
     profile.save()
 
 

@@ -29,7 +29,7 @@
                                 <h2
                                     class="secondary{% if reservation.is_inactive %} strike{% endif %}"
                                 >
-                                    {{ reservation.identifier }}
+                                    #{{ reservation.identifier }}
                                 </h2>
                                 <h2 class="primary">
                                     {{ reservation.resource.display_numbers }}<br />
@@ -40,7 +40,7 @@
                                 <h2 class="primary{% if reservation.is_inactive %} strike{% endif %}">
                                     {{ reservation.begin_in_resource_tz_naive.date|date:"D.d.m.Y" }}
                                     <br />
-                                    {{reservation.begin_in_resource_tz_naive|time:"H:i" }} –
+                                    {{ reservation.begin_in_resource_tz_naive|time:"H:i" }} –
                                     {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}
                                 </h2>
                             {% endblock %}
@@ -55,10 +55,10 @@
                                         und {{ reservation.number_of_attendees|add:"-1" }} weitere Personen
                                     {% endif %}
                                 </p>
-                                {% if reservation.purpose %}
+                                {% if reservation.get_purpose_display %}
                                     <p class="primary">
                                         <span class="bold">{% translate 'Grund' %}:</span>
-                                        {{ reservation.purpose }}
+                                        {{ reservation.get_purpose_display }}
                                     </p>
                                 {% endif %} 
                                 {% if reservation.message %}
@@ -73,12 +73,29 @@
                 </tr>
                 <tr>
                     <td>
+                        <br /><br />
                         {% block call_to_action %}
-                            <br /><br />
-                            {% blocktranslate asvar cta_label %}
-                                Reservierung {{ reservation.identifier }} öffnen
-                            {% endblocktranslate %}
-                            {% include "notifications/email_call_to_action_include.html" with url=reservation.get_absolute_url label=cta_label %} 
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+                                <tbody>
+                                    <tr>
+                                        <td align="left">
+                                            <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td> 
+                                                            <a href="{{ reservation.get_absolute_url }}" target="_blank">
+                                                                {% blocktranslate with identifier=reservation.identifier %}
+                                                                    Reservierung #{{ identifier }} öffnen
+                                                                {% endblocktranslate %}
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         {% endblock %}
                     </td>
                 </tr>
@@ -105,8 +122,8 @@
                     {% endblocktranslate %}
                 </span>
                 <span class="apple-link">
-                    {% blocktranslate with help_link="/help" %}
-                        Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a href="{{ url_root }}/help">Hilfeseite</a> zu finden.
+                    {% blocktranslate with base_url=frontend_base_url %}
+                        Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a href="{{ base_url }}/help">Hilfeseite</a> zu finden.
                     {% endblocktranslate %}
                 </span>
             {% endblock %}

@@ -4,7 +4,7 @@ import Unit from "./Unit";
 export default interface Resource {
     readonly uuid: string;
     readonly name: string;
-    readonly alternative_names: string | null;
+    readonly alternative_names: string[] | null;
     readonly display_name: string;
     readonly display_numbers: string | null;
     readonly unit: Unit;

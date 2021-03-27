@@ -51,6 +51,28 @@ class AdminUserLookupPermissionMixin():
         return qs
 
 
+class AdminProfileLookupPermissionMixin():
+    # ("can_view_external_users", _("Can view external Users")),
+    # ("can_view_regular_users", _("Can view regular Users")),
+    # ("can_view_unverified_users", _("Can view unverified Users")),
+    # ("can_view_any_user", _("Can view unverified Users")),
+    # ("can_view_real_names", _("Can view full names")),
+    # ("can_view_full_email", _("Can view full e-mail addresses")),
+    # ("can_view_full_phone_number", _("Can view full phone numbers")),
+
+    def get_queryset(self, request, allow_any=False):
+        qs = super().get_queryset(request).exclude_anonymous_users()
+        if allow_any or request.user.is_superuser or request.user.has_perm('users.can_view_any_user'):
+            return qs
+        if not request.user.has_perm('users.can_view_external_users'):
+            qs |= qs.filter(is_external=True)
+        if not request.user.has_perm('users.can_view_regular_users'):
+            qs |= qs.filter(is_external=False)
+        if not request.user.has_perm('users.can_view_unverified_users'):
+            qs = qs.exclude(verified=True)
+        return qs
+
+
 class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, DjangoUserAdmin):
     open_new_window = True
     fieldsets = (
@@ -69,7 +91,7 @@ class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, Djang
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'disable_notifications', 'preferred_language', 'profile__is_external', 'profile__verified')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
     add_form = UserCreationForm
@@ -233,9 +255,15 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     list_editable = ('verified','is_external')
-    list_filter = ('updated_at','created_at','verified','is_external')
+    list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('created_at', 'updated_at','user')
+
+    def get_queryset(self, request):
+        qs = super(ProfileAdmin, self).get_queryset(request)
+        if request.user.has_perm('users.can_view_any_users'):
+            return qs
+        return qs.exclude(verified=True)
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser and 'user' in self.readonly_fields:
@@ -261,7 +289,9 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     def email_obfuscated(self, object):
         if object.email:
             m = object.email.split('@')
-            return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}{m[0][-2]}{m[0][-1]}@{m[1]}'
+            if len(m) is 2:
+                return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 2)}{m[0][-2]}{m[0][-1]}@{m[1]}'
+            return f'{m[0][0]}{m[0][1]}{"*" * min((len(m[0]) - 2), 7)}'
     email_obfuscated.short_description = _("E-Mail Adresse")
 
     # def has_add_permission(self, request):
