@@ -19,7 +19,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
     return (
         <>
             <style jsx>{`
-                .wrapper {
+                .notice-wrapper {
                     display: flex;
                     color: ${theme.primaryColor};
                     margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
@@ -48,7 +48,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
 
                 }
             `}</style>
-            <div className={classNames("wrapper", { error })}>
+            <div className={classNames("notice-wrapper", { error })}>
                 {error && (
                     <span className="icon">
                         <AlertCircle />

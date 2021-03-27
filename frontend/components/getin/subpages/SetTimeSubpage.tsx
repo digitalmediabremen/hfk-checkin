@@ -10,6 +10,7 @@ import {
     addDateTime,
     createDate,
     createDateNow,
+    createDefaultTime,
     createTime,
     createTimeFromDate,
     createTimeNow,
@@ -42,6 +43,9 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const [begin, setBegin] = useReservationState("begin");
     const [end, setEnd] = useReservationState("end");
     const [date, setDate] = useState<Date | undefined>(begin);
+    // const default
+    // const defaultBegin = createTimeFromDate(addDateTime(createDefaultTime(), duration.hours(2)));
+    // const defaultEnd = createTimeFromDate(addDateTime(defaultBegin, duration.hours(2)));
     const [timeFrom, setTimeFrom] = useState<Time | undefined>(
         begin ? createTimeFromDate(begin) : undefined
     );

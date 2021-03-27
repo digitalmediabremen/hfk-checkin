@@ -20,6 +20,7 @@ export const useOnlyOneOpen = (
         return {
             onOpen: onFold,
             open: isOpen(),
+            key: `${index}help-section`
         };
     };
 };
@@ -73,7 +74,7 @@ const HelpSection: React.FunctionComponent<HelpSectionProps> = (props) => {
     };
 
     return (
-        <>
+        <div>
             <style jsx>{`
                 div {
                 }
@@ -90,7 +91,7 @@ const HelpSection: React.FunctionComponent<HelpSectionProps> = (props) => {
             >
                 {children}
             </SmoothCollapse>
-        </>
+        </div>
     );
 };
 

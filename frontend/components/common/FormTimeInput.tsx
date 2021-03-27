@@ -87,7 +87,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    margin-left: 48px;
+                    margin-left: ${theme.spacing(6)}px;
                     transform: translate(-50%, -50%);
                     font-weight: normal;
                 }

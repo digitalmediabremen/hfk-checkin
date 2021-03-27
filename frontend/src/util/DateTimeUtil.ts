@@ -5,6 +5,7 @@ export type TimeString = `${number}${number}:${number}${number}`;
 export type Time = Date & { isTime: true };
 
 const ONE_DAY_INTERVAL = 1000 * 60 * 60 * 24;
+const ONE_HOUR_INTERVAL = 1000 * 60 * 60;
 
 export function assertTime(time: Time) {
     if (empty(time.isTime) && time.isTime === false)
@@ -87,6 +88,12 @@ export const createTimeNow = (): Time => {
     return d;
 };
 
+export const createDefaultTime = (): Time => {
+    const now = new Date();
+    const d = createTime(now.getHours(), Math.floor(now.getMinutes() / 15) * 15);
+    return d;
+};
+
 export const createTimeFromDate = (v: Date): Time => {
     const d = createTime(v.getHours(), v.getMinutes());
     return d;
@@ -146,6 +153,7 @@ export const addDateTime = (value: Date, valueToAdd: Date) => {
             valueToAdd.getTimezoneOffset() * 60 * 1000
     );
 };
+
 export const mergeDateAndTime = (date: Date, time: Date | Time) => {
     const d = new Date();
     d.setFullYear(date.getFullYear());
@@ -165,6 +173,9 @@ export const createDateNow = () => {
 export const duration = {
     days: (days: number): Date => {
         return createDate(ONE_DAY_INTERVAL * days);
+    },
+    hours: (hours: number): Date => {
+        return createDatetime(ONE_HOUR_INTERVAL * hours);
     },
 };
 
