@@ -31,8 +31,8 @@
                 weitere Personen
             {% endif %}
 
-            {% if reservation.purpose %}
-                {% translate 'Grund' %}: {{ reservation.purpose }}
+            {% if reservation.get_purpose_display %}
+                {% translate 'Grund' %}: {{ reservation.get_purpose_display }}
             {% endif %}
 
             {% if reservation.message %}
