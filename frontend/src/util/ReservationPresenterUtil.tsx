@@ -75,13 +75,14 @@ export const attendeesFormValuePresenter = (
 
 export const resourceFormValuePresenter = (
     resource: Resource,
-    locale: string
+    locale: string,
+    includeResourceNumber: boolean = true,
 ) => {
     const theme = useTheme();
 
     const PermissionIcon = resourcePermissionIcon(resource);
     return [
-        resource.display_numbers || "",
+        ...insertIf([resource.display_numbers || ""], includeResourceNumber),
         <b>
             {resource.name}{" "}
             {resource.access_restricted && (
