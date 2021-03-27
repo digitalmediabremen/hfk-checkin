@@ -1,6 +1,11 @@
-{% extends "notifications/email_base.html" %} {% load i18n %} {% block preheader
-%}{% blocktranslate %}Es liegt ein Update für Deine Reservierungsanfrage für {{
-reservation.resource.display_name }} vor.{% endblocktranslate %}{% endblock %}
+{% extends "notifications/email_base.html" %} 
+{% load i18n %} 
+{% block preheader %}
+    {% blocktranslate %}
+        Es liegt ein Update für Deine Reservierungsanfrage für {{
+reservation.resource.display_name }} vor.
+    {% endblocktranslate %}
+{% endblock %}
 {% block main_table_inner %}
 <!-- START MAIN CONTENT AREA -->
 <tr>
