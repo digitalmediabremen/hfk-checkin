@@ -261,7 +261,9 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     def email_obfuscated(self, object):
         if object.email:
             m = object.email.split('@')
-            return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}{m[0][-2]}{m[0][-1]}@{m[1]}'
+            if len(m) is 2:
+                return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}{m[0][-2]}{m[0][-1]}@{m[1]}'
+            return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 4)}'
     email_obfuscated.short_description = _("E-Mail Adresse")
 
     # def has_add_permission(self, request):
