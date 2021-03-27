@@ -18,7 +18,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
                         border: none;
                         padding: 0;
                         margin: 0;
-                        color: blue;
+                        color: ${theme.primaryColor};
                         // opacity: 0;
                         display: block;
                         width: 100%;

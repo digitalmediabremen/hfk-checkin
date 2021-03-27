@@ -3,6 +3,7 @@ import TimeInput from "react-time-input-polyfill";
 import TimeInputPolyfill from "react-time-input-polyfill";
 import css from "styled-jsx/css";
 import { useTranslation } from "../../localization";
+import useTheme from "../../src/hooks/useTheme";
 import {
     timeFromTimeString,
     TimeString,
@@ -21,7 +22,6 @@ const { className, styles } = css.resolve`
         border: none;
         padding: 0;
         margin: 0;
-        color: blue;
         // opacity: 0;
         display: block;
         width: 100%;
@@ -65,6 +65,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
 }) => {
     const inputTimeString = value ? fromTime(value) : "";
     const { t } = useTranslation();
+    const theme = useTheme();
 
     const handleChange = (timeString: string) => {
         if (timeString === "") return onChange?.(undefined);
@@ -107,6 +108,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                         aria-label="Close"
                         type="time"
                         name="time"
+                        style={{color: theme.primaryColor}}
                         className={className}
                         onChange={({ value }) => {
                             handleChange(value);
