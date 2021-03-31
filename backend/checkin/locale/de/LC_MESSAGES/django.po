@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-27 22:44+0100\n"
+"POT-Creation-Date: 2021-03-31 17:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -249,8 +249,8 @@ msgstr ""
 msgid ""
 "\n"
 "                        Informationen zum Reservierungsverfahren und "
-"Benachrichtigungen sind auf der <a href=\"%(base_url)s/help\">Hilfeseite</a> "
-"zu finden.\n"
+"Benachrichtigungen sind auf der <a href=\"%(help_url)s\">Hilfeseite</a> zu "
+"finden.\n"
 "                    "
 msgstr ""
 
@@ -311,6 +311,7 @@ msgstr "Raum"
 #: checkin/resources/admin/list_filters.py:15
 #: checkin/resources/admin/reception.py:26
 #: checkin/resources/admin/reception.py:42
+#: checkin/resources/admin/reservation.py:188
 #: checkin/resources/models/reservation.py:206
 msgid "Organizer"
 msgstr "Organisator"
@@ -335,7 +336,7 @@ msgstr "Jetzt oder in Zukunft"
 #: checkin/resources/admin/list_filters.py:49
 #: checkin/resources/admin/reservation.py:86
 #: checkin/resources/admin/reservation.py:140
-#: checkin/resources/admin/reservation.py:265
+#: checkin/resources/admin/reservation.py:270
 #: checkin/resources/models/attendance.py:26
 #: checkin/resources/models/reservation.py:207
 msgid "State"
@@ -447,7 +448,7 @@ msgid "Attendance records"
 msgstr "Anwesenheitsdokuemtationen"
 
 #: checkin/resources/admin/reception.py:94
-#: checkin/resources/admin/reservation.py:216
+#: checkin/resources/admin/reservation.py:221
 msgid "Timespan"
 msgstr "Zeitraum"
 
@@ -508,65 +509,65 @@ msgstr "Erstellung und Änderungen"
 msgid "Resource instructions"
 msgstr "Raumhinweise"
 
-#: checkin/resources/admin/reservation.py:190
+#: checkin/resources/admin/reservation.py:195
 msgid "(phone contact not allowed)"
 msgstr "(telefonische Kontaktaufnahme nicht erlaubt)"
 
-#: checkin/resources/admin/reservation.py:191
+#: checkin/resources/admin/reservation.py:196
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: checkin/resources/admin/reservation.py:195
+#: checkin/resources/admin/reservation.py:200
 msgid "Prio."
 msgstr "Prio."
 
-#: checkin/resources/admin/reservation.py:201
+#: checkin/resources/admin/reservation.py:206
 msgid "Excl."
 msgstr "Exkl."
 
-#: checkin/resources/admin/reservation.py:211
+#: checkin/resources/admin/reservation.py:216
 #: checkin/resources/models/reservation.py:205
 msgid "Purpose"
 msgstr "Grund"
 
-#: checkin/resources/admin/reservation.py:221
+#: checkin/resources/admin/reservation.py:226
 msgid "Date"
 msgstr "Datum"
 
-#: checkin/resources/admin/reservation.py:226
+#: checkin/resources/admin/reservation.py:231
 msgid "Time"
 msgstr "Zeit"
 
-#: checkin/resources/admin/reservation.py:231
+#: checkin/resources/admin/reservation.py:236
 msgid "Created at"
 msgstr "Erstellt"
 
-#: checkin/resources/admin/reservation.py:247
+#: checkin/resources/admin/reservation.py:252
 msgid "Avail."
 msgstr "Auslastung"
 
-#: checkin/resources/admin/reservation.py:251
+#: checkin/resources/admin/reservation.py:256
 msgid "BLOCKED"
 msgstr "BLOCKIERT"
 
-#: checkin/resources/admin/reservation.py:286
+#: checkin/resources/admin/reservation.py:291
 #, python-format
 msgid "%s preferred language is: %s"
 msgstr "%s bevorzugte Sprache ist: %s"
 
-#: checkin/resources/admin/reservation.py:288
+#: checkin/resources/admin/reservation.py:293
 msgid "Has been cancelled or denied."
 msgstr "Wurde storniert oder abgelehnt."
 
-#: checkin/resources/admin/reservation.py:290
+#: checkin/resources/admin/reservation.py:295
 msgid "Has priority."
 msgstr "Hat Priorität."
 
-#: checkin/resources/admin/reservation.py:292
+#: checkin/resources/admin/reservation.py:297
 msgid "Uses space exclusively."
 msgstr "Alleinige Nutzung."
 
-#: checkin/resources/admin/reservation.py:296
+#: checkin/resources/admin/reservation.py:301
 msgid ""
 "Organizer does not want to attend. Yet the organizer is in the attendance "
 "list."
@@ -574,15 +575,15 @@ msgstr ""
 "Organisator will nicht teilnehmen. Trotzdem ist der Organisator in der "
 "Teilnehmerliste."
 
-#: checkin/resources/admin/reservation.py:298
+#: checkin/resources/admin/reservation.py:303
 msgid "Organizer does not want to attend."
 msgstr "Organisator will nicht teilnehmen."
 
-#: checkin/resources/admin/reservation.py:300
+#: checkin/resources/admin/reservation.py:305
 msgid "Organizer is missing from attendance list."
 msgstr "Der Organisator fehlt in der Teilnehmerliste."
 
-#: checkin/resources/admin/reservation.py:305
+#: checkin/resources/admin/reservation.py:310
 #, python-format
 msgid "%(user)s has one or more group assignments: %(assigned_groups)s"
 msgstr "%(user)s gehört zu folgenden Gruppen: %(assigned_groups)s"
@@ -655,7 +656,7 @@ msgid "You cannot make a reservation in the past"
 msgstr "Du kannst keine Anfragen in der Vergangenheit stellen."
 
 #: checkin/resources/api/reservation.py:258
-#: checkin/resources/models/reservation.py:640
+#: checkin/resources/models/reservation.py:665
 msgid "This resource is blocked during this time. Sorry."
 msgstr "Dieser Raum ist zum gewählten Zeitpunkt (noch) nicht verfügbar."
 
@@ -718,7 +719,7 @@ msgstr "Raumverwaltung und Buchungen"
 #: checkin/resources/models/equipment.py:12
 #: checkin/resources/models/equipment.py:24
 #: checkin/resources/models/equipment.py:39
-#: checkin/resources/models/reservation.py:1078
+#: checkin/resources/models/reservation.py:1103
 #: checkin/resources/models/resource.py:95
 #: checkin/resources/models/resource.py:113
 #: checkin/resources/models/resource.py:183
@@ -1216,71 +1217,71 @@ msgstr "Organisator nimmt teil"
 msgid "Reservations"
 msgstr "Buchungen"
 
-#: checkin/resources/models/reservation.py:271
+#: checkin/resources/models/reservation.py:283
 msgid "Number of attendees"
 msgstr "Personenzahl"
 
-#: checkin/resources/models/reservation.py:276
-#: checkin/resources/models/reservation.py:282
+#: checkin/resources/models/reservation.py:288
+#: checkin/resources/models/reservation.py:294
 msgid "Inactive"
 msgstr "Inaktiv"
 
-#: checkin/resources/models/reservation.py:303
-#: checkin/resources/models/reservation.py:324
+#: checkin/resources/models/reservation.py:328
+#: checkin/resources/models/reservation.py:349
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: checkin/resources/models/reservation.py:463
+#: checkin/resources/models/reservation.py:488
 msgid "Reservation was confirmed."
 msgstr "Buchung wurde bestätigt."
 
-#: checkin/resources/models/reservation.py:480
+#: checkin/resources/models/reservation.py:505
 msgid "Reservation was just requested and will be processed shortly"
 msgstr "Die Buchung wurde angefragt und wird zeitnah bearbeitet."
 
-#: checkin/resources/models/reservation.py:482
+#: checkin/resources/models/reservation.py:507
 msgid "Reservation was just confirmed."
 msgstr "Buchung wurde bestätigt."
 
-#: checkin/resources/models/reservation.py:492
+#: checkin/resources/models/reservation.py:517
 msgid "Reservation was denied."
 msgstr "Buchung wurde abgelehnt."
 
-#: checkin/resources/models/reservation.py:495
+#: checkin/resources/models/reservation.py:520
 msgid "Reservation was canceled."
 msgstr "Buchung wurde storniert."
 
-#: checkin/resources/models/reservation.py:623
+#: checkin/resources/models/reservation.py:648
 #, python-format
 msgid "%s is not verified. Please verify before making reservations."
 msgstr "%s ist nicht verifiziert. Bitte vor Buchungsbestätigung verifizieren."
 
-#: checkin/resources/models/reservation.py:627
+#: checkin/resources/models/reservation.py:652
 #, python-format
 msgid "%s is an external user. External users can not make reservations."
 msgstr ""
 
-#: checkin/resources/models/reservation.py:630
+#: checkin/resources/models/reservation.py:655
 msgid "This resource is not reservable. Sorry."
 msgstr "Dieser Raum ist nicht reservierbar."
 
-#: checkin/resources/models/reservation.py:643
+#: checkin/resources/models/reservation.py:668
 #, python-format
 msgid "%s is not explicitly permitted to make reservations on this resource."
 msgstr "%s ist nicht explizit berechtigt Buchungen für diesen Raum anzufragen."
 
-#: checkin/resources/models/reservation.py:648
+#: checkin/resources/models/reservation.py:673
 msgid "Begin or end are not valid dates."
 msgstr "Start- oder Endzeit sind nicht korrekt."
 
-#: checkin/resources/models/reservation.py:650
+#: checkin/resources/models/reservation.py:675
 msgid "You must end the reservation after it has begun"
 msgstr "Endzeit der Buchung muss nach der Startzeit liegen."
 
-#: checkin/resources/models/reservation.py:692
+#: checkin/resources/models/reservation.py:717
 #, python-format
 msgid ""
 "The resource's capacity (%(resource_capacity)d) is already exhausted for "
@@ -1290,17 +1291,17 @@ msgstr ""
 "Zeit bereits überschritten. Maximale Raumkapazität (inkl. diesem): "
 "%(attendance_sum)d."
 
-#: checkin/resources/models/reservation.py:699
+#: checkin/resources/models/reservation.py:724
 #, python-format
 msgid "Total attendance (incl. this one): %d."
 msgstr "Maximale Raumkapazität (inkl. diesem): %d."
 
-#: checkin/resources/models/reservation.py:703
+#: checkin/resources/models/reservation.py:728
 #, python-format
 msgid "The minimum reservation length is %(min_period)s."
 msgstr "Die minimale Buchungsdauer ist %(min_period)s."
 
-#: checkin/resources/models/reservation.py:707
+#: checkin/resources/models/reservation.py:732
 #, python-format
 msgid ""
 "The reservation duration must fit the slot size of %(slot_size)s or "
@@ -1309,36 +1310,36 @@ msgstr ""
 "Die Reservierungsdauer muss einem oder mehreden Zeitfenstern %(slot_size)s "
 "entsprechen."
 
-#: checkin/resources/models/reservation.py:1079
+#: checkin/resources/models/reservation.py:1104
 #: checkin/resources/models/unit.py:57
 msgid "Public"
 msgstr "Öffentlich"
 
-#: checkin/resources/models/reservation.py:1082
+#: checkin/resources/models/reservation.py:1107
 msgid "reservation purpose"
 msgstr "Buchungsgrund"
 
-#: checkin/resources/models/reservation.py:1083
+#: checkin/resources/models/reservation.py:1108
 msgid "reservation purposes"
 msgstr "Buchungsgründe"
 
-#: checkin/resources/models/reservation.py:1091
+#: checkin/resources/models/reservation.py:1116
 msgid "Exam"
 msgstr ""
 
-#: checkin/resources/models/reservation.py:1092
+#: checkin/resources/models/reservation.py:1117
 msgid "Exam preperation"
 msgstr "Prüfungsvorbereitung"
 
-#: checkin/resources/models/reservation.py:1093
+#: checkin/resources/models/reservation.py:1118
 msgid "Council meeting"
 msgstr "Gremiensitzung"
 
-#: checkin/resources/models/reservation.py:1094
+#: checkin/resources/models/reservation.py:1119
 msgid "Pickup"
 msgstr "Abholung"
 
-#: checkin/resources/models/reservation.py:1095
+#: checkin/resources/models/reservation.py:1120
 msgid "Other purpose"
 msgstr "Anderer Grund"
 

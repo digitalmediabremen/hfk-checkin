@@ -1,66 +1,67 @@
 {% extends "notifications/email_base_plain.txt" %}
-{% load i18n %}
+{% load i18n absoluteuri %}
 {% block preheader %}
-    {% blocktranslate %}
-        Es liegt ein Update für Deine Reservierungsanfrage für 
-        {{ reservation.resource.display_name }} vor.
-    {% endblocktranslate %}
+{% blocktranslate %}
+Es liegt ein Update für Deine Reservierungsanfrage für
+{{ reservation.resource.display_name }} vor.
+{% endblocktranslate %}
+{% endblock %}
+{% spaceless %}
+{% block main_table_inner %}
+{% block reservation %}
+{% if update_message %}
+{{ update_message }}
+{% endif %}
+
+==== {% block reservation_status %}{% blocktranslate %}ANFRAGE AKTUALISIERT{% endblocktranslate %}{% endblock %} ================
+
+{% block reservation_info %}
+#{{ reservation.identifier }}
+
+{{ reservation.resource.display_numbers }}
+{{ reservation.resource.name }}
+{{ reservation.begin_in_resource_tz_naive.date|date:"D. d.m.Y" }}
+{{ reservation.begin_in_resource_tz_naive|time:"H:i" }} – {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}
 {% endblock %}
 
-{% block main_table_inner %}
-    {% block reservation %}
-        {% if update_message %}
-            {{ update_message }}
-        {% endif %}
+{% block reservation_details %}
+{% translate 'Angemeldete Personen' %}: {{ reservation.organizer|default:"Du" }}
+{% if reservation.number_of_attendees|add:"-1" > 1 %}
+und {{ reservation.number_of_attendees|add:"-1" }}
+weitere Personen
+{% endif %}
 
-        ==== {% block reservation_status %}{% blocktranslate %}ANFRAGE AKTUALISIERT{% endblocktranslate %}{% endblock %} ================
-    
-        {% block reservation_info %}
-            #{{ reservation.identifier }}
+{% if reservation.get_purpose_display %}
+{% translate 'Grund' %}: {{ reservation.get_purpose_display }}
+{% endif %}
 
-            {{ reservation.resource.display_numbers }}
-            {{ reservation.resource.name }}
-            {{ reservation.begin_in_resource_tz_naive.date|date:"D. d.m.Y" }}
-            {{ reservation.begin_in_resource_tz_naive|time:"H:i" }} – {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}
-        {% endblock %}
+{% if reservation.message %}
+{% translate 'Nachricht' %}: {{ reservation.message }}
+{% endif %}
+{% endblock %}
 
-        {% block reservation_details %}
-            {% translate 'Angemeldete Personen' %}: {{ reservation.organizer|default:"Du" }}
-            {% if reservation.number_of_attendees|add:"-1" > 1 %} 
-                und {{ reservation.number_of_attendees|add:"-1" }} 
-                weitere Personen
-            {% endif %}
+========================================
 
-            {% if reservation.get_purpose_display %}
-                {% translate 'Grund' %}: {{ reservation.get_purpose_display }}
-            {% endif %}
+{% block call_to_action %}
+{% blocktranslate %}Anfrage aufrufen{% endblocktranslate %}: {{ reservation.get_absolute_full_url }}
+{% endblock %}
 
-            {% if reservation.message %}
-                {% translate 'Nachricht' %}: {{ reservation.message }}
-            {% endif %}        
-        {% endblock %}
-
-        ========================================
-
-        {% block call_to_action %}
-            {% blocktranslate %}Anfrage aufrufen{% endblocktranslate %}: {{ reservation.get_absolute_url }}
-        {% endblock %}
-     
-        {% block reservation_instruction %}
-        {% endblock %}
-    {% endblock %}
+{% block reservation_instruction %}
+{% endblock %}
+{% endblock %}
 {% endblock %}
 
 {% block footer %}
-    {% block footer_reason %}
-        {% blocktranslate %}
-            Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.
-        {% endblocktranslate %}
-        
-        {% blocktranslate with base_url=url_root %}
-            Informationen zum Reservierungsverfahren und Benachrichtigungen sind unter {{ base_url }}/help zu finden.
-        {% endblocktranslate %}
-    {% endblock %}
+{% block footer_reason %}
+{% blocktranslate %}
+Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.
+{% endblocktranslate %}
 
-    {{ block.super }}
+{% blocktranslate with help_url=HELP_URL %}
+Informationen zum Reservierungsverfahren und Benachrichtigungen sind unter {{ help_url }} zu finden.
+{% endblocktranslate %}
 {% endblock %}
+
+{{ block.super }}
+{% endblock %}
+{% endspaceless %}

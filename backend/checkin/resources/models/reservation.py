@@ -244,6 +244,29 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def __str__(self):
         return "#%s (%s)" % (self.short_uuid, gettext(self.get_state_display()))
 
+    def get_absolute_url(self):
+        from urllib.parse import urljoin
+        return urljoin(settings.FRONTEND_BASE_URL, 'reservation/%s' % self.pk)
+
+    def get_manage_url(self):
+        from django.urls import reverse
+        return reverse('admin:resources_reservation_change', kwargs={'object_id': self.pk})
+
+    def get_manage_attendees_url(self):
+        from django.urls import reverse
+        return reverse('admin:resources_reservationattendance_change', kwargs={'object_id': self.pk})
+
+    def get_absolute_full_url(self):
+        return self.get_absolute_url()
+
+    def get_manage_full_url(self):
+        from urllib.parse import urljoin
+        return urljoin(settings.BACKEND_BASE_URL, self.get_manage_url())
+
+    def get_manage_attendees_full_url(self):
+        from urllib.parse import urljoin
+        return urljoin(settings.BACKEND_BASE_URL, self.get_manage_attendees_url())
+
     @property
     def organizer(self):
         """

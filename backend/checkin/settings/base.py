@@ -97,6 +97,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'django_premailer',
     'anymail',
+    'absoluteuri',
 ]
 
 LOCAL_APPS = [
@@ -273,6 +274,8 @@ NOTIFICATION_SENDER_ADDRESS = "getin@%s" % MESSAGE_FQDN
 NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
 FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL', default='http://frontend.example.com')
+SITE_DOMAIN = getenv('SITE_DOMAIN', default='example.com')
+BACKEND_BASE_URL = ''.join(['http://', SITE_DOMAIN])
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
@@ -281,11 +284,9 @@ POST_OFFICE = {
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
 }
 
-SITE_DOMAIN = getenv('SITE_DOMAIN', default='example.com')
-
 PREMAILER_OPTIONS = {
     # FIXME base_url could be taken from context / request
-    'base_url': 'https://%s' % SITE_DOMAIN,
+    'base_url': BACKEND_BASE_URL,
     'cssutils_logging_level': logging.FATAL,
 }
 
@@ -298,7 +299,7 @@ ADMINS = []
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # We are currently English only: The default language middleware was disabled. See MIDDLEWARE
-ADMIN_LANGUAGE_CODE="de-de"
+ADMIN_LANGUAGE_CODE = "de-de"
 LANGUAGE_CODE = "de-de"
 
 # LOGGING
