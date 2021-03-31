@@ -289,9 +289,22 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         return self.begin
 
     @cached_property
+    def begin_as_resource_tz(self):
+        if self.resource:
+            b = self.begin.astimezone(self.resource.get_tz())
+            return b
+        return self.begin
+
+    @cached_property
     def end_in_resource_tz_naive(self):
         if self.resource:
             return make_naive(self.end, timezone=self.resource.get_tz())
+        return self.end
+
+    @cached_property
+    def end_as_resource_tz(self):
+        if self.resource:
+            return self.end.astimezone(self.resource.get_tz())
         return self.end
 
     @property
@@ -313,7 +326,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def get_display_duration_date(self, humanize=False):
         str_begin = datefilter(self.begin_in_resource_tz_naive, 'D j.n.')
         if humanize:
-            return naturalday(self.begin)
+            return naturalday(self.begin_in_resource_tz_naive)
         return str_begin
 
     def get_display_duration_time(self):
