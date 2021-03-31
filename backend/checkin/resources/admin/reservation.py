@@ -106,7 +106,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                        admin.ModelAdmin):
     # extra_readonly_fields_on_update = ('access_code',)
     list_display = (
-    'get_state_colored', 'user', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'get_collisions',
+    'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'get_collisions',
     'get_exclusive', 'get_created_at_display') #'get_priority',
     list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', 'purpose',
                    # 'resources', 'start', 'end', 'status', 'is_important',
@@ -126,7 +126,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     form = ReservationAdminForm
     date_hierarchy = 'begin'
     actions_on_top = True
-    list_display_links = ('user', 'resource')
+    list_display_links = ('get_organizer_display', 'resource')
     list_max_show_all = 50
     list_per_page = 30
     save_on_top = True
@@ -182,6 +182,11 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             return obj.resource.reservation_info
         return self.get_empty_value_display()
     get_reservation_info.short_description = _("Resource instructions")
+
+    def get_organizer_display(self, obj):
+        return obj.user.get_display_name()
+    get_organizer_display.short_description = _("Organizer")
+    get_organizer_display.admin_order_field = 'user'
 
     def get_phone_number(self, obj):
         # FIXME add permission 'can_display_phone_number_if_agreed'
