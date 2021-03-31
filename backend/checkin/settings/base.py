@@ -97,7 +97,6 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'django_premailer',
     'anymail',
-    'absoluteuri',
 ]
 
 LOCAL_APPS = [
