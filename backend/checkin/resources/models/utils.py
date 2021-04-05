@@ -110,7 +110,7 @@ class EmailInformation(UserWarning):
     pass
 
 
-def send_template_mail(recipients, template, context, attachments=None, from_address=None, reply_to_address=None, language=settings.LANGUAGES[0][0], priority=mail.PRIORITY.now):
+def send_template_mail(recipients, template, context, attachments=None, from_address=None, reply_to_address=None, in_reply_to=None, language=settings.LANGUAGES[0][0], priority=mail.PRIORITY.now):
     if not getattr(settings, 'NOTIFICATION_MAILS_ENABLED', True):
         notification_logger.debug('Notifications are disabled by NOTIFICATION_MAILS_ENABLED.')
         return
@@ -125,6 +125,9 @@ def send_template_mail(recipients, template, context, attachments=None, from_add
     headers = {}
     if reply_to_address:
         headers['Reply-To'] = reply_to_address
+    if in_reply_to:
+        headers['In-Reply-To'] = in_reply_to
+        headers['References'] = in_reply_to
 
     context = Context({**context, **email_notifications_processor()})
 

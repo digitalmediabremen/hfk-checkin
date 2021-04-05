@@ -919,6 +919,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         h, reply_to_address = forbid_multi_line_headers('Reply-To', reply_to_address, encoding)
 
         logger.debug("Trying to send notification to %s in language %s" % (str(email_address), language))
+        in_reply_to = "<%s@%s>" % (self.uuid, settings.MESSAGE_FQDN)
 
         email = send_template_mail(
             email_address,
@@ -927,7 +928,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             attachments,
             from_address=from_address,
             reply_to_address=reply_to_address,
-            language=language
+            language=language,
+            in_reply_to=in_reply_to
         )
 
         self.related_emails.add(email)
