@@ -1,5 +1,5 @@
 {% extends "notifications/email_base_plain.txt" %}
-{% load i18n absoluteuri %}
+{% load i18n %}
 {% block preheader %}
 {% blocktranslate %}
 Es liegt ein Update für Deine Reservierungsanfrage für
