@@ -6,8 +6,11 @@
     {% for lang in LANGUAGES %}
     <li>
         {% url 'admin:notifications_template_preview' original.pk|admin_urlquote as url %}
-        <a href="{% add_preserved_filters url is_popup to_field %}?_popup=1&language={{ lang.0 }}" class="related-widget-wrapper-link">
-          {% blocktrans with cl.opts.verbose_name as name %}Preview Template in{% endblocktrans %} {{ lang.1 }}
+        <a href="{% add_preserved_filters url is_popup to_field %}?_popup=1&language={{ lang.0 }}&render=html" class="related-widget-wrapper-link">
+          {% blocktrans with cl.opts.verbose_name as name %}Preview HTML in{% endblocktrans %} {{ lang.1 }}
+        </a>
+        <a href="{% add_preserved_filters url is_popup to_field %}?_popup=1&language={{ lang.0 }}&render=plain" class="related-widget-wrapper-link">
+          {% blocktrans with cl.opts.verbose_name as name %}Preview Plain in{% endblocktrans %} {{ lang.1 }}
         </a>
     </li>
     {% endfor %}

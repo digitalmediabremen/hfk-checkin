@@ -6,6 +6,6 @@ def email_notifications(request=None):
     return {
         "SUPPORT_EMAIL": settings.SUPPORT_EMAIL,
         "FRONTEND_BASE_URL": settings.FRONTEND_BASE_URL,
-        "BACKEND_BASE_URL": ''.join(['http://', settings.SITE_DOMAIN]),
+        "BACKEND_BASE_URL": getattr(settings, 'BACKEND_BASE_URL', ''.join(['http://', settings.SITE_DOMAIN])),
         "HELP_URL": urljoin(settings.FRONTEND_BASE_URL, 'help')
     }

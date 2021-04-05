@@ -1,0 +1,403 @@
+[
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 5,
+    "fields": {
+      "type": "reservation_requested_official"
+    }
+  },
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 8,
+    "fields": {
+      "type": "reservation_external_user_requested_official"
+    }
+  },
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 9,
+    "fields": {
+      "type": "reservation_access_requested_official"
+    }
+  },
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 7,
+    "fields": {
+      "type": "reservation_denied"
+    }
+  },
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 3,
+    "fields": {
+      "type": "reservation_requested"
+    }
+  },
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 4,
+    "fields": {
+      "type": "reservation_confirmed"
+    }
+  },
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 1,
+    "fields": {
+      "type": null
+    }
+  },
+  {
+    "model": "notifications.notificationemailtemplate",
+    "pk": 32,
+    "fields": {
+      "type": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 1,
+    "fields": {
+      "name": "test_notification",
+      "description": "",
+      "created": "2021-03-27T15:13:03.438Z",
+      "last_updated": "2021-03-27T15:13:03.438Z",
+      "subject": "Test Notification",
+      "content": "Default",
+      "html_content": "Default",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 2,
+    "fields": {
+      "name": "test_notification",
+      "description": "",
+      "created": "2021-03-27T15:13:03.446Z",
+      "last_updated": "2021-03-27T15:13:03.446Z",
+      "subject": "Testbenachrichtigung",
+      "content": "DE",
+      "html_content": "DE",
+      "language": "de",
+      "default_template": 1
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 3,
+    "fields": {
+      "name": "Stud. Angefragt",
+      "description": "Benachrichtigung an Buchenden, wenn Reservierung angefragt worden ist.",
+      "created": "2021-02-18T09:26:03.540Z",
+      "last_updated": "2021-03-29T17:24:36.008Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "",
+      "html_content": "",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 4,
+    "fields": {
+      "name": "Stud. Zusage",
+      "description": "Benachrichtigung an Buchenden, wenn Reservierung bestätigt wurde.",
+      "created": "2021-02-24T16:59:44.348Z",
+      "last_updated": "2021-03-29T17:32:39.926Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "",
+      "html_content": "",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 5,
+    "fields": {
+      "name": "Deleg. Anfrage an Buchungsverantwortlichen",
+      "description": "",
+      "created": "2021-02-24T18:01:18.200Z",
+      "last_updated": "2021-03-29T17:53:19.062Z",
+      "subject": "Reservierungsanfrage: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "",
+      "html_content": "",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 7,
+    "fields": {
+      "name": "Stud. Ablehnung",
+      "description": "",
+      "created": "2021-02-24T18:35:35.820Z",
+      "last_updated": "2021-03-29T17:30:12.720Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "",
+      "html_content": "",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 8,
+    "fields": {
+      "name": "Deleg. Corona",
+      "description": "",
+      "created": "2021-02-26T15:18:38.805Z",
+      "last_updated": "2021-03-29T18:06:31.365Z",
+      "subject": "Anfrage für externen Teilnehmer: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "",
+      "html_content": "",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 9,
+    "fields": {
+      "name": "Deleg. Zugangsanfrage",
+      "description": "",
+      "created": "2021-03-14T18:18:12.101Z",
+      "last_updated": "2021-03-29T18:01:51.781Z",
+      "subject": "",
+      "content": "",
+      "html_content": "",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 10,
+    "fields": {
+      "name": "Stud. Zusage",
+      "description": "",
+      "created": "2021-03-22T23:52:09.433Z",
+      "last_updated": "2021-03-29T17:32:39.929Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Bestätigt. Deine Reservierungsanfrage für {{ reservation.resource.display_name }} wurde bestätigt.{% endblock %}\r\n\r\n{% block reservation_status %}Bestätigt!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie Bestätigung oder Absage deiner Buchung wird dir per Mail an dein HfK-Postfach mitgeteilt. Alternativ kannst du den Status deiner Buchung auf Getin einsehen. Nur mit einer bestätigten Raumbuchung kannst du in den Speicher XI kommen. Mit der Bestätigung deiner Buchung stehst du automatisch auf der Zugangsliste und musst nichts weiter unternehmen.\r\n\r\nHaben sich deine Pläne geändert?\r\nDann storniere bitte deine Anfrage über Getin, damit der Raum von einer anderen Person genutzt werden kann.\r\n\r\nFragen zu deiner Buchung?\r\nBei Fragen zu deiner Buchung, antworte bitte auf diese Mail!\r\n\r\nDu hast externe Personen angefragt?\r\nBitte beachte, dass externe Personen immer extra von der Corona-Beauftragten genehmigt werden müssen. Diese Genehmigung ist unabhängig von der Raumbuchung! Ein Raum kann für dich gebucht  sein und trotzdem ist die externe Person noch nicht genehmigt. Die Genehmigung wird dir in Getin angezeigt.\r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Bestätigt. Deine Reservierungsanfrage für {{ reservation.resource.display_name }} wurde bestätigt.{% endblock %}\r\n\r\n{% block reservation_status %}Bestätigt!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie Bestätigung oder Absage deiner Buchung wird dir per Mail an dein HfK-Postfach mitgeteilt. Alternativ kannst du den Status deiner Buchung auf Getin einsehen. Nur mit einer bestätigten Raumbuchung kannst du in den Speicher XI kommen. Mit der Bestätigung deiner Buchung stehst du automatisch auf der Zugangsliste und musst nichts weiter unternehmen.\r\n<br /><br />\r\n\r\nHaben sich deine Pläne geändert?<br />\r\nDann storniere bitte deine Anfrage über Getin, damit der Raum von einer anderen Person genutzt werden kann.\r\n<br /><br />\r\n\r\nFragen zu deiner Buchung?<br />\r\nBei Fragen zu deiner Buchung, antworte bitte auf diese Mail!\r\n<br /><br />\r\n\r\nDu hast externe Personen angefragt?<br />\r\nBitte beachte, dass externe Personen immer extra von der Corona-Beauftragten genehmigt werden müssen. Diese Genehmigung ist unabhängig von der Raumbuchung! Ein Raum kann für dich gebucht  sein und trotzdem ist die externe Person noch nicht genehmigt. Die Genehmigung wird dir in Getin angezeigt. \r\n{% endblock %}",
+      "language": "de",
+      "default_template": 4
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 11,
+    "fields": {
+      "name": "Stud. Zusage",
+      "description": "",
+      "created": "2021-03-22T23:52:09.435Z",
+      "last_updated": "2021-03-29T17:26:30.407Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Confirmed. Your booking request for {{ reservation.resource.display_name }} has been confirmed.{% endblock %}\r\n\r\n{% block reservation_status %}Confirmed!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nYou will be notified about the confirmation or cancellation of your request or your booking via an email to your HfK mail box.  Alternatively, you can check the status of your booking on Getin. Only with an approved booking, you may come to Speicher XI at the appointed time. Your name will have been automatically forwarded to the reception. You do not need to take any further action. \r\n\r\nDid you change your plans?\r\nThen cancel your request in Getin to open up the room for other people.\r\n\r\nAny questions regarding your booking request?\r\nPlease answer this mail if you have any questions regarding your booking request.\r\n\r\nHave external people been invited?\r\nPlease note that external persons must always be specially approved by the Corona-Beauftragte. This approval is independent of the room booking! A room can be booked for you and  the external person is not yet approved. The approval will be displayed in Getin. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Confirmed. Your booking request for {{ reservation.resource.display_name }} has been confirmed.{% endblock %}\r\n\r\n{% block reservation_status %}Confirmed!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nYou will be notified about the confirmation or cancellation of your request or your booking via an email to your HfK mail box.  Alternatively, you can check the status of your booking on Getin. Only with an approved booking, you may come to Speicher XI at the appointed time. Your name will have been automatically forwarded to the reception. You do not need to take any further action. \r\n<br /><br />\r\n\r\nDid you change your plans?<br />\r\nThen cancel your request in Getin to open up the room for other people.\r\n<br /><br />\r\n\r\nAny questions regarding your booking request?<br />\r\nPlease answer this mail if you have any questions regarding your booking request.\r\n<br /><br />\r\n\r\nHave external people been invited?<br />\r\nPlease note that external persons must always be specially approved by the Corona-Beauftragte. This approval is independent of the room booking! A room can be booked for you and  the external person is not yet approved. The approval will be displayed in Getin. \r\n{% endblock %}",
+      "language": "en",
+      "default_template": 4
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 12,
+    "fields": {
+      "name": "Deleg. Anfrage an Buchungsverantwortlichen",
+      "description": "",
+      "created": "2021-03-23T00:42:09.517Z",
+      "last_updated": "2021-03-29T17:53:19.069Z",
+      "subject": "Booking request: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}New Request. New booking request for room {{ reservation.resource.display_name }}.{% endblock %}\r\n\r\n{% block reservation_status %}Room requested.{% endblock %}\r\n\r\n{% block call_to_action %}\r\nEdit booking request: {{ reservation.get_manage_full_url }}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nThe person filing the request has been informed that processing can take up to 48 hours and will not be conducted over the weekend on our regular schedule. \r\n\r\nCan the request be approved?\r\nPlease log in to your Getin account and confirm your request in the app. \r\n\r\nCan't approve the request or do you have any queries?\r\nPlease contact the person filing the request by answering this message or calling the person (if permitted) and resolve any issues in that way. If you were able to resolve the issue, you may log into your Getin account and enter the dates into the app. If not, then do cancel the request there.\r\n\r\nHave external people been invited?\r\nPlease note that external persons must always be specially approved by the Corona-Beauftragte. This approval is independent of the room booking! A room can be booked for you and  the external person is not yet approved. The approval will be displayed in Getin. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}New Request. New booking request for room {{ reservation.resource.display_name }}.{% endblock %}\r\n\r\n{% block reservation_status %}Room requested.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n    {% include \"notifications/email_call_to_action_include.html\" with url=reservation.get_manage_url label=\"Edit booking request\" %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nThe person filing the request has been informed that processing can take up to 48 hours and will not be conducted over the weekend on our regular schedule. \r\n<br /><br />\r\n\r\nCan the request be approved?<br />\r\nPlease log in to your Getin account and confirm your request in the app. \r\n<br /><br />\r\n\r\nCan't approve the request or do you have any queries?<br />\r\nPlease contact the person filing the request by answering this message or calling the person (if permitted) and resolve any issues in that way. If you were able to resolve the issue, you may log into your Getin account and enter the dates into the app. If not, then do cancel the request there.\r\n<br /><br />\r\n\r\nHave external people been invited?<br />\r\nPlease note that external persons must always be specially approved by the Corona-Beauftragte. This approval is independent of the room booking! A room can be booked for you and  the external person is not yet approved. The approval will be displayed in Getin. \r\n{% endblock %}",
+      "language": "en",
+      "default_template": 5
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 13,
+    "fields": {
+      "name": "Deleg. Anfrage an Buchungsverantwortlichen",
+      "description": "",
+      "created": "2021-03-23T00:42:09.519Z",
+      "last_updated": "2021-03-29T17:49:41.693Z",
+      "subject": "Reservierungsanfrage: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Neue Anfrage. Der Raum {{ reservation.resource.display_name }} wurde anfragt.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}Raum angefragt.{% endblock %}\r\n\r\n{% block call_to_action %}\r\nBuchungsanfrage bearbeiten: {{ reservation.get_manage_full_url }}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie anfragende Person wurde informiert, dass die Bearbeitung bis zu 48 Stunden dauern kann und am Wochenende normalerweise keine Anfragen bearbeitet werden.\r\n\r\nKann die Anfrage bestätigt werden?\r\nBitte logge dich in deinem Getin Konto ein und bestätige die Anfrage in Getin. \r\n\r\nKann die Anfrage nicht bestätigt werden oder hast du Rückfragen?\r\nBitte kontaktiere die anfragende Person, indem du auf diese Nachricht antwortest oder die Person anrufst (falls erlaubt) und kläre über diese Wege Rückfragen. Falls eine Lösung gefunden wird, logge dich in deinem Getin Konto ein und trage die Daten in Getin ein. Falls nicht, lehne die Anfrage dort ab.\r\n\r\nWurden externe Personen angefragt?\r\nWenn externe Personen angefragt wurden, wird die Corona-Beauftragte automatisch gebeten, diese freizugeben. Dieser Vorgang läuft parallel zu deiner Bearbeitung. Ob die Freigabe erfolgt ist, kannst du in der Anfrage in deinem Getin Konto sehen. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Neue Anfrage. Der Raum {{ reservation.resource.display_name }} wurde anfragt.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}Raum angefragt.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n    {% include \"notifications/email_call_to_action_include.html\" with url=reservation.get_manage_url label=\"Buchungsanfrage bearbeiten\" %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie anfragende Person wurde informiert, dass die Bearbeitung bis zu 48 Stunden dauern kann und am Wochenende normalerweise keine Anfragen bearbeitet werden.\r\n<br /><br />\r\n\r\nKann die Anfrage bestätigt werden?<br />\r\nBitte logge dich in deinem Getin Konto ein und bestätige die Anfrage in Getin. \r\n<br /><br />\r\n\r\nKann die Anfrage nicht bestätigt werden oder hast du Rückfragen?<br />\r\nBitte kontaktiere die anfragende Person, indem du auf diese Nachricht antwortest oder die Person anrufst (falls erlaubt) und kläre über diese Wege Rückfragen. Falls eine Lösung gefunden wird, logge dich in deinem Getin Konto ein und trage die Daten in Getin ein. Falls nicht, lehne die Anfrage dort ab.\r\n<br /><br />\r\n\r\nWurden externe Personen angefragt?<br />\r\nWenn externe Personen angefragt wurden, wird die Corona-Beauftragte automatisch gebeten, diese freizugeben. Dieser Vorgang läuft parallel zu deiner Bearbeitung. Ob die Freigabe erfolgt ist, kannst du in der Anfrage in deinem Getin Konto sehen. \r\n{% endblock %}",
+      "language": "de",
+      "default_template": 5
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 19,
+    "fields": {
+      "name": "Stud. Angefragt",
+      "description": "",
+      "created": "2021-03-23T00:44:48.757Z",
+      "last_updated": "2021-03-29T17:21:35.310Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Angefragt. Du hast eine Reservierungsanfrage für den Raum {{ reservation.resource.display_name }} gestellt.{% endblock %}\r\n\r\n{% block reservation_status %}Angefragt!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie Bearbeitung kann bis zu 48 Stunden dauern und am Wochenende werden normalerweise keine Anfragen bearbeitet.\r\n\r\nDie Bestätigung oder Absage deiner Buchung wird dir per Mail an dein HfK-Postfach mitgeteilt. Alternativ kannst du den Status deiner Buchung auf Getin einsehen. Nur mit einer bestätigten Raumbuchung kannst du in den Speicher XI kommen. Mit der Bestätigung deiner Buchung stehst du automatisch auf der Zugangsliste und musst nichts weiter unternehmen.\r\n\r\nHaben sich deine Pläne geändert?\r\nDann storniere bitte deine Anfrage über Getin, damit der Raum von einer anderen Person genutzt werden kann.\r\n\r\nFragen zu deiner Buchung?\r\nBei Fragen zu deiner Buchung, antworte bitte auf diese Mail!\r\n\r\nDu hast externe Personen angefragt?\r\nBitte beachte, dass externe Personen immer extra von der Corona-Beauftragten genehmigt werden müssen. Diese Genehmigung ist unabhängig von der Raumbuchung! Ein Raum kann für dich gebucht  sein und trotzdem ist die externe Person noch nicht genehmigt. Die Genehmigung wird dir in Getin angezeigt. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Angefragt. Du hast eine Reservierungsanfrage für den Raum {{ reservation.resource.display_name }} gestellt.{% endblock %}\r\n\r\n{% block reservation_status %}Angefragt!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie Bearbeitung kann bis zu 48 Stunden dauern und am Wochenende werden normalerweise keine Anfragen bearbeitet.\r\n<br /><br />\r\n\r\nDie Bestätigung oder Absage deiner Buchung wird dir per Mail an dein HfK-Postfach mitgeteilt. Alternativ kannst du den Status deiner Buchung auf Getin einsehen. Nur mit einer bestätigten Raumbuchung kannst du in den Speicher XI kommen. Mit der Bestätigung deiner Buchung stehst du automatisch auf der Zugangsliste und musst nichts weiter unternehmen.\r\n<br /><br />\r\n\r\nHaben sich deine Pläne geändert?<br />\r\nDann storniere bitte deine Anfrage über Getin, damit der Raum von einer anderen Person genutzt werden kann.\r\n<br /><br />\r\n\r\nFragen zu deiner Buchung?<br />\r\nBei Fragen zu deiner Buchung, antworte bitte auf diese Mail!\r\n<br /><br />\r\n\r\nDu hast externe Personen angefragt?<br />\r\nBitte beachte, dass externe Personen immer extra von der Corona-Beauftragten genehmigt werden müssen. Diese Genehmigung ist unabhängig von der Raumbuchung! Ein Raum kann für dich gebucht  sein und trotzdem ist die externe Person noch nicht genehmigt. Die Genehmigung wird dir in Getin angezeigt.  \r\n{% endblock %}",
+      "language": "de",
+      "default_template": 3
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 20,
+    "fields": {
+      "name": "Stud. Angefragt",
+      "description": "",
+      "created": "2021-03-23T00:44:48.759Z",
+      "last_updated": "2021-03-29T17:24:36.012Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Request. You made a booking request for {{ reservation.resource.display_name }}.{% endblock %}\r\n\r\n{% block reservation_status %}Requested.{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nProcessing can take up to 48 hours; requests will not be processed over weekends on a regular basis.\r\n\r\nYou will be notified about the confirmation or cancellation of your request or your booking via an email to your HfK mail box.  Alternatively, you can check the status of your booking on Getin. Only with an approved booking, you may come to Speicher XI at the appointed time. Your name will have been automatically forwarded to the reception. You do not need to take any further action. \r\n\r\nDid you change your plans?\r\nThen cancel your request in Getin to open up the room for other people.\r\n\r\nAny questions regarding your booking request?\r\nPlease answer this mail if you have any questions regarding your booking request.\r\n\r\nHave external people been invited?\r\nPlease note that external persons must always be specially approved by the Corona-Beauftragte. This approval is independent of the room booking! A room can be booked for you and  the external person is not yet approved. The approval will be displayed in Getin. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Request. You made a booking request for {{ reservation.resource.display_name }}.{% endblock %}\r\n\r\n{% block reservation_status %}Requested.{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nProcessing can take up to 48 hours; requests will not be processed over weekends on a regular basis.\r\n<br /><br />\r\n\r\nYou will be notified about the confirmation or cancellation of your request or your booking via an email to your HfK mail box.  Alternatively, you can check the status of your booking on Getin. Only with an approved booking, you may come to Speicher XI at the appointed time. Your name will have been automatically forwarded to the reception. You do not need to take any further action. \r\n<br /><br />\r\n\r\nDid you change your plans?<br />\r\nThen cancel your request in Getin to open up the room for other people.\r\n<br /><br />\r\n\r\nAny questions regarding your booking request?<br />\r\nPlease answer this mail if you have any questions regarding your booking request.\r\n<br /><br />\r\n\r\nHave external people been invited?<br />\r\nPlease note that external persons must always be specially approved by the Corona-Beauftragte. This approval is independent of the room booking! A room can be booked for you and  the external person is not yet approved. The approval will be displayed in Getin. \r\n{% endblock %}",
+      "language": "en",
+      "default_template": 3
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 24,
+    "fields": {
+      "name": "Stud. Ablehnung",
+      "description": "",
+      "created": "2021-03-23T14:37:43.952Z",
+      "last_updated": "2021-03-29T17:30:12.723Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Abgelehnt. Deine Reservierungsanfrage für {{ reservation.resource.display_name }} wurde abgelehnt.{% endblock %}\r\n\r\n{% block reservation_status %}Abgelehnt!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nFragen zu deiner Buchung?\r\nBei Fragen zu deiner Buchung, antworte bitte auf diese Mail!\r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Abgelehnt. Deine Reservierungsanfrage für {{ reservation.resource.display_name }} wurde abgelehnt.{% endblock %}\r\n\r\n{% block reservation_status %}Abgelehnt!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nFragen zu deiner Buchung?<br  />\r\nBei Fragen zu deiner Buchung, antworte bitte auf diese Mail!\r\n{% endblock %}",
+      "language": "de",
+      "default_template": 7
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 25,
+    "fields": {
+      "name": "Stud. Ablehnung",
+      "description": "",
+      "created": "2021-03-23T14:37:43.954Z",
+      "last_updated": "2021-03-29T17:30:12.725Z",
+      "subject": "{{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Denied. Your booking request for {{ reservation.resource.display_name }} has been denied.{% endblock %}\r\n\r\n{% block reservation_status %}Denied!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nAny questions regarding your booking request?\r\nPlease answer this mail if you have any questions regarding your booking request.\r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Denied. Your booking request for {{ reservation.resource.display_name }} has been denied.{% endblock %}\r\n\r\n{% block reservation_status %}Denied!{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nAny questions regarding your booking request?<br />\r\nPlease answer this mail if you have any questions regarding your booking request.\r\n{% endblock %}",
+      "language": "en",
+      "default_template": 7
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 26,
+    "fields": {
+      "name": "Deleg. Zugangsanfrage",
+      "description": "",
+      "created": "2021-03-23T14:37:59.999Z",
+      "last_updated": "2021-03-29T18:01:51.792Z",
+      "subject": "Zugangsanfrage: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Neue Zugangsanfrage. Es wurde Zugang zu Raum {{ reservation.resource.display_name }} anfragt.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}Zugang angefragt.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie anfragende Person wurde informiert, dass die Bearbeitung bis zu 48 Stunden dauern kann und am Wochenende normalerweise keine Anfragen bearbeitet werden.\r\n\r\nBitte leite diese Mail mit deiner Entscheidung an raum_kud@hfk-bremen.de weiter, damit die Zugangsberechtigung und die damit verbundene Buchungsanfrage weiter bearbeitet werden können.\r\nBei Bedarf kannst du angeben, ob der Zugang einmalig erlaubt ist, ansonstes wird der Zugang dauerhaft in Getin vermerkt. \r\n\r\nWenn du die Zugangsberechtigung an die Person vergibst, kann diese Person den Raum zukünftig buchen und benutzen. Diese Berechtigung gilt, bis du sie wieder entziehst.\r\nZugangsberechtigungen können nur an HfK-Mitglieder vergeben werden. Bitte beachte, dass HfK-Mitglieder mit Zugangsberechtigung zu deinem Räumen auch externe Personen/andere HfK Mitglieder mit in deine Räume nehmen können. Falls dies nicht gewünscht ist, sprich entsprechende Regeln bitte vorher mit den Studierenden ab. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Neue Zugangsanfrage. Es wurde Zugang zu Raum {{ reservation.resource.display_name }} anfragt.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}Zugang angefragt.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie anfragende Person wurde informiert, dass die Bearbeitung bis zu 48 Stunden dauern kann und am Wochenende normalerweise keine Anfragen bearbeitet werden.\r\n<br /><br />\r\nBitte leite diese Mail mit deiner Entscheidung an raum_kud@hfk-bremen.de weiter, damit die Zugangsberechtigung und die damit verbundene Buchungsanfrage weiter bearbeitet werden können.\r\nBei Bedarf kannst du angeben, ob der Zugang einmalig erlaubt ist, ansonstes wird der Zugang dauerhaft in Getin vermerkt. \r\n<br /><br />\r\nWenn du die Zugangsberechtigung an die Person vergibst, kann diese Person den Raum zukünftig buchen und benutzen. Diese Berechtigung gilt, bis du sie wieder entziehst.<br />\r\nZugangsberechtigungen können nur an HfK-Mitglieder vergeben werden. Bitte beachte, dass HfK-Mitglieder mit Zugangsberechtigung zu deinem Räumen auch externe Personen/andere HfK Mitglieder mit in deine Räume nehmen können. Falls dies nicht gewünscht ist, sprich entsprechende Regeln bitte vorher mit den Studierenden ab. \r\n{% endblock %}",
+      "language": "de",
+      "default_template": 9
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 27,
+    "fields": {
+      "name": "Deleg. Zugangsanfrage",
+      "description": "",
+      "created": "2021-03-23T14:38:00Z",
+      "last_updated": "2021-03-29T18:01:51.789Z",
+      "subject": "Access request: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}New access request. New access request for room {{ reservation.resource.display_name }}.{% endblock %}\r\n\r\n{% block reservation_status %}Access requested.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nThe person filing the request has been informed that processing can take up to 48 hours and will not be conducted over the weekend on our regular schedule.\r\n\r\nPlease forward this email with your decision to raum_kud@hfk-bremen.de so that access permit and booking request can be processed.\r\n\r\nIf you pass on the access permit to another person, that person will be able to book and use that room. This authorization will be valid until you cancel it.\r\nAccess permits can only be granted to members of the HfK community. Please be aware that HfK members with an access permit to your rooms may bring along people from outside or other members of the HfK with them. Do clarify these issues beforehand if you do not want this to occur.\r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}New access request. New access request for room {{ reservation.resource.display_name }}.{% endblock %}\r\n\r\n{% block reservation_status %}Access requested.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nThe person filing the request has been informed that processing can take up to 48 hours and will not be conducted over the weekend on our regular schedule.\r\n<br /><br />\r\n\r\nPlease forward this email with your decision to raum_kud@hfk-bremen.de so that access permit and booking request can be processed.\r\n<br /><br />\r\nIf you pass on the access permit to another person, that person will be able to book and use that room. This authorization will be valid until you cancel it.<br />\r\nAccess permits can only be granted to members of the HfK community. Please be aware that HfK members with an access permit to your rooms may bring along people from outside or other members of the HfK with them. Do clarify these issues beforehand if you do not want this to occur.\r\n{% endblock %}",
+      "language": "en",
+      "default_template": 9
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 28,
+    "fields": {
+      "name": "Deleg. Corona",
+      "description": "",
+      "created": "2021-03-23T14:38:04.756Z",
+      "last_updated": "2021-03-29T18:06:31.370Z",
+      "subject": "Anfrage für externe Teilnehmer: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}Neue Anfrage für externe Personen in Raum {{ reservation.resource.display_name }}.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}Externe Personen angefragt.{% endblock %}\r\n\r\n\r\n{% block call_to_action %}\r\nExterne Personen bearbeiten: {{reservation.get_manage_attendees_full_url }}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie anfragende Person wurde informiert, dass die Bearbeitung bis zu 48 Stunden dauern kann und am Wochenende normalerweise keine Anfragen bearbeitet werden.\r\n\r\nKann die Anfrage bestätigt werden?\r\nBitte logge dich in deinem Getin Konto ein und bestätige die Anfrage in Getin. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}Neue Anfrage für externe Personen in Raum {{ reservation.resource.display_name }}.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}Externe Personen angefragt.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n    {% include \"notifications/email_call_to_action_include.html\" with url=reservation.get_manage_attendees_url label=\"Externe Personen bearbeiten\" %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nDie anfragende Person wurde informiert, dass die Bearbeitung bis zu 48 Stunden dauern kann und am Wochenende normalerweise keine Anfragen bearbeitet werden.\r\n<br /><br />\r\nKann die Anfrage bestätigt werden?<br />\r\nBitte logge dich in deinem Getin Konto ein und bestätige die Anfrage in Getin. \r\n{% endblock %}",
+      "language": "de",
+      "default_template": 8
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 29,
+    "fields": {
+      "name": "Deleg. Corona",
+      "description": "",
+      "created": "2021-03-23T14:38:04.760Z",
+      "last_updated": "2021-03-29T18:06:31.368Z",
+      "subject": "Request for external attendees: {{ reservation.display_duration }} ({{ reservation.identifier }})",
+      "content": "{% extends \"notifications/email_reservation_plain.txt\" %}\r\n\r\n{% block preheader %}New request for external attendees in room {{ reservation.resource.display_name }}.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}External attendees requested.{% endblock %}\r\n\r\n{% block call_to_action %}\r\nEdit attendees: {{reservation.get_manage_attendees_full_url }}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nThe person filing the request has been informed that processing can take up to 48 hours and will not be conducted over the weekend on our regular schedule.  \r\n\r\nCan the request be approved?\r\nPlease log in to your Getin account and confirm your request in the app. \r\n{% endblock %}",
+      "html_content": "{% extends \"notifications/email_reservation.html\" %}\r\n\r\n{% block preheader %}New request for external attendees in room {{ reservation.resource.display_name }}.\r\n{% endblock %}\r\n\r\n{% block reservation_status %}External attendees requested.{% endblock %}\r\n\r\n{% block call_to_action %}\r\n    {% include \"notifications/email_call_to_action_include.html\" with url=reservation.get_manage_attendees_url label=\"Edit attendees\" %}\r\n{% endblock %}\r\n\r\n{% block reservation_instruction %}\r\nThe person filing the request has been informed that processing can take up to 48 hours and will not be conducted over the weekend on our regular schedule.  \r\n<br /><br />\r\n\r\nCan the request be approved?<br />\r\nPlease log in to your Getin account and confirm your request in the app. \r\n{% endblock %}",
+      "language": "en",
+      "default_template": 8
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 32,
+    "fields": {
+      "name": "test_test",
+      "description": "",
+      "created": "2021-03-27T16:55:16.309Z",
+      "last_updated": "2021-03-27T17:16:22.523Z",
+      "subject": "",
+      "content": "",
+      "html_content": "{% extends \"notifications/email_base.html\" %} \r\n{% load i18n %} \r\n{% block preheader %}\r\n    {% blocktranslate %}\r\n        Es liegt ein Update für Deine Reservierungsanfrage für {{ reservation.resource.display_name}} vor.\r\n    {% endblocktranslate %}\r\n{% endblock %}\r\n{% block main_table_inner %}\r\n<!-- START MAIN CONTENT AREA -->\r\n    <tr>\r\n        <td class=\"wrapper\">\r\n            <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\r\n                <tr>\r\n                    <td>\r\n                        {% block reservation %}\r\n                            <p class=\"primary bold box\">\r\n                                {% block reservation_status %}\r\n                                    Update zu einer Buchung.\r\n                                {% endblock %}\r\n                            </p>\r\n                            <br /><br /><br />\r\n                            {% if update_message %}\r\n                                <p class=\"primary\"><i>{{ update_message }}</i></p>\r\n                                <br />\r\n                                <br />\r\n                            {% endif %} \r\n                            \r\n                            {% block reservation_info %}\r\n                                <h2\r\n                                    class=\"secondary{% if reservation.is_inactive %} strike{% endif %}\"\r\n                                >\r\n                                    #{{ reservation.identifier }}\r\n                                </h2>\r\n                                <h2 class=\"primary\">\r\n                                    {{ reservation.resource.display_numbers }}<br />\r\n                                    <span class=\"bold\">\r\n                                        {{ reservation.resource.name }}\r\n                                    </span>\r\n                                </h2>\r\n                                <h2 class=\"primary{% if reservation.is_inactive %} strike{% endif %}\">\r\n                                    {{ reservation.begin_in_resource_tz_naive.date|date:\"D.d.m.Y\" }}\r\n                                    <br />\r\n                                    {{ reservation.begin_in_resource_tz_naive|time:\"H:i\" }} –\r\n                                    {{ reservation.end_in_resource_tz_naive.time|time:\"H:i\" }}\r\n                                </h2>\r\n                            {% endblock %}\r\n                            <br /><br />\r\n                            {% block reservation_details %}\r\n                                <p class=\"primary\">\r\n                                    <span class=\"bold\">\r\n                                        {% translate 'Angemeldete Personen' %}:\r\n                                    </span>\r\n                                    {{ reservation.organizer|default:\"Du\" }}\r\n                                    {% if reservation.number_of_attendees|add:\"-1\" > 1 %} \r\n                                        und {{ reservation.number_of_attendees|add:\"-1\" }} weitere Personen\r\n                                    {% endif %}\r\n                                </p>\r\n                                {% if reservation.get_purpose_display %}\r\n                                    <p class=\"primary\">\r\n                                        <span class=\"bold\">{% translate 'Grund' %}:</span>\r\n                                        {{ reservation.get_purpose_display }}\r\n                                    </p>\r\n                                {% endif %} \r\n                                {% if reservation.message %}\r\n                                    <p class=\"primary\">\r\n                                        <span class=\"bold\">{% translate 'Nachricht' %}:</span>\r\n                                        <i>{{ reservation.message }}</i>\r\n                                    </p>\r\n                                {% endif %}\r\n                            {% endblock %}\r\n                        {% endblock %}\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>\r\n                        <br /><br />\r\n                        {% block call_to_action %}\r\n                            {% include \"notifications/email_call_to_action_include.html\" with url=reservation.get_absolute_url label=\"test\" %}\r\n                        {% endblock %}\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>\r\n                        <br /><br />\r\n                        <p class=\"secondary\">\r\n                            {% block reservation_instruction %}\r\n                            {% endblock %}\r\n                        </p>\r\n                    </td>\r\n                </tr>\r\n            </table>\r\n        </td>\r\n    </tr>\r\n{% endblock %}\r\n{% block footer %}\r\n    <tr>\r\n        <td class=\"content-block\">\r\n            {% block footer_reason %}\r\n                <span class=\"apple-link\">\r\n                    {% blocktranslate %}\r\n                        Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.\r\n                    {% endblocktranslate %}\r\n                </span>\r\n                <span class=\"apple-link\">\r\n                    {% blocktranslate with base_url=url_root %}\r\n                        Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a href=\"{{ base_full_url }}/help\">Hilfeseite</a> zu finden.\r\n                    {% endblocktranslate %}\r\n                </span>\r\n            {% endblock %}\r\n        </td>\r\n    </tr>\r\n    {{ block.super }}\r\n{% endblock %}",
+      "language": "",
+      "default_template": null
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 33,
+    "fields": {
+      "name": "test_test",
+      "description": "",
+      "created": "2021-03-27T16:55:16.335Z",
+      "last_updated": "2021-03-27T17:16:22.539Z",
+      "subject": "jhgjhg",
+      "content": "",
+      "html_content": "{% extends \"notifications/email_base.html\" %} \r\n{% load i18n %} \r\n{% block preheader %}\r\n    {% blocktranslate %}\r\n        Es liegt ein Update für Deine Reservierungsanfrage für {{ reservation.resource.display_name}} vor.\r\n    {% endblocktranslate %}\r\n{% endblock %}\r\n{% block main_table_inner %}\r\n<!-- START MAIN CONTENT AREA -->\r\n    <tr>\r\n        <td class=\"wrapper\">\r\n            <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\r\n                <tr>\r\n                    <td>\r\n                        {% block reservation %}\r\n                            <p class=\"primary bold box\">\r\n                                {% block reservation_status %}\r\n                                    Update zu einer Buchung.\r\n                                {% endblock %}\r\n                            </p>\r\n                            <br /><br /><br />\r\n                            {% if update_message %}\r\n                                <p class=\"primary\"><i>{{ update_message }}</i></p>\r\n                                <br />\r\n                                <br />\r\n                            {% endif %} \r\n                            \r\n                            {% block reservation_info %}\r\n                                <h2\r\n                                    class=\"secondary{% if reservation.is_inactive %} strike{% endif %}\"\r\n                                >\r\n                                    #{{ reservation.identifier }}\r\n                                </h2>\r\n                                <h2 class=\"primary\">\r\n                                    {{ reservation.resource.display_numbers }}<br />\r\n                                    <span class=\"bold\">\r\n                                        {{ reservation.resource.name }}\r\n                                    </span>\r\n                                </h2>\r\n                                <h2 class=\"primary{% if reservation.is_inactive %} strike{% endif %}\">\r\n                                    {{ reservation.begin_in_resource_tz_naive.date|date:\"D.d.m.Y\" }}\r\n                                    <br />\r\n                                    {{ reservation.begin_in_resource_tz_naive|time:\"H:i\" }} –\r\n                                    {{ reservation.end_in_resource_tz_naive.time|time:\"H:i\" }}\r\n                                </h2>\r\n                            {% endblock %}\r\n                            <br /><br />\r\n                            {% block reservation_details %}\r\n                                <p class=\"primary\">\r\n                                    <span class=\"bold\">\r\n                                        {% translate 'Angemeldete Personen' %}:\r\n                                    </span>\r\n                                    {{ reservation.organizer|default:\"Du\" }}\r\n                                    {% if reservation.number_of_attendees|add:\"-1\" > 1 %} \r\n                                        und {{ reservation.number_of_attendees|add:\"-1\" }} weitere Personen\r\n                                    {% endif %}\r\n                                </p>\r\n                                {% if reservation.get_purpose_display %}\r\n                                    <p class=\"primary\">\r\n                                        <span class=\"bold\">{% translate 'Grund' %}:</span>\r\n                                        {{ reservation.get_purpose_display }}\r\n                                    </p>\r\n                                {% endif %} \r\n                                {% if reservation.message %}\r\n                                    <p class=\"primary\">\r\n                                        <span class=\"bold\">{% translate 'Nachricht' %}:</span>\r\n                                        <i>{{ reservation.message }}</i>\r\n                                    </p>\r\n                                {% endif %}\r\n                            {% endblock %}\r\n                        {% endblock %}\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>\r\n                        <br /><br />\r\n                        {% block call_to_action %}\r\n                            {% include \"notifications/email_call_to_action_include.html\" with url=reservation.get_absolute_url label=\"test\" %}\r\n                        {% endblock %}\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>\r\n                        <br /><br />\r\n                        <p class=\"secondary\">\r\n                            {% block reservation_instruction %}\r\n                            {% endblock %}\r\n                        </p>\r\n                    </td>\r\n                </tr>\r\n            </table>\r\n        </td>\r\n    </tr>\r\n{% endblock %}\r\n{% block footer %}\r\n    <tr>\r\n        <td class=\"content-block\">\r\n            {% block footer_reason %}\r\n                <span class=\"apple-link\">\r\n                    {% blocktranslate %}\r\n                        Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.\r\n                    {% endblocktranslate %}\r\n                </span>\r\n                <span class=\"apple-link\">\r\n                    {% blocktranslate with base_url=url_root %}\r\n                        Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a href=\"{{ base_full_url }}/help\">Hilfeseite</a> zu finden.\r\n                    {% endblocktranslate %}\r\n                </span>\r\n            {% endblock %}\r\n        </td>\r\n    </tr>\r\n    {{ block.super }}\r\n{% endblock %}",
+      "language": "en",
+      "default_template": 32
+    }
+  },
+  {
+    "model": "post_office.emailtemplate",
+    "pk": 34,
+    "fields": {
+      "name": "test_test",
+      "description": "",
+      "created": "2021-03-27T16:55:16.339Z",
+      "last_updated": "2021-03-27T16:55:16.339Z",
+      "subject": "",
+      "content": "",
+      "html_content": "{% extends \"notifications/email_base.html\" %} \r\n{% load i18n %} \r\n{% block preheader %}\r\n    {% blocktranslate %}\r\n        Es liegt ein Update für Deine Reservierungsanfrage für {{ reservation.resource.display_name}} vor.\r\n    {% endblocktranslate %}\r\n{% endblock %}\r\n{% block main_table_inner %}\r\n<!-- START MAIN CONTENT AREA -->\r\n    <tr>\r\n        <td class=\"wrapper\">\r\n            <table role=\"presentation\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\r\n                <tr>\r\n                    <td>\r\n                        {% block reservation %}\r\n                            <p class=\"primary bold box\">\r\n                                {% block reservation_status %}\r\n                                    Update zu einer Buchung.\r\n                                {% endblock %}\r\n                            </p>\r\n                            <br /><br /><br />\r\n                            {% if update_message %}\r\n                                <p class=\"primary\"><i>{{ update_message }}</i></p>\r\n                                <br />\r\n                                <br />\r\n                            {% endif %} \r\n                            \r\n                            {% block reservation_info %}\r\n                                <h2\r\n                                    class=\"secondary{% if reservation.is_inactive %} strike{% endif %}\"\r\n                                >\r\n                                    #{{ reservation.identifier }}\r\n                                </h2>\r\n                                <h2 class=\"primary\">\r\n                                    {{ reservation.resource.display_numbers }}<br />\r\n                                    <span class=\"bold\">\r\n                                        {{ reservation.resource.name }}\r\n                                    </span>\r\n                                </h2>\r\n                                <h2 class=\"primary{% if reservation.is_inactive %} strike{% endif %}\">\r\n                                    {{ reservation.begin_in_resource_tz_naive.date|date:\"D.d.m.Y\" }}\r\n                                    <br />\r\n                                    {{ reservation.begin_in_resource_tz_naive|time:\"H:i\" }} –\r\n                                    {{ reservation.end_in_resource_tz_naive.time|time:\"H:i\" }}\r\n                                </h2>\r\n                            {% endblock %}\r\n                            <br /><br />\r\n                            {% block reservation_details %}\r\n                                <p class=\"primary\">\r\n                                    <span class=\"bold\">\r\n                                        {% translate 'Angemeldete Personen' %}:\r\n                                    </span>\r\n                                    {{ reservation.organizer|default:\"Du\" }}\r\n                                    {% if reservation.number_of_attendees|add:\"-1\" > 1 %} \r\n                                        und {{ reservation.number_of_attendees|add:\"-1\" }} weitere Personen\r\n                                    {% endif %}\r\n                                </p>\r\n                                {% if reservation.get_purpose_display %}\r\n                                    <p class=\"primary\">\r\n                                        <span class=\"bold\">{% translate 'Grund' %}:</span>\r\n                                        {{ reservation.get_purpose_display }}\r\n                                    </p>\r\n                                {% endif %} \r\n                                {% if reservation.message %}\r\n                                    <p class=\"primary\">\r\n                                        <span class=\"bold\">{% translate 'Nachricht' %}:</span>\r\n                                        <i>{{ reservation.message }}</i>\r\n                                    </p>\r\n                                {% endif %}\r\n                            {% endblock %}\r\n                        {% endblock %}\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>\r\n                        {% block call_to_action %}\r\n                            <br /><br />\r\n                            {% include \"email_call_to_action_include.html\" with url=reservation.get_absolute_url label=\"test\" %}\r\n                        {% endblock %}\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>\r\n                        <br /><br />\r\n                        <p class=\"secondary\">\r\n                            {% block reservation_instruction %}\r\n                            {% endblock %}\r\n                        </p>\r\n                    </td>\r\n                </tr>\r\n            </table>\r\n        </td>\r\n    </tr>\r\n{% endblock %}\r\n{% block footer %}\r\n    <tr>\r\n        <td class=\"content-block\">\r\n            {% block footer_reason %}\r\n                <span class=\"apple-link\">\r\n                    {% blocktranslate %}\r\n                        Diese E-Mail-Benachrichtigung wurde auf Grund einer Reservierung versandt.\r\n                    {% endblocktranslate %}\r\n                </span>\r\n                <span class=\"apple-link\">\r\n                    {% blocktranslate with base_url=url_root %}\r\n                        Informationen zum Reservierungsverfahren und Benachrichtigungen sind auf der <a href=\"{{ base_full_url }}/help\">Hilfeseite</a> zu finden.\r\n                    {% endblocktranslate %}\r\n                </span>\r\n            {% endblock %}\r\n        </td>\r\n    </tr>\r\n    {{ block.super }}\r\n{% endblock %}",
+      "language": "de",
+      "default_template": 32
+    }
+  }
+]

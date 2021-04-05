@@ -40,6 +40,14 @@ class TemplatePreviewView(View):
         engine = get_template_engine()
         subject = Template(email.template.subject).render(context)
         context['subject'] = subject
-        html_message = Template(email.template.html_content).render(context)
+
+        render = request.GET.get('render', default='html')
+        if render == 'plain':
+            out = Template(email.template.content).render(context)
+            out = "<html><body><pre>%s</pre></body></html>" % (out,)
+            response = HttpResponse(content=out)
+        else:
+            out = Template(email.template.html_content).render(context)
+            response = HttpResponse(content=out)
         translation.deactivate()
-        return HttpResponse(content=html_message)
+        return response

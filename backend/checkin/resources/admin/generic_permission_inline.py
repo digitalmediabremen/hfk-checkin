@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.admin import GenericTabularInline
 from guardian.shortcuts import get_perms_for_model
 from guardian.utils import get_user_obj_perms_model as get_guardian_user_obj_perms_model
+from guardian.utils import get_group_obj_perms_model as get_guardian_group_obj_perms_model
 from django import forms
 from ..models.unit import Unit
 from django.core.exceptions import ImproperlyConfigured
@@ -25,7 +26,7 @@ class _UserPermissionInlineForm(forms.ModelForm):
             codename__in=self.permission_codenames)
 
     def set_querysets(self):
-        self.fields['permission'].queryset = self.available_permissions_qs
+        self.base_fields['permission'].queryset = self.available_permissions_qs
 
     def __init__(self, *args, **kwargs):
         self.available_permissions_qs = self.get_available_permissions_qs()
@@ -108,5 +109,20 @@ class UserPermissionInline(GenericTabularInline):
 
 class SingleUserPermissionInline(UserPermissionInline):
     fields = ('user', 'modified_at')
+    readonly_fields = ('modified_at',)
+    base_form = _SingleUserPermissionInlineForm
+
+
+class GroupPermissionInline(GenericTabularInline):
+    ct_field = "content_type"
+    ct_fk_field = "object_pk"
+    model = get_guardian_group_obj_perms_model()
+    fields = ('group', 'permission', 'modified_at')
+    readonly_fields = ('modified_at',)
+    autocomplete_fields = ('group',)
+    extra = 0
+
+class SingleGroupPermissionInline(GroupPermissionInline):
+    fields = ('group', 'modified_at')
     readonly_fields = ('modified_at',)
     base_form = _SingleUserPermissionInlineForm

@@ -223,6 +223,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 #"checkin.notifications.context_processors.email_notifications",
+                "checkin.context_processors.admin",
                 # "nucleus.context_processors.nucleus",
                 'microsoft_auth.context_processors.microsoft',
             ],
@@ -268,11 +269,13 @@ SERVER_EMAIL = getenv("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 EMAIL_SUBJECT_PREFIX = ""
 
 MESSAGE_FQDN = getenv('MESSAGE_FQDN', default='mail.example.com')
-RESOURCES_FROM_ADDRESS = "noreply@%s" % MESSAGE_FQDN
+RESOURCES_FROM_ADDRESS = "notification@%s" % MESSAGE_FQDN
 NOTIFICATION_SENDER_ADDRESS = "getin@%s" % MESSAGE_FQDN
 NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
 FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL', default='http://frontend.example.com')
+SITE_DOMAIN = getenv('SITE_DOMAIN', default='example.com')
+BACKEND_BASE_URL = getenv('BACKEND_BASE_URL', default=''.join(['http://', SITE_DOMAIN]))
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
@@ -281,11 +284,9 @@ POST_OFFICE = {
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
 }
 
-SITE_DOMAIN = getenv('SITE_DOMAIN', default='example.com')
-
 PREMAILER_OPTIONS = {
     # FIXME base_url could be taken from context / request
-    'base_url': 'https://%s' % SITE_DOMAIN,
+    'base_url': BACKEND_BASE_URL,
     'cssutils_logging_level': logging.FATAL,
 }
 
@@ -298,8 +299,11 @@ ADMINS = []
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 # We are currently English only: The default language middleware was disabled. See MIDDLEWARE
-ADMIN_LANGUAGE_CODE="de-de"
+ADMIN_LANGUAGE_CODE = "de-de"
 LANGUAGE_CODE = "de-de"
+
+APP_ADMIN_COLOR = getenv('APP_ADMIN_COLOR', default=None)
+APP_ADMIN_TITLE = getenv('APP_ADMIN_TITLE', default="Getin & Checkin")
 
 # LOGGING
 # ------------------------------------------------------------------------------

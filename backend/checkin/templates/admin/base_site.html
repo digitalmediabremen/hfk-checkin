@@ -2,12 +2,19 @@
 {% load i18n static %}
 {% block extrastyle %}
     <link rel="stylesheet" type="text/css" href="{% static "admin/css/admin-extra.css" %}">
+    {% if APP_ADMIN_COLOR %}
+    <style>
+        :root {
+          --theme-color-primary: {{ APP_ADMIN_COLOR }};
+        }
+    </style>
+    {% endif %}
 {% endblock %}
 
-{% block title %}{{ title }} | HfK Checkin / Getin{% endblock %}
+{% block title %}{{ title }} | {{ APP_ADMIN_TITLE|default:site_title }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">HfK Checkin / Getin</a></h1>
+    <div id="site-name"><strong><a href="{% url 'admin:index' %}">{{ APP_ADMIN_TITLE|default:site_title }}</a></strong></div>
 {% endblock %}
 
 {% block welcome-msg %}

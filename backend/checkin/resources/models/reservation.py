@@ -244,6 +244,29 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def __str__(self):
         return "#%s (%s)" % (self.short_uuid, gettext(self.get_state_display()))
 
+    def get_absolute_url(self):
+        from urllib.parse import urljoin
+        return urljoin(settings.FRONTEND_BASE_URL, 'reservation/%s' % self.pk)
+
+    def get_manage_url(self):
+        from django.urls import reverse
+        return reverse('admin:resources_reservation_change', kwargs={'object_id': self.pk})
+
+    def get_manage_attendees_url(self):
+        from django.urls import reverse
+        return reverse('admin:resources_reservationattendance_change', kwargs={'object_id': self.pk})
+
+    def get_absolute_full_url(self):
+        return self.get_absolute_url()
+
+    def get_manage_full_url(self):
+        from urllib.parse import urljoin
+        return urljoin(settings.BACKEND_BASE_URL, self.get_manage_url())
+
+    def get_manage_attendees_full_url(self):
+        from urllib.parse import urljoin
+        return urljoin(settings.BACKEND_BASE_URL, self.get_manage_attendees_url())
+
     @property
     def organizer(self):
         """
@@ -289,9 +312,22 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         return self.begin
 
     @cached_property
+    def begin_as_resource_tz(self):
+        if self.resource:
+            b = self.begin.astimezone(self.resource.get_tz())
+            return b
+        return self.begin
+
+    @cached_property
     def end_in_resource_tz_naive(self):
         if self.resource:
             return make_naive(self.end, timezone=self.resource.get_tz())
+        return self.end
+
+    @cached_property
+    def end_as_resource_tz(self):
+        if self.resource:
+            return self.end.astimezone(self.resource.get_tz())
         return self.end
 
     @property
@@ -313,7 +349,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     def get_display_duration_date(self, humanize=False):
         str_begin = datefilter(self.begin_in_resource_tz_naive, 'D j.n.')
         if humanize:
-            return naturalday(self.begin)
+            return naturalday(self.begin_in_resource_tz_naive)
         return str_begin
 
     def get_display_duration_time(self):
@@ -867,7 +903,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             from_address = sanitize_address((self.resource.email_sender_name, from_address), encoding)
 
         if not reply_to_users:
-            reply_to_users = self.resource.get_reservation_delegates()
+            reply_to_users = self.resource.get_reservation_delegates_to_notify()
         if not isinstance(reply_to_users, list):
             reply_to_users = [reply_to_users]
         for u in reply_to_users:
@@ -903,7 +939,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
     def send_reservation_requested_mail_to_officials(self, **kwargs):
         #notify_users = self.resource.get_users_with_perm('can_approve_reservation')
-        notify_users = self.resource.get_reservation_delegates()
+        notify_users = self.resource.get_reservation_delegates_to_notify()
         logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
@@ -913,7 +949,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
     def send_access_requested_mail_to_officials(self, **kwargs):
         # notify_users = self.resource.get_users_with_perm('can_approve_reservation')
-        notify_users = self.resource.get_access_delegates()
+        notify_users = self.resource.get_access_delegates_to_notify()
         logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
@@ -922,7 +958,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         return []
 
     def send_external_user_requested_mail_to_officials(self, external_attendee, **kwargs):
-        notify_users = self.resource.get_user_confirmation_delegates()
+        notify_users = self.resource.get_user_confirmation_delegates_to_notify()
         logger.debug('notify_users external user for %s: %s' % (self, notify_users))
         extra_context = kwargs.pop('extra_context', {})
         if len(notify_users) > 100:

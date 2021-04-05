@@ -122,8 +122,7 @@ elif getenv('MAILGUN_API_KEY'):
     ANYMAIL = {
         'MAILGUN_API_KEY': getenv('MAILGUN_API_KEY'),
         'MAILGUN_SENDER_DOMAIN': MESSAGE_FQDN,
-        # FIXME need to select API endpoint depending on selected domain! move to envvar.
-        #"MAILGUN_API_URL": "https://api.eu.mailgun.net/v3",
+        'MAILGUN_API_URL': getenv("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
     }
     POST_OFFICE.update({
         'BACKENDS': {
