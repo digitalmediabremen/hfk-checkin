@@ -31,7 +31,7 @@ class LocationAutocomplete(autocomplete.Select2QuerySetView):
             return Location.objects.none()
         qs = Location.objects.all()
         if self.q:
-            qs = qs.filter(Q(code__istartswith=self.q) | Q(org_name__istartswith=self.q) | Q(org_number__istartswith=self.q))
+            qs = qs.filter(Q(code__istartswith=self.q) | Q(_name__istartswith=self.q) | Q(_number__istartswith=self.q) | Q(resource__name__istartswith=self.q) | Q(resource__numbers__istartswith=self.q))
         return qs
 
     def get_result_label(self, item):
