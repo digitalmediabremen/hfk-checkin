@@ -9,6 +9,7 @@ from .reservation import Reservation
 from django.core.exceptions import PermissionDenied
 from urllib.parse import urlparse
 from django.shortcuts import redirect
+from django.template.defaultfilters import truncatechars
 
 from django.conf import settings
 if 'checkin.tracking' in settings.INSTALLED_APPS:
@@ -73,12 +74,13 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         fields = readonly_fields
         list_editable = ()
         #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
-        list_display = ['user', 'resource','get_display_duration','enter_action','leave_action','get_comment','state']
+        list_display = ['get_user', 'resource','get_display_duration','enter_action','leave_action','get_comment_list','state']
         list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
                        # 'resources', 'start', 'end', 'status', 'is_important',
                        ('reservation__begin', DateTimeRangeFilter),
                        ('reservation__end', DateTimeRangeFilter),
                        )
+        list_display_links = ('get_user', 'resource', 'get_comment_list')
         search_fields = ('reservation__uuid','user__first_name', 'user__last_name', 'user__email','reservation__resource__name','reservation__resource__numbers')
         date_hierarchy = 'reservation__begin'
         actions_on_top = True
@@ -94,6 +96,11 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             return obj.reservation.get_display_duration_time()
         get_display_duration.short_description = _("Timespan")
         get_display_duration.admin_order_field = 'reservation__begin'
+
+        def get_user(self, obj):
+            return obj.user.get_display_name()
+        get_user.short_description = _("User")
+        get_user.admin_order_field = 'reservation__user__last_name'
 
         def get_begin_time(self, obj):
             return format_html("<strong>{}</strong>", make_naive(obj.reservation.begin, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
@@ -115,6 +122,10 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
                 c += obj.reservation.comment
             return c.strip()
         get_comment.short_description = _("Comment")
+
+        def get_comment_list(self, obj):
+            return truncatechars(self.get_comment(obj), 24)
+        get_comment_list.short_description = _("Comment")
 
         def get_urls(self):
             urls = super().get_urls()
