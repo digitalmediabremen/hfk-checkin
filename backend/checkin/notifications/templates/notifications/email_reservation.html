@@ -38,7 +38,7 @@
                                     </span>
                                 </h2>
                                 <h2 class="primary{% if reservation.is_inactive %} strike{% endif %}">
-                                    {{ reservation.begin_in_resource_tz_naive.date|date:"D.d.m.Y" }}
+                                    {{ reservation.begin_in_resource_tz_naive.date|date:"D d.m.Y" }}
                                     <br />
                                     {{ reservation.begin_in_resource_tz_naive|time:"H:i" }} –
                                     {{ reservation.end_in_resource_tz_naive.time|time:"H:i" }}
