@@ -23,7 +23,7 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
 
     reservation = models.ForeignKey(Reservation, verbose_name=_("Reservation"), on_delete=models.CASCADE, editable=False)
     user = models.ForeignKey(PROFILE_MODEL, verbose_name=_("Userprofile"), on_delete=models.PROTECT)
-    state = models.CharField(choices=AttendanceStates.choices, verbose_name=_("State"), blank=True, null=True, max_length=25)
+    state = models.CharField(choices=AttendanceStates.choices, verbose_name=_("Attendance state"), blank=True, null=True, max_length=25)
     comment = models.CharField(_("Comment"), blank=True, null=True, max_length=255)
 
     # for `checkin_set` see tracking.Checkin.attendance FK-relation
@@ -90,7 +90,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             proxy = True
             verbose_name = _("Attendance registration")
             verbose_name_plural = _("Attendance registrations")
-            default_permissions = ()
+            default_permissions = ('view','change')
 
         def __str__(self):
             return _("%(profile)s on %(date)s for reservation %(reservation)s") % \

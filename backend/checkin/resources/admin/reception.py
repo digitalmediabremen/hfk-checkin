@@ -69,10 +69,11 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
 
     class CheckinAttendanceAdmin(AttendanceAdmin):
         inlines = [CheckinInline]
-        readonly_fields = (*AttendanceAdmin.readonly_fields, 'state','comment')
+        readonly_fields = ('user', 'reservation', 'get_reservation_organizer', 'get_reservation_resource', 'state','get_comment')
+        fields = readonly_fields
         list_editable = ()
         #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
-        list_display = ['user', 'resource','reservation','get_display_duration','enter_action','leave_action','comment','state']
+        list_display = ['user', 'resource','get_display_duration','enter_action','leave_action','get_comment','state']
         list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
                        # 'resources', 'start', 'end', 'status', 'is_important',
                        ('reservation__begin', DateTimeRangeFilter),
@@ -90,7 +91,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             return qs
 
         def get_display_duration(self, obj):
-            return obj.reservation.display_duration
+            return obj.reservation.get_display_duration_time()
         get_display_duration.short_description = _("Timespan")
         get_display_duration.admin_order_field = 'reservation__begin'
 
@@ -105,6 +106,15 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         get_end_time.short_description = _("End")
         get_end_time.allow_tags = True
         get_begin_time.admin_order_field = 'reservation__end'
+
+        def get_comment(self, obj):
+            c = ""
+            if obj.comment:
+                c += obj.comment + " "
+            if obj.reservation.comment:
+                c += obj.reservation.comment
+            return c.strip()
+        get_comment.short_description = _("Comment")
 
         def get_urls(self):
             urls = super().get_urls()
@@ -126,7 +136,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         def get_list_display(self, request):
             # remove registration fields from list_display for users without permission
             list_display = list(self.list_display)
-            if not request.user.has_perm('attendance_can_register_attendance'):
+            if not request.user.has_perm('resources.can_register_attendance'):
                 if 'enter_action' in list_display:
                     list_display.remove('enter_action')
                 if 'leave_action' in list_display:
@@ -164,7 +174,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         leave_action.allow_tags = True
 
         def process_checkin(self, request, uuid, *args, **kwargs):
-            if not request.user.has_perm('attendance_can_register_attendance'):
+            if not request.user.has_perm('resources.can_register_attendance'):
                 raise PermissionDenied
             # FIXME reverse-relation zwischen Resource und Location/Checkin fehlt.
             # c = Checkin(location_id=5, origin=Checkin.FRONTDESK_MANUAL)
@@ -180,7 +190,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             return self._redirect_after_record(request)
 
         def process_checkout(self, request, uuid, *args, **kwargs):
-            if not request.user.has_perm('attendance_can_register_attendance'):
+            if not request.user.has_perm('resources.can_register_attendance'):
                 raise PermissionDenied
             attendance = self.model.objects.get(uuid=uuid)
             try:
