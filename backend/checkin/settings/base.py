@@ -275,7 +275,7 @@ NOTIFICATION_MAILS_FROM_ADDRESS = RESOURCES_FROM_ADDRESS
 SUPPORT_EMAIL = "getin@hfk-bremen.de"
 FRONTEND_BASE_URL = getenv('FRONTEND_BASE_URL', default='http://frontend.example.com')
 SITE_DOMAIN = getenv('SITE_DOMAIN', default='example.com')
-BACKEND_BASE_URL = ''.join(['http://', SITE_DOMAIN])
+BACKEND_BASE_URL = getenv('BACKEND_BASE_URL', default=''.join(['http://', SITE_DOMAIN]))
 
 POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
