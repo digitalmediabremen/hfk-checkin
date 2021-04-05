@@ -223,6 +223,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 #"checkin.notifications.context_processors.email_notifications",
+                "checkin.context_processors.admin",
                 # "nucleus.context_processors.nucleus",
                 'microsoft_auth.context_processors.microsoft',
             ],
@@ -300,6 +301,9 @@ MANAGERS = ADMINS
 # We are currently English only: The default language middleware was disabled. See MIDDLEWARE
 ADMIN_LANGUAGE_CODE = "de-de"
 LANGUAGE_CODE = "de-de"
+
+APP_ADMIN_COLOR = getenv('APP_ADMIN_COLOR', default=None)
+APP_ADMIN_TITLE = getenv('APP_ADMIN_TITLE', default="Getin & Checkin")
 
 # LOGGING
 # ------------------------------------------------------------------------------
