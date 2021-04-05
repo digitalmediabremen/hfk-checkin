@@ -52,26 +52,10 @@ class AdminUserLookupPermissionMixin():
 
 
 class AdminProfileLookupPermissionMixin():
-    # ("can_view_external_users", _("Can view external Users")),
-    # ("can_view_regular_users", _("Can view regular Users")),
-    # ("can_view_unverified_users", _("Can view unverified Users")),
-    # ("can_view_any_user", _("Can view unverified Users")),
-    # ("can_view_real_names", _("Can view full names")),
-    # ("can_view_full_email", _("Can view full e-mail addresses")),
-    # ("can_view_full_phone_number", _("Can view full phone numbers")),
 
     def get_queryset(self, request, allow_any=False):
-        qs = super().get_queryset(request).exclude_anonymous_users()
-        if allow_any or request.user.is_superuser or request.user.has_perm('users.can_view_any_user'):
-            return qs
-        if not request.user.has_perm('users.can_view_external_users'):
-            qs |= qs.filter(is_external=True)
-        if not request.user.has_perm('users.can_view_regular_users'):
-            qs |= qs.filter(is_external=False)
-        if not request.user.has_perm('users.can_view_unverified_users'):
-            qs = qs.exclude(verified=True)
+        qs = super().get_queryset(request).exclude_anonymous_users().filter_for_user(request.user)
         return qs
-
 
 class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, DjangoUserAdmin):
     open_new_window = True

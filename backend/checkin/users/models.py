@@ -170,12 +170,27 @@ class User(AbstractUser):
 
 
 class ProfileQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
+
     def annotate_search(self):
         qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
         return qs
 
+    def filter_for_user(self, user, allow_any=False):
+        qs = self
+        if allow_any or user.is_superuser or user.has_perm('users.can_view_any_user'):
+            return qs
+        if not user.has_perm('users.can_view_external_users'):
+            qs |= qs.filter(is_external=True)
+        if not user.has_perm('users.can_view_regular_users'):
+            qs |= qs.filter(is_external=False)
+        if not user.has_perm('users.can_view_unverified_users'):
+            qs = qs.exclude(verified=True)
+        return qs
+
+
 class ProfileManager(models.Manager.from_queryset(ProfileQuerySet)):
     pass
+
 
 class Profile(DirtyFieldsMixin, models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)

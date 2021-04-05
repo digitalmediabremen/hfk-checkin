@@ -20,7 +20,8 @@
                     return;
                 }
                 $.ajax({
-                    url: '/api/profile/' + profile_id + '/',
+                    {# url: {% url 'adminprofile-detail' pk=profile_id %}',#}
+                    url: '/api/adminprofile/' + profile_id + '/',
                     format: 'json',
                     success: function (data) {
                         $('#id_first_name').val(data.first_name)

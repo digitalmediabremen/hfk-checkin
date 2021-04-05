@@ -217,7 +217,7 @@ class UserProfileSerializer(BaseUserProfileSerializer):
 
 class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.CreateModelMixin):
     permission_classes = [permissions.IsAuthenticated]
-    queryset = get_user_model().objects.exclude_anonymous_users().all()
+    queryset = get_user_model().objects.exclude_anonymous_users()
     serializer_class = UserProfileSerializer
     authentication_classes = (CSRFExemptSessionAuthentication,)
 
@@ -320,9 +320,32 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
 
 register_view(UserProfileViewSet, 'profile')
 
+# extra serialiuer endpoint for paper log input
+
+class AdminProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    display_name = serializers.ReadOnlyField(source='get_display_name')
+    class Meta:
+        model = Profile
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'student_number', 'verified', 'complete']
+
+class AdminProfileViewset(
+    #mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    #mixins.UpdateModelMixin,
+    #mixins.DestroyModelMixin,
+    #mixins.ListModelMixin,
+    viewsets.GenericViewSet):
+
+    permission_classes = [permissions.IsAdminUser]
+    queryset = Profile.objects
+    serializer_class = AdminProfileSerializer
+    authentication_classes = (CSRFExemptSessionAuthentication,)
+
+register_view(AdminProfileViewset, 'adminprofile', base_name='adminprofile')
+
 
 from django.contrib.auth import logout as auth_logout
-
 
 class LogoutViewSet(viewsets.ViewSet):
     """
