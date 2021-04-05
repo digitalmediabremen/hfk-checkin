@@ -1,8 +1,22 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 #from ..enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
 from guardian.core import ObjectPermissionChecker
 
 # Always update permissions.rst documentation accordingly after modifying this file!
+
+UNIT_PREFIX = 'unit:'
+RESOURCE_PREFIX = 'resource:'
+RESOURCE_GROUP_PREFIX = 'group:'
+
+def prefix_perm_codenames(prefix, codenames):
+    return [prefix + codename for codename in codenames]
+
+def prefix_perm_tuple(prefix, perm_tuple):
+    return [(prefix + codename, description) for (codename, description) in perm_tuple]
+
+prefix_unit_perm_codenames = lambda x: prefix_perm_codenames(UNIT_PREFIX, x)
+prefix_resource_perm_codenames = lambda x: prefix_perm_codenames(RESOURCE_PREFIX, x)
+prefix_resource_group_perm_codenames = lambda x: prefix_perm_codenames(RESOURCE_GROUP_PREFIX, x)
 
 RESERVATION_PERMISSIONS = (
     # will cause superusers to "have" the permission and thus not receive notifications
@@ -12,6 +26,10 @@ RESERVATION_PERMISSIONS = (
 SHARED_PERMISSIONS = (
     ('can_modify_reservations', _('Can modify reservations')),
     ('can_modify_access', _('Can modify access')),
+    ('can_modify_reservations_without_notifications', _('Can modify reservations, but do not notify or use as Reply-To')),
+    ('can_modify_access_without_notifications', _('Can modify access, but do not notify or use as Reply-To')),
+    ('notify_for_reservations', _('Receive notifications for reservation requests, but do not allow access to backend')),
+    ('notify_for_access', _('Receive notifications for access requests, but do not allow access to backend')),
 )
 
 RESOURCE_PERMISSIONS = (
@@ -46,6 +64,8 @@ UNIT_PERMISSIONS = [
     (
         *SHARED_PERMISSIONS,
         ('can_confirm_users', _('Can confirm (external) users')),
+        ('can_confirm_users_without_notifications', _('Can confirm (external) users, but do not notify or use as Reply-To')),
+        ('notify_for_users', _('Receive notifications for user requests, but do not allow access to backend')),
         ('view_resource', _('Can view Spaces within Unit')),
         ('change_resource', _('Can change Spaces within Unit')),
         ('delete_resource', _('Can delete Spaces within Unit')),

@@ -903,7 +903,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             from_address = sanitize_address((self.resource.email_sender_name, from_address), encoding)
 
         if not reply_to_users:
-            reply_to_users = self.resource.get_reservation_delegates()
+            reply_to_users = self.resource.get_reservation_delegates_to_notify()
         if not isinstance(reply_to_users, list):
             reply_to_users = [reply_to_users]
         for u in reply_to_users:
@@ -939,7 +939,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
     def send_reservation_requested_mail_to_officials(self, **kwargs):
         #notify_users = self.resource.get_users_with_perm('can_approve_reservation')
-        notify_users = self.resource.get_reservation_delegates()
+        notify_users = self.resource.get_reservation_delegates_to_notify()
         logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
@@ -949,7 +949,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
     def send_access_requested_mail_to_officials(self, **kwargs):
         # notify_users = self.resource.get_users_with_perm('can_approve_reservation')
-        notify_users = self.resource.get_access_delegates()
+        notify_users = self.resource.get_access_delegates_to_notify()
         logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
@@ -958,7 +958,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         return []
 
     def send_external_user_requested_mail_to_officials(self, external_attendee, **kwargs):
-        notify_users = self.resource.get_user_confirmation_delegates()
+        notify_users = self.resource.get_user_confirmation_delegates_to_notify()
         logger.debug('notify_users external user for %s: %s' % (self, notify_users))
         extra_context = kwargs.pop('extra_context', {})
         if len(notify_users) > 100:
