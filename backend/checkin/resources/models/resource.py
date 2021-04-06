@@ -201,8 +201,8 @@ class ResourceManager(models.Manager.from_queryset(ResourceQuerySet)):
             .annotate_capacity_calculation()
 
     def get_resources_reservation_delegated_to_user(self, user):
-        resources_qs = get_objects_for_user(user, ['resource:can_modify_reservations'], klass=self.model)
-        units_qs = get_objects_for_user(user, 'unit:can_modify_reservations', klass=Unit)
+        resources_qs = get_objects_for_user(user, ['resource:can_modify_reservations','resource:can_modify_reservations_without_notifications'], klass=self.model)
+        units_qs = get_objects_for_user(user, ['unit:can_modify_reservations','unit:can_modify_reservations_without_notifications'], klass=Unit)
         # return all resources with permission 'can_modify_reservations' on Resource or on Resource.unit
         resources_qs |= self.get_queryset().filter(unit__in=units_qs)
         return resources_qs
@@ -727,7 +727,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         return self.reservable and self.has_access(user)
 
     def can_modify_reservations(self, user):
-        return self._has_perm(user, 'can_modify_reservations')
+        return self._has_perm(user, 'can_modify_reservations') or self._has_perm(user, 'can_modify_reservations_without_notifications')
 
     def can_comment_reservations(self, user):
         return self._has_perm(user, 'can_comment_reservations')

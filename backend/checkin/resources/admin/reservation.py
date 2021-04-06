@@ -157,7 +157,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     def has_change_permission(self, request, obj=None):
         if obj:
-            return super().has_change_permission(request, obj) or obj.resource._has_perm(request.user, perm='can_modify_reservations')
+            return super().has_change_permission(request, obj) or obj.resource._has_perm(request.user, perm='can_modify_reservations') or obj.resource._has_perm(request.user, perm='can_modify_reservations_without_notifications')
         return super().has_change_permission(request, obj)
 
     def has_delete_permission(self, request, obj=None):
