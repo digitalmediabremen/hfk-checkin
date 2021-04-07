@@ -23,7 +23,7 @@ const ProfileBar: React.FunctionComponent<ProfileBarProps> = () => {
         <Bar extendedWidth>
             <Link href={appUrls.home} passHref>
                 <FormElement
-                    adaptiveWidth
+                    // adaptiveWidth
                     componentType="a"
                     value={[
                         <b>

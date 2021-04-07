@@ -27,6 +27,7 @@ interface ResourceListItemProps {
     onSelect?: (selected: boolean) => void;
     last?: boolean;
     showMeta?: boolean;
+    includeAlternativeNames?: boolean;
 }
 
 const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
@@ -35,6 +36,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     onSelect,
     last,
     showMeta,
+    includeAlternativeNames
 }) => {
     const theme = useTheme();
     const { t } = useTranslation("request-resource-list");
@@ -107,7 +109,10 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                 <FormMultilineValue
                     value={[
                         resource.display_numbers || "",
-                        <b>{resource.name}</b>,
+                        <span>
+                            <b>{resource.name}</b>
+                            {includeAlternativeNames && resource.alternative_names &&(<i>{" "}{resource.alternative_names.join(",")}</i>)}
+                        </span>,
                     ]}
                 />
 

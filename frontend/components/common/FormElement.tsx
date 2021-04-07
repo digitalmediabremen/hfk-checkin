@@ -13,6 +13,7 @@ export interface FormElementProps extends FormElementBaseProps {
     label?: string;
     shortLabel?: string;
     labelIcon?: ReactNode;
+    alignLabelIconTop?: boolean;
     arrow?: true;
     actionIcon?: ReactNode;
     onIconClick?: () => void;
@@ -28,6 +29,7 @@ const FormElement = forwardRef<FormElementBaseRefType, FormElementProps>(
             label,
             shortLabel,
             labelIcon,
+            alignLabelIconTop,
             arrow,
             actionIcon,
             onIconClick,
@@ -86,6 +88,8 @@ const FormElement = forwardRef<FormElementBaseRefType, FormElementProps>(
                     .label-icon {
                         padding-right: ${theme.spacing(1)}px;
                         line-height: 0;
+                        flex: 0 0 ${theme.spacing(5)}px;
+                        align-self: ${alignLabelIconTop ? "flex-start" : "center"};
                     }
                 `}</style>
                 <FormElementBase {...formElementBaseProps} ref={ref}>

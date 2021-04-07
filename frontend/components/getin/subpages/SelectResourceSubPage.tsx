@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, Menu, Search, X } from "react-feather";
+import { ArrowRight, Flag, Info, Menu, Search, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
@@ -24,6 +24,7 @@ import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 import ResourceListItem from "../../common/ResourceListItem";
 import SectionTitle from "../../common/SectionTitle";
+import Text from "../../common/Text";
 
 interface SetRoomSubpageProps {}
 
@@ -33,9 +34,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const queryResourceRequest = useResources(false);
     const unitsApi = useUnits();
     const { goForward } = useSubPage(requestSubpages);
-    const [selectedResource, setSelectedResource, reservation] = useReservationState(
-        "resource"
-    );
+    const [
+        selectedResource,
+        setSelectedResource,
+        reservation,
+    ] = useReservationState("resource");
     const [units, setUnits] = useReservationState("units");
     const [selectedUnitId, setSelectedUnitId] = useReservationState(
         "selectedUnitId"
@@ -166,7 +169,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                     {selectedResource ? (
                         <FormElement
                             bottomSpacing={2}
-                            value={resourceFormValuePresenter(selectedResource, locale)}
+                            value={resourceFormValuePresenter(
+                                selectedResource,
+                                locale,
+                                true
+                            )}
                             actionIcon={<X />}
                             onIconClick={handleDeselectResource}
                         />
@@ -211,6 +218,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                                         <ResourceListItem
                                                             key={index}
                                                             resource={r}
+                                                            includeAlternativeNames
                                                             last={
                                                                 index ===
                                                                 queryResourceRequest.result!
@@ -250,6 +258,19 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         </>
                     )}
 
+                    {selectedResource?.description && (
+                        <FormElement
+                            // label="Info"
+                            labelIcon={<Info />}
+                            alignLabelIconTop
+                            noOutline
+                            noPadding
+                            value={<>{selectedResource?.description}</>}
+                            maxRows={6}
+                            bottomSpacing={4}
+                        />
+                    )}
+
                     <Fade in={has("missingResourcePermissions")}>
                         <Notice
                             error
@@ -261,7 +282,6 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             {t(
                                 "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern."
                             )}
-                            <br />
                             <br />
                             <NewButton
                                 noOutline
