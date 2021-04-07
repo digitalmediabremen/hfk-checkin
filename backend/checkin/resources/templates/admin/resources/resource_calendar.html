@@ -17,6 +17,9 @@
         {% get_current_language as LANGUAGE_CODE %}
         var parameters = {
             resources_uuids: ['{{ calendar_resource_id }}'],
+            name_label: '{% translate 'Space' %}',
+            numbers_label: '{% translate 'Numbers' %}',
+            capacity_label: '{% translate 'Cap.' %}'
         }
         var config = {
             locale: '{{ LANGUAGE_CODE }}',

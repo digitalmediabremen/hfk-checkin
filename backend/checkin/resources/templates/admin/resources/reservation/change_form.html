@@ -25,6 +25,9 @@
             start: '{{ original.begin|date:"c" }}',
             end: '{{ original.end|date:"c" }}',
             current_uuid: '{{ original.uuid }}',
+            name_label: '{% translate 'Space' %}',
+            numbers_label: '{% translate 'Numbers' %}',
+            capacity_label: '{% translate 'Cap.' %}'
         }
         var config = {
             locale: '{{ LANGUAGE_CODE }}',
@@ -45,7 +48,7 @@
     <div style="padding: 20px 40px" class="reservation-calendar">
         <div id='calendar'></div><br/>
         {% url 'admin:resources_resource_calendar' original.resource.pk|admin_urlquote as url %}
-        <a href="{% add_preserved_filters url is_popup to_field %}?_popup=1" class="related-widget-wrapper-link" target="resource-calendar">{% translate 'Open Calendar for' %} {{ original.resource.display_name }}</a></div>
+        <a href="{{ url }}?_popup=1" class="related-widget-wrapper-link" target="resource-calendar">{% translate 'Open Calendar for' %} {{ original.resource.display_name }}</a></div>
     <hr/>
     {% endif %}
 {% endblock %}

@@ -287,7 +287,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # give some info
         # TODO move all warnings to validate_reservation()
         if obj:
-            if obj.user:
+            if obj.user and obj.user.get_preferred_language() != request.user.get_preferred_language():
                 messages.add_message(request, messages.INFO, _("%s preferred language is: %s" % (obj.user, obj.user.get_preferred_language())))
             if obj.is_inactive:
                 messages.add_message(request, messages.ERROR, _("Has been cancelled or denied."))

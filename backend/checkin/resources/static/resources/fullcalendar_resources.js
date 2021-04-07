@@ -3,6 +3,9 @@ var resources_fullcalendar = {
         resources_uuids: [],
         current_uuid: null,
         last_added_resource: null,
+        name_label: 'Space',
+        numbers_label: 'Numbers',
+        capacity_label: 'Cap'
     },
     init: function(parameters, config_overwrite) {
         document.addEventListener('DOMContentLoaded', function () {
@@ -58,16 +61,16 @@ var resources_fullcalendar = {
                 resourceAreaColumns: [
                     {
                         field: 'name',
-                        headerContent: 'Space',
+                        headerContent: resources_fullcalendar.parameters.name_label,
                     },
                     {
                         field: 'display_numbers',
-                        headerContent: 'Number',
+                        headerContent: resources_fullcalendar.parameters.numbers_label,
                         width: "30%",
                     },
                     {
                         field: 'capacity',
-                        headerContent: 'Cap.',
+                        headerContent: resources_fullcalendar.parameters.capacity_label,
                         width: "20%",
                     }
                 ],

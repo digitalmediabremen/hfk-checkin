@@ -145,7 +145,12 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     # "inherit" permissions from unit (and resourcegrups) via permission checker on Resource instance
     def has_view_permission(self, request, obj=None):
         if obj:
-            return obj._has_perm(request.user, perm=get_permission_codename('view', self.opts))
+            return (obj._has_perm(request.user, perm=get_permission_codename('view', self.opts))
+                    or
+                    obj._has_perm(request.user, perm='can_modify_reservations')
+                    or
+                    obj._has_perm(request.user, perm='can_modify_reservations_without_notification'))
+
         return super().has_view_permission(request, obj)
 
     @staticmethod
