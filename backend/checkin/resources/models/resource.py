@@ -730,7 +730,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         return not self.access_restricted or self._has_perm(user, 'has_permanent_access')
 
     def can_modify_access(self, user):
-        return self._has_perm(user, 'can_modify_access', allow_global=True, allow_admin=True)
+        return self._has_perm(user, 'can_modify_access', allow_global=True, allow_admin=True) or self._has_perm(user, 'can_modify_access_without_notifications')
 
     def can_make_reservations(self, user):
         return self.reservable and self.has_access(user)
