@@ -20,6 +20,10 @@ export default function useValidation() {
         (r) => r.level === "error"
     );
 
+    const hasNotices = appState.reservationValidation.some(
+        (r) => r.level === "error" || r.level === "notice"
+    );
+
     const has = useCallback(
         (type: ValidationType, level?: ValidationLevel) =>
             hasValidationObject(appState.reservationValidation, type, level),
@@ -47,10 +51,12 @@ export default function useValidation() {
     };
 
     return {
+        has, 
         hasError: (type: ValidationType) => has(type, "error"),
         getError: get,
         allErrors,
         hasErrors,
+        hasNotices,
         userValidate,
     };
 }

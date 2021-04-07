@@ -50,7 +50,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const showDropdown =
         !!queryResourceRequest.result && searchValue.length >= 2;
     const inputRef = useRef<HTMLInputElement>(null);
-    const { hasError, getError } = useValidation();
+    const { has, getError } = useValidation();
     const theme = useTheme();
 
     useEffect(() => {
@@ -250,7 +250,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         </>
                     )}
 
-                    <Fade in={hasError("missingResourcePermissions")}>
+                    <Fade in={has("missingResourcePermissions")}>
                         <Notice
                             error
                             title={getError("missingResourcePermissions").join(
@@ -280,7 +280,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         bottomSpacing={2}
                     />
 
-                    {!hasError("missingResourcePermissions") && (
+                    {!has("missingResourcePermissions") && (
                         <>
                             <Notice>
                                 {t(

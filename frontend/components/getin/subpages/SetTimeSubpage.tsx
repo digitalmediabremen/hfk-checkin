@@ -1,33 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "react-feather";
-import SmoothCollapse from "react-smooth-collapse";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useValidation from "../../../src/hooks/useValidation";
 import {
-    addDates,
     addDateTime,
-    createDate,
     createDateNow,
-    createDefaultTime,
-    createTime,
     createTimeFromDate,
-    createTimeNow,
     duration,
     mergeDateAndTime,
     smallerThan,
     Time,
-    timeFromDateOrNow,
 } from "../../../src/util/DateTimeUtil";
-import { calculateBookableRange } from "../../../src/util/ReservationUtil";
-import { empty, notEmpty } from "../../../src/util/TypeUtil";
-import { getReservationRequest } from "../../api/ApiService";
+import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
-import { useAppState } from "../../common/AppStateProvider";
 import Fade from "../../common/Fade";
 import FormDateInput from "../../common/FormDateInput";
-import FormElement from "../../common/FormElement";
 import FormTimeInput from "../../common/FormTimeInput";
 import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
@@ -57,7 +46,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const exceedsBookableRange =
         hasError("exceedsBookableRange") && hasError("needsExceptionReason");
 
-        // update date values
+    // update date values
     useEffect(() => {
         if (firstRender.current) return;
         if (notEmpty(date) && notEmpty(timeFrom) && notEmpty(timeTo)) {
