@@ -119,8 +119,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                                 height={20}
                                 width={18}
                                 preserveAspectRatio="none"
-                            />{" "}
-                            {t("Zugang")}
+                            />
                         </span>
                     )}
                     {resource.capacity && showMeta && (
