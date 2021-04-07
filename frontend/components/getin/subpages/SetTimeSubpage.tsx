@@ -7,6 +7,7 @@ import useValidation from "../../../src/hooks/useValidation";
 import {
     addDateTime,
     createDateNow,
+    createDefaultTime,
     createTimeFromDate,
     duration,
     mergeDateAndTime,
@@ -33,13 +34,13 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const [end, setEnd] = useReservationState("end");
     const [date, setDate] = useState<Date | undefined>(begin);
     // const default
-    // const defaultBegin = createTimeFromDate(addDateTime(createDefaultTime(), duration.hours(2)));
-    // const defaultEnd = createTimeFromDate(addDateTime(defaultBegin, duration.hours(2)));
+    const defaultBegin = createTimeFromDate(addDateTime(createDefaultTime(), duration.hours(0)));
+    const defaultEnd = createTimeFromDate(addDateTime(defaultBegin, duration.hours(2)));
     const [timeFrom, setTimeFrom] = useState<Time | undefined>(
-        begin ? createTimeFromDate(begin) : undefined
+        begin ? createTimeFromDate(begin) : defaultBegin
     );
     const [timeTo, setTimeTo] = useState<Time | undefined>(
-        end ? createTimeFromDate(end) : undefined
+        end ? createTimeFromDate(end) : defaultEnd
     );
     const hasOverlap =
         notEmpty(timeFrom) && notEmpty(timeTo) && smallerThan(timeTo, timeFrom);
