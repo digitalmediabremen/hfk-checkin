@@ -118,7 +118,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
             )}
             {message && (
                 <>
-                    <SectionTitle bottomSpacing={-0.5}>
+                    <SectionTitle bottomSpacing={1}>
                         {t("Nachricht")}
                     </SectionTitle>
                     <FormElement
