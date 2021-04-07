@@ -288,7 +288,16 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         permissions = RESOURCE_PERMISSIONS
 
     def __str__(self):
-        return self.display_name
+        name = str()
+        if self.numbers:
+            name += "%s " % self.display_numbers
+        name += "%s" % (get_translated(self, 'name'),)
+        cap = getattr(self, 'people_capacity', None)
+        if self.alternative_names:
+            name += " (" + " / ".join(self.alternative_names) + ")"
+        if cap:
+            name += " (%d)" % cap
+        return name
 
     def clean(self, *args, **kwargs):
         if self.reservable and self.external_reservation_url:

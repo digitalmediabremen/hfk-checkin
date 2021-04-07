@@ -797,7 +797,7 @@ class ResourceListViewSet(mixins.ListModelMixin,
     filter_backends = (filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend) #LocationFilterBackend)
     filterset_class = ResourceFilterSet
 
-    search_fields = append_translated(Resource, ('name', 'numbers', 'description', 'unit__name'))
+    search_fields = append_translated(Resource, ('name', 'alternative_names', 'numbers', 'description', 'unit__name'))
     serializer_class = ResourceSerializer
     authentication_classes = (
         list(drf_settings.DEFAULT_AUTHENTICATION_CLASSES) +
