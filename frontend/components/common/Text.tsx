@@ -13,7 +13,7 @@ const Text: React.FunctionComponent<TextProps> = ({children, paragraph, secondar
     
     return <>
         <style jsx>{`
-            color: ${theme.primaryColor};
+            color: ${secondary ? theme.disabledColor : theme.primaryColor};
             display: block;
             line-height: ${theme.unit > 8 ? 1.5 : 1.25}em;
             margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;

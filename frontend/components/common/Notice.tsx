@@ -21,7 +21,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
             <style jsx>{`
                 .notice-wrapper {
                     display: flex;
-                    color: ${theme.primaryColor};
+                    color: ${error ? theme.primaryColor : theme.disabledColor};
                     margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
                 }
 
