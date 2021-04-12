@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-07 18:14+0200\n"
+"POT-Creation-Date: 2021-04-12 15:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -305,6 +305,7 @@ msgstr "Zugangsberechtigung bei zuständigen Personen angefragt"
 #: checkin/resources/models/resource.py:108
 #: checkin/resources/models/resource.py:285
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:28
+#: checkin/resources/templates/admin/resources/resource_calendar.html:20
 msgid "Space"
 msgstr "Raum"
 
@@ -446,43 +447,51 @@ msgstr "Anwesenheitsdokuemtation"
 msgid "Attendance records"
 msgstr "Anwesenheitsdokuemtationen"
 
-#: checkin/resources/admin/reception.py:97
+#: checkin/resources/admin/reception.py:98
 #: checkin/resources/admin/reservation.py:221
 msgid "Timespan"
 msgstr "Zeitraum"
 
-#: checkin/resources/admin/reception.py:102
+#: checkin/resources/admin/reception.py:103
 msgid "User"
 msgstr "Nutzer"
 
-#: checkin/resources/admin/reception.py:107
+#: checkin/resources/admin/reception.py:108
+msgid "First name"
+msgstr "Vorname"
+
+#: checkin/resources/admin/reception.py:113
+msgid "Last name"
+msgstr "Nachname"
+
+#: checkin/resources/admin/reception.py:118
 msgid "Begin"
 msgstr "Anfang"
 
-#: checkin/resources/admin/reception.py:113
+#: checkin/resources/admin/reception.py:124
 msgid "End"
 msgstr "Ende"
 
-#: checkin/resources/admin/reception.py:124
-#: checkin/resources/admin/reception.py:128
+#: checkin/resources/admin/reception.py:135
+#: checkin/resources/admin/reception.py:139
 #: checkin/resources/models/attendance.py:27
 #: checkin/resources/models/reservation.py:211
 msgid "Comment"
 msgstr "Bemerkung"
 
-#: checkin/resources/admin/reception.py:178
+#: checkin/resources/admin/reception.py:189
 msgid "Record enter"
 msgstr "Eingang erfassen"
 
-#: checkin/resources/admin/reception.py:179
+#: checkin/resources/admin/reception.py:190
 msgid "Enter"
 msgstr "Eingang"
 
-#: checkin/resources/admin/reception.py:183
+#: checkin/resources/admin/reception.py:194
 msgid "Record leave"
 msgstr "Ausgang erfassen"
 
-#: checkin/resources/admin/reception.py:184
+#: checkin/resources/admin/reception.py:195
 msgid "Leave"
 msgstr "Ausgang"
 
@@ -1501,6 +1510,7 @@ msgstr ""
 
 #: checkin/resources/models/resource.py:352
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:29
+#: checkin/resources/templates/admin/resources/resource_calendar.html:21
 #: checkin/tracking/models.py:141
 msgid "Numbers"
 msgstr "Nummern"
@@ -1631,6 +1641,7 @@ msgid "Delete Item"
 msgstr "Eingabe löschen"
 
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:30
+#: checkin/resources/templates/admin/resources/resource_calendar.html:22
 msgid "Cap."
 msgstr "Kap."
 
@@ -1644,15 +1655,15 @@ msgstr "Teilnahmeliste"
 
 #: checkin/resources/templates/admin/resources/resource/change_form_object_tools.html:9
 #: checkin/resources/templates/admin/resources/resource_calendar.html:3
-#: checkin/resources/templates/admin/resources/resource_calendar.html:36
+#: checkin/resources/templates/admin/resources/resource_calendar.html:39
 msgid "Calendar"
 msgstr "Kalender"
 
-#: checkin/resources/templates/admin/resources/resource_calendar.html:32
+#: checkin/resources/templates/admin/resources/resource_calendar.html:35
 msgid "Home"
 msgstr "Home"
 
-#: checkin/resources/templates/admin/resources/resource_calendar.html:46
+#: checkin/resources/templates/admin/resources/resource_calendar.html:49
 msgid "+ Add Resource to view"
 msgstr "+ Raum zur Ansicht hinzufügen"
 

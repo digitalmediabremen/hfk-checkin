@@ -74,16 +74,17 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         fields = readonly_fields
         list_editable = ()
         #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
-        list_display = ['get_user', 'resource','get_display_duration','enter_action','leave_action','get_comment_list','state']
+        list_display = ['get_user_first_name', 'get_user_last_name', 'resource','get_display_duration','enter_action','leave_action','get_comment_list','state']
         list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
                        # 'resources', 'start', 'end', 'status', 'is_important',
                        ('reservation__begin', DateTimeRangeFilter),
                        ('reservation__end', DateTimeRangeFilter),
                        )
-        list_display_links = ('get_user', 'resource', 'get_comment_list')
+        list_display_links = ('get_user_first_name', 'get_user_last_name', 'resource', 'get_comment_list')
         search_fields = ('reservation__uuid','user__first_name', 'user__last_name', 'user__email','reservation__resource__name','reservation__resource__numbers')
         date_hierarchy = 'reservation__begin'
         actions_on_top = True
+        ordering = ['reservation__user__first_name', 'reservation__user__last_name', 'reservation__resource']
         #list_display_links = ('user','resource')
 
         def get_queryset(self, request):
@@ -100,7 +101,17 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         def get_user(self, obj):
             return obj.user.get_display_name()
         get_user.short_description = _("User")
-        get_user.admin_order_field = 'reservation__user__last_name'
+        get_user.admin_order_field = 'reservation__user__first_name'
+
+        def get_user_first_name(self, obj):
+            return obj.user.first_name
+        get_user_first_name.short_description = _("First name")
+        get_user_first_name.admin_order_field = 'reservation__user__first_name'
+
+        def get_user_last_name(self, obj):
+            return obj.user.last_name
+        get_user_last_name.short_description = _("Last name")
+        get_user_last_name.admin_order_field = 'reservation__user__last_name'
 
         def get_begin_time(self, obj):
             return format_html("<strong>{}</strong>", make_naive(obj.reservation.begin, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
