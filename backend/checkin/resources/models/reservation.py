@@ -730,9 +730,9 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                     'resource_capacity': self.resource.people_capacity,
                     'attendance_sum': total_number_of_attendees
                 }), ReservationCapacityCriticalWarning)
-            elif total_number_of_attendees > 0:
-                warnings.warn(gettext(
-                    "Total attendance (incl. this one): %d." % (total_number_of_attendees)), ReservationCapacityNotice)
+            # elif total_number_of_attendees > 0:
+            #     warnings.warn(gettext(
+            #         "Total attendance (incl. this one): %d." % (total_number_of_attendees)), ReservationCapacityNotice)
 
         #if not user_is_admin:
         if self.resource.min_period and (self.end - self.begin) < self.resource.min_period:

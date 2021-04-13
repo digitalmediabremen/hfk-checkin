@@ -24,6 +24,7 @@ from .other import DisableableRadioSelect
 from ..auth import is_general_admin
 from guardian.shortcuts import get_objects_for_user
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.utils.timezone import now
 
 logger = logging.getLogger(__name__)
 
@@ -295,6 +296,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                 messages.add_message(request, messages.WARNING, _("Has priority."))
             if obj.exclusive_resource_usage:
                 messages.add_message(request, messages.WARNING, _("Uses space exclusively."))
+            if obj.end < now():
+                messages.add_message(request, messages.WARNING, _("Reservation occurred in the past."))
             if not obj.organizer_is_attending:
                 if obj.organizer in obj.attendees.all():
                     messages.add_message(request, messages.WARNING, _(
