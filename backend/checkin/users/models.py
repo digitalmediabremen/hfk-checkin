@@ -139,7 +139,7 @@ class User(AbstractUser):
     #     max_length=16, null=True, blank=True, unique=True, db_index=True, verbose_name="iCal token"
     # )
     preferred_language = models.CharField(max_length=8, null=True, blank=True,
-                                          verbose_name="Preferred UI language",
+                                          verbose_name=_("Preferred UI language"),
                                           choices=settings.LANGUAGES)
     disable_notifications = models.BooleanField(verbose_name=_("Do not send email notifciations to this user"), default=False)
     # favorite_resources = models.ManyToManyField(Resource, blank=True, verbose_name=_('Favorite resources'),
@@ -227,12 +227,12 @@ class User(AbstractUser):
 class ProfileQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
 
     def annotate_search(self):
-        qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
+        qs = self.annotate(search=SearchVector('first_name', 'last_name', 'email', 'student_number', 'phone'))
         return qs
 
     @staticmethod
     def generate_profile_Q_filter_for_user(user, q):
-        filter = q # start q
+        filter = q  # start q
         if user.has_perm('users.can_view_external_users'):
             filter |= Q(is_external=True) | Q(is_external__isnull=True)
         if user.has_perm('users.can_view_regular_users'):
