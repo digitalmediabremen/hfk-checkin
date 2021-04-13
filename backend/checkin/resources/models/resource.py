@@ -341,7 +341,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         name = "%s" % (get_translated(self, 'name'),)
         if self.numbers:
             name += " (%s)" % self.display_numbers
-        return name
+        return name.replace("\n", "").strip()
 
     @property
     def display_numbers(self):
