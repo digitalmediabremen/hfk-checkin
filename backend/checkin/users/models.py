@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.constants import LOOKUP_SEP
+from django.contrib.postgres.fields import CIEmailField
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
@@ -118,7 +119,7 @@ class User(AbstractUser):
     '''
     #first_name = None # usually blank=True
     #last_name = None # usually blank=True
-    email = models.EmailField(_('email address'), unique=True)
+    email = CIEmailField(_('email address'), unique=True)
     #username = email # FIXME needed for microsoft_auth.admin.UserAdmin
 
     USERNAME_FIELD = 'email'
