@@ -17,7 +17,7 @@ from django.template.response import TemplateResponse
 from guardian import admin as guardian_admin
 #from image_cropping import ImageCroppingMixin
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline, TranslationTabularInline
-from checkin.users.admin import GroupAdmin
+from checkin.users.admin import GroupAdmin, UserGroupInline
 from guardian.shortcuts import get_objects_for_user
 
 #from checkin.resources.models import RESERVATION_EXTRA_FIELDS
@@ -332,10 +332,26 @@ class RespaTokenAdmin(admin.ModelAdmin):
     fields = ('user',)
     ordering = ('-created',)
     raw_id_fields = ('user',)
-    
-    
+
+
+class ReservationUserGroupInline(UserGroupInline):
+
+    def has_add_permission(self, request, obj):
+        return request.user.has_perm('resources.change_reservationusergroup')
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.has_perm('resources.change_reservationusergroup')
+
+    def has_view_permission(self, request, obj=None):
+        return request.user.has_perm('resources.view_reservationusergroup')
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.has_perm('resources.change_reservationusergroup')
+
+
 class ReservationUserGroupAdmin(GroupAdmin):
     readonly_fields = ('permissions',)
+    inlines = [ReservationUserGroupInline]
 
 
 ## FIELDS and WIDGETS
