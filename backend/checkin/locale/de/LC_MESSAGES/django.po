@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-12 15:45+0200\n"
+"POT-Creation-Date: 2021-04-13 17:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -435,7 +435,7 @@ msgid "(External) user confirmation delegates"
 msgstr "Zuständigkeiten für Anmeldung (externer) Teilnehmer"
 
 #: checkin/resources/admin/reception.py:51
-#: checkin/resources/models/attendance.py:50 checkin/users/models.py:205
+#: checkin/resources/models/attendance.py:50 checkin/users/models.py:276
 msgid "External"
 msgstr "Extern"
 
@@ -452,7 +452,7 @@ msgstr "Anwesenheitsdokuemtationen"
 msgid "Timespan"
 msgstr "Zeitraum"
 
-#: checkin/resources/admin/reception.py:103
+#: checkin/resources/admin/reception.py:103 checkin/users/models.py:267
 msgid "User"
 msgstr "Nutzer"
 
@@ -758,7 +758,7 @@ msgstr "Bestellung"
 #: checkin/resources/models/accessibility.py:57
 #: checkin/resources/models/accessibility.py:84
 #: checkin/resources/models/accessibility.py:110
-#: checkin/resources/models/base.py:77 checkin/users/models.py:271
+#: checkin/resources/models/base.py:77 checkin/users/models.py:364
 msgid "Time of creation"
 msgstr "Zeitpunkt der Erstellung"
 
@@ -766,7 +766,7 @@ msgstr "Zeitpunkt der Erstellung"
 #: checkin/resources/models/accessibility.py:58
 #: checkin/resources/models/accessibility.py:85
 #: checkin/resources/models/accessibility.py:111
-#: checkin/resources/models/base.py:81 checkin/users/models.py:272
+#: checkin/resources/models/base.py:81 checkin/users/models.py:365
 msgid "Time of modification"
 msgstr "Zeitpunkt der Änderung"
 
@@ -842,7 +842,7 @@ msgid "approved"
 msgstr "bestätigt"
 
 #: checkin/resources/models/attendance.py:25 checkin/tracking/models.py:365
-#: checkin/tracking/models.py:426 checkin/users/models.py:234
+#: checkin/tracking/models.py:426 checkin/users/models.py:314
 msgid "Userprofile"
 msgstr "Benutzerprofil"
 
@@ -1835,7 +1835,7 @@ msgid "Buchung via"
 msgstr ""
 
 #: checkin/tracking/legacy.py:25 checkin/tracking/models.py:132
-#: checkin/users/models.py:206
+#: checkin/users/models.py:277
 msgid "Letzte Änderung"
 msgstr ""
 
@@ -2061,20 +2061,20 @@ msgstr ""
 msgid "Kann Nachverfolgung durchführen"
 msgstr ""
 
-#: checkin/tracking/models.py:427 checkin/users/models.py:197
+#: checkin/tracking/models.py:427 checkin/users/models.py:268
 msgid "Vorname"
 msgstr ""
 
-#: checkin/tracking/models.py:428 checkin/users/models.py:198
+#: checkin/tracking/models.py:428 checkin/users/models.py:269
 msgid "Nachname"
 msgstr ""
 
-#: checkin/tracking/models.py:431 checkin/users/admin.py:271
-#: checkin/users/models.py:201
+#: checkin/tracking/models.py:431 checkin/users/admin.py:184
+#: checkin/users/models.py:272
 msgid "Telefonnummer"
 msgstr ""
 
-#: checkin/tracking/models.py:432 checkin/users/models.py:204
+#: checkin/tracking/models.py:432 checkin/users/models.py:275
 msgid "Matrikelnummer"
 msgstr ""
 
@@ -2315,31 +2315,35 @@ msgstr ""
 msgid "Anazhl der Aufenthalte"
 msgstr ""
 
-#: checkin/users/admin.py:64
+#: checkin/users/admin.py:37
 msgid "Personal info"
 msgstr "Informationen zur Person"
 
-#: checkin/users/admin.py:65
+#: checkin/users/admin.py:38
 msgid "Additional info"
 msgstr "Weitere Informationen"
 
-#: checkin/users/admin.py:66
+#: checkin/users/admin.py:39
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: checkin/users/admin.py:69
+#: checkin/users/admin.py:42
 msgid "Important dates"
 msgstr "Daten"
 
-#: checkin/users/admin.py:279 checkin/users/models.py:202
-msgid "E-Mail Adresse"
-msgstr ""
+#: checkin/users/admin.py:133
+msgid "Hidden value"
+msgstr "Versteckter Wert"
 
-#: checkin/users/admin.py:288
+#: checkin/users/admin.py:192 checkin/users/models.py:273
+msgid "E-Mail Adresse"
+msgstr "E-Mail-Adresse"
+
+#: checkin/users/admin.py:201
 msgid "Group membership"
 msgstr "Gruppenmitgliedschaft"
 
-#: checkin/users/admin.py:289
+#: checkin/users/admin.py:202
 msgid "Group memberships"
 msgstr "Gruppenmitgliedschaften"
 
@@ -2347,72 +2351,96 @@ msgstr "Gruppenmitgliedschaften"
 msgid "Users and Profiles"
 msgstr "Benutzer und Profile"
 
-#: checkin/users/models.py:69
+#: checkin/users/models.py:121
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: checkin/users/models.py:91
+#: checkin/users/models.py:143
 msgid "Do not send email notifciations to this user"
 msgstr "Sende keine Benachrichtigungen für Reservierungen"
 
-#: checkin/users/models.py:200
+#: checkin/users/models.py:271
 msgid "Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."
 msgstr ""
 
-#: checkin/users/models.py:203
+#: checkin/users/models.py:274
 msgid "Identität geprüft"
 msgstr ""
 
-#: checkin/users/models.py:207
+#: checkin/users/models.py:278
 msgid "Registrierung"
 msgstr ""
 
-#: checkin/users/models.py:219
+#: checkin/users/models.py:291
 #, python-format
 msgid "%s (External)"
 msgstr "%s (Extern)"
 
-#: checkin/users/models.py:224
+#: checkin/users/models.py:293
+#, python-format
+msgid "%s (Unverified)"
+msgstr "%s (Ungeprüft)"
+
+#: checkin/users/models.py:304
 #, python-format
 msgid "%s %s"
 msgstr ""
 
-#: checkin/users/models.py:227
+#: checkin/users/models.py:307
 #, python-format
 msgid "%s %s (P: %s / E: %s)"
 msgstr ""
 
-#: checkin/users/models.py:235
+#: checkin/users/models.py:315
 msgid "Userprofiles"
 msgstr "Benutzerprofile"
 
-#: checkin/users/models.py:237
-msgid "Can view any user"
-msgstr "Kann alle Benutzer anzeigen"
+#: checkin/users/models.py:317
+msgid "Can view any user or userprofile"
+msgstr "Kann alle Benutzer oder Benutzerprofile anzeigen"
 
-#: checkin/users/models.py:238
-msgid "Can view external user"
+#: checkin/users/models.py:318
+msgid "Can lookup any user"
+msgstr "Kann alle Benutzer nachschlagen"
+
+#: checkin/users/models.py:319
+msgid "Can view external users"
 msgstr "Kann externe Benutzer anzeigen"
 
-#: checkin/users/models.py:239
-msgid "Can view regular user"
-msgstr "Kann reguläre/nicht-externe Benutzer anzeigen"
+#: checkin/users/models.py:320
+msgid "Can view non-external users"
+msgstr "Kann nicht-externe Benutzer anzeigen"
 
-#: checkin/users/models.py:240
+#: checkin/users/models.py:321
 msgid "Can view unverified users"
 msgstr "Kann nicht-verifizierte Benutzer anezigen"
 
-#: checkin/users/models.py:241
-msgid "Can view full names"
+#: checkin/users/models.py:322
+#, fuzzy
+#| msgid "Can view full names"
+msgid "Can display full names"
 msgstr "Kann vollständige Namen anzeigen"
 
-#: checkin/users/models.py:242
-msgid "Can view full e-mail addresses"
+#: checkin/users/models.py:323
+#, fuzzy
+#| msgid "Can view full e-mail addresses"
+msgid "Can display full e-mail addresses"
 msgstr "Kann vollständige E-Mail-Adressen anzeigen"
 
-#: checkin/users/models.py:243
-msgid "Can view full phone numbers"
+#: checkin/users/models.py:324
+#, fuzzy
+#| msgid "Can view full phone numbers"
+msgid "Can display full phone numbers"
 msgstr "Kann vollständige Telefonnummern anzeigen"
+
+#: checkin/users/models.py:325
+#, fuzzy
+#| msgid "Can view student numbers"
+msgid "Can display student numbers"
+msgstr "Kann vollständige Matrikelnummern anzeigen"
+
+#~ msgid "Can view regular user"
+#~ msgstr "Kann reguläre/nicht-externe Benutzer anzeigen"
 
 #, python-format
 #~ msgid "Reservation %s: %s"

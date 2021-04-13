@@ -9,6 +9,9 @@ from django import forms
 from django.utils.translation import gettext, gettext_lazy as _
 from impersonate.admin import UserAdminImpersonateMixin
 from simple_history.admin import SimpleHistoryAdmin
+from django.urls import reverse
+from django.shortcuts import redirect
+from django.views.generic.base import RedirectView
 
 from .models import Profile
 User = get_user_model()
@@ -27,37 +30,7 @@ class UserProfileAdminInline(admin.StackedInline):
     max = 1
 
 
-class AdminUserLookupPermissionMixin():
-    # ("can_view_external_users", _("Can view external Users")),
-    # ("can_view_regular_users", _("Can view regular Users")),
-    # ("can_view_unverified_users", _("Can view unverified Users")),
-    # ("can_view_any_user", _("Can view unverified Users")),
-    # ("can_view_real_names", _("Can view full names")),
-    # ("can_view_full_email", _("Can view full e-mail addresses")),
-    # ("can_view_full_phone_number", _("Can view full phone numbers")),
-
-    def get_queryset(self, request, allow_any=False):
-        qs = super().get_queryset(request).exclude_anonymous_users()
-        # TODO qs limits are not working in AdminView, are they?
-        # TODO see fixme on UserAdmin
-        # if allow_any or request.user.is_superuser or request.user.has_perm('users.can_view_any_user'):
-        #     return qs
-        # if not request.user.has_perm('users.can_view_external_users'):
-        #     qs = qs.exclude(profile__is_external=True)
-        # if not request.user.has_perm('users.can_view_regular_users'):
-        #     qs = qs.exclude(profile__is_external=False)
-        # if not request.user.has_perm('users.can_view_unverified_users'):
-        #     qs = qs.exclude(profile__verified=True)
-        return qs
-
-
-class AdminProfileLookupPermissionMixin():
-
-    def get_queryset(self, request, allow_any=False):
-        qs = super().get_queryset(request).exclude_anonymous_users().filter_for_user(request.user)
-        return qs
-
-class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, DjangoUserAdmin):
+class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     open_new_window = True
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
@@ -81,28 +54,161 @@ class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, Djang
     add_form = UserCreationForm
     inlines = [UserProfileAdminInline]
 
-    # All staff users need view permission on Users to successfully use autocomplete fields.
-    # Still UserAdmin shall be hidden from admin list for regular (non admin / manager) users.
     def has_view_permission(self, request, obj=None):
-        return request.user.is_staff or super().has_view_permission(request, obj)
+        info = self.model._meta.app_label, self.model._meta.model_name
+        autocomplete_path = reverse('admin:%s_%s_autocomplete' % info)
+        if request.path == autocomplete_path:
+            # return True if request is from AutocompleteJsonView and user is_staff.
+            return request.user.is_staff
+        return super().has_view_permission(request, obj)
 
-    # protect user data by not allowing viewing changelist / changeform without explicit permission
-    def has_view_or_change_permission(self, request, obj=None):
-        return super().has_view_permission(request, obj) or self.has_change_permission(request, obj)
+    def add_view(self, request, form_url='', extra_context=None):
+        # redirect non-admin users (that have permission to change Users) to the add_view for Profile.
+        # this along with the 'can_add_user' permission is needed to show the "+" icon next to a FK-relation on users
+        if not self.has_change_permission(request):
+            redirect = RedirectView.as_view(pattern_name='admin:users_profile_add', query_string=True)
+            return redirect(request)
+        return super().add_view(request, form_url, extra_context)
 
-    # FIXME get_search_results is apparently also used on Admin's changelist view, not only on automplete.
-    # FIXME therefore it is still all or nothing, which will not help if we want to hide / protect user data against lookups.
-    # def get_queryset(self, request, allow_any=False):
-    #     if allow_any: #or request.user.is_superuser: #or request.user.has_perm('users.can_view_any_user'):
-    #         return User.objects.all()
-    #     else:
-    #         return User.objects.none()
-    #
-    # def get_search_results(self, request, queryset, search_term):
-    #     queryset = self.get_queryset(request, allow_any=True)
-    #     queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-    #     queryset = queryset.exclude(profile__is_external=True)
-    #     return queryset, use_distinct
+    def get_model_perms(self, request):
+        # hide if only add_perm without change_perm
+        return {
+            'add': self.has_add_permission(request) and self.has_change_permission(request),
+            'change': self.has_change_permission(request),
+            'delete': self.has_delete_permission(request),
+            'view': self.has_view_permission(request),
+        }
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request).exclude_anonymous_users().filter_for_user(request.user)
+        return qs
+
+
+if not admin.site.is_registered(User):
+    admin.site.register(User, UserAdmin)
+
+@admin.register(Profile)
+class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
+
+    list_display = ('id','first_name', 'last_name','phone','email','verified','is_external','created_at')
+    # ! overwritten by get_list_display to upgrade permission
+    # readonly_fields = ('last_checkin',)
+    list_editable = ('verified','is_external')
+    list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
+    search_fields = ['first_name', 'last_name','phone','email']
+    readonly_fields = ('id','created_at','updated_at','user')
+    fields = ('id','first_name', 'last_name','phone','email','student_number','verified','is_external','created_at','updated_at')
+
+    def get_queryset(self, request):
+        qs = super(ProfileAdmin, self).get_queryset(request).exclude_anonymous_users().filter_for_user(request.user)
+        return qs
+
+    def get_obfuscated_fields(self, request):
+        '''
+        Obfuscates fields to protect user data in ModelAdmin.
+
+        :param request:
+        :return: tuple(list of fields to obfuscate, list of new "fieldnames" that shall be used instead)
+        '''
+        fields = []
+        # check permissions and determine which fields shall be obfuscated
+        if not request.user.has_perm('users.can_view_real_names'):
+            fields.append('first_name')
+            fields.append('last_name')
+        if not request.user.has_perm('users.can_view_full_email'):
+            fields.append('email')
+        if not request.user.has_perm('users.can_view_full_phone_number'):
+            fields.append('phone')
+        if not request.user.has_perm('users.can_view_student_number'):
+            fields.append('student_number')
+
+        # determine new attribute names to use instead of original fields
+        attribute_name = '%s_obfuscated'
+        new_field_names = list(range(len(fields)))
+        for i, field in enumerate(fields):
+            if hasattr(self, attribute_name % field):
+                field = attribute_name % field
+            else:
+                # make obfuscate attribute
+                obfuscator = lambda self, obj=None: _("Hidden value")
+                obfuscator.short_description = self.model._meta.get_field(field).verbose_name
+                setattr(self, attribute_name % field, obfuscator)
+                field = attribute_name % field
+                #field = 'get_default_obfuscated'
+
+            new_field_names[i] = field
+        return fields, new_field_names
+
+    def get_readonly_fields(self, request, obj=None):
+        obfuscated_fields, replaced_obfuscated_fields = self.get_obfuscated_fields(request)
+        fields = list(set(self.readonly_fields) | set(replaced_obfuscated_fields))
+        if request.user.is_superuser:
+            fields.append('user')
+        return fields
+
+    def get_list_display(self, request):
+        org_fields = super().get_list_display(request)
+        obfuscated_fields, replaced_obfuscated_fields = self.get_obfuscated_fields(request)
+        return self.get_replaced_obfuscated_fields(org_fields, obfuscated_fields, replaced_obfuscated_fields)
+
+    def get_fields(self, request, obj=None):
+        org_fields = super().get_fields(request, obj)
+        if obj is None:
+            # empty object / add view
+            # show all fields for entry
+            return org_fields
+        obfuscated_fields, replaced_obfuscated_fields = self.get_obfuscated_fields(request)
+        fields = list(self.get_replaced_obfuscated_fields(org_fields, obfuscated_fields, replaced_obfuscated_fields))
+        if request.user.is_superuser:
+            fields.append('user')
+        return fields
+
+    @staticmethod
+    def get_replaced_obfuscated_fields(org_fields, obfuscated_fields, replaced_obfuscated_fields):
+        fields = list(range(len(org_fields)))
+        for i, field in enumerate(org_fields):
+            try:
+                # check if field is in obfuscated_fields and get index
+                j = obfuscated_fields.index(field)
+                # used replaced attribute name instead
+                fields[i] = replaced_obfuscated_fields[j]
+            except ValueError:
+                # if value does not exist, field is not obfuscated
+                fields[i] = field
+        return fields
+
+    def phone_obfuscated(self, object):
+        if object.phone:
+            m = object.phone
+            return f'{m[0]}{m[1]}{m[2]}{m[3]}{m[4]}{"*" * (len(m) - 6)}{m[-1]}'
+    phone_obfuscated.short_description = _("Telefonnummer")
+
+    def email_obfuscated(self, object):
+        if object.email:
+            m = object.email.split('@')
+            if len(m) is 2:
+                return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 2)}{m[0][-2]}{m[0][-1]}@{m[1]}'
+            return f'{m[0][0]}{m[0][1]}{"*" * min((len(m[0]) - 2), 7)}'
+    email_obfuscated.short_description = _("E-Mail Adresse")
+
+    # def has_add_permission(self, request):
+    #     return False
+    # Needed to add person in bookingrequests (and paper entry)
+
+class UserGroupInline(admin.StackedInline):
+    model = get_user_model().groups.through
+    autocomplete_fields = ('user',)
+    verbose_name = _("Group membership")
+    verbose_name_plural = _("Group memberships")
+    extra = 0
+
+
+class GroupAdmin(DjangoGroupAdmin):
+    inlines = [UserGroupInline]
+
+
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)
 
 
 #from resources.models import Reservation
@@ -226,73 +332,3 @@ class UserAdmin(AdminUserLookupPermissionMixin, UserAdminImpersonateMixin, Djang
 #         'groups',
 #     ]
 #     actions = [anonymize_user_data]
-
-if not admin.site.is_registered(User):
-    admin.site.register(User, UserAdmin)
-
-@admin.register(Profile)
-class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
-    # TODO: default query set nur nicht Verifiziert
-    # TODO: default query set nur neue Nutzer
-
-    list_display = ('id','first_name', 'last_name','phone_obfuscated','email_obfuscated','verified','is_external','user','created_at')
-    # ! overwritten by get_list_display to upgrade permission
-    # readonly_fields = ('last_checkin',)
-    list_editable = ('verified','is_external')
-    list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
-    search_fields = ['first_name', 'last_name','phone','email']
-    readonly_fields = ('created_at', 'updated_at','user')
-
-    def get_queryset(self, request):
-        qs = super(ProfileAdmin, self).get_queryset(request)
-        if request.user.has_perm('users.can_view_any_users'):
-            return qs
-        return qs.exclude(verified=True)
-
-    def get_readonly_fields(self, request, obj=None):
-        if request.user.is_superuser and 'user' in self.readonly_fields:
-            rof = list(self.readonly_fields)
-            rof.remove('user')
-            return rof
-        return self.readonly_fields
-
-    def get_list_display(self, request):
-        phone = 'phone' if request.user.has_perm('tracking.can_view_full_phone_number') else 'phone_obfuscated'
-        email = 'email' if request.user.has_perm('tracking.can_view_full_email') else 'email_obfuscated'
-        list_display = ['id', 'first_name', 'last_name', phone, email, 'verified', 'is_external', 'created_at']
-        return list_display
-
-    # TODO hide email in change view or make sure people understand change view will display all fields.
-
-    def phone_obfuscated(self, object):
-        if object.phone:
-            m = object.phone
-            return f'{m[0]}{m[1]}{m[2]}{m[3]}{m[4]}{"*" * (len(m) - 6)}{m[-1]}'
-    phone_obfuscated.short_description = _("Telefonnummer")
-
-    def email_obfuscated(self, object):
-        if object.email:
-            m = object.email.split('@')
-            if len(m) is 2:
-                return f'{m[0][0]}{m[0][1]}{"*" * (len(m[0]) - 2)}{m[0][-2]}{m[0][-1]}@{m[1]}'
-            return f'{m[0][0]}{m[0][1]}{"*" * min((len(m[0]) - 2), 7)}'
-    email_obfuscated.short_description = _("E-Mail Adresse")
-
-    # def has_add_permission(self, request):
-    #     return False
-    # Needed to add person in bookingrequests (and paper entry)
-
-class UserGroupInline(admin.StackedInline):
-    model = get_user_model().groups.through
-    autocomplete_fields = ('user',)
-    verbose_name = _("Group membership")
-    verbose_name_plural = _("Group memberships")
-    extra = 0
-
-
-class GroupAdmin(DjangoGroupAdmin):
-    inlines = [UserGroupInline]
-
-
-admin.site.unregister(Group)
-admin.site.register(Group, GroupAdmin)

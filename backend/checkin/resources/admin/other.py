@@ -335,7 +335,7 @@ class RespaTokenAdmin(admin.ModelAdmin):
     
     
 class ReservationUserGroupAdmin(GroupAdmin):
-    pass
+    readonly_fields = ('permissions',)
 
 
 ## FIELDS and WIDGETS

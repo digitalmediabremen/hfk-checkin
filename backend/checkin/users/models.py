@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.constants import LOOKUP_SEP
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
@@ -21,6 +22,30 @@ from dirtyfields import DirtyFieldsMixin
 #     )
 
 
+class Q(models.Q):
+    """
+    A custom Q implementation that allows prefixing existing Q objects with some
+    related field name dynamically.
+    """
+
+    def prefix(self, prefix):
+        """Recursively copies the Q object, prefixing all lookup keys.
+
+        The prefix and the existing filter key are delimited by the lookup separator __.
+        Use this feature to delegate existing query constraints to a related field.
+        """
+        return type(self)(
+            *(
+                child.prefix(prefix)
+                if isinstance(child, Q)
+                else (prefix + LOOKUP_SEP + child[0], child[1])
+                for child in self.children
+            ),
+            _connector=self.connector,
+            _negated=self.negated,
+        )
+
+
 class NonAnonyoumusUserQuerySetMixin():
     def exclude_anonymous_users(self):
         return self.filter(id__gte=0)
@@ -29,6 +54,22 @@ class NonAnonyoumusUserQuerySetMixin():
 class UserQuerySet(models.QuerySet):
     def exclude_anonymous_users(self):
         return self.filter(id__gte=0)
+
+    def filter_for_user(self, user, force_any=False):
+        qs = self
+        if force_any or user.is_superuser or user.has_perm('users.can_view_any_user'):
+            return qs
+        # exclude non-profile users for non-admin users
+        qs = qs.exclude(profile__isnull=True)
+        if user.has_perm('users.can_lookup_any_user'):
+            return qs
+
+        filter = ProfileQuerySet.generate_profile_Q_filter_for_user(user, Q()).prefix('profile')
+        if not filter:
+            # Q() is empty
+            return qs.none()
+        # apply filters
+        return qs.filter(filter)
 
 
 class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
@@ -64,6 +105,17 @@ class UserManager(BaseUserManager.from_queryset(UserQuerySet)):
 
 
 class User(AbstractUser):
+    '''
+    User model swapped in for auth.User.
+    Holds django-typical is_admin, is_staff (via AbstractBaseUser), permissions (via PermissionMixin) as well
+    application-specific preferences and app-wide properties (is_external, is_verified) related to `profile`.
+    Personal information (falling under GDPR regulation) are modeled as
+    UserProfile with a OneToOne Relation to User.
+
+    Using `email` instead of `username` (as USERNAME_FILED).
+    Has no first_name or last_name field.
+    (Still) uses IDs as PKs. TODO Replace with UUIDs?
+    '''
     #first_name = None # usually blank=True
     #last_name = None # usually blank=True
     email = models.EmailField(_('email address'), unique=True)
@@ -137,7 +189,9 @@ class User(AbstractUser):
             return False
 
     def __str__(self):
-        return self.get_email_notation()
+        if not hasattr(self, 'profile') or not self.profile:
+            return '{0} <{1}>'.format(self.pk, getattr(self, self.USERNAME_FIELD)).strip()
+        return self.profile.__str__()
 
     @property
     def username(self):
@@ -175,17 +229,28 @@ class ProfileQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
         qs = self.annotate(search=SearchVector('first_name', 'last_name','email','student_number','phone'))
         return qs
 
-    def filter_for_user(self, user, allow_any=False):
+    @staticmethod
+    def generate_profile_Q_filter_for_user(user, q):
+        filter = q # start q
+        if user.has_perm('users.can_view_external_users'):
+            filter |= Q(is_external=True) | Q(is_external__isnull=True)
+        if user.has_perm('users.can_view_regular_users'):
+            filter |= Q(is_external=False) | Q(is_external__isnull=True)
+        if user.has_perm('users.can_view_unverified_users'):
+            filter |= Q(verified=False) | Q(verified__isnull=True)
+        return filter
+
+    def filter_for_user(self, user, force_any=False):
         qs = self
-        if allow_any or user.is_superuser or user.has_perm('users.can_view_any_user'):
+        if force_any or user.is_superuser or user.has_perm('users.can_view_any_user'):
             return qs
-        if not user.has_perm('users.can_view_external_users'):
-            qs |= qs.filter(is_external=True)
-        if not user.has_perm('users.can_view_regular_users'):
-            qs |= qs.filter(is_external=False)
-        if not user.has_perm('users.can_view_unverified_users'):
-            qs = qs.exclude(verified=True)
-        return qs
+        filter = Q()
+        filter = self.generate_profile_Q_filter_for_user(user, filter)
+        if not filter:
+            # Q() is empty
+            return qs.none()
+        # apply filters
+        return qs.filter(filter)
 
 
 class ProfileManager(models.Manager.from_queryset(ProfileQuerySet)):
@@ -193,7 +258,13 @@ class ProfileManager(models.Manager.from_queryset(ProfileQuerySet)):
 
 
 class Profile(DirtyFieldsMixin, models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    '''
+    UserProfile models all user-related information, that hold personal data.
+    These profiles might be subject to GDPR deletion policies.
+
+    Profiles are a core part of the `tracking` applications and are used to trace possible contacts.
+    '''
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE, blank=True, null=True)
     first_name = models.CharField(_("Vorname"), max_length=1000)
     last_name = models.CharField(_("Nachname"), max_length=1000)
     phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
@@ -215,10 +286,19 @@ class Profile(DirtyFieldsMixin, models.Model):
         # return _("Person mit Profil-ID %i") % (self.id, )
 
     def get_display_name(self):
+        name = self.get_email_notation()
         if self.is_external:
-            return _("%s (External)") % self.get_full_name()
-        else:
-            return self.get_full_name()
+            name = _("%s (External)") % name
+        if not self.verified:
+            name = _("%s (Unverified)") % name
+        return name
+
+    def get_email_notation(self):
+        name_part = '{0} {1}'.format(self.first_name, self.last_name).strip()
+        if self.email:
+            address_part = self.email
+            return '{0} <{1}>'.format(name_part, address_part).strip()
+        return name_part
 
     def get_full_name(self):
         return _("%s %s") % (self.first_name, self.last_name)
@@ -234,13 +314,15 @@ class Profile(DirtyFieldsMixin, models.Model):
         verbose_name = _("Userprofile")
         verbose_name_plural = _("Userprofiles")
         permissions = [
-            ("can_view_any_user", _("Can view any user")),
-            ("can_view_external_users", _("Can view external user")),
-            ("can_view_regular_users", _("Can view regular user")),
+            ("can_view_any_user", _("Can view any user or userprofile")), # applies to ProfileQuerySet
+            ("can_lookup_any_user", _("Can lookup any user")), # applies to UserQuerySet, used for autocomplete lookup
+            ("can_view_external_users", _("Can view external users")),
+            ("can_view_regular_users", _("Can view non-external users")),
             ("can_view_unverified_users", _("Can view unverified users")),
-            ("can_view_real_names", _("Can view full names")),
-            ("can_view_full_email", _("Can view full e-mail addresses")),
-            ("can_view_full_phone_number", _("Can view full phone numbers")),
+            ("can_view_real_names", _("Can display full names")),
+            ("can_view_full_email", _("Can display full e-mail addresses")),
+            ("can_view_full_phone_number", _("Can display full phone numbers")),
+            ("can_view_student_number", _("Can display student numbers")),
         ]
 
     @property
@@ -250,22 +332,33 @@ class Profile(DirtyFieldsMixin, models.Model):
             return Checkin.objects.filter(profile=self)[:10]
         return []
 
-
-@receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
-    """ Update profile on every save or if user is created."""
+@receiver(post_save, sender=Profile)
+def create_user(sender, instance, created, **kwargs):
+    """ Update user on every save or if profile is created."""
     # if created:
-    if not instance.first_name or not instance.last_name or not instance.email:
+    if not instance.email:
         return
-    profile, new = Profile.objects.get_or_create(user=instance)
-    profile.first_name = instance.first_name
-    profile.last_name = instance.last_name
-    profile.email = instance.email
-    profile.save()
+    user, new = User.objects.get_or_create(profile=instance)
+    user.first_name = instance.first_name
+    user.last_name = instance.last_name
+    user.email = instance.email
+    user.save()
+    # do not forget to update the relation (do not use save(), otherwise this will loop infinitely)
+    Profile.objects.filter(pk=instance.pk).update(user=user)
 
+# @receiver(post_save, sender=User)
+# def create_profile(sender, instance, created, **kwargs):
+#     """ Update profile on every save or if user is created."""
+#     # if created:
+#     if not instance.first_name or not instance.last_name or not instance.email:
+#         return
+#     profile, new = Profile.objects.get_or_create(user=instance)
+#     profile.first_name = instance.first_name
+#     profile.last_name = instance.last_name
+#     profile.email = instance.email
+#     profile.save()
 
 from guardian.models import UserObjectPermissionAbstract, GroupObjectPermissionAbstract
-
 
 class TimeEnabledAbstract(models.Model):
     created_at = models.DateTimeField(verbose_name=_('Time of creation'), auto_now_add=True, editable=False)
