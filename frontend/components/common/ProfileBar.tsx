@@ -1,14 +1,11 @@
-import classNames from "classnames";
 import Link from "next/link";
 import React from "react";
-import { Menu } from "react-feather";
+import { List } from "react-feather";
 import { appUrls } from "../../config";
 import { getTitle } from "../../features";
 import { useTranslation } from "../../localization";
-import useTheme from "../../src/hooks/useTheme";
 import { useAppState } from "./AppStateProvider";
 import Bar from "./Bar";
-import EllipseText from "./EllipseText";
 import FormElement from "./FormElement";
 
 interface ProfileBarProps {}
@@ -33,7 +30,7 @@ const ProfileBar: React.FunctionComponent<ProfileBarProps> = () => {
                         <>{!!profile.phone && profile.phone}</>,
                     ]}
                     noOutline
-                    labelIcon={<Menu strokeWidth={2} />}
+                    labelIcon={<List strokeWidth={2} />}
                     noPadding
                     noBottomSpacing
                     narrow
