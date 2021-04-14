@@ -41,6 +41,7 @@ const needsProfile = <
             });
             if (!!profile || cameFromAuth) {
                 console.log("cookie error");
+                Sentry.captureMessage("Cookie Error", Sentry.Severity.Error);
                 router.replace(appUrls.cookieError);
             } else {
                 router.replace(appUrls.createProfile);
