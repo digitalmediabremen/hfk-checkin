@@ -3,35 +3,34 @@ import Document, {
     Head,
     Html,
     Main,
-    NextScript,
+    NextScript
 } from "next/document";
+import React, { Fragment } from "react";
 import {
     getManifestUrl,
     getName,
     getPrimaryColorHex,
-    getTitle,
+    getTitle
 } from "../features";
 import { getInitialLocale, LocaleConsumer } from "../localization";
 
 const iconSizes = ["512x512", "192x192", "144x144"];
 const applicationName = getName();
 const iconMetaTags = iconSizes.map((size) => (
-    <>
+    <Fragment key={`${applicationName}-icon-${size}`}>
         <link
-            key={`${applicationName}-icon-${size}`}
             rel="icon"
             type="image/png"
             sizes={size}
             href={`/icons/${applicationName}/icon-${size}.png`}
         />
         <link
-            key={`${applicationName}-icon-${size}-apple`}
             rel="apple-touch-icon"
             type="image/png"
             sizes={size}
             href={`/icons/${applicationName}/icon-${size}.png`}
         />
-    </>
+    </Fragment>
 ));
 
 class MyDocument extends Document {
