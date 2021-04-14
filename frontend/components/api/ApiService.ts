@@ -144,8 +144,8 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             return result;
         })
         .catch((error) => {
-            if (error.error !== undefined) return error;
             Sentry.captureException(error);
+            if (error.error !== undefined) return error;
             return {
                 error: "You are most likely offline.",
                 status: config.httpStatuses.unprocessable,
