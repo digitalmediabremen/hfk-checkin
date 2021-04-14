@@ -17,6 +17,7 @@ import Unit from "../../src/model/api/Unit";
 import { notEmpty } from "../../src/util/TypeUtil";
 import validateCheckin from "../../src/model/api/Checkin.validator";
 import validateLocation from "../../src/model/api/Location.validator";
+import * as Sentry from '@sentry/node';
 
 export type ApiResponse<T> =
     | {
@@ -144,6 +145,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         })
         .catch((error) => {
             if (error.error !== undefined) return error;
+            Sentry.captureException(error);
             return {
                 error: "You are most likely offline.",
                 status: config.httpStatuses.unprocessable,

@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { appUrls } from "../../config";
@@ -48,6 +49,14 @@ const needsProfile = <
             router.replace(appUrls.setprofile);
         } else if (cameFromAuth) {
             router.replace(router.pathname);
+        }
+
+        if (profile) {
+            Sentry.setUser({
+                username: `${profile.first_name} ${profile.last_name}`,
+                email: profile.email,
+                verified: profile.verified
+            });
         }
     }, [initialized, additionalData, cameFromAuth]);
 
