@@ -1,10 +1,17 @@
 import Link from "next/link";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { ArrowRight, ChevronsDown, ChevronsUp, Divide, EyeOff } from "react-feather";
+import {
+    ArrowRight,
+    ChevronsDown,
+    ChevronsUp,
+    Divide,
+    EyeOff,
+} from "react-feather";
 import SmoothCollapse from "react-smooth-collapse";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import AlignContent from "../../components/common/AlignContent";
+import { Button } from "../../components/common/Button";
 import Divider from "../../components/common/Divider";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
@@ -34,7 +41,9 @@ const sort = (a: MyReservation, b: MyReservation) =>
     a.begin.getTime() - b.begin.getTime();
 
 const headerProvider = (groupKey: string, firstValue: MyReservation) => (
-    <Subtitle center bold>{groupKey}</Subtitle>
+    <Subtitle center bold>
+        {groupKey}
+    </Subtitle>
 );
 
 const EmptyState = () => {
@@ -77,7 +86,9 @@ const GroupedReservationList: FunctionComponent<{
                             includeState={true}
                             includeDate={false}
                             includeTime={reservation.state !== "cancelled"}
-                            includeResourceNumber={reservation.state !== "cancelled"}
+                            includeResourceNumber={
+                                reservation.state !== "cancelled"
+                            }
                             extendedWidth
                             reservation={reservation}
                             bottomSpacing={last ? 2 : 1}
@@ -122,7 +133,6 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
             noPadding
             onClick={() => toggleShowPast(!showPast)}
             iconRight={pastIcon}
-            
         >
             {showPast && !!apiPast.result
                 ? t("Vergangene ausblenden")
@@ -132,6 +142,11 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
 
     return (
         <Layout title={t("Buchungsübersicht")}>
+            <Button
+                onClick={() => {
+                    throw new Error("fsf");
+                }}
+            >Track error</Button>
             <Loading loading={api.state === "loading"}>
                 {api.state === "success" && (
                     <>
@@ -151,7 +166,9 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
                                     />
                                 </>
                             )}
-                        {!!apiPast.result && apiPast.result.length > 0 && <>{pastButton}</>}
+                        {!!apiPast.result && apiPast.result.length > 0 && (
+                            <>{pastButton}</>
+                        )}
                     </>
                 )}
             </Loading>

@@ -21,15 +21,13 @@ const MyApp = ({ Component }: AppProps) => {
                 />
                 <title>{getTitle()}</title>
             </Head>
-            <ErrorBoundary>
-                <AppStateProvider>
-                    <LocaleProvider locale={getInitialLocale()}>
-                        <AppWrapper>
-                            <Component />
-                        </AppWrapper>
-                    </LocaleProvider>
-                </AppStateProvider>
-            </ErrorBoundary>
+            <AppStateProvider>
+                <LocaleProvider locale={getInitialLocale()}>
+                    <AppWrapper>
+                        <Component />
+                    </AppWrapper>
+                </LocaleProvider>
+            </AppStateProvider>
         </>
     );
 };
