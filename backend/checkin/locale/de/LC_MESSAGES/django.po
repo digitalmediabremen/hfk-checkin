@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-13 19:34+0200\n"
+"POT-Creation-Date: 2021-04-15 15:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -312,7 +312,7 @@ msgstr "Raum"
 #: checkin/resources/admin/list_filters.py:15
 #: checkin/resources/admin/reception.py:27
 #: checkin/resources/admin/reception.py:43
-#: checkin/resources/admin/reservation.py:189
+#: checkin/resources/admin/reservation.py:195
 #: checkin/resources/models/reservation.py:206
 msgid "Organizer"
 msgstr "Organisator"
@@ -336,8 +336,8 @@ msgstr "Jetzt oder in Zukunft"
 
 #: checkin/resources/admin/list_filters.py:49
 #: checkin/resources/admin/reservation.py:87
-#: checkin/resources/admin/reservation.py:141
-#: checkin/resources/admin/reservation.py:271
+#: checkin/resources/admin/reservation.py:147
+#: checkin/resources/admin/reservation.py:277
 #: checkin/resources/models/reservation.py:207
 msgid "State"
 msgstr "Status"
@@ -448,7 +448,7 @@ msgid "Attendance records"
 msgstr "Anwesenheitsdokuemtationen"
 
 #: checkin/resources/admin/reception.py:98
-#: checkin/resources/admin/reservation.py:222
+#: checkin/resources/admin/reservation.py:228
 msgid "Timespan"
 msgstr "Zeitraum"
 
@@ -516,81 +516,86 @@ msgstr ""
 msgid "Already existing reservations can not have state %s"
 msgstr "Bereits erstellte Buchungsanfragen können nicht den Status %s haben"
 
-#: checkin/resources/admin/reservation.py:144
+#: checkin/resources/admin/reservation.py:108
+#, python-format
+msgid "'%s' can not be set as organizer, until they have a valid user profile."
+msgstr "'%s' kann nicht als Organisator eingesetzt werden, es kein gültiges Benutzerprofil gibt."
+
+#: checkin/resources/admin/reservation.py:150
 msgid "Request details"
 msgstr "Anfragedetails"
 
-#: checkin/resources/admin/reservation.py:149
+#: checkin/resources/admin/reservation.py:155
 msgid "Creation and modifications"
 msgstr "Erstellung und Änderungen"
 
-#: checkin/resources/admin/reservation.py:185
+#: checkin/resources/admin/reservation.py:191
 msgid "Resource instructions"
 msgstr "Raumhinweise"
 
-#: checkin/resources/admin/reservation.py:196
+#: checkin/resources/admin/reservation.py:202
 msgid "(phone contact not allowed)"
 msgstr "(telefonische Kontaktaufnahme nicht erlaubt)"
 
-#: checkin/resources/admin/reservation.py:197
+#: checkin/resources/admin/reservation.py:203
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: checkin/resources/admin/reservation.py:201
+#: checkin/resources/admin/reservation.py:207
 msgid "Prio."
 msgstr "Prio."
 
-#: checkin/resources/admin/reservation.py:207
+#: checkin/resources/admin/reservation.py:213
 msgid "Excl."
 msgstr "Exkl."
 
-#: checkin/resources/admin/reservation.py:217
+#: checkin/resources/admin/reservation.py:223
 #: checkin/resources/models/reservation.py:205
 msgid "Purpose"
 msgstr "Grund"
 
-#: checkin/resources/admin/reservation.py:227
+#: checkin/resources/admin/reservation.py:233
 msgid "Date"
 msgstr "Datum"
 
-#: checkin/resources/admin/reservation.py:232
+#: checkin/resources/admin/reservation.py:238
 msgid "Time"
 msgstr "Zeit"
 
-#: checkin/resources/admin/reservation.py:237
+#: checkin/resources/admin/reservation.py:243
 msgid "Created at"
 msgstr "Erstellt"
 
-#: checkin/resources/admin/reservation.py:253
+#: checkin/resources/admin/reservation.py:259
 msgid "Avail."
 msgstr "Auslastung"
 
-#: checkin/resources/admin/reservation.py:257
+#: checkin/resources/admin/reservation.py:263
 msgid "BLOCKED"
 msgstr "BLOCKIERT"
 
-#: checkin/resources/admin/reservation.py:292
+#: checkin/resources/admin/reservation.py:298
 #, python-format
 msgid "%s preferred language is: %s"
 msgstr "%s bevorzugte Sprache ist: %s"
 
-#: checkin/resources/admin/reservation.py:294
+#: checkin/resources/admin/reservation.py:300
 msgid "Has been cancelled or denied."
 msgstr "Wurde storniert oder abgelehnt."
 
-#: checkin/resources/admin/reservation.py:296
+#: checkin/resources/admin/reservation.py:302
 msgid "Has priority."
 msgstr "Hat Priorität."
 
-#: checkin/resources/admin/reservation.py:298
+#: checkin/resources/admin/reservation.py:304
 msgid "Uses space exclusively."
 msgstr "Alleinige Nutzung."
 
-#: checkin/resources/admin/reservation.py:300
+#: checkin/resources/admin/reservation.py:306
 msgid "Reservation occurred in the past."
 msgstr "Buchung liegt in der Vergangenheit."
 
-#: checkin/resources/admin/reservation.py:304
+#: checkin/resources/admin/reservation.py:310
 msgid ""
 "Organizer does not want to attend. Yet the organizer is in the attendance "
 "list."
@@ -598,15 +603,15 @@ msgstr ""
 "Organisator will nicht teilnehmen. Trotzdem ist der Organisator in der "
 "Teilnehmerliste."
 
-#: checkin/resources/admin/reservation.py:306
+#: checkin/resources/admin/reservation.py:312
 msgid "Organizer does not want to attend."
 msgstr "Organisator will nicht teilnehmen."
 
-#: checkin/resources/admin/reservation.py:308
+#: checkin/resources/admin/reservation.py:314
 msgid "Organizer is missing from attendance list."
 msgstr "Der Organisator fehlt in der Teilnehmerliste."
 
-#: checkin/resources/admin/reservation.py:313
+#: checkin/resources/admin/reservation.py:319
 #, python-format
 msgid "%(user)s has one or more group assignments: %(assigned_groups)s"
 msgstr "%(user)s gehört zu folgenden Gruppen: %(assigned_groups)s"
@@ -762,7 +767,7 @@ msgstr "Bestellung"
 #: checkin/resources/models/accessibility.py:57
 #: checkin/resources/models/accessibility.py:84
 #: checkin/resources/models/accessibility.py:110
-#: checkin/resources/models/base.py:77 checkin/users/models.py:376
+#: checkin/resources/models/base.py:77 checkin/users/models.py:391
 msgid "Time of creation"
 msgstr "Zeitpunkt der Erstellung"
 
@@ -770,7 +775,7 @@ msgstr "Zeitpunkt der Erstellung"
 #: checkin/resources/models/accessibility.py:58
 #: checkin/resources/models/accessibility.py:85
 #: checkin/resources/models/accessibility.py:111
-#: checkin/resources/models/base.py:81 checkin/users/models.py:377
+#: checkin/resources/models/base.py:81 checkin/users/models.py:392
 msgid "Time of modification"
 msgstr "Zeitpunkt der Änderung"
 
