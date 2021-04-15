@@ -84,9 +84,9 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
-    state = forms.ChoiceField(required=False, label=_("State"), choices=Reservation.STATE_CHOICES,
+    state = forms.ChoiceField(required=False, label=_("State"), choices=Reservation.STATE_CHOICES, initial=Reservation.CREATED,
                               widget=DisableableRadioSelect(
-                                  disabled_choices=[Reservation.CREATED]))
+                                  disabled_choices=[Reservation.CREATED, Reservation.CANCELLED]))
     message_state_update = forms.CharField(required=False, label=_('Notification Message'),
                                            widget=forms.Textarea(attrs={'cols': 80, 'rows': 5}),
                                            help_text=_(
@@ -101,6 +101,12 @@ class ReservationAdminForm(forms.ModelForm):
         if value == Reservation.CREATED:
             raise ValidationError(_("Already existing reservations can not have state %s" % Reservation.CREATED))
         return value
+
+    def clean_user(self):
+        organizer = self.cleaned_data['user']
+        if not hasattr(organizer, 'profile') or organizer.profile is None: #or not organizer.profile.complete:
+            raise ValidationError(_("'%s' can not be set as organizer, until they have a valid user profile." % organizer))
+        return organizer
 
 
 class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ExtraReadonlyFieldsOnUpdateMixin,
