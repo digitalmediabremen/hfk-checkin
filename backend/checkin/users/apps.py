@@ -49,8 +49,8 @@ def fix_microsoft_auth_user_admin():
 
         logger.info("Removing microsoft_auth hijacked Admin views.")
 
-        if admin.site.is_registered(MicrosoftAccount):
-            admin.site.unregister(MicrosoftAccount)
+        # if admin.site.is_registered(MicrosoftAccount):
+        #     admin.site.unregister(MicrosoftAccount)
         # register microsoft_account's hijacked UserAdmin
         if admin.site.is_registered(User):
             admin.site.unregister(User)

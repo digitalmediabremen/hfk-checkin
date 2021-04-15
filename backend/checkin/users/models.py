@@ -5,12 +5,13 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.core.validators import RegexValidator
 from simple_history.models import HistoricalRecords
 from django.contrib.postgres.search import SearchVector
 from dirtyfields import DirtyFieldsMixin
+
 
 # set to anonyoumous user
 # def get_sentinel_user():
@@ -117,10 +118,10 @@ class User(AbstractUser):
     Has no first_name or last_name field.
     (Still) uses IDs as PKs. TODO Replace with UUIDs?
     '''
-    #first_name = None # usually blank=True
-    #last_name = None # usually blank=True
+    # first_name = None # usually blank=True
+    # last_name = None # usually blank=True
     email = CIEmailField(_('email address'), unique=True)
-    #username = email # FIXME needed for microsoft_auth.admin.UserAdmin
+    # username = email # FIXME needed for microsoft_auth.admin.UserAdmin
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -141,7 +142,9 @@ class User(AbstractUser):
     preferred_language = models.CharField(max_length=8, null=True, blank=True,
                                           verbose_name=_("Preferred UI language"),
                                           choices=settings.LANGUAGES)
-    disable_notifications = models.BooleanField(verbose_name=_("Do not send email notifciations to this user"), default=False)
+    disable_notifications = models.BooleanField(verbose_name=_("Do not send email notifciations to this user"),
+                                                default=False)
+
     # favorite_resources = models.ManyToManyField(Resource, blank=True, verbose_name=_('Favorite resources'),
     #                                             related_name='favorited_by')
     #
@@ -265,16 +268,18 @@ class Profile(DirtyFieldsMixin, models.Model):
 
     Profiles are a core part of the `tracking` applications and are used to trace possible contacts.
     '''
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE, blank=True, null=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE, blank=True,
+                                null=True)
     first_name = models.CharField(_("Vorname"), max_length=1000)
     last_name = models.CharField(_("Nachname"), max_length=1000)
     phone_regex = RegexValidator(regex=r'^\+?1?[\d ()]{9,15}$',
                                  message=_("Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."))
-    phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True, null=True) # validators should be a list
+    phone = models.CharField(_("Telefonnummer"), validators=[phone_regex], max_length=20, blank=True,
+                             null=True)  # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
-    verified = models.BooleanField(_("Identität geprüft"),blank=True, null=True, default=True)
+    verified = models.BooleanField(_("Identität geprüft"), blank=True, null=True, default=True)
     student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
-    is_external = models.BooleanField(_("External"),blank=True, null=True, default=False)
+    is_external = models.BooleanField(_("External"), blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
     # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
@@ -315,8 +320,8 @@ class Profile(DirtyFieldsMixin, models.Model):
         verbose_name = _("Userprofile")
         verbose_name_plural = _("Userprofiles")
         permissions = [
-            ("can_view_any_user", _("Can view any user or userprofile")), # applies to ProfileQuerySet
-            ("can_lookup_any_user", _("Can lookup any user")), # applies to UserQuerySet, used for autocomplete lookup
+            ("can_view_any_user", _("Can view any user or userprofile")),  # applies to ProfileQuerySet
+            ("can_lookup_any_user", _("Can lookup any user")),  # applies to UserQuerySet, used for autocomplete lookup
             ("can_view_external_users", _("Can view external users")),
             ("can_view_regular_users", _("Can view non-external users")),
             ("can_view_unverified_users", _("Can view unverified users")),
@@ -333,33 +338,54 @@ class Profile(DirtyFieldsMixin, models.Model):
             return Checkin.objects.filter(profile=self)[:10]
         return []
 
+
 @receiver(post_save, sender=Profile)
-def create_user(sender, instance, created, **kwargs):
-    """ Update user on every save or if profile is created."""
+def create_user_from_profile(sender, instance, **kwargs):
+    """
+    Update Profile.user after saving the Profile.
+    Will copy over email, first_name, last_name if necessary.
+    """
     # if created:
     if not instance.email:
+        # do not try to create or update user if there is no email given
         return
-    user, new = User.objects.get_or_create(profile=instance)
-    user.first_name = instance.first_name
-    user.last_name = instance.last_name
-    user.email = instance.email
-    user.save()
+    if not hasattr(instance, 'user') or instance.user is None:
+        # create user if non is existing already
+        instance.user = User(profile=instance)
+    # DO NOT set first_name or last_name from profile to user.
+    # otherwise updating form AD via microsoft_auth will not work, because first_name, last_name
+    # is assumed to be already given.
+    if instance.email and instance.user.email != instance.email:
+        instance.user.email = instance.email
+        #instance._skip_post_save = True # FIXME
+        instance.user.save()
     # do not forget to update the relation (do not use save(), otherwise this will loop infinitely)
-    Profile.objects.filter(pk=instance.pk).update(user=user)
+    Profile.objects.filter(pk=instance.pk).update(user=instance.user)
 
-# @receiver(post_save, sender=User)
-# def create_profile(sender, instance, created, **kwargs):
-#     """ Update profile on every save or if user is created."""
-#     # if created:
-#     if not instance.first_name or not instance.last_name or not instance.email:
-#         return
-#     profile, new = Profile.objects.get_or_create(user=instance)
-#     profile.first_name = instance.first_name
-#     profile.last_name = instance.last_name
-#     profile.email = instance.email
-#     profile.save()
+
+@receiver(pre_save, sender=User)
+def update_profile_from_user(sender, instance, **kwargs):
+    if (hasattr(instance, 'profile') and instance.profile is not None):
+        if instance.first_name and instance.profile.first_name != instance.first_name:
+            instance.profile.first_name = instance.first_name
+        if instance.last_name and instance.profile.last_name != instance.last_name:
+            instance.profile.last_name = instance.last_name
+        if instance.email and instance.profile.email != instance.email:
+            instance.profile.email = instance.email
+        instance.profile.save()
+
+
+@receiver(post_save, sender=User)
+def create_profile_from_user(sender, instance, created, **kwargs):
+    """ Update profile on every save or if user is created."""
+    if created and (not hasattr(instance, 'profile') or instance.profile is None):
+        # only create new profile on when creating new user
+        # this is used when signing up trough an auth-provider
+        Profile.objects.create(user=instance, email=instance.email, first_name=instance.first_name, last_name=instance.last_name)
+
 
 from guardian.models import UserObjectPermissionAbstract, GroupObjectPermissionAbstract
+
 
 class TimeEnabledAbstract(models.Model):
     created_at = models.DateTimeField(verbose_name=_('Time of creation'), auto_now_add=True, editable=False)
