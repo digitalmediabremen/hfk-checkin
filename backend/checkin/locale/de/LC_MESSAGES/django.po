@@ -656,7 +656,7 @@ msgstr "Gebäude"
 #: checkin/resources/templates/admin/resources/change_form_object_tools.html:10
 #: checkin/resources/templates/admin/resources/resource/change_form_object_tools.html:19
 msgid "Access Permissions"
-msgstr "Zugnangsberechtigungen"
+msgstr "Zugangsberechtigung"
 
 #: checkin/resources/admin/resource_access.py:15
 msgid "Access Permissions for Spaces"
