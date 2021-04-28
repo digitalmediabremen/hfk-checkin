@@ -58,6 +58,7 @@ class CaseEvaluationView(PermissionRequiredMixin, FormView):
         model_admin = ModelAdmin(Checkin, admin_site=site)
         context = super().get_context_data(**kwargs)
         context['media'] = model_admin.media + self.get_form().media
+        context['title'] = _('Kontaktnachverfolgung')
         return context
 
     def form_valid(self, form):

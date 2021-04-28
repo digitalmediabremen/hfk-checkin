@@ -14,7 +14,6 @@ from django.forms import BaseInlineFormSet
 from django.core.exceptions import ValidationError, ImproperlyConfigured
 from django.forms.fields import TimeInput, to_current_timezone, TimeField, from_current_timezone
 from django.utils import timezone
-from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 from django.db.models import Q
 
 import logging

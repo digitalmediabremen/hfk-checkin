@@ -10,10 +10,12 @@ from django.utils.html import format_html
 from django.urls import reverse, path
 from .views.contact_report import case_evaluation_view
 from django.utils.html import format_html
+from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
 
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
+from .admin_list_filters import ProfileFilter, LocationFilter
 
 
 
@@ -83,7 +85,8 @@ class LocationAdmin(MPTTModelAdmin, SimpleHistoryAdmin, DynamicArrayMixin):
 class CheckinAdmin(admin.ModelAdmin):
     """Disables all editing capabilities."""
     list_display = ('pk','location','profile_id','time_entered','origin_entered','time_left','origin_left')
-    list_filter = ('location', 'time_entered', 'time_left')
+    search_fields = ('profile__id', 'profile__first_name', 'profile__last_name', 'location___name', 'location__resource__name', 'location___number', 'location__resource__numbers',)
+    list_filter = (ProfileFilter, LocationFilter, ('time_entered', DateRangeFilter),'origin_entered',('time_left', DateTimeRangeFilter),'origin_left')
 
     actions = None
 
@@ -115,7 +118,7 @@ class CheckinAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
 
-from .views.paper_log import PaperLogSingleLineInline, PaperLogAdminForm, DateRangeFilter, DateTimeRangeFilter
+from .views.paper_log import PaperLogSingleLineInline, PaperLogAdminForm
 
 class PaperLogAdmin(admin.ModelAdmin):
     inlines = [PaperLogSingleLineInline]
@@ -123,6 +126,8 @@ class PaperLogAdmin(admin.ModelAdmin):
     autocomplete_fields = ['profile']
     list_display = ['profile', 'date', 'entries_number', 'signed', 'created_at', 'comment']
     list_filter = (('date', DateRangeFilter),('created_at', DateTimeRangeFilter),'signed')
+    date_hierarchy = 'date'
+    search_fields = ('profile__id', 'profile__first_name', 'profile__last_name')
     fieldsets = (
         ('Personendaten suchen', {
             'fields': ('profile',),
