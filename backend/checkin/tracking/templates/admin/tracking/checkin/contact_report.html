@@ -5,8 +5,8 @@
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />{% endblock %}
 {% block extrahead %}{{ block.super }}
-    <script src="/admin/jsi18n/"></script>
-    <script src="{% static "admin/js/collapse.js" %}"></script>
+    <script src="{% url 'admin:jsi18n' %}"></script>
+    {{ media }}
 {% endblock %}
 {% block bodyclass %}{{ block.super }} {{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
 {% if not is_popup %}
@@ -25,10 +25,8 @@
 {% endblock %}
 
 {% block content_title %}
-    <h1>Infektionsnachverfolgung</h1>
-    <p>Als authorisierte Stelle können Sie mit diesem Werkzeug Kontakte von Personen, die ihre Aufenhalte mit dieser Anwendung selbst dokumentiert haben, auswerten.<br/>
-        Die Auswertung berücksichtigt aktuell keine analog angefertigten Protokolle oder Daten aus anderen Systemen.</p>
-    <p>Informationen des RKI zur <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Kontaktperson/Management.html">Kontaktpersonen-Nachverfolgung bei Infektionen durch SARS-CoV-2</a></p>
+    <h1>Kontaktnachverfolgung</h1>
+    <p>Als authorisierte Stelle können Sie mit diesem Werkzeug Kontakte von Personen, deren Aufenthalte in dieser Anwendung dokumentiert wurde, auswerten.<br/>Informationen des RKI zur <a href="https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Kontaktperson/Management.html">Kontaktpersonen-Nachverfolgung bei Infektionen durch SARS-CoV-2</a></p>
 {% endblock %}
 
 {% block content %}

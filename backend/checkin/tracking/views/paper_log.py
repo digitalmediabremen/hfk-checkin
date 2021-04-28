@@ -23,51 +23,6 @@ log = logging.getLogger(__name__)
 from django.utils.encoding import force_text
 
 
-class LocationAutocomplete(autocomplete.Select2QuerySetView):
-    # TODO privacy? do not allow to display all users here?
-    def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-        if not self.request.user.is_authenticated and self.request.user.is_staff:
-            return Location.objects.none()
-        qs = Location.objects.all()
-        if self.q:
-            qs = qs.filter(Q(code__istartswith=self.q) | Q(_name__istartswith=self.q) | Q(_number__istartswith=self.q) | Q(resource__name__istartswith=self.q) | Q(resource__numbers__istartswith=self.q))
-        return qs
-
-    def get_result_label(self, item):
-        return format_html("<strong>%s</strong> – %s" % (item.code, item))
-
-    def get_selected_result_label(self, item):
-        return self.get_result_label(item)
-
-
-class ProfileAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-        if not self.request.user.is_authenticated and self.request.user.is_staff:
-            return Profile.objects.none()
-        qs = Profile.objects.all()
-        if self.q:
-            qs = qs.annotate_search().filter(search=self.q)
-        return qs
-
-    def get_result_label(self, item):
-        extra_markers = []
-        if item.phone:
-            extra_markers.append("T")
-        if item.email:
-            extra_markers.append("E")
-        if item.student_number:
-            extra_markers.append("M")
-        if item.verified:
-            extra_markers.append("Geprüft")
-        extra = " ".join(extra_markers)
-        return format_html("<strong>%s</strong> %s" % (item.get_full_name(), extra))
-
-    def get_selected_result_label(self, item):
-        return self.get_result_label(item)
-
-
 class TimezoneAwareTimeField(TimeField):
     def prepare_value(self, datetime_value):
         value = datetime_value
@@ -206,41 +161,3 @@ class PaperLogAdminForm(forms.ModelForm):
                 _("Bitte aktivieren Sie die Speicherung eines neuen Profils oder wählen Sie ein vorhandenes."))
 
 
-class PaperLogAdmin(admin.ModelAdmin):
-    inlines = [PaperLogSingleLineInline]
-    form = PaperLogAdminForm
-    autocomplete_fields = ['profile']
-    list_display = ['profile', 'date', 'entries_number', 'signed', 'created_at', 'comment']
-    list_filter = (('date', DateRangeFilter),('created_at', DateTimeRangeFilter),'signed')
-    fieldsets = (
-        ('Personendaten suchen', {
-            'fields': ('profile',),
-        }),
-        ('Personendaten hinzufügen, falls Person nicht zu finden ist oder vorhandenes Profil ändern', {
-            'fields': ('first_name', 'last_name', 'phone', 'student_number'),
-            #'classes': ('collapse',),
-            'description': 'Achtung: Falls oben ein Profil ausgewählt wurde, werden die hier eingegebenen Daten gewählten Profil gespeichert.<br/>' \
-            'Stellen Sie sicher, dass oben kein Profil gewählt ist, falls sie eine bisher nicht erfasste Person hinterlegen wollen.</br>',
-        }),
-        (None, {
-            'fields': ('date', 'signed','comment'),
-        }),
-        (None, {
-            'fields': [],
-            'description': 'Geben Sie nachfolgend die Aufenthalte in einzelen Räumen / an einzelnen Standtorten ein. '\
-            'Uhrzeiten müssen das Format <strong>HH:MM</strong> oder verkürzt <strong>HHMM</strong> (ohne Doppelpunkt) haben. Zweistellige Eingaben sind ungültig. Bitte achten sie darauf Uhrzeiten, die auf den <strong>Folgetag (nach 23:59)</strong> fallen, mit der entsp. Checkbox zu markieren. Anderfalls würden die Zeitangaben falsch erfasst werden. '\
-            'Das Feld "Persönliche Referenz" muss nur bei wichtigen Mitteilungen eingegeben werden.<br/>Bitte konsultieren Sie bei Fragen und Problemen mit der Eingabe die Gebrauchsanweisung oder melden Sie sich bei ' \
-            'checkin@hfk-bremen.de.',
-        }),
-    )
-
-    def entries_number(self, object):
-        return object.papercheckin_set.count()
-    entries_number.short_description = _("Anazhl der Aufenthalte")
-
-    # TODO add instructions what to do now. Stamp the paper log for example.
-    # TODO default first inline to location Speicher XI / 9270. (need some kind of setting option)
-    # TODO auf "Persönliche Referenz" verzichten? Lieber nicht, da sonst keinn vollständiges Digitalisat erstellt werden kann.
-    # TODO Warnung bei Doppelten oder Ähnlichen profilen?
-
-admin.site.register(PaperLog, PaperLogAdmin)

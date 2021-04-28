@@ -106,11 +106,11 @@ class ContactReport(object):
             self.write_dataset(self.get_report_info_ds())
 
             if include_infected_checkins:
-                self.write_headline("Protokolleinträge der infizierten Person:")
+                self.write_headline("Protokolleinträge der gesuchten Person:")
                 self.write_dataset(infected_checkins_ds)
 
             if include_encountered_checkins:
-                self.write_headline("Protokolleinträge von anderen Personen mit Überlappungen zur infizierten Person:")
+                self.write_headline("Protokolleinträge von anderen Personen mit Überlappungen zur gesuchten Person:")
                 self.write_dataset(encountered_checkins_ds)
 
             if include_personal_data:
@@ -151,7 +151,7 @@ class ContactReport(object):
     def get_report_info_ds(self):
 
         ds = tablib.Dataset(title="Parameter")
-        ds.append(('Infiziertes Profil (ID)', self.infected_profile_id))
+        ds.append(('Gesuchtes Profil (ID)', self.infected_profile_id))
         ds.append(('Zeitpunkt der Auswertung', format_datetime(self.now)))
         ds.append(('Beginn des Auswertungszeitraums', format_datetime(self.lookback_start)))
         ds.append(('Standardaufenthaltsdauer', format_timedelta(self.CHECKIN_DEFAULT_LENGTH)))
@@ -244,7 +244,7 @@ class ContactReport(object):
         ds.headers = ['','ID', 'Vorname', 'Nachname', 'Telefon', 'Email', 'Registriert seit', 'Zuletzt geändert', 'Summe Überlappungszeit']
 
         p = Profile.objects.get(pk=self.infected_profile_id)
-        ds.append(['Infiziert', p.id, p.first_name, p.last_name, p.phone, p.email, format_datetime(p.created_at),
+        ds.append(['Gesucht', p.id, p.first_name, p.last_name, p.phone, p.email, format_datetime(p.created_at),
                    format_datetime(p.updated_at), ''])
 
         for profile_id in sorted(encountered_profiles, key=encountered_profiles.get, reverse=True): # reverse but most duration on top

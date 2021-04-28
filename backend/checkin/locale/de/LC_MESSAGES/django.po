@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-15 15:30+0200\n"
+"POT-Creation-Date: 2021-04-28 16:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -519,7 +519,9 @@ msgstr "Bereits erstellte Buchungsanfragen können nicht den Status %s haben"
 #: checkin/resources/admin/reservation.py:108
 #, python-format
 msgid "'%s' can not be set as organizer, until they have a valid user profile."
-msgstr "'%s' kann nicht als Organisator eingesetzt werden, es kein gültiges Benutzerprofil gibt."
+msgstr ""
+"'%s' kann nicht als Organisator eingesetzt werden, es kein gültiges "
+"Benutzerprofil gibt."
 
 #: checkin/resources/admin/reservation.py:150
 msgid "Request details"
@@ -1735,6 +1737,10 @@ msgstr ""
 msgid "Raumname / Standort"
 msgstr ""
 
+#: checkin/tracking/admin.py:150
+msgid "Anazhl der Aufenthalte"
+msgstr ""
+
 #: checkin/tracking/api.py:22 checkin/users/api.py:29
 msgid ""
 "Bitte bestätigen Sie Ihre Identität vor dem ersten Checkin beim Personal am "
@@ -1985,7 +1991,7 @@ msgstr ""
 msgid "Max. Kapazität"
 msgstr ""
 
-#: checkin/tracking/models.py:233
+#: checkin/tracking/models.py:233 checkin/tracking/views/contact_report.py:26
 msgid "Profil"
 msgstr ""
 
@@ -2073,7 +2079,7 @@ msgstr ""
 msgid "Nachname"
 msgstr ""
 
-#: checkin/tracking/models.py:431 checkin/users/admin.py:184
+#: checkin/tracking/models.py:431 checkin/users/admin.py:187
 #: checkin/users/models.py:277
 msgid "Telefonnummer"
 msgstr ""
@@ -2159,19 +2165,19 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
-#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:55
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:53
 msgid "Eingabe"
 msgstr ""
 
-#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:72
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:70
 msgid "Auswerten"
 msgstr ""
 
-#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:72
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:70
 msgid "Herunterladen"
 msgstr ""
 
-#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:77
+#: checkin/tracking/templates/admin/tracking/checkin/contact_report.html:75
 msgid "Ausgabe"
 msgstr ""
 
@@ -2199,101 +2205,100 @@ msgstr ""
 msgid "Sichern und neuen Zettel eingeben"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:16
-msgid "Infizierte Person"
+#: checkin/tracking/views/contact_report.py:27
+msgid ""
+"Sie können nach Vornamen, Nachnamen, Telefonnummer (T), Matrikelnummer (M) "
+"und E-Mail-Addressen (E) suchen.<br/>Bei der Suche wird anhand von "
+"Abkürzungen angegeben, welche Informationen im Profil hinterlegt sind."
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:16
-msgid "Profil der Person, die in der nachverfolgt werden soll."
-msgstr ""
-
-#: checkin/tracking/views/contact_report.py:17
+#: checkin/tracking/views/contact_report.py:30
 msgid "Auszuschließende Standorte"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:17
+#: checkin/tracking/views/contact_report.py:30
 msgid ""
 "Optional: Ein oder mehrere Standorte, die in der Auswertung ignoriert werden "
 "sollen. z.B. ganze Gebäude / Eingänge etc."
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:18
+#: checkin/tracking/views/contact_report.py:31
 msgid "Checkins ausgeben"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:18
-msgid "Checkins der infizierten Person werden in der Ausgabe einschlossen."
+#: checkin/tracking/views/contact_report.py:31
+msgid "Checkins der gesuchten Person werden in der Ausgabe einschlossen."
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:19
+#: checkin/tracking/views/contact_report.py:32
 msgid "Begegnungen ausgeben"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:19
+#: checkin/tracking/views/contact_report.py:32
 msgid ""
-"Checkins der infizierten Person mit einer anderen Person werden in der "
-"Ausgabe einschlossen."
+"Checkins der gesuchten Person mit einer anderen Person werden in der Ausgabe "
+"einschlossen."
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:20
+#: checkin/tracking/views/contact_report.py:33
 msgid "Kontaktdaten ausgeben"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:20
+#: checkin/tracking/views/contact_report.py:33
 msgid "Klarnamen und Kontaktdaten werden in der Ausgabe einschlossen."
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:22
+#: checkin/tracking/views/contact_report.py:35
 msgid "Standarddauer"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:22
+#: checkin/tracking/views/contact_report.py:35
 msgid ""
 "Dauer in Stunden, nach der ein Aufenthalt als ausgecheckt gilt, wenn ein "
 "Checkout vergessen wurde."
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:24
+#: checkin/tracking/views/contact_report.py:37
 msgid "Kontaktkorrekturzeit"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:24
+#: checkin/tracking/views/contact_report.py:37
 msgid ""
 "Dauer, um die die tasächliche Aufenthaltsdauer der inf. Person verlängert "
-"oder verkürzt werden soll."
+"(bei positiven Wert) oder verkürzt (bei negativen Wert) werden soll."
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:25
+#: checkin/tracking/views/contact_report.py:38
 msgid "Zeitraum"
 msgstr ""
 
-#: checkin/tracking/views/contact_report.py:27
+#: checkin/tracking/views/contact_report.py:40
 msgid ""
 "Dauer ab jetzt in die Vergangenheit, die für die Protokollauswertung "
 "durchsucht werden soll. (21 00:00:00 = 21 Tage = 3 Wochen)"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:98
+#: checkin/tracking/views/paper_log.py:53
 msgid "Uhrzeit Eingang"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:100
+#: checkin/tracking/views/paper_log.py:55
 msgid "Uhrzeit Ausgang"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:137
+#: checkin/tracking/views/paper_log.py:92
 msgid "Uhrzeiten: Der Eingang muss vor dem Ausgang liegen."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:141
+#: checkin/tracking/views/paper_log.py:96
 msgid "Profilangabe fehlt."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:170
+#: checkin/tracking/views/paper_log.py:125
 msgid "Suche nach vorhandenem Profil"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:171
+#: checkin/tracking/views/paper_log.py:126
 msgid ""
 "Sie können nach Vornamen, Nachnamen, Telefonnummer (T), Matrikelnummer (M) "
 "und E-Mail-Addressen (E) suchen.<br/>Geprüfte Profile sind bevorzugt "
@@ -2301,22 +2306,18 @@ msgid ""
 "Informationen im Profil hinterlegt sind."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:174
+#: checkin/tracking/views/paper_log.py:129
 msgid "Unterschrift vorhanden?"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:174
+#: checkin/tracking/views/paper_log.py:129
 msgid "Aktivieren Sie das Feld, wenn das Papierprotokoll unterschrieben wurde."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:206
+#: checkin/tracking/views/paper_log.py:161
 msgid ""
 "Bitte aktivieren Sie die Speicherung eines neuen Profils oder wählen Sie ein "
 "vorhandenes."
-msgstr ""
-
-#: checkin/tracking/views/paper_log.py:239
-msgid "Anazhl der Aufenthalte"
 msgstr ""
 
 #: checkin/users/admin.py:37
@@ -2339,15 +2340,15 @@ msgstr "Daten"
 msgid "Hidden value"
 msgstr "Versteckter Wert"
 
-#: checkin/users/admin.py:192 checkin/users/models.py:279
+#: checkin/users/admin.py:195 checkin/users/models.py:279
 msgid "E-Mail Adresse"
 msgstr "E-Mail-Adresse"
 
-#: checkin/users/admin.py:201
+#: checkin/users/admin.py:204
 msgid "Group membership"
 msgstr "Gruppenmitgliedschaft"
 
-#: checkin/users/admin.py:202
+#: checkin/users/admin.py:205
 msgid "Group memberships"
 msgstr "Gruppenmitgliedschaften"
 

@@ -7,7 +7,7 @@
       <li>
         {% url 'admin:checkin-evaluation' as evaluate_url %}
         <a href="{% add_preserved_filters evaluate_url is_popup to_field %}" class="evaluatelink">
-          {% blocktrans with cl.opts.verbose_name as name %}Infektionsnachverfolgung{% endblocktrans %}
+          {% blocktrans with cl.opts.verbose_name as name %}Kontaktnachverfolgung{% endblocktrans %}
         </a>
       </li><li>
         {% url 'admin:tracking_paperlog_add' as paper_url %}

@@ -21,20 +21,7 @@ urlpatterns = []
 checkin_api_router = routers.SimpleRouter()
 
 if 'checkin.tracking' in settings.INSTALLED_APPS:
-    from checkin.tracking.views.location import LocationsPDFView, LocationsView
-    from checkin.tracking.api import LocationViewSet, CheckinViewSet
-    from checkin.users.api import LogoutViewSet
-    from checkin.tracking.views.paper_log import LocationAutocomplete, ProfileAutocomplete
-    checkin_api_router.register(r'location', LocationViewSet)
-    checkin_api_router.register(r'checkin', CheckinViewSet, basename='checkin')
-    #checkin_api_router.register(r'auth', LogoutViewSet, basename='auth')
-    urlpatterns += [
-        path('location/html/', LocationsView.as_view(), name='html-export'),
-        path('location/pdf/', LocationsPDFView.as_view(), name='pdf-export'),
-        path('api/', include(checkin_api_router.urls)),
-        path('paperlog-location-autocomplete/', LocationAutocomplete.as_view(), name='paper-location-autocomplete'),
-        path('paperlog-profile-autocomplete/', ProfileAutocomplete.as_view(), name='paper-profile-autocomplete'),
-    ]
+    urlpatterns += [path('', include('checkin.tracking.urls'))]
 
 respa_router = RespaAPIRouter()
 
