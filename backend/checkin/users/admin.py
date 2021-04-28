@@ -179,8 +179,11 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 
     def phone_obfuscated(self, object):
         if object.phone:
-            m = object.phone
-            return f'{m[0]}{m[1]}{m[2]}{m[3]}{m[4]}{"*" * (len(m) - 6)}{m[-1]}'
+            try:
+                m = object.phone
+                return f'{m[0]}{m[1]}{m[2]}{m[3]}{m[4]}{"*" * (len(m) - 6)}{m[-1]}'
+            except (IndexError, ValueError):
+                return '***'
     phone_obfuscated.short_description = _("Telefonnummer")
 
     def email_obfuscated(self, object):

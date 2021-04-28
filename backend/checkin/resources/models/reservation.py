@@ -458,7 +458,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
     def try_to_set_state(self, new_state, user):
         """
-        Tryies to set new state on Reservation. Will validate, check collisions and availability first.
+        Tries to set new state on Reservation. Will validate, check collisions and availability first.
         TODO check opening ours
         TODO check availabilty to user
         TODO check permission to make reservation
