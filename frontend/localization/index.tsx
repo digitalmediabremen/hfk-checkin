@@ -111,7 +111,7 @@ export function _t(
     const translationId = `${locale}.${inModule}.["${id}"]${
         alternativeId ? ` to "${s}"` : ""
     }`;
-    if (production && translatedString === undefined)
+    if (!production && translatedString === undefined)
         console.error(`No translation for ${translationId} provided`);
 
     return translatedString || translationId;
