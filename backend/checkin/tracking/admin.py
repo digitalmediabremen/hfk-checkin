@@ -16,7 +16,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 from .admin_list_filters import ProfileFilter, LocationFilter
-
+from django.conf import settings
+DEBUG = settings.DEBUG
 
 
 class ActivityProfileAdmin(admin.ModelAdmin):
@@ -97,17 +98,25 @@ class CheckinAdmin(admin.ModelAdmin):
     # get_readonly_fields(request, obj), causing infinite recursion. Ditto for
     # super().get_form(request, obj). So we  assume the default ModelForm.
     def get_readonly_fields(self, request, obj=None):
+        if DEBUG:
+            return []
         return self.fields or [f.name for f in self.model._meta.fields]
 
     def has_add_permission(self, request):
+        if DEBUG:
+            return super().has_add_permission(request)
         return False
 
     # Allow viewing objects but not actually changing them.
     def has_change_permission(self, request, obj=None):
+        if DEBUG:
+            return super().has_change_permission(request, obj)
         return (request.method in ['GET', 'HEAD'] and
                 super().has_change_permission(request, obj))
 
     def has_delete_permission(self, request, obj=None):
+        if DEBUG:
+            return super().has_delete_permission(request, obj)
         return False
 
     def get_urls(self):
