@@ -94,7 +94,7 @@ class LocationViewSet(viewsets.ModelViewSet):
         profile = request.user.profile
 
         origin = request.query_params.get('origin', None)
-        checkin, new = Checkin.objects.checkin(profile=profile, location=self.get_object(), origin=origin)
+        checkin, new = Checkin.objects.only_user_generated().checkin(profile=profile, location=self.get_object(), origin=origin)
         checkin_serializer = CheckinSerializer(checkin)
         if not new:
             return Response(checkin_serializer.data, status=status.HTTP_202_ACCEPTED)
@@ -112,7 +112,7 @@ class LocationViewSet(viewsets.ModelViewSet):
 
         origin = request.query_params.get('origin', None)
         try:
-            checkout, new = Checkin.objects.checkout(profile=profile, location=self.get_object(), origin=origin)
+            checkout, new = Checkin.objects.only_user_generated().checkout(profile=profile, location=self.get_object(), origin=origin)
             checkin_serializer = CheckinSerializer(checkout)
             if not new:
                 return Response(checkin_serializer.data, status=status.HTTP_202_ACCEPTED)
