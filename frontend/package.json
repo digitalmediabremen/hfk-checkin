@@ -11,7 +11,7 @@
         "gen": "run-for-every-file --src 'src/model/api/' --file '*.ts' --not-file '*.validator.ts'  --run 'typescript-json-validator {{src-file}} && replace \"^export [{].*$\" \"\" src/model/api/{{file-name}}.validator.ts'"
     },
     "cacheDirectories": [
-        ".next/cache"
+        ".next/cache", "node_modules"
     ],
     "dependencies": {
         "@babel/core": "^7.13.15",
