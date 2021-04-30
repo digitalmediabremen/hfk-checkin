@@ -509,7 +509,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             # FIXME generate status messages (set_state_verbose) here? or in reservation logic? ... multilang?
             notified_users = self.send_reservation_requested_mail()
             notified_reservation_delegates = self.send_reservation_requested_mail_to_officials()
-            if not self.resource.can_make_reservations(user):
+            if not self.resource.can_make_reservations(self.user):
                 notified_access_delegates = self.send_access_requested_mail_to_officials()
             # notified_external_user_officials = self.send_external_user_requested_mail_to_officials()
             # notify external user confirmation official via Signal m2m_changed attendees_changed
@@ -675,7 +675,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             if collisions_type_blocked.exists():
                 raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
 
-        if not self.resource.can_make_reservations(user):
+        if not self.resource.can_make_reservations(self.user):
             warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource." % user), ReservationPermissionWarning)
 
         user_is_admin = user and self.resource.is_admin(user)
