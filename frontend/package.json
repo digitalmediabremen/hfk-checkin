@@ -4,8 +4,8 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
-        "build": "npm run translate -- --quiet && npm run gen && next build && npm run postbuild",
-        "postbuild": "rimraf ./_next/static/**/*.js.map",
+        "build": "npm run translate -- --quiet && npm run gen && next build",
+        "postbuild": "rimraf _next/static/**/*.js.map",
         "test-build": "next build",
         "start": "next start -p $PORT",
         "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.ts -",
