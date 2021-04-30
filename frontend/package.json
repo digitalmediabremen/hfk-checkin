@@ -5,13 +5,15 @@
     "scripts": {
         "dev": "next dev",
         "build": "npm run translate -- --quiet && npm run gen && next build",
+        "postbuild": "rimraf ./_next/static/**/*.js.map",
         "test-build": "next build",
         "start": "next start -p $PORT",
         "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.ts -",
         "gen": "run-for-every-file --src 'src/model/api/' --file '*.ts' --not-file '*.validator.ts'  --run 'typescript-json-validator {{src-file}} && replace \"^export [{].*$\" \"\" src/model/api/{{file-name}}.validator.ts'"
     },
     "cacheDirectories": [
-        ".next/cache", "node_modules"
+        ".next/cache",
+        "node_modules"
     ],
     "dependencies": {
         "@babel/core": "^7.13.15",
@@ -61,6 +63,7 @@
         "@types/yargs": "^15.0.9",
         "colors": "^1.4.0",
         "replace": "^1.2.0",
+        "rimraf": "^3.0.2",
         "run-for-every-file": "^1.1.0",
         "string-similarity": "^4.0.2",
         "ts-morph": "^8.1.2",
