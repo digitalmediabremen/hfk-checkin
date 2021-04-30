@@ -26,7 +26,7 @@ ERROR_NOT_COMPLETE = _("Ihr Profil ist unvollständig.")
 ERROR_NOT_VALID = _("Ihre Eingaben sind nicht korrekt.")
 ERROR_NOT_VALID_WITH_SUMMARY = _("Bitte korregieren Sie: %s")
 ERROR_NOT_CHECKED_IN_HERE = _("Sie sind hier nicht eingecheckt.")
-ERROR_ROOM_NOT_FOUND = _("Raum oder Standort nicht gefunden.")
+ERROR_LOCATION_NOT_FOUND = _("Raum oder Standort nicht gefunden.")
 ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein Fehler aufgetreten.")
 ERROR_PROFILE_INCOMPLETE = _("Ihr Profil ist unvollstädnig.")
 SUCCESS_LOGOUT = _("Abmeldung erfolgreich. Danke!")
@@ -81,7 +81,7 @@ class LocationViewSet(viewsets.ModelViewSet):
         try:
             return super().retrieve(request, *args, **kwargs)
         except Http404:
-            return Response({'detail': ERROR_ROOM_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': ERROR_LOCATION_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=True, methods=['get','post'], permission_classes=[IsAuthenticated])
     # fails with method 'PUT' because of call to get_serializer() in renderers.py:552
