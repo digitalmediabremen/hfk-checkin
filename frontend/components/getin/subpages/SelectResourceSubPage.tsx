@@ -262,6 +262,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             // label="Info"
                             labelIcon={<Info />}
                             alignLabelIconTop
+                            superNarrow
                             noOutline
                             noPadding
                             value={<>{selectedResource?.description}</>}
