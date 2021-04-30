@@ -83,6 +83,8 @@ module.exports = withPWA({
         register: false,
         skipWaiting: true,
         disable: process.env.NODE_ENV === "development",
+        publicExcludes: ["!**/*.js.map"],
+        buildExcludes: [/.*\.js\.map$/]
     },
     generateEtags: false,
     async headers() {
