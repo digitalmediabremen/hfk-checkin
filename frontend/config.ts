@@ -80,7 +80,8 @@ export const requestSubpages = {
 
 export const pageTransitionDuration = 300;
 
-export const production = process.env.NODE_ENV === "production";
+export const environmentIsProduction = process.env.NEXT_PUBLIC_ENVIRONMENT === "production";
+export const environmentIsStaging = process.env.NEXT_PUBLIC_ENVIRONMENT === "staging";
 export const isClient = typeof window === "object";
 export const isServer = typeof window === "undefined";
 

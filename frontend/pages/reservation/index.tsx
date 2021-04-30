@@ -21,7 +21,7 @@ import Notice from "../../components/common/Notice";
 import Reservation from "../../components/common/Reservation";
 import Subtitle from "../../components/common/Subtitle";
 import Title from "../../components/common/Title";
-import { appUrls } from "../../config";
+import { appUrls, environmentIsStaging } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import useReservations from "../../src/hooks/useReservations";
@@ -142,11 +142,15 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
 
     return (
         <Layout title={t("Buchungsübersicht")}>
-            <Button
-                onClick={() => {
-                    throw new Error("fsf");
-                }}
-            >Track error</Button>
+            {environmentIsStaging && (
+                <NewButton
+                    onClick={() => {
+                        throw new Error("This is a test error");
+                    }}
+                >
+                    Track error
+                </NewButton>
+            )}
             <Loading loading={api.state === "loading"}>
                 {api.state === "success" && (
                     <>

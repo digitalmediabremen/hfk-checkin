@@ -8,7 +8,7 @@ import {
     baseLocale,
     defaultLocale,
     forceLocale,
-    production,
+    environmentIsProduction,
     requestSubpages,
 } from "../config";
 import translation from "./translation";
@@ -111,7 +111,7 @@ export function _t(
     const translationId = `${locale}.${inModule}.["${id}"]${
         alternativeId ? ` to "${s}"` : ""
     }`;
-    if (!production && translatedString === undefined)
+    if (!environmentIsProduction && translatedString === undefined)
         console.error(`No translation for ${translationId} provided`);
 
     return translatedString || translationId;
