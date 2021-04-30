@@ -54,8 +54,9 @@ const needsProfile = <
 
         if (profile) {
             Sentry.setUser({
-                username: `${profile.first_name} ${profile.last_name}`,
-                email: profile.email,
+                username: `User ${profile.id}`,
+                // email: profile.email,
+                id: `${profile.id}`,
                 verified: profile.verified
             });
         }
