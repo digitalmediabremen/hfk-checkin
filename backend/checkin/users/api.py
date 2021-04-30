@@ -28,6 +28,7 @@ logger = getLogger(__name__)
 
 ERROR_NOT_VERIFIED = _("Bitte bestätigen Sie Ihre Identität vor dem ersten Checkin beim Personal am Empfang.")
 ERROR_NO_PROFILE = _("Bitte legen Sie ein Profil an.")
+ERROR_NOT_LOGGED_IN = _("Bitte melden Sie sich an.")
 ERROR_DENIED = _("Sie sind nicht berechtigt diese Aktion auszuführen.")
 ERROR_NOT_COMPLETE = _("Ihr Profil ist unvollständig.")
 ERROR_NOT_VALID = _("Ihre Eingaben sind nicht korrekt.")
@@ -239,8 +240,10 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
 
     @action(detail=False, methods=['get'], permission_classes=[AllowAny])
     def me(self, request, pk=None):
-        if request.user.is_anonymous or not hasattr(request.user, 'profile'):
-            raise PermissionDenied(ERROR_NO_PROFILE)
+        if not request.user or request.user.is_anonymous:
+            raise PermissionDenied(ERROR_NOT_LOGGED_IN)
+        if not hasattr(request.user, 'profile'):
+            raise NotFound(ERROR_NO_PROFILE)
         return self.retrieve(self, request)
 
     # def perform_update(self, serializer):
