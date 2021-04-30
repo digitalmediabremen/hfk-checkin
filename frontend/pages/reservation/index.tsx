@@ -3,16 +3,11 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import {
     ArrowRight,
     ChevronsDown,
-    ChevronsUp,
-    Divide,
-    EyeOff,
+    EyeOff
 } from "react-feather";
-import SmoothCollapse from "react-smooth-collapse";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import AlignContent from "../../components/common/AlignContent";
-import { Button } from "../../components/common/Button";
-import Divider from "../../components/common/Divider";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
 import Loading, { LoadingInline } from "../../components/common/Loading";
@@ -20,14 +15,13 @@ import NewButton from "../../components/common/NewButton";
 import Notice from "../../components/common/Notice";
 import Reservation from "../../components/common/Reservation";
 import Subtitle from "../../components/common/Subtitle";
-import Title from "../../components/common/Title";
-import { appUrls, environmentIsStaging } from "../../config";
+import { appUrls, environment } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import useReservations from "../../src/hooks/useReservations";
 import MyProfile from "../../src/model/api/MyProfile";
 import ReservationModel, {
-    MyReservation,
+    MyReservation
 } from "../../src/model/api/Reservation";
 import { isNow } from "../../src/util/DateTimeUtil";
 import * as format from "../../src/util/TimeFormatUtil";
@@ -142,7 +136,7 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
 
     return (
         <Layout title={t("Buchungsübersicht")}>
-            {environmentIsStaging && (
+            {environment === "staging" && (
                 <NewButton
                     onClick={() => {
                         throw new Error("This is a test error");
