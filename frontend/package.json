@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "next dev",
         "build": "npm run translate -- --quiet && npm run gen && next build",
-        "postbuild": "rimraf ./.next/static/**/*.js.map",
+        "postbuild": "rimraf ./.next/**/*.js.map",
         "test-build": "next build",
         "start": "next start -p $PORT",
         "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.ts -",
