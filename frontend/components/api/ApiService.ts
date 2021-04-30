@@ -17,7 +17,7 @@ import Unit from "../../src/model/api/Unit";
 import { notEmpty } from "../../src/util/TypeUtil";
 import validateCheckin from "../../src/model/api/Checkin.validator";
 import validateLocation from "../../src/model/api/Location.validator";
-import * as Sentry from '@sentry/node';
+import * as Sentry from "@sentry/node";
 
 export type ApiResponse<T> =
     | {
@@ -81,7 +81,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
     const forceLocaleHeader = config.forceLocale
         ? { "Accept-Language": config.forceLocale }
         : undefined;
-    return (fetch(url, {
+    return fetch(url, {
         headers: {
             "Content-Type": "application/json",
             ...headers,
@@ -145,7 +145,14 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         })
         .catch((error) => {
             if (error.error !== undefined) {
-                Sentry.captureException(error.error);
+                Sentry.withScope(function (scope) {
+                    scope.setLevel(
+                        error.status >= 500
+                            ? Sentry.Severity.Error
+                            : Sentry.Severity.Warning
+                    );
+                    Sentry.captureException(error.error);
+                });
                 return error;
             } else {
                 Sentry.captureException(error);
@@ -154,18 +161,22 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                 error: "You are most likely offline.",
                 status: config.httpStatuses.unprocessable,
             };
-        }));
+        });
 };
 
 export const updateProfileRequest = async (
     profile: ProfileUpdate,
     headers?: HeadersInit
 ) =>
-    await apiRequest<MyProfile>("profile/me/save/", {
-        method: "POST",
-        body: JSON.stringify(profile),
-        headers,
-    }, validateProfile);
+    await apiRequest<MyProfile>(
+        "profile/me/save/",
+        {
+            method: "POST",
+            body: JSON.stringify(profile),
+            headers,
+        },
+        validateProfile
+    );
 
 export const getCheckinsRequest = async (
     options?: RequestOptions<{
@@ -184,26 +195,38 @@ export const doCheckinRequest = async (
         origin?: CheckinOrigin;
     }>
 ) => {
-    return await apiRequest<Checkin>(`location/${locationCode}/checkin/`, {
-        ...options,
-    }, validateCheckin);
+    return await apiRequest<Checkin>(
+        `location/${locationCode}/checkin/`,
+        {
+            ...options,
+        },
+        validateCheckin
+    );
 };
 
 export const doCheckoutRequest = async (
     locationCode: string,
     headers?: HeadersInit
 ) =>
-    await apiRequest<Checkin>(`location/${locationCode}/checkout/`, {
-        headers,
-    }, validateCheckin);
+    await apiRequest<Checkin>(
+        `location/${locationCode}/checkout/`,
+        {
+            headers,
+        },
+        validateCheckin
+    );
 
 export const getLocationRequest = async (
     locationCode: string,
     headers?: HeadersInit
 ) =>
-    await apiRequest<Location>(`location/${locationCode}/`, {
-        headers,
-    }, validateLocation);
+    await apiRequest<Location>(
+        `location/${locationCode}/`,
+        {
+            headers,
+        },
+        validateLocation
+    );
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<MyProfile>("profile/me/", { headers }, validateProfile);
