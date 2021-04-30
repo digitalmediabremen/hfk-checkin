@@ -1,11 +1,13 @@
 import Link from "next/link";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { ArrowRight, ChevronsDown, ChevronsUp, Divide, EyeOff } from "react-feather";
-import SmoothCollapse from "react-smooth-collapse";
+import {
+    ArrowRight,
+    ChevronsDown,
+    EyeOff
+} from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
 import AlignContent from "../../components/common/AlignContent";
-import Divider from "../../components/common/Divider";
 import GroupedList from "../../components/common/GroupedList";
 import Layout from "../../components/common/Layout";
 import Loading, { LoadingInline } from "../../components/common/Loading";
@@ -13,14 +15,13 @@ import NewButton from "../../components/common/NewButton";
 import Notice from "../../components/common/Notice";
 import Reservation from "../../components/common/Reservation";
 import Subtitle from "../../components/common/Subtitle";
-import Title from "../../components/common/Title";
-import { appUrls } from "../../config";
+import { appUrls, environment } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import useReservations from "../../src/hooks/useReservations";
 import MyProfile from "../../src/model/api/MyProfile";
 import ReservationModel, {
-    MyReservation,
+    MyReservation
 } from "../../src/model/api/Reservation";
 import { isNow } from "../../src/util/DateTimeUtil";
 import * as format from "../../src/util/TimeFormatUtil";
@@ -34,7 +35,9 @@ const sort = (a: MyReservation, b: MyReservation) =>
     a.begin.getTime() - b.begin.getTime();
 
 const headerProvider = (groupKey: string, firstValue: MyReservation) => (
-    <Subtitle center bold>{groupKey}</Subtitle>
+    <Subtitle center bold>
+        {groupKey}
+    </Subtitle>
 );
 
 const EmptyState = () => {
@@ -77,7 +80,9 @@ const GroupedReservationList: FunctionComponent<{
                             includeState={true}
                             includeDate={false}
                             includeTime={reservation.state !== "cancelled"}
-                            includeResourceNumber={reservation.state !== "cancelled"}
+                            includeResourceNumber={
+                                reservation.state !== "cancelled"
+                            }
                             extendedWidth
                             reservation={reservation}
                             bottomSpacing={last ? 2 : 1}
@@ -122,7 +127,6 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
             noPadding
             onClick={() => toggleShowPast(!showPast)}
             iconRight={pastIcon}
-            
         >
             {showPast && !!apiPast.result
                 ? t("Vergangene ausblenden")
@@ -132,6 +136,15 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
 
     return (
         <Layout title={t("Buchungsübersicht")}>
+            {environment === "staging" && (
+                <NewButton
+                    onClick={() => {
+                        throw new Error("This is a test error");
+                    }}
+                >
+                    Track error
+                </NewButton>
+            )}
             <Loading loading={api.state === "loading"}>
                 {api.state === "success" && (
                     <>
@@ -151,7 +164,9 @@ const ReservationsPage: FunctionComponent<ReservationsPageProps> = ({
                                     />
                                 </>
                             )}
-                        {!!apiPast.result && apiPast.result.length > 0 && <>{pastButton}</>}
+                        {!!apiPast.result && apiPast.result.length > 0 && (
+                            <>{pastButton}</>
+                        )}
                     </>
                 )}
             </Loading>

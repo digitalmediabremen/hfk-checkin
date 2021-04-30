@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { appUrls } from "../../config";
@@ -40,6 +41,7 @@ const needsProfile = <
             });
             if (!!profile || cameFromAuth) {
                 console.log("cookie error");
+                Sentry.captureMessage("Cookie Error", Sentry.Severity.Error);
                 router.replace(appUrls.cookieError);
             } else {
                 router.replace(appUrls.createProfile);
@@ -48,6 +50,15 @@ const needsProfile = <
             router.replace(appUrls.setprofile);
         } else if (cameFromAuth) {
             router.replace(router.pathname);
+        }
+
+        if (profile) {
+            Sentry.setUser({
+                username: `User ${profile.id}`,
+                // email: profile.email,
+                id: `${profile.id}`,
+                verified: profile.verified
+            });
         }
     }, [initialized, additionalData, cameFromAuth]);
 

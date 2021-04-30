@@ -1,7 +1,5 @@
+import * as Sentry from "@sentry/node";
 import React, { Component, ErrorInfo } from "react";
-import Title from "./Title";
-import theme from "../../styles/theme";
-import Layout from "./Layout";
 import Error from "../../pages/Error";
 
 export default class ErrorBoundary extends Component<
@@ -21,6 +19,7 @@ export default class ErrorBoundary extends Component<
     componentDidCatch(error: Error, errorInfo: ErrorInfo) {
         // You can also log the error to an error reporting service
         //   logErrorToMyService(error, errorInfo);
+        Sentry.captureException(error);
     }
 
     render() {

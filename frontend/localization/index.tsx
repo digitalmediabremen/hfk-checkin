@@ -1,5 +1,6 @@
 import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
+import { browser } from "process";
 import { createContext, useCallback, useContext, useEffect } from "react";
 import { useAppState } from "../components/common/AppStateProvider";
 import {
@@ -7,8 +8,8 @@ import {
     baseLocale,
     defaultLocale,
     forceLocale,
-    production,
     requestSubpages,
+    environment,
 } from "../config";
 import translation from "./translation";
 
@@ -40,7 +41,12 @@ export const getInitialLocale = (headers?: IncomingHttpHeaders) => {
             defaultLocale
         );
     }
-    return getUserLocale()?.split("-")[0] || defaultLocale;
+    const browserLocale = getUserLocale()?.split("-")[0] || defaultLocale;
+    // if browser locale is not part of the translated locales revert to default locale
+    if (![baseLocale, ...Object.keys(translation)].includes(browserLocale))
+        return defaultLocale;
+
+    return browserLocale;
 };
 
 const { Provider } = localeContext;
@@ -75,10 +81,7 @@ export type TranslationFunction = (
 ) => string;
 
 export const useTranslation = (inModule: TranslationModules = "common") => {
-    let { locale } = useContext(localeContext);
-    if (![baseLocale, ...Object.keys(translation)].includes(locale)) {
-        locale = defaultLocale;
-    }
+    const { locale } = useContext(localeContext);
     const t: TFunction = useCallback(
         (s, data?, alternativeId?) =>
             _t(locale, inModule, s, data, alternativeId),
@@ -108,7 +111,7 @@ export function _t(
     const translationId = `${locale}.${inModule}.["${id}"]${
         alternativeId ? ` to "${s}"` : ""
     }`;
-    if (production && translatedString === undefined)
+    if (environment !== "production" && translatedString === undefined)
         console.error(`No translation for ${translationId} provided`);
 
     return translatedString || translationId;

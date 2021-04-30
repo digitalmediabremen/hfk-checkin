@@ -37,7 +37,6 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const [
         selectedResource,
         setSelectedResource,
-        reservation,
     ] = useReservationState("resource");
     const [units, setUnits] = useReservationState("units");
     const [selectedUnitId, setSelectedUnitId] = useReservationState(
@@ -263,6 +262,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             // label="Info"
                             labelIcon={<Info />}
                             alignLabelIconTop
+                            superNarrow
                             noOutline
                             noPadding
                             value={<>{selectedResource?.description}</>}
