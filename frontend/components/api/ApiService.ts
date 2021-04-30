@@ -107,7 +107,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                     throw {
                         status: status,
                         error:
-                            "Api responded with wrong format.\n Http Error Codes should contain a detail field",
+                            "API responded with wrong format.\n Http Error Codes should contain a detail field",
                     };
                 throw {
                     status: status,
@@ -137,7 +137,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                     throw {
                         status: status,
                         error:
-                            "Api responded with wrong format.\nReturn object is of wrong type.",
+                            "API responded with wrong format.\nReturn object is of wrong type.",
                     };
                 }
             }
