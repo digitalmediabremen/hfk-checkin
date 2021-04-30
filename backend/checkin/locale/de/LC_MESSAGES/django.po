@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-28 16:13+0200\n"
+"POT-Creation-Date: 2021-04-30 18:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -364,7 +364,6 @@ msgid "denied"
 msgstr "abgelehnt"
 
 #: checkin/resources/admin/list_filters.py:58
-#: checkin/resources/models/reservation.py:185
 msgid "cancelled"
 msgstr "storniert"
 
@@ -452,7 +451,8 @@ msgstr "Anwesenheitsdokuemtationen"
 msgid "Timespan"
 msgstr "Zeitraum"
 
-#: checkin/resources/admin/reception.py:103 checkin/users/models.py:271
+#: checkin/resources/admin/reception.py:103
+#: checkin/tracking/admin_list_filters.py:6 checkin/users/models.py:271
 msgid "User"
 msgstr "Nutzer"
 
@@ -1210,6 +1210,10 @@ msgstr "Kann Ressourcen in Gebäude löschen"
 msgid "Can add Spaces within Unit"
 msgstr "Kann Ressourcen in Gebäude hinzufügen"
 
+#: checkin/resources/models/reservation.py:185
+msgid "cancelled by user"
+msgstr "storniert (durch Organisator)"
+
 #: checkin/resources/models/reservation.py:192
 msgid "Normal reservation"
 msgstr "Normale Buchung"
@@ -1729,17 +1733,25 @@ msgstr "Log-in"
 msgid "Checkin API"
 msgstr ""
 
-#: checkin/tracking/admin.py:34
+#: checkin/tracking/admin.py:37
 msgid "PDF-Raumkarten für ausgewählte Standorte generieren"
 msgstr ""
 
-#: checkin/tracking/admin.py:60 checkin/tracking/legacy.py:14
+#: checkin/tracking/admin.py:63 checkin/tracking/legacy.py:14
 msgid "Raumname / Standort"
 msgstr ""
 
-#: checkin/tracking/admin.py:150
+#: checkin/tracking/admin.py:164
 msgid "Anazhl der Aufenthalte"
 msgstr ""
+
+#: checkin/tracking/admin_list_filters.py:10
+msgid "Profile"
+msgstr "Benutzerprofil"
+
+#: checkin/tracking/admin_list_filters.py:14
+msgid "Location"
+msgstr "Standort"
 
 #: checkin/tracking/api.py:22 checkin/users/api.py:29
 msgid ""
@@ -1751,40 +1763,40 @@ msgstr ""
 msgid "Bitte legen Sie ein Profil an."
 msgstr ""
 
-#: checkin/tracking/api.py:24 checkin/users/api.py:31
+#: checkin/tracking/api.py:24 checkin/users/api.py:32
 msgid "Sie sind nicht berechtigt diese Aktion auszuführen."
 msgstr ""
 
-#: checkin/tracking/api.py:25 checkin/users/api.py:32
+#: checkin/tracking/api.py:25 checkin/users/api.py:33
 msgid "Ihr Profil ist unvollständig."
 msgstr ""
 
-#: checkin/tracking/api.py:26 checkin/users/api.py:33
+#: checkin/tracking/api.py:26 checkin/users/api.py:34
 msgid "Ihre Eingaben sind nicht korrekt."
 msgstr ""
 
-#: checkin/tracking/api.py:27 checkin/users/api.py:34
+#: checkin/tracking/api.py:27 checkin/users/api.py:35
 #, python-format
 msgid "Bitte korregieren Sie: %s"
 msgstr ""
 
-#: checkin/tracking/api.py:28 checkin/users/api.py:35
+#: checkin/tracking/api.py:28 checkin/users/api.py:36
 msgid "Sie sind hier nicht eingecheckt."
 msgstr ""
 
-#: checkin/tracking/api.py:29 checkin/users/api.py:36
+#: checkin/tracking/api.py:29 checkin/users/api.py:37
 msgid "Raum oder Standort nicht gefunden."
 msgstr ""
 
-#: checkin/tracking/api.py:30 checkin/users/api.py:37
+#: checkin/tracking/api.py:30 checkin/users/api.py:38
 msgid "Beim Speichern deiner Kontaktdaten ist ein Fehler aufgetreten."
 msgstr ""
 
-#: checkin/tracking/api.py:31 checkin/users/api.py:38
+#: checkin/tracking/api.py:31 checkin/users/api.py:39
 msgid "Ihr Profil ist unvollstädnig."
 msgstr ""
 
-#: checkin/tracking/api.py:32 checkin/users/api.py:39
+#: checkin/tracking/api.py:32 checkin/users/api.py:40
 msgid "Abmeldung erfolgreich. Danke!"
 msgstr ""
 
@@ -2153,7 +2165,8 @@ msgid "Aufenthalte (per Papierprotokoll)"
 msgstr ""
 
 #: checkin/tracking/templates/admin/tracking/checkin/change_list_object_tools.html:10
-msgid "Infektionsnachverfolgung"
+#: checkin/tracking/views/contact_report.py:61
+msgid "Kontaktnachverfolgung"
 msgstr ""
 
 #: checkin/tracking/templates/admin/tracking/checkin/change_list_object_tools.html:15
@@ -2278,27 +2291,27 @@ msgid ""
 "durchsucht werden soll. (21 00:00:00 = 21 Tage = 3 Wochen)"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:53
+#: checkin/tracking/views/paper_log.py:52
 msgid "Uhrzeit Eingang"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:55
+#: checkin/tracking/views/paper_log.py:54
 msgid "Uhrzeit Ausgang"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:92
+#: checkin/tracking/views/paper_log.py:91
 msgid "Uhrzeiten: Der Eingang muss vor dem Ausgang liegen."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:96
+#: checkin/tracking/views/paper_log.py:95
 msgid "Profilangabe fehlt."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:125
+#: checkin/tracking/views/paper_log.py:124
 msgid "Suche nach vorhandenem Profil"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:126
+#: checkin/tracking/views/paper_log.py:125
 msgid ""
 "Sie können nach Vornamen, Nachnamen, Telefonnummer (T), Matrikelnummer (M) "
 "und E-Mail-Addressen (E) suchen.<br/>Geprüfte Profile sind bevorzugt "
@@ -2306,15 +2319,15 @@ msgid ""
 "Informationen im Profil hinterlegt sind."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:129
+#: checkin/tracking/views/paper_log.py:128
 msgid "Unterschrift vorhanden?"
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:129
+#: checkin/tracking/views/paper_log.py:128
 msgid "Aktivieren Sie das Feld, wenn das Papierprotokoll unterschrieben wurde."
 msgstr ""
 
-#: checkin/tracking/views/paper_log.py:161
+#: checkin/tracking/views/paper_log.py:160
 msgid ""
 "Bitte aktivieren Sie die Speicherung eines neuen Profils oder wählen Sie ein "
 "vorhandenes."
@@ -2351,6 +2364,10 @@ msgstr "Gruppenmitgliedschaft"
 #: checkin/users/admin.py:205
 msgid "Group memberships"
 msgstr "Gruppenmitgliedschaften"
+
+#: checkin/users/api.py:31
+msgid "Bitte melden Sie sich an."
+msgstr ""
 
 #: checkin/users/apps.py:12
 msgid "Users and Profiles"
@@ -2425,26 +2442,18 @@ msgid "Can view unverified users"
 msgstr "Kann nicht-verifizierte Benutzer anezigen"
 
 #: checkin/users/models.py:328
-#, fuzzy
-#| msgid "Can view full names"
 msgid "Can display full names"
 msgstr "Kann vollständige Namen anzeigen"
 
 #: checkin/users/models.py:329
-#, fuzzy
-#| msgid "Can view full e-mail addresses"
 msgid "Can display full e-mail addresses"
 msgstr "Kann vollständige E-Mail-Adressen anzeigen"
 
 #: checkin/users/models.py:330
-#, fuzzy
-#| msgid "Can view full phone numbers"
 msgid "Can display full phone numbers"
 msgstr "Kann vollständige Telefonnummern anzeigen"
 
 #: checkin/users/models.py:331
-#, fuzzy
-#| msgid "Can view student numbers"
 msgid "Can display student numbers"
 msgstr "Kann vollständige Matrikelnummern anzeigen"
 

@@ -182,7 +182,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         (REQUESTED, _('requested')),
         (CONFIRMED, _('confirmed')),
         (DENIED, _('denied')),
-        (CANCELLED, _('cancelled')),
+        (CANCELLED, _('cancelled by user')),
         #(WAITING_FOR_PAYMENT, _('waiting for payment')), # deactiveted with all other payment methods
     )
 

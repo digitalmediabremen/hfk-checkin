@@ -84,9 +84,9 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
-    state = forms.ChoiceField(required=False, label=_("State"), choices=Reservation.STATE_CHOICES, initial=Reservation.CREATED,
+    state = forms.ChoiceField(required=True, label=_("State"), choices=Reservation.STATE_CHOICES, initial=Reservation.CREATED,
                               widget=DisableableRadioSelect(
-                                  disabled_choices=[Reservation.CREATED, Reservation.CANCELLED]))
+                                  disabled_choices=[Reservation.CREATED]))
     message_state_update = forms.CharField(required=False, label=_('Notification Message'),
                                            widget=forms.Textarea(attrs={'cols': 80, 'rows': 5}),
                                            help_text=_(
