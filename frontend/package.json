@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
-        "build": "npm run translate -- --quiet && npm run gen && next build",
+        "build": "npm run translate -- --quiet && npm run gen && next build && npm run postbuild",
         "postbuild": "rimraf ./_next/static/**/*.js.map",
         "test-build": "next build",
         "start": "next start -p $PORT",
