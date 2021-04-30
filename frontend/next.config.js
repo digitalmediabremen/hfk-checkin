@@ -69,7 +69,8 @@ module.exports = withPWA({
                     ignore: ["node_modules"],
                     stripPrefix: ["webpack://_N_E/"],
                     urlPrefix: `~${basePath}/_next`,
-                    release: HEROKU_SOURCE_VERSION,      
+                    release: HEROKU_SOURCE_VERSION,
+                    deleteAfterCompile: true
                 })
             );
         }
