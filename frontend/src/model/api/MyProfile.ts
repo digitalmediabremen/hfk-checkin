@@ -13,7 +13,7 @@ interface PrivateProfile extends BaseProfile {
     /**
      * @TJS-format email
      */
-    email: string;
+    email: string | null;
 }
 
 export interface BaseProfile {
