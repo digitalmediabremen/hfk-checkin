@@ -22,6 +22,7 @@ class CapacityForActivityProfileSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     capacities = serializers.SerializerMethodField(read_only=True)
     id = ReadOnlyField()
+    load = serializers.IntegerField(source='load_user_generated')
 
     class Meta:
         model = Location

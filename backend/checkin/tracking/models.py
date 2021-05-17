@@ -168,19 +168,22 @@ class Location(MPTTModel):
         #return Checkin.objects.filter(location=self).not_older_then(LOAD_LOOKBACK_TIME).active().count()
     load.short_description = _('# jetzt')
 
+    def load_user_generated(self):
+        locations = self.get_descendants(include_self=True)
+        return Checkin.objects.filter(location__in=locations).order_by('profile','time_entered').distinct('profile').not_older_then(LOAD_LOOKBACK_TIME).only_user_generated().active().count()
+    load_user_generated.short_description = _('# jetzt (selbstdok.)')
+
     def load_descendants(self):
         locations = self.get_descendants(include_self=True)
-        # only works in postgres: .distinct('profile')
-        # not_older_then(LOAD_LOOKBACK_TIME).active()
-        return Checkin.objects.filter(location__in=locations).not_older_then(LOAD_LOOKBACK_TIME).active().count()
+        return Checkin.objects.filter(location__in=locations).order_by('profile','time_entered').distinct('profile').not_older_then(LOAD_LOOKBACK_TIME).active().count()
     load_descendants.short_description = _('# jetzt (kumuliert)')
 
     def real_load(self):
-        return Checkin.objects.filter(location=self).active().count()
+        return Checkin.objects.filter(location=self).order_by('profile','time_entered').distinct('profile').active().count()
     real_load.short_description = _('# jetzt')
 
     def checkins_sum(self):
-        return Checkin.objects.filter(location=self).count()
+        return Checkin.objects.filter(location=self).order_by('profile','time_entered').distinct('profile').count()
     checkins_sum.short_description = _('# Summe')
     #checkins_sum.admin_order_field = Count()
 
