@@ -1,0 +1,10 @@
+{
+  "environments": {
+    "test": {
+      "addons": ["heroku-postgresql:in-dyno"],
+      "scripts": {
+        "test": "pipenv run pytest --disable-warnings"
+      }
+    }
+  }
+}
