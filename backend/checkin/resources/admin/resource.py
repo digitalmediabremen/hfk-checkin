@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 from .mixins import PopulateCreatedAndModifiedMixin, CommonExcludeMixin, ModifiableModelAdminMixin
 from .other import ResourceGroupInline #, PeriodInline
+from ..auth import is_general_admin, is_superuser
 from .permission_inlines import (
     AccessAllowedToResourceUserPermissionInline,
     AccessDelegatesForResourceUserPermissionInline,
@@ -106,12 +107,16 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
 
     def get_queryset(self, request):
         # overwriting get_queryset from ExtendedGuardedModelAdminMixin and ModelAdmin
+        if is_general_admin(request.user):
+            return self.model.objects.all()
         return self.model.objects.get_resources_reservation_delegated_to_user(request.user)
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
         # queryset is already filtered based on permissions of request.user in get_queryset (see ExtendedGuardedModelAdminMixin)
-        queryset = queryset.filter(reservable=True)
+        # filter to only reservable resource if requested for autocomplete field or if user is not a general admin.
+        if '/autocomplete/' in request.path or not is_general_admin(request.user):
+            queryset = queryset.filter(reservable=True)
         return queryset, use_distinct
 
     def get_people_capacity(self, obj):

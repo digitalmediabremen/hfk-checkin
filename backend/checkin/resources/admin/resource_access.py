@@ -32,6 +32,9 @@ class ResourceAccessAdmin(ResourceAdmin):
             return obj.can_modify_access(request.user) or super().has_change_permission(request, obj)
         return False
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
 admin.site.register(ResourceAccess, ResourceAccessAdmin)
 
 
