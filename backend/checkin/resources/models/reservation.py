@@ -900,7 +900,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         from_address = getattr(settings, 'RESOURCES_FROM_ADDRESS', None)
         if from_address:
-            from_address = sanitize_address((self.resource.email_sender_name, from_address), encoding)
+            from_address = formataddr((self.resource.email_sender_name, from_address))
 
         if not reply_to_users:
             reply_to_users = self.resource.get_reservation_delegates_to_notify()

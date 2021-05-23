@@ -20,8 +20,27 @@ from checkin.resources.models import (
     #UnitAuthorization,
 )
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
-class ReservationTestCase(TestCase):
+from guardian.shortcuts import assign_perm
+
+
+class SetupUnit1WithUnitPermissions():
+    fixtures = ['notificationtemplates.json']
+
+    def setUp(self):
+        self.unit1 = Unit.objects.create(name='Unit 1', pk='00000000-00000000-00000000-10000001',
+                                         time_zone='Europe/Helsinki', slug='U1', public=True)
+        self.user1 = User.objects.create_user(email='accessmanager@example.com')
+        assign_perm('resource.unit:can_modify_access', self.user1, self.unit1)
+        self.user2 = User.objects.create_user(email='reservationmanager@example.com')
+        assign_perm('resource.unit:can_modify_reservations', self.user2, self.unit1)
+        self.user3 = User.objects.create_user(email='usermanager@example.com')
+        assign_perm('resource.unit:can_modify_access', self.user3, self.unit1)
+
+
+class ReservationTestCase(SetupUnit1WithUnitPermissions,TestCase):
 
     def tearDown(self):
         pass
@@ -31,13 +50,15 @@ class ReservationTestCase(TestCase):
         # Resource.objects.delete(pk='00000000-00000000-00000000-10000001')
 
     def setUp(self):
-        u1 = Unit.objects.create(name='Unit 1', pk='00000000-00000000-00000000-10000001', time_zone='Europe/Helsinki', slug='U1')
-        u2 = Unit.objects.create(name='Unit 2', pk='00000000-00000000-00000000-10000002', time_zone='Europe/Helsinki', slug='U2')
-        rt = ResourceType.objects.create(name='Type 1', pk='00000000-00000000-00000000-20000001', main_type='space')
-        Resource.objects.create(name='Resource 1a', pk='00000000-00000000-00000000-30000001', unit=u1, type=rt)
-        Resource.objects.create(name='Resource 1b', pk='00000000-00000000-00000000-30000002', unit=u1, type=rt)
-        Resource.objects.create(name='Resource 2a', pk='00000000-00000000-00000000-30000003', unit=u2, type=rt)
-        Resource.objects.create(name='Resource 2b', pk='00000000-00000000-00000000-30000004', unit=u2, type=rt)
+        super().setUp()
+        self.user = User.objects.create_user(email='test@example.com')
+        # self.unit1 = Unit.objects.create(name='Unit 1', pk='00000000-00000000-00000000-10000001', time_zone='Europe/Helsinki', slug='U1')
+        self.unit2 = Unit.objects.create(name='Unit 2', pk='00000000-00000000-00000000-10000002', time_zone='Europe/Helsinki', slug='U2')
+        self.resourcetype1 = ResourceType.objects.create(name='Type 1', pk='00000000-00000000-00000000-20000001', main_type='space')
+        Resource.objects.create(name='Resource 1a', pk='00000000-00000000-00000000-30000001', unit=self.unit1, type=self.resourcetype1)
+        Resource.objects.create(name='Resource 1b', pk='00000000-00000000-00000000-30000002', unit=self.unit1, type=self.resourcetype1)
+        Resource.objects.create(name='Resource 2a', pk='00000000-00000000-00000000-30000003', unit=self.unit2, type=self.resourcetype1)
+        Resource.objects.create(name='Resource 2b', pk='00000000-00000000-00000000-30000004', unit=self.unit2, type=self.resourcetype1)
 
         # p1 = Period.objects.create(start='2116-06-01', end='2116-09-01', unit=u1, name='')
         # p2 = Period.objects.create(start='2116-06-01', end='2116-09-01', unit=u2, name='')
@@ -65,57 +86,80 @@ class ReservationTestCase(TestCase):
     #     self.assertEqual(hours['opens'].time(), datetime.time(8, 00))
     #     self.assertEqual(hours['closes'].time(), datetime.time(22, 00))
 
-    def test_reservation(self):
+    def test_simple_reservation(self):
         r1a = Resource.objects.get(pk='00000000-00000000-00000000-30000001')
         r1b = Resource.objects.get(pk='00000000-00000000-00000000-30000002')
+        self.do_reservation_on_resource(r1a)
 
+    def test_simple_reservation_on_resource_with_long_name(self):
+        resource_with_long_name = Resource.objects.create(name='Stud. Arbeitsraum / Büro Prof. Baumkötter', numbers=['3.16.040'], pk='00000000-00000000-00000000-30000005', unit=self.unit2, type=self.resourcetype1)
+        self.do_reservation_on_resource(resource_with_long_name)
+
+    def test_reservation_on_resource_with_capacity_2(self):
+        r = Resource.objects.create(name='resource', people_capacity_default=2, unit=self.unit2, type=self.resourcetype1)
+        self.do_reservation_on_resource(r)
+
+    def test_reservation_on_resource_with_capacity_0(self):
+        r = Resource.objects.create(name='resource', people_capacity_default=0, unit=self.unit2, type=self.resourcetype1)
+        self.do_reservation_on_resource(r)
+
+    def test_reservation_on_resource_without_capacity(self):
+        r = Resource.objects.create(name='resource', people_capacity_default=None, unit=self.unit2,
+                                    type=self.resourcetype1)
+        self.do_reservation_on_resource(r)
+
+    def do_reservation_on_resource(self, resource):
         tz = timezone.get_current_timezone()
         begin = tz.localize(datetime.datetime(2116, 6, 1, 8, 0, 0))
         end = begin + datetime.timedelta(hours=2)
 
-        reservation = Reservation.objects.create(resource=r1a, begin=begin, end=end)
+        reservation = Reservation.objects.create(resource=resource, begin=begin, end=end, user=self.user)
         reservation.clean()
+        reservation.process_state_change(Reservation.CREATED, Reservation.REQUESTED, self.user)
+        #reservation.save()
+
+    # def test_reservation_warnings(self):
 
         # TODO assert warnings triggered with warnings.warn()
 
         # Attempt overlapping reservation
-        with self.assertWarns(ReservationWarning):
-            reservation = Reservation(resource=r1a, begin=begin, end=end)
-            reservation.clean()
-
-        valid_begin = begin + datetime.timedelta(hours=3)
-        valid_end = end + datetime.timedelta(hours=3)
-
-        # Attempt incorrectly aligned begin time
-        with self.assertWarns(ReservationWarning):
-            reservation = Reservation(resource=r1a, begin=valid_begin + datetime.timedelta(minutes=1), end=valid_end)
-            reservation.clean()
-
-        # Attempt incorrectly aligned end time
-        with self.assertWarns(ReservationWarning):
-            reservation = Reservation(resource=r1a, begin=valid_begin, end=valid_end + datetime.timedelta(minutes=1))
-            reservation.clean()
-
-        # Attempt reservation that starts before the resource opens
-        # Should not raise an exception as this check isn't included in model clean
-        reservation = Reservation(
-            resource=r1a,
-            begin=begin - datetime.timedelta(hours=1),
-            end=begin
-        )
-        reservation.clean()
-
-        begin = tz.localize(datetime.datetime(2116, 6, 1, 16, 0, 0))
-        end = begin + datetime.timedelta(hours=2)
-
-        # Make a reservation that ends when the resource closes
-        reservation = Reservation(resource=r1a, begin=begin, end=end)
-        reservation.clean()
-
-        # Attempt reservation that ends after the resource closes
-        # Should not raise an exception as this check isn't included in model clean
-        reservation = Reservation(resource=r1a, begin=begin, end=end + datetime.timedelta(hours=1))
-        reservation.clean()
+        # with self.assertWarns(ReservationWarning):
+        #     reservation = Reservation(resource=resource, begin=begin, end=end)
+        #     reservation.clean()
+        #
+        # valid_begin = begin + datetime.timedelta(hours=3)
+        # valid_end = end + datetime.timedelta(hours=3)
+        #
+        # # Attempt incorrectly aligned begin time
+        # with self.assertWarns(ReservationWarning):
+        #     reservation = Reservation(resource=resource, begin=valid_begin + datetime.timedelta(minutes=1), end=valid_end)
+        #     reservation.clean()
+        #
+        # # Attempt incorrectly aligned end time
+        # with self.assertWarns(ReservationWarning):
+        #     reservation = Reservation(resource=resource, begin=valid_begin, end=valid_end + datetime.timedelta(minutes=1))
+        #     reservation.clean()
+        #
+        # # Attempt reservation that starts before the resource opens
+        # # Should not raise an exception as this check isn't included in model clean
+        # reservation = Reservation(
+        #     resource=resource,
+        #     begin=begin - datetime.timedelta(hours=1),
+        #     end=begin
+        # )
+        # reservation.clean()
+        #
+        # begin = tz.localize(datetime.datetime(2116, 6, 1, 16, 0, 0))
+        # end = begin + datetime.timedelta(hours=2)
+        #
+        # # Make a reservation that ends when the resource closes
+        # reservation = Reservation(resource=resource, begin=begin, end=end)
+        # reservation.clean()
+        #
+        # # Attempt reservation that ends after the resource closes
+        # # Should not raise an exception as this check isn't included in model clean
+        # reservation = Reservation(resource=resource, begin=begin, end=end + datetime.timedelta(hours=1))
+        # reservation.clean()
 
 
 # @pytest.mark.django_db
