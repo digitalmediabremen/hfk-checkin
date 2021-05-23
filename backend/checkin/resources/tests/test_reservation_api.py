@@ -22,7 +22,7 @@ from checkin.resources.models import (Reservation, Resource, ResourceGroup, Atta
 #                               ReservationMetadataSet, UnitAuthorization, ReservationCancelReasonCategory,
 #                               ReservationCancelReason, Attachment)
 # from checkin.notifications.models import NotificationTemplate, NotificationType
-from checkin.notifications.tests.utils import check_received_mail_exists
+#from checkin.notifications.tests.utils import check_received_mail_exists
 from .utils import check_disallowed_methods, assert_non_field_errors_contain, assert_response_objects, MAX_QUERIES
 
 

@@ -15,13 +15,51 @@ from checkin.resources.tests.utils import get_field_errors # create_resource_ima
 
 @pytest.mark.django_db
 @pytest.fixture
-def resource_with_default_capacity_2(space_resource_type, test_unit):
+def resource_with_default_capacity_10(space_resource_type, test_unit):
     return Resource.objects.create(
         type=space_resource_type,
         name="resource in unit",
         unit=test_unit,
         reservable=True,
-        people_capacity_default=2
+        people_capacity_default=10
+    )
+
+
+@pytest.mark.django_db
+@pytest.fixture
+def resource_with_default_capacity_10_min(space_resource_type, test_unit):
+    return Resource.objects.create(
+        type=space_resource_type,
+        name="resource in unit",
+        unit=test_unit,
+        reservable=True,
+        people_capacity_default=10,
+        people_capacity_calculation_type=Resource.CAPACITY_CALCULATION_MIN
+    )
+
+
+@pytest.mark.django_db
+@pytest.fixture
+def resource_with_default_capacity_10_max(space_resource_type, test_unit):
+    return Resource.objects.create(
+        type=space_resource_type,
+        name="resource in unit",
+        unit=test_unit,
+        reservable=True,
+        people_capacity_default=10,
+        people_capacity_calculation_type=Resource.CAPACITY_CALCULATION_MAX
+    )
+
+@pytest.mark.django_db
+@pytest.fixture
+def resource_with_default_capacity_10_none(space_resource_type, test_unit):
+    return Resource.objects.create(
+        type=space_resource_type,
+        name="resource in unit",
+        unit=test_unit,
+        reservable=True,
+        people_capacity_default=10,
+        people_capacity_calculation_type = Resource.CAPACITY_CALCULATION_NONE
     )
 
 
@@ -39,6 +77,19 @@ def resource_without_default_capacity(space_resource_type, test_unit):
 
 @pytest.mark.django_db
 @pytest.fixture
+def resource_without_default_capacity_none(space_resource_type, test_unit):
+    return Resource.objects.create(
+        type=space_resource_type,
+        name="resource in unit",
+        unit=test_unit,
+        reservable=True,
+        people_capacity_default=None,
+        people_capacity_calculation_type=Resource.CAPACITY_CALCULATION_NONE
+    )
+
+
+@pytest.mark.django_db
+@pytest.fixture
 def resourcecapacitypolicy_abs_1():
     policy = ResourceCapacityPolicy.objects.create(
         name = 'test policy',
@@ -48,24 +99,90 @@ def resourcecapacitypolicy_abs_1():
 
 
 @pytest.mark.django_db
-def test_resource_people_capacity_without_policy(resource_without_default_capacity, resource_with_default_capacity_2):
-    r = Resource.objects.get(pk=resource_without_default_capacity.pk)
-    assert r.people_capacity is None
+@pytest.fixture
+def resourcecapacitypolicy_abs_2():
+    policy = ResourceCapacityPolicy.objects.create(
+        name = 'test policy',
+        value = 2
+    )
+    return policy
 
-    r = Resource.objects.get(pk=resource_with_default_capacity_2.pk)
-    assert r.people_capacity is 2
+@pytest.mark.django_db
+@pytest.fixture
+def resourcecapacitypolicy_abs_99():
+    policy = ResourceCapacityPolicy.objects.create(
+        name = 'test policy',
+        value = 99
+    )
+    return policy
 
 
 @pytest.mark.django_db
-def test_resource_people_capacity_policy_abs_1(resourcecapacitypolicy_abs_1, resource_without_default_capacity, resource_with_default_capacity_2):
+@pytest.fixture
+def resourcecapacitypolicy_abs_99():
+    policy = ResourceCapacityPolicy.objects.create(
+        name = 'test policy',
+        value = 99
+    )
+    return policy
+
+
+@pytest.mark.django_db
+def test_resource_people_capacity_without_policy(resource_without_default_capacity, resource_with_default_capacity_10):
+    r = Resource.objects.get(pk=resource_without_default_capacity.pk)
+    assert r.people_capacity is None
+
+    r = Resource.objects.get(pk=resource_with_default_capacity_10.pk)
+    assert r.people_capacity is 10
+
+
+@pytest.mark.django_db
+def test_resource_people_capacity_policy_abs_1(resourcecapacitypolicy_abs_1, resource_without_default_capacity, resource_with_default_capacity_10):
     resourcecapacitypolicy_abs_1.resources.add(resource_without_default_capacity)
-    resourcecapacitypolicy_abs_1.resources.add(resource_with_default_capacity_2)
+    resourcecapacitypolicy_abs_1.resources.add(resource_with_default_capacity_10)
 
     r = Resource.objects.get(pk=resource_without_default_capacity.pk)
     assert r.people_capacity is 1
 
-    r = Resource.objects.get(pk=resource_with_default_capacity_2.pk)
+    r = Resource.objects.get(pk=resource_with_default_capacity_10.pk)
     assert r.people_capacity is 1
+
+
+@pytest.mark.django_db
+def test_resource_people_capacity_policy_abs_1_and_abs_2(resourcecapacitypolicy_abs_1, resourcecapacitypolicy_abs_2, resource_with_default_capacity_10_none, resource_with_default_capacity_10_max, resource_with_default_capacity_10_min, resource_without_default_capacity_none):
+    resourcecapacitypolicy_abs_1.resources.add(resource_with_default_capacity_10_none)
+    resourcecapacitypolicy_abs_1.resources.add(resource_with_default_capacity_10_min)
+    resourcecapacitypolicy_abs_1.resources.add(resource_with_default_capacity_10_max)
+    resourcecapacitypolicy_abs_1.resources.add(resource_without_default_capacity_none)
+    resourcecapacitypolicy_abs_2.resources.add(resource_with_default_capacity_10_none)
+    resourcecapacitypolicy_abs_2.resources.add(resource_with_default_capacity_10_min)
+    resourcecapacitypolicy_abs_2.resources.add(resource_with_default_capacity_10_max)
+    resourcecapacitypolicy_abs_2.resources.add(resource_without_default_capacity_none)
+
+    r = Resource.objects.get(pk=resource_with_default_capacity_10_none.pk)
+    assert r.people_capacity is 10
+
+    r = Resource.objects.get(pk=resource_with_default_capacity_10_min.pk)
+    assert r.people_capacity is 1
+
+    r = Resource.objects.get(pk=resource_with_default_capacity_10_max.pk)
+    assert r.people_capacity is 2
+
+    r = Resource.objects.get(pk=resource_without_default_capacity_none.pk)
+    assert r.people_capacity is None
+
+
+@pytest.mark.django_db
+def test_resource_people_capacity_policy_abs_99(resourcecapacitypolicy_abs_99, resource_without_default_capacity, resource_with_default_capacity_10):
+    resourcecapacitypolicy_abs_99.resources.add(resource_without_default_capacity)
+    resourcecapacitypolicy_abs_99.resources.add(resource_with_default_capacity_10)
+
+    r = Resource.objects.get(pk=resource_without_default_capacity.pk)
+    assert r.people_capacity is 99
+    # FIXME does this make any sense? setting a resource without capacity to a random policy cap?
+
+    r = Resource.objects.get(pk=resource_with_default_capacity_10.pk)
+    assert r.people_capacity is 10
 
 
 # @pytest.mark.django_db
