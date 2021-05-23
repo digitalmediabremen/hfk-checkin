@@ -11,7 +11,7 @@
       "generator": "secret"
     },
     "DJANGO_SETTINGS_MODULE": {
-      "description": "The django-configurations configuration class to use",
+      "description": "The django configuration to use",
       "value": "checkin.settings.production"
     },
     "APP_BASE": {
@@ -24,14 +24,14 @@
     "test": {
       "addons": ["heroku-postgresql:in-dyno"],
       "scripts": {
-        "test": "pipenv run pytest --disable-warnings"
+        "test": "pytest --disable-warnings"
       }
     }
   },
   "formation": {
-    "web": {
+    "test": {
       "quantity": 1,
-      "size": "free"
+      "size": "standard-1x"
     }
   },
   "buildpacks": [
