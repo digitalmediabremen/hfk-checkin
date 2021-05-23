@@ -83,6 +83,13 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
         qs = super().get_queryset(request).exclude_anonymous_users().filter_for_user(request.user)
         return qs
 
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        # filter to only non external users if requested for autocomplete field (e.g. in ReservationAdmin or PermissionInline)
+        if '/autocomplete/' in request.path:
+            queryset = queryset.filter(profile__is_external=False)
+        return queryset, use_distinct
+
 
 if not admin.site.is_registered(User):
     admin.site.register(User, UserAdmin)
