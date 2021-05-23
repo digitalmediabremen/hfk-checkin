@@ -574,9 +574,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         # reservations that need manual confirmation and are confirmed cannot be
         # modified or cancelled without reservation approve permission
-        cannot_approve = not self.resource.can_approve_reservations(user)
-        if self.need_manual_confirmation() and self.state == Reservation.CONFIRMED and cannot_approve:
-            return False
+        # FIXME disabeling this for now because it prohibits to cancel your own reservations
+        # FIXME need_manual_confirmation is used differently in our context (so far)
+        # cannot_approve = not self.resource.can_approve_reservations(user)
+        # if self.need_manual_confirmation() and self.state == Reservation.CONFIRMED and cannot_approve:
+        #     return False
 
         return self.user == user or self.resource.can_modify_reservations(user)
 
