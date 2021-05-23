@@ -11,7 +11,7 @@ pytest = "==6.2.2"
 [packages]
 gunicorn = "==20.0.4"
 whitenoise = "*"
-asgiref = "==3.2.10"
+asgiref = "*"
 certifi = "==2020.6.20"
 cffi = "==1.14.3"
 chardet = "==3.0.4"
@@ -70,6 +70,7 @@ django-redis = "*"
 django-admin-autocomplete-filter = "*"
 rollbar = "*"
 django-anymail = "*"
+pytest-django = "*"
 
 [requires]
 python_version = "3.7.10"

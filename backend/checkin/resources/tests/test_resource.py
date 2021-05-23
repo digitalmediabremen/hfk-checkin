@@ -9,8 +9,63 @@ from PIL import Image
 
 #from checkin.resources.enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
 #from checkin.resources.errors import InvalidImage
-from checkin.resources.models import Resource # ResourceImage,
+from checkin.resources.models import Resource, ResourceCapacityPolicy
 from checkin.resources.tests.utils import get_field_errors # create_resource_image, get_test_image_data,
+
+
+@pytest.mark.django_db
+@pytest.fixture
+def resource_with_default_capacity_2(space_resource_type, test_unit):
+    return Resource.objects.create(
+        type=space_resource_type,
+        name="resource in unit",
+        unit=test_unit,
+        reservable=True,
+        people_capacity_default=2
+    )
+
+
+@pytest.mark.django_db
+@pytest.fixture
+def resource_without_default_capacity(space_resource_type, test_unit):
+    return Resource.objects.create(
+        type=space_resource_type,
+        name="resource in unit",
+        unit=test_unit,
+        reservable=True,
+        people_capacity_default=None
+    )
+
+
+@pytest.mark.django_db
+@pytest.fixture
+def resourcecapacitypolicy_abs_1():
+    policy = ResourceCapacityPolicy.objects.create(
+        name = 'test policy',
+        value = 1
+    )
+    return policy
+
+
+@pytest.mark.django_db
+def test_resource_people_capacity_without_policy(resource_without_default_capacity, resource_with_default_capacity_2):
+    r = Resource.objects.get(pk=resource_without_default_capacity.pk)
+    assert r.people_capacity is None
+
+    r = Resource.objects.get(pk=resource_with_default_capacity_2.pk)
+    assert r.people_capacity is 2
+
+
+@pytest.mark.django_db
+def test_resource_people_capacity_policy_abs_1(resourcecapacitypolicy_abs_1, resource_without_default_capacity, resource_with_default_capacity_2):
+    resourcecapacitypolicy_abs_1.resources.add(resource_without_default_capacity)
+    resourcecapacitypolicy_abs_1.resources.add(resource_with_default_capacity_2)
+
+    r = Resource.objects.get(pk=resource_without_default_capacity.pk)
+    assert r.people_capacity is 1
+
+    r = Resource.objects.get(pk=resource_with_default_capacity_2.pk)
+    assert r.people_capacity is 1
 
 
 # @pytest.mark.django_db
@@ -83,78 +138,78 @@ from checkin.resources.tests.utils import get_field_errors # create_resource_ima
 #     assert "cannot identify" in ei.value.message
 
 
-@pytest.mark.django_db
-def test_price_validations(resource_in_unit):
-    activate('en')
-
-    resource_in_unit.min_price = Decimal(1)
-    resource_in_unit.max_price = None
-    resource_in_unit.full_clean()  # should not raise
-
-    resource_in_unit.min_price = Decimal(8)
-    resource_in_unit.max_price = Decimal(5)
-    with pytest.raises(ValidationError) as ei:
-        resource_in_unit.full_clean()
-    assert 'This value cannot be greater than max price' in get_field_errors(ei.value, 'min_price')
-
-    resource_in_unit.min_price = Decimal(-5)
-    resource_in_unit.max_price = Decimal(-8)
-    with pytest.raises(ValidationError) as ei:
-        resource_in_unit.full_clean()
-    assert 'Ensure this value is greater than or equal to 0.00.' in get_field_errors(ei.value, 'min_price')
-    assert 'Ensure this value is greater than or equal to 0.00.' in get_field_errors(ei.value, 'max_price')
-
-
-@pytest.mark.django_db
-def test_time_slot_validations(resource_in_unit):
-    activate('en')
-
-    resource_in_unit.min_period = datetime.timedelta(hours=2)
-    resource_in_unit.slot_size = datetime.timedelta(minutes=45)
-    with pytest.raises(ValidationError) as error:
-        resource_in_unit.full_clean()
-    assert 'This value must be a multiple of slot_size' in get_field_errors(error.value, 'min_period')
-
-    resource_in_unit.min_period = datetime.timedelta(hours=2)
-    resource_in_unit.slot_size = datetime.timedelta(minutes=30)
-    resource_in_unit.full_clean()
-
-
-@pytest.mark.django_db
-def test_queryset_with_perm(resource_in_unit, user):
-    resources = Resource.objects.with_perm('can_view_reservation_catering_orders', user)
-    assert not resources
-
-    # user.unit_authorizations.create(
-    #     authorized=user,
-    #     level=UnitAuthorizationLevel.manager,
-    #     subject=resource_in_unit.unit
-    # )
-    # user.save()
-
-    resources = Resource.objects.with_perm('can_view_reservation_catering_orders', user)
-    assert resources
-    assert resource_in_unit in resources
-
-    # user.unit_authorizations.create(
-    #     authorized=user,
-    #     level=UnitAuthorizationLevel.admin,
-    #     subject=resource_in_unit.unit
-    # )
-
-    resources = Resource.objects.with_perm('can_modify_paid_reservations', user)
-    assert not resources
-
-    user.unit_authorizations.all().delete()
-
-    # user.unit_authorizations.create(
-    #     authorized=user,
-    #     level=UnitAuthorizationLevel.viewer,
-    #     subject=resource_in_unit.unit
-    # )
-
-    resources = Resource.objects.with_perm('can_modify_reservations', user)
-    assert resources
-    assert resource_in_unit in resources
+# @pytest.mark.django_db
+# def test_price_validations(resource_in_unit):
+#     activate('en')
+#
+#     resource_in_unit.min_price = Decimal(1)
+#     resource_in_unit.max_price = None
+#     resource_in_unit.full_clean()  # should not raise
+#
+#     resource_in_unit.min_price = Decimal(8)
+#     resource_in_unit.max_price = Decimal(5)
+#     with pytest.raises(ValidationError) as ei:
+#         resource_in_unit.full_clean()
+#     assert 'This value cannot be greater than max price' in get_field_errors(ei.value, 'min_price')
+#
+#     resource_in_unit.min_price = Decimal(-5)
+#     resource_in_unit.max_price = Decimal(-8)
+#     with pytest.raises(ValidationError) as ei:
+#         resource_in_unit.full_clean()
+#     assert 'Ensure this value is greater than or equal to 0.00.' in get_field_errors(ei.value, 'min_price')
+#     assert 'Ensure this value is greater than or equal to 0.00.' in get_field_errors(ei.value, 'max_price')
+#
+#
+# @pytest.mark.django_db
+# def test_time_slot_validations(resource_in_unit):
+#     activate('en')
+#
+#     resource_in_unit.min_period = datetime.timedelta(hours=2)
+#     resource_in_unit.slot_size = datetime.timedelta(minutes=45)
+#     with pytest.raises(ValidationError) as error:
+#         resource_in_unit.full_clean()
+#     assert 'This value must be a multiple of slot_size' in get_field_errors(error.value, 'min_period')
+#
+#     resource_in_unit.min_period = datetime.timedelta(hours=2)
+#     resource_in_unit.slot_size = datetime.timedelta(minutes=30)
+#     resource_in_unit.full_clean()
+#
+#
+# @pytest.mark.django_db
+# def test_queryset_with_perm(resource_in_unit, user):
+#     resources = Resource.objects.with_perm('can_view_reservation_catering_orders', user)
+#     assert not resources
+#
+#     # user.unit_authorizations.create(
+#     #     authorized=user,
+#     #     level=UnitAuthorizationLevel.manager,
+#     #     subject=resource_in_unit.unit
+#     # )
+#     # user.save()
+#
+#     resources = Resource.objects.with_perm('can_view_reservation_catering_orders', user)
+#     assert resources
+#     assert resource_in_unit in resources
+#
+#     # user.unit_authorizations.create(
+#     #     authorized=user,
+#     #     level=UnitAuthorizationLevel.admin,
+#     #     subject=resource_in_unit.unit
+#     # )
+#
+#     resources = Resource.objects.with_perm('can_modify_paid_reservations', user)
+#     assert not resources
+#
+#     user.unit_authorizations.all().delete()
+#
+#     # user.unit_authorizations.create(
+#     #     authorized=user,
+#     #     level=UnitAuthorizationLevel.viewer,
+#     #     subject=resource_in_unit.unit
+#     # )
+#
+#     resources = Resource.objects.with_perm('can_modify_reservations', user)
+#     assert resources
+#     assert resource_in_unit in resources
 
 

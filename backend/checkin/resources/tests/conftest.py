@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from rest_framework.test import APIClient, APIRequestFactory
 
 # from checkin.resources.enums import UnitAuthorizationLevel
-from checkin.resources.models import Resource, ResourceType, Unit, #UnitIdentifier, Purpose, Day, Period
+from checkin.resources.models import Resource, ResourceType, Unit #UnitIdentifier, Purpose, Day, Period
 # from checkin.resources.models import Equipment, EquipmentAlias, ResourceEquipment, EquipmentCategory, TermsOfUse, ResourceGroup
 # from checkin.resources.models import AccessibilityValue, AccessibilityViewpoint, ResourceAccessibility, UnitAccessibility
 #from munigeo.models import Municipality
@@ -31,7 +31,8 @@ def user_api_client(user):
     return api_client
 
 
-@pytest.fixture(params=[None, 'user', 'staff_user'])
+#@pytest.fixture(params=[None, 'user', 'staff_user'])
+@pytest.fixture(params=['user', 'staff_user'])
 def all_user_types_api_client(request):
     api_client = APIClient()
     if request.param:
@@ -47,7 +48,7 @@ def api_rf():
 @pytest.mark.django_db
 @pytest.fixture
 def space_resource_type():
-    return ResourceType.objects.get_or_create(pk="test_space", name="test_space", main_type="space")[0]
+    return ResourceType.objects.get_or_create(pk="00000000-00000000-00000000-20000001", name="test_space", main_type="space")[0]
 
 
 @pytest.mark.django_db
@@ -109,20 +110,20 @@ def test_unit4():
 
 @pytest.mark.django_db
 @pytest.fixture
-def resource_in_unit(space_resource_type, test_unit, generic_terms, payment_terms):
+def resource_in_unit(space_resource_type, test_unit):
     return Resource.objects.create(
         type=space_resource_type,
-        authentication="none",
+        #authentication="none",
         name="resource in unit",
         unit=test_unit,
-        max_reservations_per_user=1,
-        max_period=datetime.timedelta(hours=2),
+        #max_reservations_per_user=1,
+        #max_period=datetime.timedelta(hours=2),
         reservable=True,
-        generic_terms=generic_terms,
-        payment_terms=payment_terms,
-        specific_terms_fi='spesifiset käyttöehdot',
-        specific_terms_en='specific terms of use',
-        reservation_confirmed_notification_extra_en='this resource rocks'
+        #generic_terms=generic_terms,
+        #payment_terms=payment_terms,
+        #specific_terms_fi='spesifiset käyttöehdot',
+        #specific_terms_en='specific terms of use',
+        #reservation_confirmed_notification_extra_en='this resource rocks'
     )
 
 
@@ -131,11 +132,11 @@ def resource_in_unit(space_resource_type, test_unit, generic_terms, payment_term
 def resource_in_unit2(space_resource_type, test_unit2):
     return Resource.objects.create(
         type=space_resource_type,
-        authentication="none",
+        #authentication="none",
         name="resource in unit 2",
         unit=test_unit2,
-        max_reservations_per_user=2,
-        max_period=datetime.timedelta(hours=4),
+        #max_reservations_per_user=2,
+        #max_period=datetime.timedelta(hours=4),
         reservable=True,
     )
 
@@ -145,10 +146,10 @@ def resource_in_unit2(space_resource_type, test_unit2):
 def resource_in_unit3(space_resource_type, test_unit3):
     return Resource.objects.create(
         type=space_resource_type,
-        authentication="none",
+        #authentication="none",
         name="resource in unit 3",
         unit=test_unit3,
-        max_reservations_per_user=2,
+        #max_reservations_per_user=2,
         max_period=datetime.timedelta(hours=4),
         reservable=True,
     )
@@ -159,11 +160,11 @@ def resource_in_unit3(space_resource_type, test_unit3):
 def resource_in_unit4(space_resource_type, test_unit4):
     return Resource.objects.create(
         type=space_resource_type,
-        authentication="none",
+        #authentication="none",
         name="resource in unit 4",
         unit=test_unit4,
-        max_reservations_per_user=2,
-        max_period=datetime.timedelta(hours=4),
+        #max_reservations_per_user=2,
+        #max_period=datetime.timedelta(hours=4),
         reservable=True,
     )
 
