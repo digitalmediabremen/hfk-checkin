@@ -269,6 +269,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     # FIXME purposes = usages?
     features = models.ManyToManyField(ResourceFeature, verbose_name=_('Features'), blank=True)
 
+    people_capacity = None # will be annotated through queryset with `annotate_capacity_calculation()`
     people_capacity_default = models.PositiveIntegerField(verbose_name=_('Default people capacity'), null=True, blank=True)
     people_capacity_calculation_type = models.CharField(verbose_name=_('Capacity calculation'), max_length=20, choices=CAPACITY_CALCULATION_TYPES, default=CAPACITY_CALCULATION_MIN)
     area = models.DecimalField(verbose_name=_('Area (m²)'), help_text=_("in Quadratmetern"), max_digits=8,
