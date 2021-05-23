@@ -8,7 +8,7 @@ from arrow.parser import ParserError
 from .. import settings
 from ..models.permissions import NoSuperuserObjectPermissionChecker, ObjectPermissionChecker
 from django.contrib.auth import get_user_model
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import (
     PermissionDenied, ValidationError as DjangoValidationError
 )

@@ -11,7 +11,7 @@ from django.contrib.admin.options import get_permission_codename
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.template.response import TemplateResponse
 from guardian import admin as guardian_admin

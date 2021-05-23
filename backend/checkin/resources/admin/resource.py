@@ -1,6 +1,6 @@
 import logging
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from django_better_admin_arrayfield.admin.mixins import DynamicArrayMixin
 from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin

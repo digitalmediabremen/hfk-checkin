@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db import models
 from django.db.models.query import EmptyQuerySet
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from django.core.validators import DecimalValidator
 from django import forms
 from dal import autocomplete

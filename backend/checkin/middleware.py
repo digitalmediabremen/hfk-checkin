@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 import json
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 # 404 JSON return
 

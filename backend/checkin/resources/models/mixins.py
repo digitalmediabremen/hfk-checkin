@@ -1,7 +1,7 @@
 import datetime
 from django.db import models
 from django.core.exceptions import ValidationError, ImproperlyConfigured
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from .base import AUTH_USER_MODEL
 import logging
 from guardian.shortcuts import get_users_with_perms

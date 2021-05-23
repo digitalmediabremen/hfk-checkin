@@ -11,7 +11,7 @@ from django.utils import formats
 from django.utils.translation import ungettext
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.models import Site
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.utils.timezone import localtime
 from rest_framework.reverse import reverse

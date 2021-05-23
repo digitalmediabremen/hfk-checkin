@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
 from six import BytesIO
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.contrib.postgres.fields import HStoreField, DateTimeRangeField
 #from .gistindex import GistIndex

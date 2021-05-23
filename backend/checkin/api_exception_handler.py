@@ -1,5 +1,5 @@
 from rest_framework.views import exception_handler
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ngettext
 from rest_framework.exceptions import ErrorDetail
 import logging

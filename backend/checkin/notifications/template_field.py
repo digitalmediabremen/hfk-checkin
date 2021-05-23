@@ -18,7 +18,7 @@ from django.template import TemplateDoesNotExist, engines
 from django.template.loader import get_template
 from django.utils.encoding import force_text
 from functools import partial
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from .template_handlers import get_results_from_registry
 
 def get_templates_from_loaders():

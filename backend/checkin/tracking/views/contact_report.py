@@ -2,7 +2,7 @@ from ..models import Location, Profile
 from django.views.generic import FormView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from ..report import ContactReport
 from datetime import timedelta
 import io

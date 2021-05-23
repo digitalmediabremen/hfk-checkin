@@ -4,7 +4,7 @@ from mptt.admin import MPTTModelAdmin, DraggableMPTTAdmin
 from .models import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from simple_history.admin import SimpleHistoryAdmin
 from django.utils.html import format_html
 from django.urls import reverse, path

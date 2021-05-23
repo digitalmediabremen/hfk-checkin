@@ -3,7 +3,7 @@ from django.db.models.constants import LOOKUP_SEP
 from django.contrib.postgres.fields import CIEmailField
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.crypto import get_random_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver

@@ -2,7 +2,7 @@ from .generic_permission_inline import SingleGroupPermissionInline, UserPermissi
 from .generic_permission_inline import *
 from guardian.shortcuts import get_perms_for_model
 from ..models.resource import Resource, Unit
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class MakeDelegateStaffUserInlineFormMixin():
