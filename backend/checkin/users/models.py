@@ -157,12 +157,12 @@ class User(AbstractUser):
     #         "Designates whether the user can log into "
     #         "Django Admin or Respa Admin sites."))
     #
-    # is_general_admin = models.BooleanField(
-    #     default=False, verbose_name=_("general administrator status"),
-    #     help_text=_(
-    #         "Designates whether the user is a General Administrator "
-    #         "with special permissions to many objects within Respa. "
-    #         "This is almost as powerful as superuser."))
+    is_general_admin = models.BooleanField(
+        default=False, verbose_name=_("Administrator status (for resources and booking application)"),
+        help_text=_(
+            "Designates whether the user is a administrator "
+            "with special permissions to many objects within resources application. "
+            "This is almost as powerful as superuser."))
 
     class Meta(AbstractUser.Meta):
         ordering = ('id',)

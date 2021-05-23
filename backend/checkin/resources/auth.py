@@ -9,8 +9,8 @@ def is_superuser(user):
 
 
 def is_general_admin(user):
-    return is_authenticated_user(user) and (
-        user.is_superuser or getattr(user, 'is_general_admin', False))
+    return is_authenticated_user(user) and (#user.is_superuser or
+        getattr(user, 'is_general_admin', False))
 
 
 def is_staff(user):
