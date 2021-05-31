@@ -73,7 +73,8 @@ export const isNow = (
     date: Date,
     thresholdInMinutes: number = timeWithinDateIsConsideredNow
 ) =>
-    Math.abs(new Date().getTime() - date.getTime()) < thresholdInMinutes * 60 * 1000;
+    Math.abs(new Date().getTime() - date.getTime()) <
+    thresholdInMinutes * 60 * 1000;
 
 export const isToday = (date: Date) =>
     new Date().toDateString() === date.toDateString();
@@ -90,7 +91,10 @@ export const createTimeNow = (): Time => {
 
 export const createDefaultTime = (): Time => {
     const now = new Date();
-    const d = createTime(now.getHours(), Math.floor(now.getMinutes() / 15) * 15);
+    const d = createTime(
+        now.getHours(),
+        Math.floor(now.getMinutes() / 15) * 15
+    );
     return d;
 };
 
@@ -156,13 +160,8 @@ export const addDateTime = (value: Date, valueToAdd: Date) => {
 
 export const mergeDateAndTime = (date: Date, time: Date | Time) => {
     const d = new Date();
-    d.setFullYear(date.getFullYear());
-    d.setMonth(date.getMonth());
-    d.setDate(date.getDate());
-    d.setHours(time.getHours());
-    d.setMinutes(time.getMinutes());
-    d.setSeconds(time.getSeconds());
-    d.setMilliseconds(0);
+    d.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+    d.setHours(time.getHours(), time.getMinutes(), time.getSeconds(), 0);
     return d;
 };
 
@@ -179,7 +178,8 @@ export const duration = {
     },
 };
 
-export type DateString = `${number}${number}-${number}${number}-${number}${number}`;
+export type DateString =
+    `${number}${number}-${number}${number}-${number}${number}`;
 
 export function assertDateString(
     dateString: string
@@ -208,10 +208,7 @@ export function assertDateString(
 export const createDate = (datetime?: number): Date => {
     if (empty(datetime)) return createDateNow();
     const d = new Date(datetime);
-    d.setHours(0);
-    d.setMinutes(0);
-    d.setSeconds(0);
-    d.setMilliseconds(0);
+    d.setHours(0, 0, 0, 0);
 
     return d;
 };
@@ -225,11 +222,7 @@ export const fromDateString = (dateString: DateString): Date => {
     const timestamp = Date.parse(dateString.replace(/-/g, "/"));
     if (isNaN(timestamp)) throw `DateString in wrong format`;
     const date = new Date(dateString);
-    date.setHours(0);
-    date.setMinutes(0);
-    date.setSeconds(0);
-    date.setMilliseconds(0);
-
+    date.setHours(0, 0, 0, 0);
     return date;
 };
 
@@ -240,7 +233,7 @@ export const getDateString = (date: Date): DateString => {
         }
         return number;
     }
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-        date.getUTCDate() + 1
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+        date.getDate()
     )}` as DateString;
 };
