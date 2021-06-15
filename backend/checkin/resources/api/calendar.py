@@ -10,6 +10,8 @@ from .resource import ResourceSerializer, ResourceListViewSet, Resource
 from django.urls import reverse
 from django.http import Http404
 from django.core.exceptions import ValidationError
+from ..admin.reservation import RESERVATION_STATE_COLORS
+from django.utils.translation import gettext
 
 class ReservationCalendarEventSerializer(ReservationSerializer):
     start = serializers.DateTimeField(source='begin')
@@ -19,16 +21,23 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
     id = serializers.CharField(source='uuid')
     resourceId = serializers.CharField(source='resource.uuid')
     classNames = serializers.SerializerMethodField(required=False)
+    textColor = serializers.SerializerMethodField(required=False, method_name='get_color')
+    borderColor = serializers.SerializerMethodField(required=False, method_name='get_color')
+
+    class Meta:
+        model = Reservation
+        fields = ['url', 'id', 'identifier', 'start', 'end', 'title','resourceId','classNames','textColor','borderColor']
 
     def get_url(self, obj):
         return reverse('admin:{0}_{1}_change'.format(obj._meta.app_label, obj._meta.model_name), args=(obj.pk,))
 
     def get_title(self, obj):
-        return "%(user)s (%(attendees)d) #%(id)s (%(state)s)" % {
-            'user':obj.organizer,
-            'attendees':obj.number_of_attendees,
+        return "%(user)s (%(attendees)s) #%(id)s (%(state)s)" % {
+            'user':obj.organizer.get_full_name(),
+            'attendees': gettext('Exclusive resource usage') + ': ' + str(obj.number_of_attendees) if obj.exclusive_resource_usage else str(obj.number_of_attendees),
             'id': obj.identifier,
             'state': obj.get_state_display(),
+            #'description': obj.get_state_display(),
         }
 
     # FIXME remove render-specific attributes form representation!
@@ -43,9 +52,12 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
             class_names.append('current')
         return " ".join(class_names)
 
-    class Meta:
-        model = Reservation
-        fields = ['url', 'id', 'identifier', 'start', 'end', 'title','resourceId','classNames']
+    # FIXME remove render-specific attributes form representation!
+    def get_color(self, obj):
+        try:
+            return RESERVATION_STATE_COLORS[obj.state]
+        except (KeyError, LookupError):
+            return None
 
 
 class ReservationCalendarViewSet(ReservationListViewSet):

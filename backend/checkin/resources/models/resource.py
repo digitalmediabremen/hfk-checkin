@@ -294,8 +294,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             name += "%s " % self.display_numbers
         name += "%s" % (get_translated(self, 'name'),)
         cap = getattr(self, 'people_capacity', None)
-        if self.alternative_names:
-            name += " (" + " / ".join(self.alternative_names) + ")"
+        # if self.alternative_names:
+        #     name += " (" + " / ".join(self.alternative_names) + ")"
         if cap:
             name += " (%d)" % cap
         return name

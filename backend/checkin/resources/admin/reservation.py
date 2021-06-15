@@ -35,6 +35,14 @@ USERS_IN_RESERVATIONS_QS_FILTER = {
     'profile__is_external': False,
 }
 
+RESERVATION_STATE_COLORS = {
+    Reservation.CREATED: '#555',
+    Reservation.CANCELLED: '#E2574C',
+    Reservation.CONFIRMED: '#58AD69',
+    Reservation.DENIED: '#E2574C',
+    Reservation.REQUESTED: '#FFBC49',
+    Reservation.WAITING_FOR_PAYMENT: '#FFBC49',
+}
 
 class AttendanceInline(admin.TabularInline):
     autocomplete_fields = ('user',)
@@ -261,17 +269,9 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     def get_state_colored(self, obj):
         if obj.type == obj.TYPE_BLOCKED:
             return _("BLOCKED")
-        colors = {
-            Reservation.CREATED: '#555',  # ('green', ''),
-            Reservation.CANCELLED: '#E2574C',
-            Reservation.CONFIRMED: '#58AD69',
-            Reservation.DENIED: '#E2574C',
-            Reservation.REQUESTED: '#FFBC49',
-            Reservation.WAITING_FOR_PAYMENT: '#FFBC49',
-        }
         return format_html(
             '<b style="color:{};">{}</b>',
-            colors[obj.state],
+            RESERVATION_STATE_COLORS[obj.state],
             gettext(obj.get_state_display()),
         )
     get_state_colored.short_description = _("State")
