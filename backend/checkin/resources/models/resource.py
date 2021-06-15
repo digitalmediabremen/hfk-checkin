@@ -1011,9 +1011,10 @@ class ResourceCapacityPolicy(ModifiableModel, UUIDModelMixin):
         # ('RATIO', _('Percentage of original capacity'))
     )
     name = models.CharField(verbose_name=_("Name"), max_length=255)
+    description = models.TextField(verbose_name=_("Description"), null=True, blank=True)
     value = models.PositiveIntegerField(_("Value"))
     type = models.CharField(choices=CAPACITY_POLICY_TYPES, max_length=20, default='ABS')
-    resources = models.ManyToManyField(Resource, related_name='capacity_policies')
+    resources = models.ManyToManyField(Resource, verbose_name=_('Resources'), related_name='capacity_policies')
 
     class Meta:
         verbose_name = _("Capacity policy for resources")

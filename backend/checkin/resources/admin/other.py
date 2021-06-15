@@ -223,8 +223,8 @@ class ResourceGroupAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin,
                          TranslationAdmin):
     pass
 
-class ResourceCapacityPolicyAdmin(CommonExcludeMixin, admin.ModelAdmin):
-    list_display = ('name','value','type','get_resources_count')
+class ResourceCapacityPolicyAdmin(CommonExcludeMixin, PopulateCreatedAndModifiedMixin, admin.ModelAdmin):
+    list_display = ('name','value','type','get_resources_count','modified_at','modified_by')
     filter_horizontal = ('resources',)
 
     def get_resources_count(self, obj):
