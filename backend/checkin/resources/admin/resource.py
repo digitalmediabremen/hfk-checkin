@@ -69,7 +69,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Details'), {
             # 'classes': ('collapse',),
-            'fields': ('type','description','people_capacity_default','people_capacity_calculation_type','get_people_capacity','area','floor_number','floor_name'),#'purposes'
+            'fields': ('type','description','people_capacity_default','people_capacity_calculation_type','get_people_capacity','get_people_capacity_policy','area','floor_number','floor_name'),#'purposes'
         }),
         (_('Features'), {
             'fields': ('features',),
@@ -100,7 +100,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     ordering = ('unit', 'name')
     search_fields = ('name','alternative_names','numbers','unit__name')
     list_display_links = ('display_numbers', 'name')
-    readonly_fields = ('get_people_capacity', *ModifiableModelAdminMixin._fields)
+    readonly_fields = ('get_people_capacity', 'get_people_capacity_policy', *ModifiableModelAdminMixin._fields)
     list_max_show_all = 1000
     filter_horizontal = ('features',)
     save_on_top = True
@@ -122,6 +122,10 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     def get_people_capacity(self, obj):
         return obj.people_capacity
     get_people_capacity.short_description = _("Active Capacity")
+
+    def get_people_capacity_policy(self, obj):
+        return ", ".join(["%s (%s: %d)" % (p.name, p.type, p.value) for p in obj.capacity_policies.all()])
+    get_people_capacity_policy.short_description = _("Associated capacity policies")
 
     def get_unit_slug(self, obj):
         if obj.unit:
