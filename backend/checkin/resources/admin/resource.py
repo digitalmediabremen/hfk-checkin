@@ -11,6 +11,8 @@ from django.contrib.admin.widgets import AutocompleteSelect
 from django.contrib.admin.options import get_content_type_for_model, unquote, capfirst, PermissionDenied, IS_POPUP_VAR
 from django.contrib.admin.options import get_permission_codename
 from checkin.tracking.models import Location as CheckinLocation
+from django.contrib.messages import add_message, WARNING
+from django.http import Http404
 
 logger = logging.getLogger(__name__)
 
@@ -211,5 +213,9 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }
 
         request.current_app = self.admin_site.name
+
+        if obj and not obj.reservable:
+            add_message(request=request, message=_('%s is not reservable.') % str(obj), level=WARNING)
+            return TemplateResponse(request, "admin/base_site.html", context)
 
         return TemplateResponse(request, "admin/resources/resource_calendar.html", context)
