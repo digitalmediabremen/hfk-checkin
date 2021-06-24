@@ -365,7 +365,8 @@ def create_user_from_profile(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=User)
 def update_profile_from_user(sender, instance, **kwargs):
-    if (hasattr(instance, 'profile') and instance.profile is not None):
+    # pk != None -> instance was saved. Will raise ValueError: save() prohibited to prevent data loss due to unsaved related object 'user'. otherwise.
+    if (hasattr(instance, 'profile') and instance.profile is not None and instance.pk is not None):
         if instance.first_name and instance.profile.first_name != instance.first_name:
             instance.profile.first_name = instance.first_name
         if instance.last_name and instance.profile.last_name != instance.last_name:

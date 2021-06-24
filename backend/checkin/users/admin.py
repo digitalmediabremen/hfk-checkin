@@ -94,6 +94,27 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
 if not admin.site.is_registered(User):
     admin.site.register(User, UserAdmin)
 
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('first_name', 'last_name','phone','email','student_number','verified','is_external')
+
+    def validate_unique(self):
+        super().validate_unique()
+        email = self.cleaned_data['email']
+        # validate email in advance to prevent IntegrityError later (via pre_save / post_save signal)
+        obj = Profile.objects.filter(email=email).exclude(pk=self.instance.pk)
+        if obj:
+            self._update_errors(forms.ValidationError(_('Profile with this email is already exists. Try an another email.')))
+        obj = User.objects.filter(email=email)
+        if self.instance and self.instance.user:
+            obj = obj.exclude(pk=self.instance.user.pk)
+        if obj:
+            self._update_errors(
+                forms.ValidationError(_('User with this email is already exists. Try an another email.')))
+
+
 @admin.register(Profile)
 class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 
@@ -105,6 +126,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('id','created_at','updated_at','user')
     fields = ('id','first_name', 'last_name','phone','email','student_number','verified','is_external','created_at','updated_at')
+    form = ProfileForm
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request).exclude_anonymous_users().filter_for_user(request.user)
