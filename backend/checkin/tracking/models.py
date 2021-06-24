@@ -170,6 +170,8 @@ class Location(MPTTModel):
     load.short_description = _('# jetzt')
 
     def load_user_generated(self):
+        if self.hide_load:
+            return -1
         locations = self.get_descendants(include_self=True)
         return Checkin.objects.filter(location__in=locations).order_by('profile','time_entered').distinct('profile').not_older_then(LOAD_LOOKBACK_TIME).only_user_generated().active().count()
     load_user_generated.short_description = _('# jetzt (selbstdok.)')
