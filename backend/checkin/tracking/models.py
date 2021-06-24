@@ -19,6 +19,7 @@ from django.contrib.postgres.search import SearchVector
 from dirtyfields import DirtyFieldsMixin
 from django_better_admin_arrayfield.models.fields import ArrayField
 import random, string
+from django.db.models import Prefetch
 
 CHECKIN_RETENTION_TIME = timedelta(weeks=4)
 CHECKIN_LIFETIME = timedelta(hours=24)
@@ -95,7 +96,6 @@ class BookingMethod(models.Model):
 
 class LocationQuerySet(models.QuerySet):
     def prefetch_activities(self):
-        from django.db.models import Prefetch
         return self.prefetch_related(
         Prefetch(
             'org_activities',
@@ -110,7 +110,8 @@ class LocationManager(models.Manager.from_queryset(LocationQuerySet)):
     def get_queryset(self):
         return super(LocationManager, self).get_queryset() \
             .prefetch_activities() \
-            .select_related('resource')
+            .prefetch_related(Prefetch('resource', queryset=Resource.objects.annotate_capacity_calculation()))
+            #.select_related('resource')
 
 
 # Getin/Checkin-App Model
@@ -193,6 +194,9 @@ class Location(MPTTModel):
 
     @property
     def capacity(self):
+        if self.resource:
+            # use resource.capacity if existing
+            return self.resource.people_capacity
         activities = self.capacityforactivityprofile_set.all()
         if activities:
             max_capacity = max([act.capacity for act in activities])
