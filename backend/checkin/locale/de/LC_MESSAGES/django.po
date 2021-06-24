@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-15 18:58+0200\n"
+"POT-Creation-Date: 2021-06-24 17:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -303,7 +303,7 @@ msgstr "Zugangsberechtigung bei zuständigen Personen angefragt"
 #: checkin/resources/admin/reception.py:31
 #: checkin/resources/admin/reception.py:47
 #: checkin/resources/models/resource.py:108
-#: checkin/resources/models/resource.py:289
+#: checkin/resources/models/resource.py:286
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:28
 #: checkin/resources/templates/admin/resources/resource_calendar.html:20
 msgid "Space"
@@ -368,12 +368,12 @@ msgid "cancelled"
 msgstr "storniert"
 
 #: checkin/resources/admin/other.py:128
-#: checkin/resources/models/resource.py:969
+#: checkin/resources/models/resource.py:966
 msgid "Resource group"
 msgstr "Raumgruppe"
 
 #: checkin/resources/admin/other.py:129
-#: checkin/resources/models/resource.py:970
+#: checkin/resources/models/resource.py:967
 msgid "Resource groups"
 msgstr "Raumgruppen"
 
@@ -618,50 +618,54 @@ msgstr "Der Organisator fehlt in der Teilnehmerliste."
 msgid "%(user)s has one or more group assignments: %(assigned_groups)s"
 msgstr "%(user)s gehört zu folgenden Gruppen: %(assigned_groups)s"
 
-#: checkin/resources/admin/resource.py:45
+#: checkin/resources/admin/resource.py:47
 msgid "Checkin location"
 msgstr "Checkin-Standort"
 
-#: checkin/resources/admin/resource.py:46
+#: checkin/resources/admin/resource.py:48
 msgid "Checkin locations"
 msgstr "Checkin-Standorte"
 
-#: checkin/resources/admin/resource.py:70
+#: checkin/resources/admin/resource.py:72
 msgid "Details"
 msgstr "Details"
 
-#: checkin/resources/admin/resource.py:74
-#: checkin/resources/models/resource.py:272
+#: checkin/resources/admin/resource.py:76
+#: checkin/resources/models/resource.py:270
 msgid "Features"
 msgstr "Ausstattungsmerkmale"
 
-#: checkin/resources/admin/resource.py:77
+#: checkin/resources/admin/resource.py:79
 #: checkin/resources/models/attendance.py:24
 #: checkin/resources/models/reservation.py:239
 msgid "Reservation"
 msgstr "Reservierung"
 
-#: checkin/resources/admin/resource.py:85
+#: checkin/resources/admin/resource.py:87
 msgid "Access"
 msgstr "Zugang"
 
-#: checkin/resources/admin/resource.py:89
+#: checkin/resources/admin/resource.py:91
 msgid "Changes"
 msgstr "Änderungen"
 
-#: checkin/resources/admin/resource.py:124
+#: checkin/resources/admin/resource.py:126
 msgid "Active Capacity"
 msgstr "Gültige Kapazität"
 
-#: checkin/resources/admin/resource.py:128
+#: checkin/resources/admin/resource.py:130
 msgid "Associated capacity policies"
 msgstr "Zugeordnete Kapazitätsrichtlinien"
 
-#: checkin/resources/admin/resource.py:133
+#: checkin/resources/admin/resource.py:135
 #: checkin/resources/models/availability.py:112
-#: checkin/resources/models/resource.py:265
+#: checkin/resources/models/resource.py:263
 msgid "Unit"
 msgstr "Gebäude"
+
+#: checkin/resources/admin/resource.py:218
+msgid "%s is not reservable."
+msgstr "Diese Ressource ist nicht reservierbar."
 
 #: checkin/resources/admin/resource_access.py:14
 #: checkin/resources/templates/admin/resources/change_form_object_tools.html:10
@@ -681,7 +685,7 @@ msgstr "Teilnehmerliste für Buchungen"
 msgid "Attendance list for reservations"
 msgstr "Teilnehmerliste für Buchungen"
 
-#: checkin/resources/api/calendar.py:37
+#: checkin/resources/api/calendar.py:38 checkin/resources/api/calendar.py:46
 #: checkin/resources/models/reservation.py:232
 msgid "Exclusive resource usage"
 msgstr "Alleinige Nutzung"
@@ -761,11 +765,11 @@ msgstr "Raumverwaltung und Buchungen"
 #: checkin/resources/models/reservation.py:1118
 #: checkin/resources/models/resource.py:95
 #: checkin/resources/models/resource.py:113
-#: checkin/resources/models/resource.py:185
-#: checkin/resources/models/resource.py:261
-#: checkin/resources/models/resource.py:341
-#: checkin/resources/models/resource.py:965
-#: checkin/resources/models/resource.py:1016
+#: checkin/resources/models/resource.py:183
+#: checkin/resources/models/resource.py:259
+#: checkin/resources/models/resource.py:338
+#: checkin/resources/models/resource.py:962
+#: checkin/resources/models/resource.py:1013
 #: checkin/resources/models/unit.py:52
 msgid "Name"
 msgstr ""
@@ -778,7 +782,7 @@ msgstr "Bestellung"
 #: checkin/resources/models/accessibility.py:57
 #: checkin/resources/models/accessibility.py:84
 #: checkin/resources/models/accessibility.py:110
-#: checkin/resources/models/base.py:77 checkin/users/models.py:391
+#: checkin/resources/models/base.py:77 checkin/users/models.py:392
 msgid "Time of creation"
 msgstr "Zeitpunkt der Erstellung"
 
@@ -786,7 +790,7 @@ msgstr "Zeitpunkt der Erstellung"
 #: checkin/resources/models/accessibility.py:58
 #: checkin/resources/models/accessibility.py:85
 #: checkin/resources/models/accessibility.py:111
-#: checkin/resources/models/base.py:81 checkin/users/models.py:392
+#: checkin/resources/models/base.py:81 checkin/users/models.py:393
 msgid "Time of modification"
 msgstr "Zeitpunkt der Änderung"
 
@@ -823,7 +827,7 @@ msgstr ""
 
 #: checkin/resources/models/accessibility.py:79
 #: checkin/resources/models/accessibility.py:105
-#: checkin/resources/models/availability.py:110 checkin/tracking/models.py:119
+#: checkin/resources/models/availability.py:110 checkin/tracking/models.py:120
 msgid "Resource"
 msgstr "Ressource"
 
@@ -861,8 +865,8 @@ msgstr "Bestätigung steht aus"
 msgid "approved"
 msgstr "bestätigt"
 
-#: checkin/resources/models/attendance.py:25 checkin/tracking/models.py:374
-#: checkin/tracking/models.py:435 checkin/users/models.py:320
+#: checkin/resources/models/attendance.py:25 checkin/tracking/models.py:380
+#: checkin/tracking/models.py:441 checkin/users/models.py:320
 msgid "Userprofile"
 msgstr "Benutzerprofil"
 
@@ -931,7 +935,9 @@ msgid "End date"
 msgstr "Enddatum"
 
 #: checkin/resources/models/availability.py:119
-#: checkin/resources/models/resource.py:263 checkin/resources/models/unit.py:54
+#: checkin/resources/models/resource.py:261
+#: checkin/resources/models/resource.py:1014
+#: checkin/resources/models/unit.py:54
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -1441,129 +1447,130 @@ msgstr "Resourcentyp"
 msgid "resource types"
 msgstr "Resourcentypen"
 
-#: checkin/resources/models/resource.py:186
+#: checkin/resources/models/resource.py:184
 msgid "File"
 msgstr "Anhang"
 
-#: checkin/resources/models/resource.py:242
+#: checkin/resources/models/resource.py:240
 msgid "None"
 msgstr "Keiner"
 
-#: checkin/resources/models/resource.py:243
+#: checkin/resources/models/resource.py:241
 msgid "4-digit PIN code"
 msgstr "4-stelliger Pin-Code"
 
-#: checkin/resources/models/resource.py:244
+#: checkin/resources/models/resource.py:242
 msgid "6-digit PIN code"
 msgstr "6-stelliger Pin-Code"
 
-#: checkin/resources/models/resource.py:251
+#: checkin/resources/models/resource.py:249
 msgid "Default without policies"
 msgstr "Standardwert ohne Berücksichtigung der Richtlinien"
 
-#: checkin/resources/models/resource.py:252
+#: checkin/resources/models/resource.py:250
 msgid "Minimum according to policies"
 msgstr "Minimalwert unter Berücksichtigung der Richtlinien"
 
-#: checkin/resources/models/resource.py:253
+#: checkin/resources/models/resource.py:251
 msgid "Maximum according to policies"
 msgstr "Maximalwert unter Berücksichtigung der Richtlinien"
 
-#: checkin/resources/models/resource.py:259
+#: checkin/resources/models/resource.py:257
 msgid "Room number(s)"
 msgstr "Raumnummer(n)"
 
-#: checkin/resources/models/resource.py:260 checkin/tracking/legacy.py:13
+#: checkin/resources/models/resource.py:258 checkin/tracking/legacy.py:13
 msgid "Speicher XI: X.XX.XXX / Dechanatstraße: X.XX(x)"
 msgstr "Speicher XI: X.XX.XXX / Dechanatstraße: X.XX(x)"
 
-#: checkin/resources/models/resource.py:262
+#: checkin/resources/models/resource.py:260
 msgid "Alternative names"
 msgstr "Alternative Namen"
 
-#: checkin/resources/models/resource.py:267
+#: checkin/resources/models/resource.py:265
 msgid "Resource type"
 msgstr "Resourcentyp"
 
-#: checkin/resources/models/resource.py:276
+#: checkin/resources/models/resource.py:273
 msgid "Default people capacity"
 msgstr "Standardpersonenkapazizät"
 
-#: checkin/resources/models/resource.py:277
+#: checkin/resources/models/resource.py:274
 msgid "Capacity calculation"
 msgstr "Kapazitätsberechnung"
 
-#: checkin/resources/models/resource.py:278
+#: checkin/resources/models/resource.py:275
 msgid "Area (m²)"
 msgstr "Größe (m²)"
 
-#: checkin/resources/models/resource.py:278 checkin/tracking/legacy.py:17
+#: checkin/resources/models/resource.py:275 checkin/tracking/legacy.py:17
 msgid "in Quadratmetern"
 msgstr ""
 
-#: checkin/resources/models/resource.py:281
+#: checkin/resources/models/resource.py:278
 msgid "Floor number"
 msgstr "Etagennummer"
 
-#: checkin/resources/models/resource.py:281
+#: checkin/resources/models/resource.py:278
 msgid "-1: Basement, 0: Ground Floor, 1: First Floor"
 msgstr "-1: Keller, 0: Erdgeschoss, 1: Erste Etage, usw."
 
-#: checkin/resources/models/resource.py:282
+#: checkin/resources/models/resource.py:279
 msgid "Floor name"
 msgstr "Etagenbezeichung"
 
-#: checkin/resources/models/resource.py:290
+#: checkin/resources/models/resource.py:287
 msgid "Spaces"
 msgstr "Räume"
 
-#: checkin/resources/models/resource.py:308
+#: checkin/resources/models/resource.py:305
 msgid ""
 "Resources can not be reservable in this system and use a external "
 "reservation service url at the same time."
 msgstr ""
 
-#: checkin/resources/models/resource.py:356
+#: checkin/resources/models/resource.py:353
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:29
 #: checkin/resources/templates/admin/resources/resource_calendar.html:21
-#: checkin/tracking/models.py:141
+#: checkin/tracking/models.py:142
 msgid "Numbers"
 msgstr "Nummern"
 
-#: checkin/resources/models/resource.py:419
+#: checkin/resources/models/resource.py:416
 msgid "You must start and end the reservation during opening hours"
 msgstr "Die Buchungsanfrage muss innerhalb der Öffnungszeiten liegen."
 
-#: checkin/resources/models/resource.py:422
+#: checkin/resources/models/resource.py:419
 #, python-format
 msgid "The maximum reservation length is %(max_period)s"
 msgstr "Die maximale Buchungsdauer ist %(max_period)s"
 
-#: checkin/resources/models/resource.py:441
+#: checkin/resources/models/resource.py:438
 msgid "Maximum number of active reservations for this resource exceeded."
 msgstr "Die maximale Anzahl an Buchungen für diesen Raum wurde überschritten."
 
-#: checkin/resources/models/resource.py:966
+#: checkin/resources/models/resource.py:963
+#: checkin/resources/models/resource.py:1017
 msgid "Resources"
 msgstr "Ressourcen"
 
-#: checkin/resources/models/resource.py:990
+#: checkin/resources/models/resource.py:987
 msgid "Overlapping opening hours"
 msgstr "Überschneidende Öffnungszeiten"
 
-#: checkin/resources/models/resource.py:1013
+#: checkin/resources/models/resource.py:1010
 msgid "Absolute value"
 msgstr "Absoluter Wert"
 
-#: checkin/resources/models/resource.py:1017
+#: checkin/resources/models/resource.py:1015
 msgid "Value"
 msgstr "Wert"
 
-#: checkin/resources/models/resource.py:1022
+#: checkin/resources/models/resource.py:1020
 msgid "Capacity policy for resources"
 msgstr "Raumkapazitätsrichtlinie"
 
-#: checkin/resources/models/resource.py:1023
+#: checkin/resources/models/resource.py:1021
 msgid "Capacity policies for resources"
 msgstr "Raumkapazitätsrichtlinien"
 
@@ -1809,11 +1816,11 @@ msgstr ""
 msgid "Dokumentation und Nachverfolgung"
 msgstr ""
 
-#: checkin/tracking/legacy.py:11 checkin/tracking/models.py:120
+#: checkin/tracking/legacy.py:11 checkin/tracking/models.py:121
 msgid "Raumcode"
 msgstr ""
 
-#: checkin/tracking/legacy.py:12 checkin/tracking/models.py:121
+#: checkin/tracking/legacy.py:12 checkin/tracking/models.py:122
 msgid "Teil von"
 msgstr ""
 
@@ -1861,7 +1868,7 @@ msgstr ""
 msgid "Buchung via"
 msgstr ""
 
-#: checkin/tracking/legacy.py:25 checkin/tracking/models.py:132
+#: checkin/tracking/legacy.py:25 checkin/tracking/models.py:133
 #: checkin/users/models.py:283
 msgid "Letzte Änderung"
 msgstr ""
@@ -1870,7 +1877,7 @@ msgstr ""
 msgid "Checkins verstecken"
 msgstr ""
 
-#: checkin/tracking/legacy.py:27 checkin/tracking/models.py:134
+#: checkin/tracking/legacy.py:27 checkin/tracking/models.py:135
 msgid "Entfernt"
 msgstr ""
 
@@ -1884,236 +1891,236 @@ msgstr ""
 msgid "Kapazität"
 msgstr ""
 
-#: checkin/tracking/models.py:32
+#: checkin/tracking/models.py:33
 msgid "Bezeichnung DE"
 msgstr ""
 
-#: checkin/tracking/models.py:33
+#: checkin/tracking/models.py:34
 msgid "Bezeichnung EN"
 msgstr ""
 
-#: checkin/tracking/models.py:34
+#: checkin/tracking/models.py:35
 msgid "Beschreibung DE"
 msgstr ""
 
-#: checkin/tracking/models.py:35
+#: checkin/tracking/models.py:36
 msgid "Beschreibung EN"
 msgstr ""
 
-#: checkin/tracking/models.py:36
+#: checkin/tracking/models.py:37
 msgid "Mindestabstand DE"
 msgstr ""
 
-#: checkin/tracking/models.py:37
+#: checkin/tracking/models.py:38
 msgid "Mindestabstand EN"
 msgstr ""
 
-#: checkin/tracking/models.py:38
+#: checkin/tracking/models.py:39
 msgid "Regeln, Sonstige Maßnahmen DE"
 msgstr ""
 
-#: checkin/tracking/models.py:39
+#: checkin/tracking/models.py:40
 msgid "Regeln, Sonstige Maßnahmen EN"
 msgstr ""
 
-#: checkin/tracking/models.py:42
+#: checkin/tracking/models.py:43
 msgid "Aktivitätsprofil"
 msgstr ""
 
-#: checkin/tracking/models.py:43
+#: checkin/tracking/models.py:44
 msgid "Aktivitätsprofile"
 msgstr ""
 
-#: checkin/tracking/models.py:54 checkin/tracking/models.py:65
+#: checkin/tracking/models.py:55 checkin/tracking/models.py:66
 msgid "Bezeichnung"
 msgstr ""
 
-#: checkin/tracking/models.py:60
+#: checkin/tracking/models.py:61
 msgid "Raumnutzungsart"
 msgstr ""
 
-#: checkin/tracking/models.py:61
+#: checkin/tracking/models.py:62
 msgid "Raumnutzungsarten"
 msgstr ""
 
-#: checkin/tracking/models.py:71
+#: checkin/tracking/models.py:72
 msgid "Buchungsmethode"
 msgstr ""
 
-#: checkin/tracking/models.py:72
+#: checkin/tracking/models.py:73
 msgid "Buchungsmethoden"
 msgstr ""
 
-#: checkin/tracking/models.py:122
+#: checkin/tracking/models.py:123
 msgid "Subtitle / No."
 msgstr "Untertitel / Nr."
 
-#: checkin/tracking/models.py:122 checkin/tracking/models.py:123
+#: checkin/tracking/models.py:123 checkin/tracking/models.py:124
 msgid "Used if not attached to resource."
 msgstr "Wird angezeigt, falls keine Raum zum Standort zugeordnet ist."
 
-#: checkin/tracking/models.py:123
+#: checkin/tracking/models.py:124
 msgid "Title"
 msgstr "Titel"
 
-#: checkin/tracking/models.py:131
+#: checkin/tracking/models.py:132
 msgid "Aktivitätsprofile und Kapazitäten"
 msgstr ""
 
-#: checkin/tracking/models.py:133
+#: checkin/tracking/models.py:134
 msgid "Anzahl der Anwesenden verstecken"
 msgstr ""
 
-#: checkin/tracking/models.py:133
+#: checkin/tracking/models.py:134
 msgid ""
 "Anzahl der aktuell eingecheckten Personen den Nutzern nicht anzeigen. z.B. "
 "für Gebäude etc."
 msgstr ""
 
-#: checkin/tracking/models.py:134
+#: checkin/tracking/models.py:135
 msgid ""
 "Diese Checkin-Standort ist deaktiviert oder entfernt. Eine Löschung ist "
 "jedoch noch nicht möglich, weil noch Checkins am Raum hängen. (Soft-Delete)"
 msgstr ""
 
-#: checkin/tracking/models.py:157
+#: checkin/tracking/models.py:158
 msgid "Checkin-Standort"
 msgstr ""
 
-#: checkin/tracking/models.py:158
+#: checkin/tracking/models.py:159
 msgid "Checkin-Standorte"
 msgstr ""
 
-#: checkin/tracking/models.py:160
+#: checkin/tracking/models.py:161
 msgid "Kann PDF-Raumausweise erstellen"
 msgstr ""
 
-#: checkin/tracking/models.py:161
+#: checkin/tracking/models.py:162
 msgid "Kann aktuelle aktuelle Checkins anzeigen"
 msgstr ""
 
-#: checkin/tracking/models.py:169 checkin/tracking/models.py:183
+#: checkin/tracking/models.py:170 checkin/tracking/models.py:186
 msgid "# jetzt"
 msgstr ""
 
-#: checkin/tracking/models.py:174
+#: checkin/tracking/models.py:177
 msgid "# jetzt (selbstdok.)"
 msgstr ""
 
-#: checkin/tracking/models.py:179
+#: checkin/tracking/models.py:182
 msgid "# jetzt (kumuliert)"
 msgstr ""
 
-#: checkin/tracking/models.py:187
+#: checkin/tracking/models.py:190
 msgid "# Summe"
 msgstr ""
 
-#: checkin/tracking/models.py:201
+#: checkin/tracking/models.py:207
 msgid "Max. Kapazität"
 msgstr ""
 
-#: checkin/tracking/models.py:236 checkin/tracking/views/contact_report.py:26
+#: checkin/tracking/models.py:242 checkin/tracking/views/contact_report.py:26
 msgid "Profil"
 msgstr ""
 
-#: checkin/tracking/models.py:237 checkin/tracking/models.py:375
+#: checkin/tracking/models.py:243 checkin/tracking/models.py:381
 msgid "Standort"
 msgstr ""
 
-#: checkin/tracking/models.py:238
+#: checkin/tracking/models.py:244
 msgid "Maximalkapazität"
 msgstr ""
 
-#: checkin/tracking/models.py:239
+#: checkin/tracking/models.py:245
 msgid "Zusatz DE"
 msgstr ""
 
-#: checkin/tracking/models.py:240
+#: checkin/tracking/models.py:246
 msgid "Zusatz EN"
 msgstr ""
 
-#: checkin/tracking/models.py:243
+#: checkin/tracking/models.py:249
 msgid "Aktivitätsprofil und Kapzitäten"
 msgstr ""
 
-#: checkin/tracking/models.py:244
+#: checkin/tracking/models.py:250
 msgid "Aktivitätsprofile und Kapzitäten"
 msgstr ""
 
-#: checkin/tracking/models.py:363
+#: checkin/tracking/models.py:369
 msgid "Scan eines QR-Codes"
 msgstr ""
 
-#: checkin/tracking/models.py:364
+#: checkin/tracking/models.py:370
 msgid "Manuelle Eingabe durch Nutzer"
 msgstr ""
 
-#: checkin/tracking/models.py:365
+#: checkin/tracking/models.py:371
 msgid "Manuelle Eingabe durch Betreiber"
 msgstr ""
 
-#: checkin/tracking/models.py:366
+#: checkin/tracking/models.py:372
 msgid "Manuelle Eingabe durch Empfangspersonal"
 msgstr ""
 
-#: checkin/tracking/models.py:367
+#: checkin/tracking/models.py:373
 msgid "Scan eines QR-Codes durch andere Person"
 msgstr ""
 
-#: checkin/tracking/models.py:368
+#: checkin/tracking/models.py:374
 msgid "Checkin durch untergeordnetes Objekt"
 msgstr ""
 
-#: checkin/tracking/models.py:369
+#: checkin/tracking/models.py:375
 msgid "Checkout durch übergeordnetes Objekt"
 msgstr ""
 
-#: checkin/tracking/models.py:376
+#: checkin/tracking/models.py:382
 msgid "Eingang"
 msgstr ""
 
-#: checkin/tracking/models.py:377
+#: checkin/tracking/models.py:383
 msgid "Ausgang"
 msgstr ""
 
-#: checkin/tracking/models.py:379
+#: checkin/tracking/models.py:385
 msgid "Datenquelle Eingang"
 msgstr ""
 
-#: checkin/tracking/models.py:380
+#: checkin/tracking/models.py:386
 msgid "Datenquelle Ausgang"
 msgstr ""
 
-#: checkin/tracking/models.py:390
+#: checkin/tracking/models.py:396
 msgid "Checkin"
 msgstr ""
 
-#: checkin/tracking/models.py:399
+#: checkin/tracking/models.py:405
 msgid "Kann Nachverfolgung durchführen"
 msgstr ""
 
-#: checkin/tracking/models.py:436 checkin/users/models.py:273
+#: checkin/tracking/models.py:442 checkin/users/models.py:273
 msgid "Vorname"
 msgstr ""
 
-#: checkin/tracking/models.py:437 checkin/users/models.py:274
+#: checkin/tracking/models.py:443 checkin/users/models.py:274
 msgid "Nachname"
 msgstr ""
 
-#: checkin/tracking/models.py:440 checkin/users/admin.py:194
+#: checkin/tracking/models.py:446 checkin/users/admin.py:216
 #: checkin/users/models.py:277
 msgid "Telefonnummer"
 msgstr ""
 
-#: checkin/tracking/models.py:441 checkin/users/models.py:281
+#: checkin/tracking/models.py:447 checkin/users/models.py:281
 msgid "Matrikelnummer"
 msgstr ""
 
-#: checkin/tracking/models.py:442
+#: checkin/tracking/models.py:448
 msgid "Datum"
 msgstr ""
 
-#: checkin/tracking/models.py:442
+#: checkin/tracking/models.py:448
 #, python-format
 msgid ""
 "Ohne Datum ist die Eingabe und Kontaktnachverfolgung nicht möglich. Bitte "
@@ -2122,54 +2129,54 @@ msgid ""
 "werden in Ihrer Zeitzone (%(timezone)s) interpretiert."
 msgstr ""
 
-#: checkin/tracking/models.py:443
+#: checkin/tracking/models.py:449
 msgid "Unterschrift vorhanden"
 msgstr ""
 
-#: checkin/tracking/models.py:444
+#: checkin/tracking/models.py:450
 msgid "Eingegeben am"
 msgstr ""
 
-#: checkin/tracking/models.py:445
+#: checkin/tracking/models.py:451
 msgid "Eingabekommentar"
 msgstr ""
 
-#: checkin/tracking/models.py:445
+#: checkin/tracking/models.py:451
 msgid ""
 "Nutzen die dieses Feld für alle weiteren Bemerkugen zum vorliegenden "
 "Papierprotokoll oder zu Ihrer Eingabe."
 msgstr ""
 
-#: checkin/tracking/models.py:448
+#: checkin/tracking/models.py:454
 msgid "Papierprotokoll"
 msgstr ""
 
-#: checkin/tracking/models.py:449
+#: checkin/tracking/models.py:455
 msgid "Papierprotokolle"
 msgstr ""
 
-#: checkin/tracking/models.py:452
+#: checkin/tracking/models.py:458
 #, python-format
 msgid "Besuchsdokumentation von %s am %s"
 msgstr ""
 
-#: checkin/tracking/models.py:463
+#: checkin/tracking/models.py:469
 msgid "persönliche Referenz"
 msgstr ""
 
-#: checkin/tracking/models.py:464
+#: checkin/tracking/models.py:470
 msgid "Eingang nach 23:59 (Folgetag)"
 msgstr ""
 
-#: checkin/tracking/models.py:465
+#: checkin/tracking/models.py:471
 msgid "Ausgang nach 23:59 (Folgetag)"
 msgstr ""
 
-#: checkin/tracking/models.py:471
+#: checkin/tracking/models.py:477
 msgid "Aufenthalt (per Papierprotokoll)"
 msgstr ""
 
-#: checkin/tracking/models.py:472
+#: checkin/tracking/models.py:478
 msgid "Aufenthalte (per Papierprotokoll)"
 msgstr ""
 
@@ -2358,19 +2365,27 @@ msgstr "Berechtigungen"
 msgid "Important dates"
 msgstr "Daten"
 
-#: checkin/users/admin.py:140
+#: checkin/users/admin.py:109
+msgid "Profile with this email is already exists. Try an another email."
+msgstr ""
+
+#: checkin/users/admin.py:115
+msgid "User with this email is already exists. Try an another email."
+msgstr ""
+
+#: checkin/users/admin.py:162
 msgid "Hidden value"
 msgstr "Versteckter Wert"
 
-#: checkin/users/admin.py:202 checkin/users/models.py:279
+#: checkin/users/admin.py:224 checkin/users/models.py:279
 msgid "E-Mail Adresse"
 msgstr "E-Mail-Adresse"
 
-#: checkin/users/admin.py:211
+#: checkin/users/admin.py:233
 msgid "Group membership"
 msgstr "Gruppenmitgliedschaft"
 
-#: checkin/users/admin.py:212
+#: checkin/users/admin.py:234
 msgid "Group memberships"
 msgstr "Gruppenmitgliedschaften"
 
