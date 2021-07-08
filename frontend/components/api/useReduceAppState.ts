@@ -134,7 +134,7 @@ const useReduceAppState = () =>
                     },
                 };
             default:
-                assertNever(action, `Unhandled state change "${action!.type}"`);
+                assertNever(action, `Unhandled state change "${(action as unknown as AppAction).type}"`);
         }
     }, initialAppState);
 
