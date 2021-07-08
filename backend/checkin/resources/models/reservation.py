@@ -231,6 +231,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     agreed_to_phone_contact = models.BooleanField(_("Phone contact agreed"), blank=True, default=False)
     exclusive_resource_usage = models.BooleanField(_('Exclusive resource usage'), blank=True, default=False)
     organizer_is_attending = models.BooleanField(_("Organizer is attending"), blank=True, default=True)
+    title = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Title'), help_text=_("Optional title or reference for events, courses, classes etc."))
+    link = models.URLField(null=True, blank=True, verbose_name=_('Link'), help_text=_("Optional link or web reference for this reservation. e.g. ARTIST page, event annoucement, etc."))
 
     objects = ReservationManager()
     #objects = ReservationQuerySet.as_manager()
@@ -1129,6 +1131,8 @@ class ReservationPurpose(ModifiableModel, NameIdentifiedModel):
 
 
 class StaticReservationPurpose(models.TextChoices):
+    FOR_TEACHING = 'FOR_TEACHING', _("Teaching")
+    FOR_APPOINTMENT = 'FOR_APPOINTMENT', _("Appointment")
     FOR_EXAM = 'FOR_EXAM', _("Exam")
     FOR_EXAM_PREPARATION = 'FOR_EXAM_PREPARATION', _("Exam preperation")
     FOR_COUNCIL_MEETING = 'FOR_COUNCIL_MEETING', _("Council meeting")

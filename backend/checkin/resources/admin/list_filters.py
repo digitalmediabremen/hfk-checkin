@@ -3,7 +3,7 @@ from ..models import Resource
 from django.utils.translation import gettext_lazy as _
 from admin_auto_filters.filters import AutocompleteFilter
 from django.utils.timezone import now
-from ..models.reservation import Reservation
+from ..models.reservation import Reservation, StaticReservationPurpose
 
 
 class ResourceFilter(AutocompleteFilter):
@@ -76,3 +76,13 @@ class ReservationStateFilter(admin.SimpleListFilter):
             return queryset.filter(state=Reservation.REQUESTED)
         else:
             return queryset.filter(state=self.value())
+
+class PurposeFilter(admin.SimpleListFilter):
+    parameter_name = 'purpose'
+    title = _("Purpose")
+
+    def lookups(self, request, model_admin):
+        return StaticReservationPurpose.choices
+
+    def queryset(self, request, queryset):
+        return queryset.filter(purpose=self.value())

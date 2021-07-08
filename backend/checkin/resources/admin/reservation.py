@@ -15,7 +15,7 @@ from post_office.models import Email
 from django.urls import reverse
 from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from .resource import ResourceAdmin
-from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter
+from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, PurposeFilter
 from django.contrib.admin.utils import format_html
 from ..models.reservation import StaticReservationPurpose
 from ..models.resource import Resource
@@ -93,6 +93,8 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
+    PURPOSE_CHOICES = [('', '---------')] + StaticReservationPurpose.choices # add blank option
+    purpose = forms.ChoiceField(required=False, label=_("Purpose"), choices=PURPOSE_CHOICES)
     state = forms.ChoiceField(required=True, label=_("State"), choices=Reservation.STATE_CHOICES, initial=Reservation.CREATED,
                               widget=DisableableRadioSelect(
                                   disabled_choices=[Reservation.CREATED]))
@@ -122,9 +124,9 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                        admin.ModelAdmin):
     # extra_readonly_fields_on_update = ('access_code',)
     list_display = (
-    'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'get_collisions',
+    'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'title', 'get_collisions',
     'get_exclusive', 'get_created_at_display') #'get_priority',
-    list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', 'purpose',
+    list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', PurposeFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('begin', DateTimeRangeFilter),
                    ('end', DateTimeRangeFilter),
@@ -136,8 +138,9 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     autocomplete_fields = ('user', 'resource')
     readonly_fields = (
     'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_reservation_delegates',
-    'get_phone_number', 'get_purpose_display', 'created_at','created_by','modified_at','modified_by')
-    extra_readonly_fields_edit = ('user', 'purpose','organizer_is_attending', 'type', 'message', 'purpose')
+    'get_phone_number', 'created_at','created_by','modified_at','modified_by')
+    #extra_readonly_fields_edit = ('user', 'purpose','organizer_is_attending', 'type', 'message', 'purpose')
+    extra_readonly_fields_edit = ('user', 'organizer_is_attending', 'type')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
     date_hierarchy = 'begin'
@@ -151,7 +154,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     fieldsets = (
         (None, {
             'fields': ('user', 'resource', 'begin', 'end', 'number_of_attendees', 'exclusive_resource_usage',
-                       'get_purpose_display', 'message')  # 'short_uuid')
+                       'purpose', 'title', 'message', 'link')  # 'short_uuid')
         }),
         (_('State'), {
             'fields': ('state', 'message_state_update', 'approver', 'get_reservation_info','get_reservation_delegates','comment'),
