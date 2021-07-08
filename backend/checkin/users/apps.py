@@ -15,6 +15,8 @@ class UsersConfig(AppConfig):
     # triggered after migration.
 
     def ready(self):
+        # define signal handlers
+        from .signals import handlers
         # FIXME move this out of here! Dependency: microsoft_auth.
         # FIXME replace microsoft_auth with allauth or python-social-auth
         # does not belong here and should not even be necessary from the start.

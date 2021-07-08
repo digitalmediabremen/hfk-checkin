@@ -77,12 +77,16 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(source='profile.phone')
     email = serializers.EmailField(source='profile.email', read_only=True) # can only be writable if we validate emails
     is_external = serializers.BooleanField(source='profile.is_external', read_only=True)
-    preferred_language = serializers.ChoiceField(choices=settings.LANGUAGES, required=False, read_only=True)
+    preferred_language = serializers.ChoiceField(choices=settings.LANGUAGES, required=False, allow_null=True)
     #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     # TODO limited qs on reservations etc. ListField to ReservationsViewSet?
     #reservations = serializers.ListField(serializers=)
     verified = serializers.ReadOnlyField(source='profile.verified', read_only=True)
     complete = serializers.ReadOnlyField(source='profile.complete', read_only=True)
+
+    # FIXME attention!
+    # All fields are mapped manually to either user.profile or user.
+    # If you change fields you must change the create() and update() methods below as well.
 
     class Meta:
         model = User
@@ -91,27 +95,21 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     def validate_phone(self, value):
         return value.strip()
 
-    def get_preferred_language(self, validated_data):
+    def get_default_preferred_language(self):
         request = self.context.get("request")
-        # take language from serializer data if exists
-        # FIXME 'preferred_language' is not in validated_data. why?
-        # if 'preferred_language' in validated_data:
-        #     return {'preferred_language': validated_data['preferred_language']}
-        # take language form request otherwise
         if request and hasattr(request, "user"):
-            preferred_language = get_language_from_request(request)
-            return{'preferred_language': preferred_language}
-        return {}
+            return get_language_from_request(request)
+        return None
 
     def create(self, validated_data, user_extra={}, profile_extra={}):
         userprofile_data = validated_data.pop('profile')
-
         user = User.objects.create_user(**{
             User.USERNAME_FIELD: generate_username_for_new_user(userprofile_data),
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
-            'disable_notifications': True,
-            **self.get_preferred_language(userprofile_data),
+            'disable_notifications': True, # only for "guest users". regular users will never pass this method.
+            'preferred_language': validated_data.pop('preferred_language') or self.get_default_preferred_language(),
+            #**self.get_preferred_language(userprofile_data),
             **user_extra,
         })
         # create profile object
@@ -127,28 +125,38 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
         try:
             # FIXME will never exists if the username is time dependent
             profile = Profile.objects.get(user=user)
-            profile.__dict__.update(**profile_dict)
+            # update profile
+            for attr, value in profile_dict.items():
+                setattr(profile, attr, value)
             profile.save()
         except Profile.DoesNotExist:
             profile = Profile.objects.create(**profile_dict)
         user.profile = profile
         return user
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data, user_extra={}, profile_extra={}):
         userprofile_data = validated_data.pop('profile')
         # update user object
-        instance.__dict__.update(**{
+        user_data = {
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
-            **self.get_preferred_language(userprofile_data),
-        })
+            'preferred_language': validated_data.pop('preferred_language') or self.get_default_preferred_language(),
+            **user_extra,
+        }
+        # update instance
+        for attr, value in user_data.items():
+            setattr(instance, attr, value)
         # update profile object
-        instance.profile.__dict__.update(**{
+        profile_data = {
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
             'phone': userprofile_data['phone'],
             #'email': userprofile_data['email'], # can only be writable if we validate emails
-        })
+            **profile_extra,
+        }
+        # update instance.profile
+        for attr, value in profile_data.items():
+            setattr(instance.profile, attr, value)
         instance.profile.save()
         instance.save()
         return instance

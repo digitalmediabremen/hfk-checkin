@@ -12,7 +12,6 @@ from simple_history.models import HistoricalRecords
 from django.contrib.postgres.search import SearchVector
 from dirtyfields import DirtyFieldsMixin
 
-
 # set to anonyoumous user
 # def get_sentinel_user():
 #     return get_user_model().objects.get_or_create(username='deleted')[0]
