@@ -74,11 +74,11 @@ class ModifiableModel(models.Model):
     """
     Abstract "Mixin" to generalize created_by/at and modified_by/at fields for many models.
     """
-    created_at = models.DateTimeField(verbose_name=_('Time of creation'), default=timezone.now, editable=False)
+    created_at = models.DateTimeField(verbose_name=_('Time of creation'), auto_now_add=True, editable=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Created by'),
                                    null=True, blank=True, related_name="%(class)s_created",
                                    on_delete=models.SET_NULL, editable=False)
-    modified_at = models.DateTimeField(verbose_name=_('Time of modification'), default=timezone.now, editable=False)
+    modified_at = models.DateTimeField(verbose_name=_('Time of modification'), auto_now=True, editable=False)
     modified_by = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Modified by'),
                                     null=True, blank=True, related_name="%(class)s_modified",
                                     on_delete=models.SET_NULL, editable=False)
