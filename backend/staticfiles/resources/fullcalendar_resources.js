@@ -39,7 +39,7 @@ var resources_fullcalendar = {
                     },
                     success: function () {
                         calendar.refetchResources()
-                    }
+                    },
                 }, [
                     {
                         start: resources_fullcalendar.parameters.start,
@@ -47,6 +47,13 @@ var resources_fullcalendar = {
                         display: 'background'
                     }
                 ]],
+                eventContent: function(args) {
+                    var description = args.event.extendedProps.description;
+                    var title = args.event.title;
+                    if (description != undefined) {
+                        return {html: '<div class="fc-event-main-frame"><div class="fc-event-title-container fc-sticky"><div class="fc-event-title fc-sticky"">' + title + '</div></div><div class="fc-event-title-end-container fc-sticky"><div class="fc-event-title-end fc-sticky">' + description + '</div></div></div>'}
+                    }
+                },
                 resources: {
                     url: '/api/calendar/resource/',
                     method: 'GET',
