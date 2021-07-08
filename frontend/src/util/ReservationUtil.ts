@@ -175,6 +175,11 @@ export function getPurposeLabelMap(
             "request-purpose",
             "Gremiensitzung"
         ),
+        FOR_TEACHING: _t(
+            locale,
+            "request-purpose",
+            "Lehrveranstaltung"
+        ),
         OTHER: _t(
             locale,
             "request-purpose",

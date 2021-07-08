@@ -11,72 +11,91 @@ import Notice from "../../common/Notice";
 
 interface SetPurposeSubPageProps {}
 
-const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> = ({}) => {
-    const { t, locale } = useTranslation("request-purpose");
-    const { hasError, getError } = useValidation();
-    const [purpose, setPurpose] = useReservationState("purpose");
-    const [purposeText, setPurposeText] = useReservationState("message");
-    const handlePurposeTextChange = (
-        event: React.ChangeEvent<HTMLTextAreaElement>
-    ) => {
-        setPurposeText(event.target.value);
-    };
+const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> =
+    ({}) => {
+        const { t, locale } = useTranslation("request-purpose");
+        const { hasError, getError } = useValidation();
+        const [purpose, setPurpose] = useReservationState("purpose");
+        const [purposeText, setPurposeText] = useReservationState("message");
+        const handlePurposeTextChange = (
+            event: React.ChangeEvent<HTMLTextAreaElement>
+        ) => {
+            setPurposeText(event.target.value);
+        };
 
-    const displayedPurposes: Array<ReservationPurpose | undefined> = [
-        undefined,
-        "FOR_PICKUP",
-        "FOR_EXAM",
-        "FOR_EXAM_PREPARATION",
-        "FOR_COUNCIL_MEETING",
-        "OTHER",
-    ];
+        const displayedPurposes: Array<ReservationPurpose | undefined> = [
+            undefined,
+            "FOR_PICKUP",
+            "FOR_EXAM",
+            "FOR_EXAM_PREPARATION",
+            "FOR_COUNCIL_MEETING",
+            "FOR_TEACHING",
+            "OTHER",
+        ];
 
-    const Checkboxes = () =>
-        useMemo(
-            () => (
-                <>
-                    {displayedPurposes.map((p, index, arr) => (
-                        <FormCheckbox
-                            key={p || "normal"}
-                            value={purpose === p}
-                            onChange={(v) => setPurpose(v ? p : undefined)}
-                            label={getPurposeLabel(p, locale)}
-                            bottomSpacing={index === arr.length - 1 ? 3 : 1}
-                        />
-                    ))}
-                </>
-            ),
-            [purpose, displayedPurposes]
+        const Checkboxes = () =>
+            useMemo(
+                () => (
+                    <>
+                        {displayedPurposes.map((p, index, arr) => {
+                            const lastItem = index === arr.length - 1;
+                            const bottomSpacing = lastItem ? 3 : 1;
+                            return (
+                                <>
+                                    <FormCheckbox
+                                        key={p || "normal"}
+                                        value={purpose === p}
+                                        onChange={(v) =>
+                                            setPurpose(v ? p : undefined)
+                                        }
+                                        label={getPurposeLabel(p, locale)}
+                                        bottomSpacing={bottomSpacing}
+                                    />
+                                    {p === "FOR_TEACHING" && (
+                                        <Notice bottomSpacing={2}>
+                                            {t(
+                                                "Dieser Buchungsgrund soll zur Anmeldung einer Lehrveranstaltung durch Lehrende verwendet werden."
+                                            )}
+                                        </Notice>
+                                    )}
+                                </>
+                            );
+                        })}
+                    </>
+                ),
+                [purpose, displayedPurposes]
+            );
+
+        return (
+            <>
+                <style jsx>{``}</style>
+                <SmoothCollapse expanded={hasError("needsExceptionReason")}>
+                    <Notice
+                        error
+                        bottomSpacing={2}
+                        title={getError("needsExceptionReason").join("\n")}
+                    ></Notice>
+                </SmoothCollapse>
+                <Notice bottomSpacing={1}>
+                    {t(
+                        "Bitte ergänze deine Anfrage mit folgender Information."
+                    )}
+                </Notice>
+
+                <Checkboxes />
+                {purpose === "OTHER" && (
+                    <FormMultilineTextInput
+                        bottomSpacing={4}
+                        textareaProps={{
+                            value: purposeText,
+                            onChange: handlePurposeTextChange,
+                            maxRows: 6,
+                            placeholder: t("Begründung"),
+                        }}
+                    />
+                )}
+            </>
         );
-
-    return (
-        <>
-            <style jsx>{``}</style>
-            <SmoothCollapse expanded={hasError("needsExceptionReason")}>
-                <Notice
-                    error
-                    bottomSpacing={2}
-                    title={getError("needsExceptionReason").join("\n")}
-                ></Notice>
-            </SmoothCollapse>
-            <Notice bottomSpacing={1}>
-                {t("Bitte ergänze deine Anfrage mit folgender Information.")}
-            </Notice>
-
-            <Checkboxes />
-            {purpose === "OTHER" && (
-                <FormMultilineTextInput
-                    bottomSpacing={4}
-                    textareaProps={{
-                        value: purposeText,
-                        onChange: handlePurposeTextChange,
-                        maxRows: 6,
-                        placeholder: t("Begründung"),
-                    }}
-                />
-            )}
-        </>
-    );
-};
+    };
 
 export default SetPurposeSubPage;
