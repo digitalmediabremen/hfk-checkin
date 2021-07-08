@@ -4,7 +4,7 @@ import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useValidation from "../../../src/hooks/useValidation";
-import { ReservationPurpose } from "../../../src/model/api/ReservationPurpose";
+import ReservationPurpose from "../../../src/model/api/ReservationPurpose";
 import { getPurposeLabel } from "../../../src/util/ReservationUtil";
 import FormCheckbox from "../../common/FormCheckbox";
 import FormMultilineTextInput from "../../common/FormMultilineTextInput";

@@ -1,5 +1,5 @@
 import { Attendance } from "./MyProfile";
-import { ReservationPurpose } from "./ReservationPurpose";
+import ReservationPurpose from "./ReservationPurpose";
 import Resource from "./Resource";
 
 export type ReservationState =
