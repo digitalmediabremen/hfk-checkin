@@ -1,6 +1,6 @@
 .fc-event {
-    background: var(--theme-color-primary);
-    color: white;
+    background: white;
+    color: var(--theme-color-primary);
     border-color: var(--theme-color-primary);
 }
 .fc-event.inactive {
