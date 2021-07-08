@@ -728,7 +728,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             #     }, ReservationCollisionWarning)
 
             total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end)
-            if self.resource.people_capacity and total_number_of_attendees >= self.resource.people_capacity:
+            if self.resource.people_capacity is not None and total_number_of_attendees >= self.resource.people_capacity:
                 warnings.warn(gettext("The resource's capacity (%(resource_capacity)d) is already exhausted for some of the period." \
                                       "Total attendance (incl. this one): %(attendance_sum)d." % {
                     'resource_capacity': self.resource.people_capacity,

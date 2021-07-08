@@ -296,7 +296,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         cap = getattr(self, 'people_capacity', None)
         # if self.alternative_names:
         #     name += " (" + " / ".join(self.alternative_names) + ")"
-        if cap:
+        if cap is not None:
             name += " (%d)" % cap
         return name
 
