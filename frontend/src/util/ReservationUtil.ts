@@ -180,6 +180,11 @@ export function getPurposeLabelMap(
             "request-purpose",
             "Lehrveranstaltung"
         ),
+        FOR_APPOINTMENT: _t(
+            locale,
+            "request-purpose",
+            "Terminbuchung"
+        ),
         OTHER: _t(
             locale,
             "request-purpose",
