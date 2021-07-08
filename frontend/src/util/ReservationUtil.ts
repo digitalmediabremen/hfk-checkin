@@ -3,7 +3,8 @@ import { _t } from "../../localization";
 import { AttendanceState } from "../model/api/MyProfile";
 import NewReservation from "../model/api/NewReservation";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
-import { ReservationPurpose, ReservationState } from "../model/api/Reservation";
+import { ReservationState } from "../model/api/Reservation";
+import { ReservationPurpose } from "../model/api/ReservationPurpose";
 import { assertNever } from "./TypeUtil";
 
 export function getIcon(state: ReservationState) {
