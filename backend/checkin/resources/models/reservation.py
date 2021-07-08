@@ -863,6 +863,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         """
 
         from django.core.mail.message import sanitize_address, formataddr, forbid_multi_line_headers
+        from .utils import user_list_to_email_formatted_addresses
         encoding = 'utf-8'
         recipient = user
 
@@ -915,7 +916,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 logger.warning(
                     "Skipping %s. Can not send emails to external Users. External users do not have valid e-mail addresses." % u)
                 reply_to_users.remove(u)
-        reply_to_address = ", ".join([formataddr((u.get_display_name(), u.email)) for u in reply_to_users])
+        reply_to_address = user_list_to_email_formatted_addresses(reply_to_users)
 
         h, from_address = forbid_multi_line_headers('From', from_address, encoding)
         h, reply_to_address = forbid_multi_line_headers('Reply-To', reply_to_address, encoding)

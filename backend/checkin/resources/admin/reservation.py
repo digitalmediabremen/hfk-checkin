@@ -20,6 +20,7 @@ from django.contrib.admin.utils import format_html
 from ..models.reservation import StaticReservationPurpose
 from ..models.resource import Resource
 from ..models.users import ReservationUserGroup
+from ..models.utils import user_list_to_email_formatted_addresses
 from .other import DisableableRadioSelect
 from ..auth import is_general_admin
 from guardian.shortcuts import get_objects_for_user
@@ -134,8 +135,8 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     'uuid', 'resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
     readonly_fields = (
-    'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_phone_number',
-    'get_purpose_display', 'created_at','created_by','modified_at','modified_by')
+    'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_reservation_delegates',
+    'get_phone_number', 'get_purpose_display', 'created_at','created_by','modified_at','modified_by')
     extra_readonly_fields_edit = ('user', 'purpose','organizer_is_attending', 'type', 'message', 'purpose')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
@@ -153,7 +154,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                        'get_purpose_display', 'message')  # 'short_uuid')
         }),
         (_('State'), {
-            'fields': ('state', 'message_state_update', 'approver', 'get_reservation_info','comment'),
+            'fields': ('state', 'message_state_update', 'approver', 'get_reservation_info','get_reservation_delegates','comment'),
         }),
         (_('Request details'), {
             # 'classes': ('collapse',),
@@ -197,6 +198,13 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             return obj.resource.reservation_info
         return self.get_empty_value_display()
     get_reservation_info.short_description = _("Resource instructions")
+
+    def get_reservation_delegates(self, obj):
+        if obj and obj.resource:
+            return user_list_to_email_formatted_addresses(obj.resource.get_reservation_delegates())
+        return self.get_empty_value_display()
+    get_reservation_delegates.short_description = _("Resource reservation delegates")
+
 
     def get_organizer_display(self, obj):
         return obj.user.get_display_name()
