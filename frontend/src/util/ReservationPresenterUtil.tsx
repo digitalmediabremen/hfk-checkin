@@ -47,6 +47,12 @@ export const requestedAttendeePresenter = (
     </>
 );
 
+export const requestedAttendeePresenterString = (
+    a: AttendanceUpdate,
+    locale: string
+) =>
+    `${a.first_name} ${a.last_name} (${_t(locale, "request-purpose", "Extern")})`;
+
 export const attendeesFormValuePresenter = (
     r: NewReservationBlueprint | Reservation,
     locale: string

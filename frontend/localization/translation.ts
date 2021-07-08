@@ -82,8 +82,9 @@ const translation: Translation = {
             Zugang: "Access",
         },
         "request-attendees": {
-            "HfK externe Person(en) anmelden": "Register external person(s)",
-            Delete: "Delete",
+            "Externe anmelden": "Register externals",
+            "Studierende anmelden": "Register students",
+            "Möchtest du {name} aus der Liste entfernen?": "Do you want to delete {name} from the list?",
             "Person hinzufügen": "Add person",
             "Weitere Person hinzufügen": "Additional person",
             "HfK externe Personen müssen vorab angemeldet werden. Deine Anfrage wird an die Corona-Beauftragte geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern.":

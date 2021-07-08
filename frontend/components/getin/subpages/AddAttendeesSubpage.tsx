@@ -2,8 +2,10 @@ import React from "react";
 import { ArrowRight, UserPlus, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
-import useReservationState, { useReservationArrayState } from "../../../src/hooks/useReservationState";
-import { requestedAttendeePresenter } from "../../../src/util/ReservationPresenterUtil";
+import useReservationState, {
+    useReservationArrayState,
+} from "../../../src/hooks/useReservationState";
+import { requestedAttendeePresenter, requestedAttendeePresenterString } from "../../../src/util/ReservationPresenterUtil";
 import useSubPage from "../../api/useSubPage";
 import Divider from "../../common/Divider";
 import FormAmountInput from "../../common/FormAmountInput";
@@ -33,7 +35,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
 
         return (
             <>
-                <SectionTitle>{t("Studierende hinzufügen")}</SectionTitle>
+                <SectionTitle>{t("Studierende anmelden")}</SectionTitle>
                 <FormAmountInput
                     value={amount}
                     label={
@@ -49,30 +51,33 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
                     )}
                 </Notice>
                 <Divider />
-                <SectionTitle>
-                    {t("HfK externe Person(en) anmelden")}
-                </SectionTitle>
-                {attendees?.map((profile, index) => (
-                    <FormElement
-                        key={index}
-                        value={[
-                            requestedAttendeePresenter(profile, locale),
-                            `Tel: ${profile.phone}`,
-                        ]}
-                        onClick={() => goForward("attendee-set", `${index}`)}
-                        extendedWidth
-                        actionIcon={<X strokeWidth={2} />}
-                        onIconClick={() => {
-                            const c = window.confirm(
-                                `${t("Delete")} "${profile.first_name} ${
-                                    profile.last_name
-                                } (Extern)"?`
-                            );
-                            console.log(c);
-                            if (c) removeAttendee(index);
-                        }}
-                    ></FormElement>
-                ))}
+                <SectionTitle>{t("Externe anmelden")}</SectionTitle>
+                {attendees?.map((profile, index) => {
+                    const attendeeLabel = requestedAttendeePresenterString(profile, locale);
+                    const deleteConfirmText = t(
+                        "Möchtest du {name} aus der Liste entfernen?",
+                        { name: attendeeLabel }
+                    );
+                    return (
+                        <FormElement
+                            key={index}
+                            value={[
+                                requestedAttendeePresenter(profile, locale),
+                                `Tel: ${profile.phone}`,
+                            ]}
+                            onClick={() =>
+                                goForward("attendee-set", `${index}`)
+                            }
+                            extendedWidth
+                            actionIcon={<X strokeWidth={2} />}
+                            onIconClick={() => {
+                                const c = window.confirm(deleteConfirmText);
+                                console.log(c);
+                                if (c) removeAttendee(index);
+                            }}
+                        ></FormElement>
+                    );
+                })}
                 <NewButton
                     // noOutline={amountAttendees > 0}
                     extendedWidth
