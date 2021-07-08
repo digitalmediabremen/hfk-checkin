@@ -1,3 +1,4 @@
+import useResizeObserver from "@react-hook/resize-observer";
 import * as React from "react";
 import useTheme from "../../src/hooks/useTheme";
 type AlignOptions = "center" | "bottom";
@@ -10,43 +11,52 @@ interface IPushToBottomProps {
 const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     children,
     offsetBottomPadding,
-    align: _align
+    align: _align,
 }) => {
     const theme = useTheme();
-    const [offsetTop, setOffsetTop] = React.useState<number>(0);
+    const [containerHeight, setContainerHeight] = React.useState<string>();
     const measuredRef = React.useRef<HTMLDivElement>(null);
     const align = _align || "bottom";
     const alignCss = {
-        "center": "center",
-        "bottom": "flex-end",
+        center: "center",
+        bottom: "flex-end",
+    };
+
+    function updateContainerHeight(offsetTop: number) {
+        const heightString = `calc(100vh - ${
+            offsetTop + theme.footerHeight() + theme.spacing(2)
+        }px)`;
+        setContainerHeight(heightString);
     }
 
-    React.useEffect(() => {
-        if (measuredRef.current !== null) {
-            setOffsetTop(measuredRef.current.getBoundingClientRect().top);
-        }
-    }, [children]);
-    const containerHeight = (() => {
-        return `calc(100vh - ${offsetTop + theme.footerHeight() + theme.spacing(2)}px)`;
-    })();
+    React.useLayoutEffect(() => {
+        if (measuredRef.current === null) return;
+        updateContainerHeight(measuredRef.current.getBoundingClientRect().top);
+    },);
+
     return (
-        <>
+        <div ref={measuredRef}>
             <style jsx>{`
                 .flex {
+                    --offset: ${containerHeight};
                     display: flex;
                     align-items: ${alignCss[align]};
                     justify-content: center;
-                    min-height: ${containerHeight};
+                    min-height: var(--offset);
                 }
 
                 .offset-bottom-padding {
-                    transform: translateY(${theme.spacing(2) }px);
+                    transform: translateY(${theme.spacing(2)}px);
                 }
             `}</style>
-            <div ref={measuredRef}>
-                <div className={`flex ${offsetBottomPadding ? "offset-bottom-padding" : ""}`}>{children}</div>
+            <div
+                className={`flex ${
+                    offsetBottomPadding ? "offset-bottom-padding" : ""
+                }`}
+            >
+                {children}
             </div>
-        </>
+        </div>
     );
 };
 

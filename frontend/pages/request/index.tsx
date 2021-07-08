@@ -144,6 +144,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 iconRight={LoadingIcon}
                 disabled={loading}
                 extendedWidth
+                noBottomSpacing
             >
                 {t("Anfragen")}
             </NewButton>
