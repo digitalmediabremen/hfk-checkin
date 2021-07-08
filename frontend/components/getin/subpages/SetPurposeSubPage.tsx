@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import SmoothCollapse from "react-smooth-collapse";
 import { useTranslation } from "../../../localization";
+import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useValidation from "../../../src/hooks/useValidation";
 import { ReservationPurpose } from "../../../src/model/api/ReservationPurpose";
@@ -17,10 +18,16 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> =
         const { hasError, getError } = useValidation();
         const [purpose, setPurpose] = useReservationState("purpose");
         const [purposeText, setPurposeText] = useReservationState("message");
+        const [purposeTextLocalState, setpurposeTextLocalState] = useState<string>();
+
+
+        const updatePurposeText = useDelayedCallback(setPurposeText, 200)
         const handlePurposeTextChange = (
             event: React.ChangeEvent<HTMLTextAreaElement>
         ) => {
-            setPurposeText(event.target.value);
+            const text = event.target.value;
+            setpurposeTextLocalState(text)
+            updatePurposeText(text);
         };
 
         const displayedPurposes: Array<ReservationPurpose | undefined> = [
@@ -87,7 +94,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> =
                     <FormMultilineTextInput
                         bottomSpacing={4}
                         textareaProps={{
-                            value: purposeText,
+                            value: purposeTextLocalState,
                             onChange: handlePurposeTextChange,
                             maxRows: 6,
                             placeholder: t("Begründung"),
