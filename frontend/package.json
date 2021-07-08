@@ -4,7 +4,9 @@
     "private": true,
     "scripts": {
         "dev": "next dev",
-        "build": "npm run translate -- --quiet && npm run gen && next build",
+        "build": "if-env NEXT_PUBLIC_ENVIRONMENT=production && npm run build:production || npm run build:staging",
+        "build:production": "npm run translate -- --quiet && npm run gen && next build",
+        "build:staging": "npm run gen && next build",
         "postbuild": "rimraf ./.next/**/*.js.map",
         "test-build": "next build",
         "start": "next start -p $PORT",
@@ -62,6 +64,7 @@
         "@types/styled-jsx": "^2.2.8",
         "@types/yargs": "^15.0.9",
         "colors": "^1.4.0",
+        "if-env": "^1.0.4",
         "replace": "^1.2.0",
         "rimraf": "^3.0.2",
         "run-for-every-file": "^1.1.0",
