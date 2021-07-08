@@ -35,6 +35,16 @@ export const attendeePresenter = (a: Attendance, locale: string) => {
     );
 };
 
+export const extraAttendeesPresenter = (
+    numberOfExtraAttendees: number,
+    locale: string
+) => (
+    <>
+        +{numberOfExtraAttendees || 0}{" "}
+        {_t(locale, "request-purpose", "weitere")}
+    </>
+);
+
 export const requestedAttendeePresenter = (
     a: AttendanceUpdate,
     locale: string
@@ -51,7 +61,11 @@ export const requestedAttendeePresenterString = (
     a: AttendanceUpdate,
     locale: string
 ) =>
-    `${a.first_name} ${a.last_name} (${_t(locale, "request-purpose", "Extern")})`;
+    `${a.first_name} ${a.last_name} (${_t(
+        locale,
+        "request-purpose",
+        "Extern"
+    )})`;
 
 export const attendeesFormValuePresenter = (
     r: NewReservationBlueprint | Reservation,

@@ -26,9 +26,10 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
         const [attendees, , removeAttendee] =
             useReservationArrayState("attendees");
         const amountAttendees = attendees?.length || 0;
-        const amount = (_amount || 0) + 1;
+        const amount = (_amount || 0);
         const setAmount = (value: number) => {
-            _setAmount(value - 1);
+            console.log("changed amout")
+            _setAmount(value);
         };
 
         const { goForward } = useSubPage(requestSubpages);
@@ -41,7 +42,8 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
                     label={
                         amountAttendees > 0 ? `+${amountAttendees}` : undefined
                     }
-                    minValue={1}
+                    minValue={0}
+                    maxValue={50}
                     onChange={setAmount}
                     bottomSpacing={2}
                 />

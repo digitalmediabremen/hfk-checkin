@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Plus, Minus } from "react-feather";
-import useTheme from "../../src/hooks/useTheme";import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
+import useLongButtonPress from "../../src/hooks/useLongButtonPress";
+import useTheme from "../../src/hooks/useTheme";
+import { notEmpty } from "../../src/util/TypeUtil";
+import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 
 interface FormAmountInputProps extends Omit<FormElementBaseProps, "noOutline"> {
     value: number;
     minValue?: number;
     maxValue?: number;
     label?: string;
-    onChange?: (value: number) => void;
+    onChange?: (currentValue: number) => void;
 }
 
 const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
@@ -20,7 +23,10 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
 }) => {
     const theme = useTheme();
     const calculateValue = (v: number) =>
-        Math.min(Math.max(v, minValue || v), maxValue || v);
+        Math.min(
+            Math.max(v, notEmpty(minValue) ? minValue : v),
+            notEmpty(maxValue) ? maxValue : v
+        );
 
     const value = calculateValue(_value);
     const handleChange = (modifier: number) => {
@@ -29,6 +35,18 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
 
     const plusDisabled = !!maxValue && value === maxValue;
     const minusDisabled = !!minValue && value === minValue;
+
+    const longButtonPressDecreaseHandlers = useLongButtonPress(
+        () => handleChange(-1),
+        () => handleChange(-2),
+        100
+    );
+
+    const longButtonPressIncreaseHandlers = useLongButtonPress(
+        () => handleChange(1),
+        () => handleChange(2),
+        100
+    );
 
     return (
         <>
@@ -39,7 +57,7 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                 }
 
                 .label {
-                    color: ${theme.shadeDisabledColor(.7)};
+                    color: ${theme.shadeDisabledColor(0.7)};
                     font-weight: normal;
                 }
                 .control {
@@ -58,6 +76,8 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
                     cursor: pointer;
                     outline: none;
                     touch-action: manipulation;
+                    -webkit-touch-callout: none;
+                    user-select: none;
                 }
 
                 button.button-circle > :global(svg) {
@@ -83,24 +103,19 @@ const FormAmountInput: React.FunctionComponent<FormAmountInputProps> = ({
             `}</style>
             <FormElementBase noPadding noOutline {...formBaseElementProps}>
                 <span key={value} className="amount">
-                    {value}
-                    {" "}{label && (
-                        <span className="label">
-                            {label}
-                        </span>
-                    )}
+                    {value} {label && <span className="label">{label}</span>}
                 </span>
                 <div className="control">
                     <button
                         disabled={plusDisabled}
-                        onClick={() => handleChange(+1)}
+                        {...longButtonPressIncreaseHandlers}
                         className="button-circle plus"
                     >
                         <Plus />
                     </button>
                     <button
                         disabled={minusDisabled}
-                        onClick={() => handleChange(-1)}
+                        {...longButtonPressDecreaseHandlers}
                         className="button-circle minus"
                     >
                         <Minus />
