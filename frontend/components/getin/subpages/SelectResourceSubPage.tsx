@@ -171,6 +171,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             value={resourceFormValuePresenter(
                                 selectedResource,
                                 locale,
+                                true,
                                 true
                             )}
                             actionIcon={<X />}

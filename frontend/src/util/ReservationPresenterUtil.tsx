@@ -57,7 +57,7 @@ export const attendeesFormValuePresenter = (
         (extraAttendees && extraAttendees > 0);
     return show
         ? [
-              ...(((attendees as unknown) as AttendanceUpdate[])?.map((a) =>
+              ...((attendees as unknown as AttendanceUpdate[])?.map((a) =>
                   requestedAttendeePresenter(a, locale)
               ) || []),
               ...insertIf(
@@ -77,27 +77,44 @@ export const resourceFormValuePresenter = (
     resource: Resource,
     locale: string,
     includeResourceNumber: boolean = true,
+    includeAlternativeTitle: boolean = true
 ) => {
     const theme = useTheme();
+
+    const alternativeNamesAsSeperateRow = !theme.isDesktop;
+    const alternativeNamesString = resource.alternative_names?.join(", ");
 
     const PermissionIcon = resourcePermissionIcon(resource);
     return [
         ...insertIf([resource.display_numbers || ""], includeResourceNumber),
-        <b>
-            {resource.name}{" "}
-            {resource.access_restricted && (
-                <PermissionIcon
-                    strokeWidth={(2 / 20) * 24}
-                    height={theme.fontSize * 1.111}
-                    width={theme.fontSize}
-                    preserveAspectRatio="none"
-                    style={{
-                        verticalAlign: "text-bottom",
-                        transform: "translateY(-2px)",
-                    }}
-                />
-            )}
-        </b>,
+        <>
+            <b>
+                {resource.name}{" "}
+                {resource.access_restricted && (
+                    <PermissionIcon
+                        strokeWidth={(2 / 20) * 24}
+                        height={theme.fontSize * 1.111}
+                        width={theme.fontSize}
+                        preserveAspectRatio="none"
+                        style={{
+                            verticalAlign: "text-bottom",
+                            transform: "translateY(-2px)",
+                        }}
+                    />
+                )}
+            </b>{" "}
+            {includeAlternativeTitle &&
+                !!alternativeNamesString &&
+                !alternativeNamesAsSeperateRow && (
+                    <i>{alternativeNamesString}</i>
+                )}
+        </>,
+        ...insertIf(
+            [<i>{alternativeNamesString}</i>],
+            includeAlternativeTitle &&
+                !!alternativeNamesString &&
+                alternativeNamesAsSeperateRow
+        ),
     ];
 };
 export const resourcePermissionIcon = (r: Resource) =>

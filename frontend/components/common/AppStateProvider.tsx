@@ -31,6 +31,7 @@ export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
         dispatch({
             type: "updateTheme",
             theme: {
+                isDesktop,
                 fontSize: isDesktop ? 18 : 16,
                 unit: isDesktop ? 9 : 8,
                 borderRadius: isDesktop ? 6 : 5,

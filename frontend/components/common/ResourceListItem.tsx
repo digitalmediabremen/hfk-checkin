@@ -20,6 +20,7 @@ import FormElementBase from "./FormElementBase";
 import { LoadingInline } from "./Loading";
 import classNames from "classnames";
 import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
+import { insertIf } from "../../src/util/ReservationUtil";
 
 interface ResourceListItemProps {
     resource: Resource;
@@ -28,6 +29,7 @@ interface ResourceListItemProps {
     last?: boolean;
     showMeta?: boolean;
     includeAlternativeNames?: boolean;
+    includeAlternativeNamesAsNewRow?: boolean;
 }
 
 const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
@@ -36,7 +38,8 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     onSelect,
     last,
     showMeta,
-    includeAlternativeNames
+    includeAlternativeNames,
+    includeAlternativeNamesAsNewRow,
 }) => {
     const theme = useTheme();
     const { t } = useTranslation("request-resource-list");
@@ -45,6 +48,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     };
 
     const PermissionIcon = resourcePermissionIcon(resource);
+    const alternativeNames = resource.alternative_names?.join(", ");
 
     return (
         <div className="wrapper">
@@ -111,8 +115,16 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                         resource.display_numbers || "",
                         <span>
                             <b>{resource.name}</b>
-                            {includeAlternativeNames && resource.alternative_names &&(<i>{" "}{resource.alternative_names.join(",")}</i>)}
+                            {!!includeAlternativeNames &&
+                                !!alternativeNames && (
+                                    <i> {alternativeNames}</i>
+                                )}
                         </span>,
+                        ...insertIf(
+                            [<i> {alternativeNames}</i>],
+                            !!includeAlternativeNamesAsNewRow &&
+                                !!alternativeNames
+                        ),
                     ]}
                 />
 

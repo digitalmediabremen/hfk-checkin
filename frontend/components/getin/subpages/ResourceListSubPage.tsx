@@ -81,6 +81,7 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> = (
                         onSelect={handleResourceSelect(item)}
                         last={last}
                         showMeta
+                        includeAlternativeNames
                     />
                 )}
             </LazyList>

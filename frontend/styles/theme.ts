@@ -37,6 +37,7 @@ const createTheme = (unit: number = 8, fontSize: number = 16): Theme => ({
         return this.unit * 10;
     },
     desktopWidth: 600,
+    isDesktop: false,
     topBarHeight: function () {
         return this.unit * 8 + this.offsetTopBar;
     },
