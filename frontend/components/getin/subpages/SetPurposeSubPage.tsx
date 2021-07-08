@@ -18,7 +18,7 @@ const SetPurposeSubPage: React.FunctionComponent<SetPurposeSubPageProps> =
         const { hasError, getError } = useValidation();
         const [purpose, setPurpose] = useReservationState("purpose");
         const [purposeText, setPurposeText] = useReservationState("message");
-        const [purposeTextLocalState, setpurposeTextLocalState] = useState<string>();
+        const [purposeTextLocalState, setpurposeTextLocalState] = useState<string>(purposeText || "");
 
 
         const updatePurposeText = useDelayedCallback(setPurposeText, 200)
