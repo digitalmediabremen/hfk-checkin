@@ -73,7 +73,6 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
                             actionIcon={<X strokeWidth={2} />}
                             onIconClick={() => {
                                 const c = window.confirm(deleteConfirmText);
-                                console.log(c);
                                 if (c) removeAttendee(index);
                             }}
                         ></FormElement>
