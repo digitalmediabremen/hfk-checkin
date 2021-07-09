@@ -28,7 +28,6 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
         const amountAttendees = attendees?.length || 0;
         const amount = (_amount || 0);
         const setAmount = (value: number) => {
-            console.log("changed amout")
             _setAmount(value);
         };
 

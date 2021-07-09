@@ -12,25 +12,29 @@ export default function useLongButtonPress(
 
     useEffect(() => {
         callbackRef.current = longClickHandler;
-      }, [longClickHandler]);
-
-    const cb = useDelayedCallback(() => {
-        if (pressed.current === false) return;
-        interval.current = window.setInterval(() => callbackRef.current(), clickRate);
-    }, 200);
-
-    const onMouseDown = (event: React.MouseEvent<any, MouseEvent>) => {
-        if (interval.current) window.clearInterval(interval.current);
-
-        pressed.current = true;
-        cb();
-    };
+    }, [longClickHandler]);
 
     useEffect(() => {
         return () => {
             if (interval.current) window.clearInterval(interval.current);
         };
     }, []);
+
+    const cb = useDelayedCallback(() => {
+        if (pressed.current === false) return;
+        callbackRef.current();
+        interval.current = window.setInterval(
+            () => callbackRef.current(),
+            clickRate
+        );
+    }, 200);
+
+    const _onMouseDown = () => {
+        if (interval.current) window.clearInterval(interval.current);
+
+        pressed.current = true;
+        cb();
+    };
 
     const _onMouseUp = (triggerNormalClick = true) => {
         if (pressed.current === false) return;
@@ -46,17 +50,36 @@ export default function useLongButtonPress(
         }
     };
 
-    function onMouseOut(event: React.MouseEvent<any, MouseEvent>) {
-        _onMouseUp(false);
+    function onPointerDown(event: React.PointerEvent<any>) {
+        _onMouseDown();
     }
 
-    function onMouseUp(event: React.MouseEvent<any, MouseEvent>) {
+    function onPointerUp(event: React.PointerEvent<any>) {
         _onMouseUp();
     }
 
-    function onBlur(event: React.FocusEvent<any>) {
+    function onPointerCancel(event: React.PointerEvent<any>) {
         _onMouseUp(false);
     }
 
-    return { onMouseDown, onMouseUp, onMouseOut, onBlur };
+    function onPointerLeave(event: React.PointerEvent<any>) {
+        _onMouseUp(false);
+    }
+
+    function onPointerOut(event: React.PointerEvent<any>) {
+        _onMouseUp(false);
+    }
+
+    function onContextMenu(event: React.MouseEvent<any>) {
+        event.preventDefault();
+    }
+
+    return {
+        onPointerDown,
+        onPointerUp,
+        onPointerCancel,
+        onPointerOut,
+        onPointerLeave,
+        onContextMenu,
+    };
 }
