@@ -28,11 +28,9 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(({
                         -moz-appearance: textfield;
                         min-height: 1.2rem;
                         // opacity: 0;
-                    }
-                
-                    input {
                         font-weight: bold;
                     }
+                
 
                     input[type="date"]::-webkit-datetime-edit {
                         text-align: center;

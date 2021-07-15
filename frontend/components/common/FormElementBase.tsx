@@ -102,8 +102,11 @@ const FormElementBase = forwardRef<
                         padding: 0px;
 
                         min-height: ${theme.spacing(minHeightSpacing)}px;
+                        height: min-content;
                         color: ${theme.primaryColor};
                         background-color: ${theme.secondaryColor};
+
+                        line-height: 1.25rem;
                     }
 
                     .form-element-base.adaptive-width {
@@ -146,7 +149,12 @@ const FormElementBase = forwardRef<
                         border: 2px solid ${theme.primaryColor};
                     }
 
-                    .form-element-base.padding {
+                    .form-element-base.padding:not(.outline) {
+                        padding: ${theme.spacing(0.5)}px
+                            ${theme.spacing(1) + 4}px;
+                    }
+
+                    .form-element-base.padding.outline {
                         padding: ${theme.spacing(0.5)}px
                             ${theme.spacing(1) + 2}px;
                     }

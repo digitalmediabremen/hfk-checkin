@@ -60,11 +60,6 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                 <Link href={appUrls.privacy}>
                     <a>{t("Datenschutz")}</a>
                 </Link>
-                {profile && (
-                    <Link href={appUrls.logout}>
-                        <a>{t("Ausloggen")}</a>
-                    </Link>
-                )}
             </div>
         </>
     );

@@ -16,7 +16,9 @@ const appStateContext = React.createContext<{
     dispatch: () => undefined,
 });
 
-const { Provider } = appStateContext;
+const { Provider, Consumer  } = appStateContext;
+
+export const AppStateConsumer = Consumer;
 
 export const AppStateProvider: FunctionComponent<{}> = ({ children }) => {
     const [appState, dispatch] = useReduceAppState();

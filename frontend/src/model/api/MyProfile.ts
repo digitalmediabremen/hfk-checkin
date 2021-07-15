@@ -1,10 +1,11 @@
 import { Writable } from "../../util/TypeUtil";
 import { LastCheckin } from "./Checkin";
-import { MyReservation } from "./Reservation";
+import Locale from "./Locale";
 
 export default interface MyProfile extends PrivateProfile {
     readonly verified: boolean;
     readonly last_checkins: Array<LastCheckin>;
+    preferred_language: Locale | null;
     // readonly reservations: Array<MyReservation>;
 }
 

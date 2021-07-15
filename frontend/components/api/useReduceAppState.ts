@@ -4,13 +4,15 @@ import { AppAction, AppState } from "../../src/model/AppState";
 import { assertNever } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/util/ReservationValidationUtil";
 import createTheme from "../../styles/theme";
+import Locale from "../../src/model/api/Locale";
+import { getTypeSafeLocale } from "../../src/util/LocaleUtil";
 
 export const initialAppState: AppState = {
     initialized: false,
     disableNextUpdate: false,
     subPageTransitionDirection: "right",
     reservationValidation: [],
-    currentLocale: "en",
+    currentLocale: getTypeSafeLocale(),
     status: undefined,
     theme: createTheme(),
 };
@@ -119,7 +121,7 @@ const useReduceAppState = () =>
             case "updateLocale":
                 return {
                     ...previousState,
-                    currentLocale: action.locale,
+                    currentLocale: action.locale as unknown as Locale,
                     reservationValidation: validateReservation(
                         previousState.reservationRequest || {},
                         action.locale

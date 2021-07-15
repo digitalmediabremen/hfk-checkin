@@ -85,6 +85,7 @@ export const isClient = typeof window === "object";
 export const isServer = typeof window === "undefined";
 
 // language
+export const availableLocales = ["de", "en"] as const;
 export const defaultLocale = "en" as const;
 export const baseLocale = "de" as const;
 export const forceLocale: string | undefined = undefined;

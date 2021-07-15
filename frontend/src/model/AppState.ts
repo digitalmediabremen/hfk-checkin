@@ -5,6 +5,7 @@ import { Validation } from "../util/ReservationValidationUtil";
 import Theme from "./Theme";
 import Status from "./Status";
 import MyProfile from "./api/MyProfile";
+import Locale from "./api/Locale";
 
 export type TransitionDirection = "left" | "right";
 
@@ -23,7 +24,7 @@ export interface AppState {
     // template object from which a new request can be based on
     reservationRequestTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;
-    currentLocale: string;
+    currentLocale: Locale;
     theme: Theme;
 }
 

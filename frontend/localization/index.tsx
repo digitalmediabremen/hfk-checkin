@@ -1,8 +1,6 @@
 import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
-import { browser } from "process";
 import { createContext, useCallback, useContext, useEffect } from "react";
-import { useAppState } from "../components/common/AppStateProvider";
 import {
     appUrls,
     baseLocale,
@@ -57,10 +55,6 @@ export const LocaleProvider: React.FunctionComponent<{ locale: string }> = ({
     locale,
     children,
 }) => {
-    const { dispatch } = useAppState();
-    useEffect(() => {
-        dispatch({ type: "updateLocale", locale });
-    }, [locale]);
     return <Provider value={{ locale }}>{children}</Provider>;
 };
 
@@ -85,7 +79,7 @@ export const useTranslation = (inModule: TranslationModules = "common") => {
     const t: TFunction = useCallback(
         (s, data?, alternativeId?) =>
             _t(locale, inModule, s, data, alternativeId),
-        []
+        [locale]
     );
     return { locale, t };
 };
