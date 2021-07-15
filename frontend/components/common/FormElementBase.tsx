@@ -1,7 +1,9 @@
 import classNames from "classnames";
 import React, { forwardRef, ReactNode } from "react";
 import useTheme from "../../src/hooks/useTheme";
+import { assertNever } from "../../src/util/TypeUtil";
 
+export type VerticalDensityType = "super-narrow" | "narrow" | "normal" | "wide";
 export interface FormElementBaseProps {
     children?: ReactNode;
     componentType?: "a" | "div" | "li" | "button";
@@ -11,8 +13,7 @@ export interface FormElementBaseProps {
     extendedWidth?: boolean;
     noOutline?: boolean;
     className?: string;
-    narrow?: boolean;
-    superNarrow?: boolean;
+    density?: VerticalDensityType;
     disabled?: boolean;
     noPadding?: boolean;
     zIndex?: number;
@@ -29,7 +30,20 @@ export type FormElementBaseRefType = HTMLButtonElement &
     HTMLAnchorElement &
     HTMLDivElement;
 
-const FormElementBase = forwardRef<FormElementBaseRefType, FormElementBaseProps>(
+export function calculateMinHeightSpacing(
+    density: VerticalDensityType | undefined
+) {
+    if (density === "super-narrow") return 5;
+    else if (density === "narrow") return 3;
+    else if (density === "normal" || !density) return 7;
+    else if (density === "wide") return 9;
+    assertNever(density);
+}
+
+const FormElementBase = forwardRef<
+    FormElementBaseRefType,
+    FormElementBaseProps
+>(
     (
         {
             componentType,
@@ -40,8 +54,7 @@ const FormElementBase = forwardRef<FormElementBaseRefType, FormElementBaseProps>
             children,
             noOutline,
             primary,
-            narrow,
-            superNarrow,
+            density,
             className,
             disabled,
             noPadding,
@@ -63,6 +76,8 @@ const FormElementBase = forwardRef<FormElementBaseRefType, FormElementBaseProps>
             if (extendedWidth) return -theme.spacing(1.5) + 1;
             return 0;
         };
+
+        const minHeightSpacing = calculateMinHeightSpacing(density);
         return (
             <>
                 <style jsx>{`
@@ -86,9 +101,7 @@ const FormElementBase = forwardRef<FormElementBaseRefType, FormElementBaseProps>
 
                         padding: 0px;
 
-                        min-height: ${theme.spacing(
-                            superNarrow ? 4 : narrow ? 5 : 7
-                        )}px;
+                        min-height: ${theme.spacing(minHeightSpacing)}px;
                         color: ${theme.primaryColor};
                         background-color: ${theme.secondaryColor};
                     }

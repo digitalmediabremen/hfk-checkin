@@ -34,14 +34,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const queryResourceRequest = useResources(false);
     const unitsApi = useUnits();
     const { goForward } = useSubPage(requestSubpages);
-    const [
-        selectedResource,
-        setSelectedResource,
-    ] = useReservationState("resource");
+    const [selectedResource, setSelectedResource] =
+        useReservationState("resource");
     const [units, setUnits] = useReservationState("units");
-    const [selectedUnitId, setSelectedUnitId] = useReservationState(
-        "selectedUnitId"
-    );
+    const [selectedUnitId, setSelectedUnitId] =
+        useReservationState("selectedUnitId");
     const [checked, setChecked] = useReservationState(
         "exclusive_resource_usage"
     );
@@ -150,7 +147,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         <FormElement
                             primary={unit.slug === selectedUnitId}
                             onClick={() => handleSetUnit(unit.slug)}
-                            superNarrow
+                            density="super-narrow"
                             value={unit.name}
                             adaptiveWidth
                             key={unit.uuid}
@@ -263,7 +260,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             // label="Info"
                             labelIcon={<Info />}
                             alignLabelIconTop
-                            superNarrow
+                            density="super-narrow"
                             noOutline
                             noPadding
                             value={<>{selectedResource?.description}</>}
@@ -296,7 +293,9 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
                     <FormCheckbox
                         value={checked ?? false}
-                        label={t("Keine anderen Buchungen im Zeitraum zulassen.")}
+                        label={t(
+                            "Keine anderen Buchungen im Zeitraum zulassen."
+                        )}
                         onChange={setChecked}
                         bottomSpacing={2}
                     />

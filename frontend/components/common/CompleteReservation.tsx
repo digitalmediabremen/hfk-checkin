@@ -36,10 +36,10 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
         const purposeValue = purposeFormValuePresenter(reservation, locale);
         const disabled = state === "cancelled" || state === "denied";
 
-        const formElementProps = {
+        const formElementProps: Partial<FormElementProps> = {
             noPadding: true,
             noOutline: true,
-            narrow: true,
+            density: "narrow",
             disabled,
         };
 
@@ -72,7 +72,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                     <FormElement
                         labelIcon={<Icon />}
                         {...formElementBaseProps}
-                        narrow
+                        density="narrow"
                         noOutline
                         value={getStateLabel(state, locale).toUpperCase()}
                     />
@@ -103,7 +103,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                         <AttendeeStateIcon strokeWidth={1} />
                                     }
                                     bottomSpacing={bottomSpacing}
-                                    superNarrow
+                                    density="super-narrow"
                                     {...formElementProps}
                                     value={attendeePresenter(attendee, locale)}
                                 />
@@ -113,7 +113,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                             numberOfExtraAttendees > 0 && (
                                 <FormElement
                                     labelIcon={" "}
-                                    superNarrow
+                                    density="super-narrow"
                                     {...formElementProps}
                                     value={extraAttendeesPresenter(
                                         numberOfExtraAttendees,

@@ -33,7 +33,7 @@ const ProfileBar: React.FunctionComponent<ProfileBarProps> = () => {
                     labelIcon={<List strokeWidth={2} />}
                     noPadding
                     noBottomSpacing
-                    narrow
+                    density="narrow"
                 />
             </Link>
         </Bar>

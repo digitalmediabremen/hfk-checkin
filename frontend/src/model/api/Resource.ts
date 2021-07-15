@@ -14,4 +14,5 @@ export default interface Resource {
     readonly reservable_max_days_in_advance: number | null;
     readonly reservable_min_days_in_advance: number | null;
     readonly description: string | null;
+    readonly features: string[] | null;
 }

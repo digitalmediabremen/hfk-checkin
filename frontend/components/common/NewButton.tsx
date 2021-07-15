@@ -23,7 +23,7 @@ const NewButton = forwardRef<FormElementBaseRefType, NewButtonProps>(({
     iconLeft,
     iconRight,
     noOutline,
-    narrow,
+    density,
     href,
     ...formElementBaseProps
 }, ref) => {
@@ -81,7 +81,7 @@ const NewButton = forwardRef<FormElementBaseRefType, NewButtonProps>(({
                 }
             `}</style>
             <FormElementBase
-                narrow
+                density="narrow"
                 noPadding={noOutline}
                 noOutline={noOutline}
                 {...formElementBaseProps}

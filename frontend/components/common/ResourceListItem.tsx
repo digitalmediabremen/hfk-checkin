@@ -16,7 +16,7 @@ import useTheme from "../../src/hooks/useTheme";
 import FormMultilineValue from "../FormMultilineValue";
 import Divider from "./Divider";
 import FormElement from "./FormElement";
-import FormElementBase from "./FormElementBase";
+import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import { LoadingInline } from "./Loading";
 import classNames from "classnames";
 import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
@@ -29,8 +29,9 @@ interface ResourceListItemProps {
     last?: boolean;
     showMeta?: boolean;
     includeAlternativeNames?: boolean;
-    includeAlternativeNamesAsNewRow?: boolean;
 }
+
+export const RESOURCE_LIST_ITEM_DENSITY = "wide";
 
 const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     resource,
@@ -39,7 +40,6 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     last,
     showMeta,
     includeAlternativeNames,
-    includeAlternativeNamesAsNewRow,
 }) => {
     const theme = useTheme();
     const { t } = useTranslation("request-resource-list");
@@ -49,6 +49,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
 
     const PermissionIcon = resourcePermissionIcon(resource);
     const alternativeNames = resource.alternative_names?.join(", ");
+    const featureList = resource.features?.join(", ");
 
     return (
         <div className="wrapper">
@@ -100,6 +101,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                 noBottomSpacing
                 onClick={handleSelect}
                 componentType="li"
+                density={RESOURCE_LIST_ITEM_DENSITY}
             >
                 {notEmpty(selected) && (
                     <span className="icon left">
@@ -120,11 +122,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                                     <i> {alternativeNames}</i>
                                 )}
                         </span>,
-                        ...insertIf(
-                            [<i> {alternativeNames}</i>],
-                            !!includeAlternativeNamesAsNewRow &&
-                                !!alternativeNames
-                        ),
+                        ...insertIf([<i> {featureList}</i>], !!featureList),
                     ]}
                 />
 

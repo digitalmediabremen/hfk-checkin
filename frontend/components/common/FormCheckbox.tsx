@@ -48,7 +48,7 @@ const FormCheckbox: React.FunctionComponent<FormCheckboxProps> = ({
                 noOutline
                 noPadding
                 onClick={handleChange}
-                narrow
+                density="narrow"
                 {...formElementBaseProps}
             >
                 <span className="icon">

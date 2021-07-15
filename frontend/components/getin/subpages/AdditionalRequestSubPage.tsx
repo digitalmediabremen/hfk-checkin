@@ -168,7 +168,7 @@ const AdditionalRequestSubPage: React.FunctionComponent<AdditionalRequestSubPage
                 bottomSpacing={4}
                 onClick={() => handleNewReservationRequest(undefined)}
                 value={[t("Neue Anfrage")]}
-                narrow
+                density="narrow"
             /> */}
             <Notice>
                 {t("Wähle die Angaben aus, die du aus der Buchung #{identifier} übernehmen möchtest.", {identifier: reservation.identifier})}
