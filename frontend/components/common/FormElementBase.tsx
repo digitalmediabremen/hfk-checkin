@@ -33,8 +33,8 @@ export type FormElementBaseRefType = HTMLButtonElement &
 export function calculateMinHeightSpacing(
     density: VerticalDensityType | undefined
 ) {
-    if (density === "super-narrow") return 5;
-    else if (density === "narrow") return 3;
+    if (density === "super-narrow") return 4;
+    else if (density === "narrow") return 5;
     else if (density === "normal" || !density) return 7;
     else if (density === "wide") return 9;
     assertNever(density);
