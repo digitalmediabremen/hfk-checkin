@@ -296,7 +296,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
                     <FormCheckbox
                         value={checked ?? false}
-                        label={t("Ich möchte den Raum allein nutzen.")}
+                        label={t("Keine anderen Buchungen im Zeitraum zulassen.")}
                         onChange={setChecked}
                         bottomSpacing={2}
                     />
