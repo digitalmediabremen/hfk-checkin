@@ -231,8 +231,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     agreed_to_phone_contact = models.BooleanField(_("Phone contact agreed"), blank=True, default=False)
     exclusive_resource_usage = models.BooleanField(_('Exclusive resource usage'), blank=True, default=False)
     organizer_is_attending = models.BooleanField(_("Organizer is attending"), blank=True, default=True)
-    title = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Title'), help_text=_("Optional title or reference for events, courses, classes etc."))
-    link = models.URLField(null=True, blank=True, verbose_name=_('Link'), help_text=_("Optional link or web reference for this reservation. e.g. ARTIST page, event annoucement, etc."))
+    title = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Title'), help_text=_("Optional title or reference for events, courses, classes etc. (For internal use only.)"))
+    link = models.URLField(null=True, blank=True, verbose_name=_('Link'), help_text=_("Optional link or web reference for this reservation. e.g. ARTIST page, event annoucement, etc. (For internal use only.)"))
 
     objects = ReservationManager()
     #objects = ReservationQuerySet.as_manager()
@@ -729,7 +729,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
             total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end)
             if self.resource.people_capacity is not None and total_number_of_attendees >= self.resource.people_capacity:
-                warnings.warn(gettext("The resource's capacity (%(resource_capacity)d) is already exhausted for some of the period." \
+                warnings.warn(gettext("The resource's capacity (%(resource_capacity)d) is already exhausted for some of the period. " \
                                       "Total attendance (incl. this one): %(attendance_sum)d." % {
                     'resource_capacity': self.resource.people_capacity,
                     'attendance_sum': total_number_of_attendees

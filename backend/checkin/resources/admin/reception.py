@@ -10,6 +10,8 @@ from django.core.exceptions import PermissionDenied
 from urllib.parse import urlparse
 from django.shortcuts import redirect
 from django.template.defaultfilters import truncatechars
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from django.conf import settings
 if 'checkin.tracking' in settings.INSTALLED_APPS:
@@ -70,11 +72,11 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
 
     class CheckinAttendanceAdmin(AttendanceAdmin):
         inlines = [CheckinInline]
-        readonly_fields = ('user', 'reservation', 'get_reservation_organizer', 'get_reservation_resource', 'state','get_comment')
+        readonly_fields = ('user', 'get_reservation_link', 'get_reservation_organizer', 'get_reservation_resource', 'state','get_comment','get_extra_attendees_on_organizer')
         fields = readonly_fields
         list_editable = ()
         #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
-        list_display = ['get_user_first_name', 'get_user_last_name', 'resource','get_display_duration','enter_action','leave_action','get_comment_list','state']
+        list_display = ['get_user_first_name', 'get_user_last_name','get_extra_attendees_on_organizer', 'resource','get_display_duration','enter_action','leave_action','get_purpose','get_comment_list','state']
         list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
                        # 'resources', 'start', 'end', 'status', 'is_important',
                        ('reservation__begin', DateTimeRangeFilter),
@@ -134,9 +136,29 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
             return c.strip()
         get_comment.short_description = _("Comment")
 
+        def get_purpose(self, obj):
+            if obj and obj.reservation:
+                return obj.reservation.get_purpose_display()
+        get_purpose.short_description = _("Purpose")
+
         def get_comment_list(self, obj):
             return truncatechars(self.get_comment(obj), 24)
         get_comment_list.short_description = _("Comment")
+
+        def get_extra_attendees_on_organizer(self, obj):
+            if obj and obj.reservation:
+                res = obj.reservation
+                if res.number_of_extra_attendees and obj.is_organizer:
+                    return "+ %d" % res.number_of_extra_attendees
+        get_extra_attendees_on_organizer.short_description = ''
+
+        def get_reservation_link(self, obj):
+            if obj and obj.reservation:
+                o = obj.reservation
+                info = o._meta.app_label, o._meta.model_name
+                url = reverse('admin:%s_%s_change' % info, args=(o.pk,))
+                return mark_safe('<a href="%s">%s</a>' % (url, str(o)))
+        get_reservation_link.short_description = _("Reservation")
 
         def get_urls(self):
             urls = super().get_urls()
