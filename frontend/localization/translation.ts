@@ -54,13 +54,10 @@ const translation: Translation = {
             Nachricht: "Message",
             "Datum und Uhrzeit": "Date and time",
             Raum: "Room",
-            "Externe Personen": "Attendees",
-            "Person hinzufügen": "Add person",
             Raumliste: "Rooms",
             "Neue Anfrage": "New booking request",
             Zeit: "time",
             "optionale angaben": "optional information",
-            "Pers.": "Pers.",
             Grund: "Purpose",
             "Nach.": "Msg.",
             "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
@@ -70,28 +67,32 @@ const translation: Translation = {
             Alleinnutzung: "Exclusive use",
             Anfang: "Begin",
             Ende: "End",
-            "Weitere Personen": "Additional participants",
             'Du hast keine Berechtigung den Raum "{resource}" zu buchen.':
                 'You don\'t have permission to book this room "{resource}".',
             "Ein Ausnahmegrund muss angegeben werden.":
                 "Please specify an exception.",
             "Du musst noch den Raum auswählen.": "Please select a room.",
             "Du musst noch eine Zeit angeben.": "Please select date and time.",
-        },
-        "request-resource-list": {
-            Zugang: "Access",
+            "Teilnehmer||Teilnehmerinnen": "Attendees",
+            "Teilnehmer||Teilnehmerin hinzufügen": "Add attendee",
+            "Teiln.": "Atts.",
+            "Externe Teilnehmer||Teilnehmerinnen": "External attendees",
+            "Weitere Teilnehmer||Teilnehmerinnen": "Additional attendees",
         },
         "request-attendees": {
-            "Externe anmelden": "Register externals",
-            "Studierende anmelden": "Register students",
-            "Möchtest du {name} aus der Liste entfernen?": "Do you want to delete {name} from the list?",
-            "Person hinzufügen": "Add person",
-            "Weitere Person hinzufügen": "Additional person",
-            "HfK externe Personen müssen vorab angemeldet werden. Deine Anfrage wird an die Corona-Beauftragte geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern.":
-                "Visits of external persons - non-HfK-members - must be coordinated in advance. Your request will be sent to our staff member tasked with handling issues relating to the pandemic, the Corona-Beauftragte, for review. This process may delay your room request.",
+            "Möchtest du {name} aus der Liste entfernen?":
+                "Do you want to delete {name} from the list?",
             "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en.":
                 "Please state the purpose of the person's stay.",
             "Aufenthaltsgrund angeben": "State purpose now",
+            "HfK-Mitglieder anmelden": "Register students",
+            "Gib die Anzahl der HfK-Mitglieder an, die an dieser Buchung teilnehmen.":
+                "State the amount of HfK-members attending your booking.",
+            "Externe Teilnehmer anmelden": "Register externals",
+            "Teilnehmer||Teilnehmerin hinzufügen": "Add attendee",
+            "Weitere hinzufügen": "Add another",
+            "HfK externe Teilnehmer||Teilnehmerinnen müssen vorab angemeldet werden. Deine Anfrage wird an das Dekanat Kunst und Design geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern.":
+                "Visits of external persons - non-HfK-members - must be coordinated in advance. Your request will be sent to the Dekanat Kunst und Design for review. This process may delay your room request.",
         },
         "request-attendee-set": {
             "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
@@ -112,10 +113,9 @@ const translation: Translation = {
             "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern.":
                 "If you think this is a mistake, please describe your situation in the message box.",
             "Kommentar hinzufügen": "add message",
-            "Ich möchte den Raum allein nutzen.":
-                "I want to use the room alone.",
             'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Anfrage kopieren"':
-                'Rooms can\’t be booked over continuous dates. If you want to request the same booking over a number of days, you may transfer the information from your previous booking under "Copy request".',
+                'Rooms can’t be booked over continuous dates. If you want to request the same booking over a number of days, you may transfer the information from your previous booking under "Copy request".',
+            "Keine anderen Buchungen im Zeitraum zulassen.": "I want no further booking in my timeslot",
         },
         "request-message": {
             "message-placeholder":
@@ -132,7 +132,12 @@ const translation: Translation = {
             Gremiensitzung: "Board meeting",
             "Anderer Grund": "Other",
             Extern: "External",
-            weitere: "other",
+            "Dieser Buchungsgrund soll zur Anmeldung einer Lehrveranstaltung durch Lehrende verwendet werden.":
+                "This booking purpose should only be used for pre-registering of classes by teaching staff.",
+            Lehrveranstaltung: "Teaching",
+            Terminbuchung: "Time appointment",
+            "HfK-Mitglieder": "HfK-Members",
+            "HfK-Mitglied": "HfK-Member",
         },
         "request-time": {
             Datum: "Date",
@@ -174,12 +179,13 @@ const translation: Translation = {
                 "Please do use Checkin to document your stay, as only the digital system enables our staff member tasked with handling issues relating to the pandemic, the Corona-Beauftragte, to inform you quickly if an infection risk arises in your close environ-ment.",
             "Aktuell ist die Nutzung von Getin nur mit einem HfK-Account möglich.":
                 "Until now Getin is only accessible with an HfK-account",
+            "Buchungen können erst mit einem Startzeitpunkt beginnend ab dem 06.04.2021 - 08:00 getätigt werden.":
+                "Booking request can be made with a starting date beginning of 04/06/2021 - 8am.",
             "HfK-Angehörige": "HfK members",
             Gäste: "guests",
             "Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig.":
                 "The verification with a photo ID at the front desk after registration is mandatory",
             Gastzugang: "guest access",
-            "Buchungen können erst mit einem Startzeitpunkt beginnend ab dem 06.04.2021 - 08:00 getätigt werden.": "Booking request can be made with a starting date beginning of 04/06/2021 - 8am."
         },
         setprofile: {
             "{fieldName} darf nicht leer sein.": "{fieldName} can't be empty.",
@@ -233,4 +239,5 @@ const translation: Translation = {
         },
     },
 };
+
 export default translation;

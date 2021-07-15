@@ -95,7 +95,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
 
                 <Notice>
                     {t(
-                        "HfK externe Teilnehmer||Teilnehmerinnen müssen vorab angemeldet werden. Deine Anfrage wird an das Dekanat Kunst und Design  geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern."
+                        "HfK externe Teilnehmer||Teilnehmerinnen müssen vorab angemeldet werden. Deine Anfrage wird an das Dekanat Kunst und Design geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern."
                     )}
                 </Notice>
                 <Notice>
