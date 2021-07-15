@@ -13,7 +13,7 @@ export default function useDelayedCallback<T extends unknown[]>(
         return () => {
             if (timerId.current) window.clearTimeout(timerId.current);
         };
-    }, [value, param, callback]);
+    }, [value, param]);
 
     const update = (...value: T) => {
         setValue(Math.random());
