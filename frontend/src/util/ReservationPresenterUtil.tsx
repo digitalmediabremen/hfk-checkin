@@ -38,12 +38,17 @@ export const attendeePresenter = (a: Attendance, locale: string) => {
 export const extraAttendeesPresenter = (
     numberOfExtraAttendees: number,
     locale: string
-) => (
-    <>
-        +{numberOfExtraAttendees}{" "}
-        {_t(locale, "request-purpose", "weitere")}
-    </>
-);
+) => {
+    const label =
+        numberOfExtraAttendees > 1
+            ? _t(locale, "request-purpose", "HfK-Mitglieder")
+            : _t(locale, "request-purpose", "HfK-Mitglied");
+    return (
+        <>
+            +{numberOfExtraAttendees} {label}
+        </>
+    );
+};
 
 export const requestedAttendeePresenter = (
     a: AttendanceUpdate,
@@ -81,13 +86,8 @@ export const attendeesFormValuePresenter = (
                   requestedAttendeePresenter(a, locale)
               ) || []),
               ...insertIf(
-                  [
-                      <>
-                          +{extraAttendees || 0}{" "}
-                          {_t(locale, "request-purpose", "weitere")}
-                      </>,
-                  ],
-                  (extraAttendees || 0) !== 0
+                  [extraAttendeesPresenter(extraAttendees || 0, locale)],
+                  !!extraAttendees
               ),
           ]
         : undefined;

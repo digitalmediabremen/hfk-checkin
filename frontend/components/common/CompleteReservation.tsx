@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { NonNullExpression } from "ts-morph";
 import { useTranslation } from "../../localization";
+import useGenderDiscrimination from "../../src/hooks/useGenderDiscrimination";
 import useTheme from "../../src/hooks/useTheme";
 import Reservation from "../../src/model/api/Reservation";
 import {
@@ -42,9 +43,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
             disabled,
         };
 
-        const gender = useRef(
-            Math.random() > 0.5 ? t("Teilnehmerinnen") : t("Teilnehmer")
-        );
+        const genderize = useGenderDiscrimination();
 
         const isConfirmed = state === "confirmed";
 
@@ -88,7 +87,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                 {attendees && attendees.length > 0 && (
                     <>
                         <SectionTitle bottomSpacing={0.5}>
-                            {gender.current}
+                            {genderize(t("Teilnehmerinnen"), t("Teilnehmer"))}
                         </SectionTitle>
                         {attendees?.map((attendee, index, arr) => {
                             const AttendeeStateIcon = getAttendanceStateIcon(

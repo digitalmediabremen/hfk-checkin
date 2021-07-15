@@ -35,7 +35,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
 
         return (
             <>
-                <SectionTitle>{t("Studierende anmelden")}</SectionTitle>
+                <SectionTitle>{t("HfK-Mitglieder anmelden")}</SectionTitle>
                 <FormAmountInput
                     value={amount}
                     label={
@@ -48,11 +48,11 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
                 />
                 <Notice>
                     {t(
-                        "Gib die Anzahl der Studierenden an, die an dieser Buchung teilnehmen."
+                        "Gib die Anzahl der HfK-Mitglieder an, die an dieser Buchung teilnehmen."
                     )}
                 </Notice>
                 <Divider />
-                <SectionTitle>{t("Externe anmelden")}</SectionTitle>
+                <SectionTitle>{t("Externe Teilnehmer anmelden")}</SectionTitle>
                 {attendees?.map((profile, index) => {
                     const attendeeLabel = requestedAttendeePresenterString(profile, locale);
                     const deleteConfirmText = t(
@@ -89,13 +89,13 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
                     bottomSpacing={3}
                 >
                     {amountAttendees === 0
-                        ? t("Person hinzufügen")
-                        : t("Weitere Person hinzufügen")}
+                        ? t("Teilnehmer||Teilnehmerin hinzufügen")
+                        : t("Weitere hinzufügen")}
                 </NewButton>
 
                 <Notice>
                     {t(
-                        "HfK externe Personen müssen vorab angemeldet werden. Deine Anfrage wird an die Corona-Beauftragte geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern."
+                        "HfK externe Teilnehmer||Teilnehmerinnen müssen vorab angemeldet werden. Deine Anfrage wird an das Dekanat Kunst und Design  geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern."
                     )}
                 </Notice>
                 <Notice>

@@ -98,12 +98,13 @@ export function _t(
     alternativeId?: string
 ) {
     const id = alternativeId || s;
+    const gender = Date.now() % 30000 > 15000;
     const replace = (string?: string) =>
         string?.replace(
-            /{([A-Za-z]+)}/g,
+            /{([A-Za-z]+?)}/g,
             (string: string, match: string) =>
                 `${!!data && data[match] !== undefined ? data[match] : string}`
-        );
+        ).replace(/([A-Za-z]+)\|\|([A-Za-z]+)/g, (string: string, match1: string, match2: string) => gender ? match1 : match2)
     if (locale === baseLocale) return replace(s)!;
     const translatedString =
         replace(translation[locale]?.[inModule]?.[id]) ||

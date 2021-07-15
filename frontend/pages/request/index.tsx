@@ -95,8 +95,8 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("attendees")}
                 value={attendeesFormValuePresenter(reservation, locale)}
-                label={t("Externe Personen")}
-                shortLabel={t("Pers.")}
+                label={t("Teilnehmer||Teilnehmerinnen")}
+                shortLabel={t("Teiln.")}
                 arrow
                 extendedWidth
                 dotted={!attendeesFormValuePresenter(reservation, locale)}
