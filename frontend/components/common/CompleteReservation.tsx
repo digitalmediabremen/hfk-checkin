@@ -95,7 +95,8 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                 attendee.state || "confirmed"
                             );
                             const lastItem = index === arr.length - 1;
-                            const bottomSpacing = !lastItem || !!numberOfExtraAttendees ? 0 : 2;
+                            const bottomSpacing =
+                                !lastItem || !!numberOfExtraAttendees ? 0 : 2;
                             return (
                                 <FormElement
                                     key={attendee.uuid}
@@ -109,17 +110,18 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                 />
                             );
                         })}
-                        {numberOfExtraAttendees && (
-                            <FormElement
-                                labelIcon={" "}
-                                superNarrow
-                                {...formElementProps}
-                                value={extraAttendeesPresenter(
-                                    numberOfExtraAttendees,
-                                    locale
-                                )}
-                            />
-                        )}
+                        {!!numberOfExtraAttendees &&
+                            numberOfExtraAttendees > 0 && (
+                                <FormElement
+                                    labelIcon={" "}
+                                    superNarrow
+                                    {...formElementProps}
+                                    value={extraAttendeesPresenter(
+                                        numberOfExtraAttendees,
+                                        locale
+                                    )}
+                                />
+                            )}
                     </>
                 )}
                 {purposeValue && (

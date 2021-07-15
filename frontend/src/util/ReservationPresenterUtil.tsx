@@ -40,7 +40,7 @@ export const extraAttendeesPresenter = (
     locale: string
 ) => (
     <>
-        +{numberOfExtraAttendees || 0}{" "}
+        +{numberOfExtraAttendees}{" "}
         {_t(locale, "request-purpose", "weitere")}
     </>
 );
