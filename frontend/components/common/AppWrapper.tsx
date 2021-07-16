@@ -1,14 +1,23 @@
-import React, { SFC } from "react";
-import MyProfile from "../../src/model/api/MyProfile";
-import { useUpdateProfileFromAppStateAndUpdate } from "../api/ApiHooks";
+import React from "react";
+import useInitApp from "../../src/hooks/useInitApp";
+import useTheme from "../../src/hooks/useTheme";
 
-interface AppWrapperProps {
-    profileFromServer?: MyProfile;
-}
+interface AppWrapperProps {}
 
-const AppWrapper: SFC<AppWrapperProps> = ({ profileFromServer, children }) => {
-    useUpdateProfileFromAppStateAndUpdate();
-    return <>{children}</>;
+const AppWrapper: React.FunctionComponent<AppWrapperProps> = ({ children }) => {
+    useInitApp();
+    const theme = useTheme();
+
+    return (
+        <>
+            <style jsx>{`
+                :global(html, body) {
+                    background-color: ${theme.secondaryColor};
+                }
+            `}</style>
+            {children}
+        </>
+    );
 };
 
 export default AppWrapper;

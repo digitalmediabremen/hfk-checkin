@@ -10,34 +10,44 @@ const features = {
     getin: envToBoolean(process.env.NEXT_PUBLIC_FEATURE_GETIN),
 };
 
-function getHomeUrl () {
+function getHomeUrl() {
     if (features.checkin) return "/profile";
     if (features.getin) return "/reservation";
     return "/";
-};
+}
 
-function getTitle () {
+function getTitle() {
     if (features.checkin) return "HfK-Checkin";
     if (features.getin) return "HfK-Getin";
     return "HfK-Checkin";
 }
 
-function getName () {
+function getName() {
     if (features.checkin) return "checkin";
     if (features.getin) return "getin";
     return "checkin";
 }
 
-function getPrimaryColor() {
-    if (features.checkin) return "rgba(216, 24, 48, 100)";
-    if (features.getin) return "rgba(0,46,255, 100)";
-    return "rgba(0, 24, 48, 100)";
+function getPrimaryColor(colorScheme) {
+    if (colorScheme === "light") {
+        if (features.checkin) return "rgba(216, 24, 48, 1)";
+        if (features.getin) return "rgba(0,46,255, 1)";
+    } else if (colorScheme === "dark") {
+        if (features.checkin) return "rgba(227, 166, 173)";
+        if (features.getin) return "rgba(183, 196, 255, 1)";
+    }
+    throw "error in app configuration";
 }
 
-function getPrimaryColorHex() {
-    if (features.checkin) return "#D81830";
-    if (features.getin) return "#002EFF";
-    return "#D81830";
+function getPrimaryColorHex(colorScheme) {
+    if (colorScheme === "light") {
+        if (features.checkin) return "#D81830";
+        if (features.getin) return "#002EFF";
+    } else if (colorScheme === "dark") {
+        if (features.checkin) return "#e3a6ad";
+        if (features.getin) return "#b7c4ff";
+    }
+    throw "error in app configuration";
 }
 
 function getManifestUrl() {

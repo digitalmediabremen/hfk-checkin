@@ -14,7 +14,7 @@ export const initialAppState: AppState = {
     reservationValidation: [],
     currentLocale: getTypeSafeLocale(),
     status: undefined,
-    theme: createTheme(),
+    theme: createTheme(false, false, "light"),
 };
 
 const useReduceAppState = () =>
@@ -131,12 +131,14 @@ const useReduceAppState = () =>
                     ),
                 };
             case "updateTheme":
+                console.log("update theme")
                 return {
                     ...previousState,
-                    theme: {
-                        ...previousState.theme,
-                        ...action.theme,
-                    },
+                    theme: createTheme(
+                        action.isDesktop,
+                        action.isPWA,
+                        action.colorScheme
+                    ),
                 };
             default:
                 assertNever(

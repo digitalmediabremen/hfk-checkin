@@ -1,4 +1,3 @@
-
 interface Theme {
     fontSize: number;
     unit: number;
@@ -18,6 +17,9 @@ interface Theme {
     boxShadow: () => string;
 }
 
+
+
 type ReadonlyTheme = Readonly<Theme>;
 
+export type ColorScheme = "light" | "dark"; 
 export default ReadonlyTheme;

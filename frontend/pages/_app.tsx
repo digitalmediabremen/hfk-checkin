@@ -2,13 +2,12 @@ import { AppProps } from "next/dist/next-server/lib/router/router";
 import Head from "next/head";
 import "normalize.css";
 import {
-    AppStateProvider,
     AppStateConsumer,
+    AppStateProvider,
 } from "../components/common/AppStateProvider";
 import AppWrapper from "../components/common/AppWrapper";
-import ErrorBoundary from "../components/common/ErrorBoundary";
 import { getTitle } from "../features";
-import { getInitialLocale, LocaleProvider } from "../localization";
+import { LocaleProvider } from "../localization";
 import { init } from "../src/util/Sentry";
 import "../styles/globals.css";
 
@@ -26,7 +25,7 @@ const MyApp = ({ Component }: AppProps) => {
             </Head>
             <AppStateProvider>
                 <AppStateConsumer>
-                    {({appState}) => (
+                    {({ appState }) => (
                         <LocaleProvider locale={appState.currentLocale}>
                             <AppWrapper>
                                 <Component />

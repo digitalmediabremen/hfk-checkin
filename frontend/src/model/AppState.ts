@@ -2,7 +2,7 @@ import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
 import Reservation from "./api/Reservation";
 import { Validation } from "../util/ReservationValidationUtil";
-import Theme from "./Theme";
+import Theme, { ColorScheme } from "./Theme";
 import Status from "./Status";
 import MyProfile from "./api/MyProfile";
 import Locale from "./api/Locale";
@@ -80,5 +80,7 @@ export type AppAction =
           locale: string;
       } | {
           type: "updateTheme";
-          theme: Partial<Theme>;
+          isDesktop: boolean,
+          isPWA: boolean,
+          colorScheme: ColorScheme
       };
