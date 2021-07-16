@@ -282,7 +282,7 @@ const LastCheckinListItem = ({
                 .list-item-interactable:hover {
                     cursor: pointer;
                     background-color: ${theme.primaryColor};
-                    color: #fff;
+                    color: ${theme.secondaryColor};
                 }
 
                 .list-item-highlighted {
