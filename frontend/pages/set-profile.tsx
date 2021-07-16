@@ -110,6 +110,11 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         updateProfile(value);
     };
 
+    const handleLogout = () => {
+        const confirm = window.confirm(t("Wirklich ausloggen?"))
+        if (confirm) router.push(appUrls.logout);
+    }
+
     const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
 
     if (!appState.initialized) return null;
@@ -139,16 +144,15 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         density="super-narrow"
                         bottomSpacing={3}
                         actionIcon={
-                            <Link href={appUrls.logout} passHref>
                                 <NewButton
                                     componentType="a"
                                     noBottomSpacing
                                     noOutline
                                     noPadding
+                                    onClick={handleLogout}
                                 >
                                     {t("Ausloggen")}
                                 </NewButton>
-                            </Link>
                         }
                     />
                 </>
