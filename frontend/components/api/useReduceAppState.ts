@@ -29,6 +29,9 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     initialized: true,
+                    currentLocale:
+                        action.profile?.preferred_language ||
+                        previousState.currentLocale,
                     myProfile: action.profile,
                 };
 
@@ -136,7 +139,12 @@ const useReduceAppState = () =>
                     },
                 };
             default:
-                assertNever(action, `Unhandled state change "${(action as unknown as AppAction).type}"`);
+                assertNever(
+                    action,
+                    `Unhandled state change "${
+                        (action as unknown as AppAction).type
+                    }"`
+                );
         }
     }, initialAppState);
 
