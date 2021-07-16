@@ -130,7 +130,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             {!isUserCreation && (
                 <>
                     <SectionTitle noMarginBottom>
-                        {t("eingeloggt als")}
+                        {t("Eingeloggt als")}
                     </SectionTitle>
                     <FormElement
                         value={initialProfile?.display_name}
@@ -199,11 +199,11 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 {initialProfile?.phone && (
                     <Notice bottomSpacing={3}>
                         {t(
-                            "Die Telefonnummer wird auschliesslich im Falle einer Infektionsnachverfolgung verwendet."
+                            "Die Telefonnummer wird im Falle einer Infektionsnachverfolgung verwendet."
                         )}
                     </Notice>
                 )}
-                <SectionTitle>{t("Präferierte Sprache")}</SectionTitle>
+                <SectionTitle>{t("Sprache")}</SectionTitle>
                 <Controller
                     control={control}
                     name="preferred_language"

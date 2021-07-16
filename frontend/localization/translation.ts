@@ -19,19 +19,21 @@ const translation: Translation = {
             Datenschutzinformationen: "Data privacy",
             Protokoll: "Log",
             "Noch keine Checkins vorhanden": "No checkins so far",
-            "Telefon ändern": "change phone number",
+            "Profil ändern": "change profile",
             "sowie {fields}": "and also {fields}",
             Heute: "Today",
             Morgen: "Tomorrow",
             Datenschutz: "Privacy",
             Ausloggen: "Logout",
+            Deutsch: "Deutsch",
+            English: "English"
         },
         reservation: {
             "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
             "Vergangene ausblenden": "Hide past bookings",
             "Vergangene einblenden": "Show past bookings",
             Buchungsübersicht: "Bookings",
-            "Telefon ändern": "Change phone",
+            "Profil ändern": "Change profile",
             "Bist du sicher, dass du deine Buchung stornieren willst? Diese Aktion lässt sich nicht rückgängig machen.":
                 "Are you sure to cancel your booking? This action cannot be reversed.",
             "Deine Buchung {identifier} wurde storniert.":
@@ -197,10 +199,13 @@ const translation: Translation = {
             "Keine gültige Telefonnummer": "Not a valid phone number",
             "setprofile-accept-legal":
                 "Your data will only be used, if an infection occurs. With your registration you agree to the prevailing privacy policy that your data is being collected for tracing purposes in the event of an infection. You confirm to have read and understood the HfK rules of hygiene and to follow these rules during the stay at the HfK Bremen. Please find our prevailing privacy policy and the HfK hygiene rules on faq.hfk-bremen.de or on https://www.hfk-bremen.de/corona-downloads and on display at the front desk.",
-            "Die Telefonnummer wird auschliesslich im Falle einer Infektionsnachverfolgung verwendet.":
+            "Die Telefonnummer wird im Falle einer Infektionsnachverfolgung verwendet.":
                 "Your phone number is only used in case of an infection.",
             Erstellen: "Create",
             Speichern: "Save",
+            "Eingeloggt als": "Logged in as",
+            "Ausloggen": "Log out",
+            "Sprache": "Language"
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
