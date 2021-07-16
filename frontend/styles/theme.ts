@@ -54,6 +54,8 @@ const createTheme = (
     },
     desktopWidth: 600,
     isDesktop,
+    isPWA,
+    colorScheme,
     topBarHeight: function () {
         return this.unit * 8 + this.offsetTopBar;
     },

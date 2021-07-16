@@ -80,7 +80,7 @@ export type AppAction =
           locale: string;
       } | {
           type: "updateTheme";
-          isDesktop: boolean,
-          isPWA: boolean,
-          colorScheme: ColorScheme
+          isDesktop?: boolean,
+          isPWA?: boolean,
+          colorScheme?: ColorScheme
       };

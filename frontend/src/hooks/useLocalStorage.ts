@@ -1,7 +1,51 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { notEmpty } from "../util/TypeUtil";
 import useDelayedCallback from "./useDelayedCallback";
 import "json.date-extensions";
+
+export function loadItemFromLocalStorage<T extends Object>(
+    key: string,
+    validateObject?: (o: any) => T
+) {
+    if (typeof localStorage === "undefined") return undefined;
+    try {
+        // todo: fix
+        // parse ones without dates
+        const item = localStorage.getItem(key);
+
+        if (!item) {
+            console.debug(`no item for key "${key}"`);
+            return;
+        }
+
+        const check = JSON.parse(item) as unknown;
+        validateObject?.(check);
+        // @ts-ignore
+        const parseAgainWithDates = JSON.parseWithDate(item) as unknown as T;
+        console.debug(`loaded "${key}" from local-storage`);
+        return parseAgainWithDates;
+    } catch (e) {
+        console.error(e);
+        // delete invalid reservation item
+        localStorage.removeItem(key);
+    }
+}
+
+export function useReadLocalStorage<T extends Object>(
+    key: string,
+    validateObject?: (o: any) => T
+) {
+    const [item, setItem] = useState(
+        loadItemFromLocalStorage(key, validateObject)
+    );
+
+    useEffect(
+        () => setItem(loadItemFromLocalStorage(key, validateObject)),
+        [key, validateObject]
+    );
+
+    return item;
+}
 
 export default function useLocalStorage<T extends Object>(
     key: string,
@@ -18,7 +62,7 @@ export default function useLocalStorage<T extends Object>(
 
     useEffect(() => {
         updateFirstRender();
-        load(object);
+        load();
     }, []);
 
     useEffect(() => {
@@ -26,36 +70,14 @@ export default function useLocalStorage<T extends Object>(
         persist();
     }, [object, firstRender]);
 
-    const load = useCallback((object: T | undefined) => {
-        try {
-            // todo: fix
-            // parse ones without dates
-            const item = localStorage.getItem(key);
-
-            if (!item) {
-                console.debug(`no item for key "${key}"`);
-                return;
-            }
-
-            const check = JSON.parse(item) as unknown;
-            validateObject?.(check);
-            // @ts-ignore
-            const parseAgainWithDates = (JSON.parseWithDate(
-                item
-            ) as unknown) as T;
-            console.debug(`loaded "${key}" from local-storage`);
-            onLoad?.(parseAgainWithDates);
-        } catch (e) {
-            console.error(e);
-            // delete invalid reservation item
-            localStorage.removeItem(key);
-        }
-    }, []);
+    const load = useCallback(() => {
+        const r = loadItemFromLocalStorage(key, validateObject);
+        if (r) onLoad?.(r);
+    }, [key, validateObject]);
 
     const persistImmediate = useCallback(() => {
         console.debug(`saved "${key}" to local-storage`);
         localStorage.setItem(key, JSON.stringify(object));
     }, [key, object]);
     const persist = useDelayedCallback(() => persistImmediate(), 1000);
-
 }

@@ -131,13 +131,13 @@ const useReduceAppState = () =>
                     ),
                 };
             case "updateTheme":
-                console.log("update theme")
+                console.log("update theme", action.colorScheme);
                 return {
                     ...previousState,
                     theme: createTheme(
-                        action.isDesktop,
-                        action.isPWA,
-                        action.colorScheme
+                        action.isDesktop || previousState.theme.isDesktop,
+                        action.isPWA || previousState.theme.isPWA,
+                        action.colorScheme || previousState.theme.colorScheme
                     ),
                 };
             default:

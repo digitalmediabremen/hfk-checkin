@@ -12,6 +12,8 @@ interface Theme {
     footerHeight: () => number;
     topBarHeight: () => number;
     isDesktop: boolean;
+    isPWA: boolean;
+    colorScheme: ColorScheme;
     desktopWidth: number;
     offsetTopBar: number;
     boxShadow: () => string;
