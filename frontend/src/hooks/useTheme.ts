@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import useMedia from "use-media";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { isClient } from "../../config";
@@ -17,6 +17,24 @@ function validateColorScheme(o: any): ColorScheme {
     return o;
 }
 
+export function useActiveColorScheme() {
+    const savedColorSchemeSetting = useReadLocalStorage(
+        "scheme",
+        validateColorScheme
+    );
+
+    const prefersDarkMode = useMedia({ prefersColorScheme: "dark" });
+    const colorScheme: ColorScheme =
+        savedColorSchemeSetting || (prefersDarkMode ? "dark" : "light");
+    const [activeColorScheme, setActiveColorScheme] = useState(colorScheme);
+
+    useEffect(() => {
+        setActiveColorScheme(colorScheme);
+    }, [colorScheme])
+
+    return activeColorScheme;
+}
+
 export function useInitTheme() {
     const { dispatch } = useAppState();
     const isDesktop = useMedia({ minWidth: 600 });
@@ -24,12 +42,7 @@ export function useInitTheme() {
         useMedia({ displayMode: "standalone" }) ||
         // @ts-expect-error
         (isClient && window.navigator.standalone === true);
-
-    const savedColorSchemeSetting = useReadLocalStorage("scheme", validateColorScheme)
-
-    const prefersDarkMode = useMedia({ prefersColorScheme: "dark" });
-    const colorScheme: ColorScheme =
-        savedColorSchemeSetting || (prefersDarkMode ? "dark" : "light");
+    const colorScheme = useActiveColorScheme();
 
     useLayoutEffect(() => {
         dispatch({

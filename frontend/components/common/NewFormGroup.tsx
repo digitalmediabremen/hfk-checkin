@@ -7,6 +7,7 @@ interface NewFormGroupProps {
 
 const NewFormGroup: React.FunctionComponent<NewFormGroupProps> = ({
     children,
+    bottomSpacing
 }) => {
     const theme = useTheme();
     return (
@@ -15,6 +16,7 @@ const NewFormGroup: React.FunctionComponent<NewFormGroupProps> = ({
                 .form-group {
                     display: flex;
                     flex-wrap: wrap;
+                    margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
                 }
 
                 .form-group > div {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { notEmpty } from "../util/TypeUtil";
 import useDelayedCallback from "./useDelayedCallback";
 import "json.date-extensions";
+import { ColorScheme } from "../model/Theme";
 
 export function loadItemFromLocalStorage<T extends Object>(
     key: string,
@@ -35,9 +36,7 @@ export function useReadLocalStorage<T extends Object>(
     key: string,
     validateObject?: (o: any) => T
 ) {
-    const [item, setItem] = useState(
-        loadItemFromLocalStorage(key, validateObject)
-    );
+    const [item, setItem] = useState<T>();
 
     useEffect(
         () => setItem(loadItemFromLocalStorage(key, validateObject)),
@@ -62,7 +61,7 @@ export default function useLocalStorage<T extends Object>(
 
     useEffect(() => {
         updateFirstRender();
-        load();
+        if (!!onLoad) load();
     }, []);
 
     useEffect(() => {

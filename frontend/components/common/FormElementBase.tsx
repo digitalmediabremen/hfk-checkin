@@ -104,7 +104,7 @@ const FormElementBase = forwardRef<
                         min-height: ${theme.spacing(minHeightSpacing)}px;
                         height: min-content;
                         color: ${theme.primaryColor};
-                        background-color: ${theme.secondaryColor};
+                        background-color: inherit;
 
                         line-height: 1.25rem;
                     }

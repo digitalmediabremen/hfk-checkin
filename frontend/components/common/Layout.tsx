@@ -161,7 +161,6 @@ const Layout: FunctionComponent<LayoutProps> = ({
                     font-size: ${theme.fontSize}px;
                     overflow: hidden;
                     position: relative;
-                    background-color: ${theme.secondaryColor};
                 }
             `}</style>
             {title && (

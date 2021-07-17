@@ -41,7 +41,7 @@ export function getStateLabel(state: ReservationState, locale: string) {
 }
 
 type MapToStringRecord<T> = Record<Exclude<keyof T, undefined>, string>;
-type Entries<T extends {}> = {
+export type Entries<T extends {}> = {
     [K in Exclude<keyof T, undefined>]: [K, T[K]];
 }[Exclude<keyof T, undefined>][];
 

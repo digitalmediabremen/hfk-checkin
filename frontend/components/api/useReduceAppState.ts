@@ -131,7 +131,6 @@ const useReduceAppState = () =>
                     ),
                 };
             case "updateTheme":
-                console.log("update theme", action.colorScheme);
                 return {
                     ...previousState,
                     theme: createTheme(

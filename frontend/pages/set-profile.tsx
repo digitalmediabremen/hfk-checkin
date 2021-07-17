@@ -20,14 +20,20 @@ import SubPageBar from "../components/common/SubPageBar";
 import Title from "../components/common/Title";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
+import useLocalStorage from "../src/hooks/useLocalStorage";
+import { useActiveColorScheme } from "../src/hooks/useTheme";
 import Locale from "../src/model/api/Locale";
 import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
+import { ColorScheme } from "../src/model/Theme";
 import { getLocaleLabelMap } from "../src/util/LocaleUtil";
+import { Entries } from "../src/util/ReservationUtil";
 import reservation from "./reservation";
 
 interface EditProfileProps {
     profile?: MyProfile;
 }
+
+type ColorSchemeSetting = ColorScheme | "auto";
 
 const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const { appState, dispatch } = useAppState();
@@ -43,6 +49,20 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const router = useRouter();
     const { t, locale: currentLocale } = useTranslation("setprofile");
     const localeMap = getLocaleLabelMap(currentLocale);
+    const colorSchemeMap: Record<ColorSchemeSetting, string> = {
+        auto: t("Automatisch"),
+        light: t("Hell"),
+        dark: t("Dunkel"),
+    };
+    const activeColorScheme = appState.theme.colorScheme;
+    useLocalStorage("scheme", activeColorScheme, undefined, undefined);
+    const handleColorSchemeChange = (cs: ColorSchemeSetting) => {
+        if (activeColorScheme === cs) return;
+        dispatch({
+            type: "updateTheme",
+            colorScheme: cs,
+        });
+    };
 
     const handleLocaleChange = (locale: Locale) => {
         setValue("preferred_language", locale);
@@ -111,9 +131,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     };
 
     const handleLogout = () => {
-        const confirm = window.confirm(t("Wirklich ausloggen?"))
+        const confirm = window.confirm(t("Wirklich ausloggen?"));
         if (confirm) router.push(appUrls.logout);
-    }
+    };
 
     const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
 
@@ -144,15 +164,15 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         density="super-narrow"
                         bottomSpacing={3}
                         actionIcon={
-                                <NewButton
-                                    componentType="a"
-                                    noBottomSpacing
-                                    noOutline
-                                    noPadding
-                                    onClick={handleLogout}
-                                >
-                                    {t("Ausloggen")}
-                                </NewButton>
+                            <NewButton
+                                componentType="a"
+                                noBottomSpacing
+                                noOutline
+                                noPadding
+                                onClick={handleLogout}
+                            >
+                                {t("Ausloggen")}
+                            </NewButton>
                         }
                     />
                 </>
@@ -212,7 +232,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     control={control}
                     name="preferred_language"
                     render={(field) => (
-                        <NewFormGroup>
+                        <NewFormGroup bottomSpacing={3}>
                             {Object.entries(localeMap).map(
                                 ([locale, label]) => (
                                     <FormElement
@@ -233,6 +253,26 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         </NewFormGroup>
                     )}
                 />
+
+                <SectionTitle>{t("Farben")}</SectionTitle>
+
+                <NewFormGroup bottomSpacing={3}>
+                    {(
+                        Object.entries<string>(colorSchemeMap) as Entries<
+                            Record<ColorSchemeSetting, string>
+                        >
+                    ).map(([colorScheme, label]) => (
+                        <FormElement
+                            primary={activeColorScheme === colorScheme}
+                            density="super-narrow"
+                            value={label}
+                            adaptiveWidth
+                            key={colorScheme}
+                            noBottomSpacing
+                            onClick={() => handleColorSchemeChange(colorScheme)}
+                        />
+                    ))}
+                </NewFormGroup>
 
                 <AlignContent align="bottom" offsetBottomPadding>
                     <NewButton

@@ -59,7 +59,9 @@ const Page: React.FunctionComponent<PageProps> = ({
                     width: 100vw;
                     height: ${height}px;
                     overflow: hidden;
-                    background: ${theme.secondaryColor};
+                    background-color: ${theme.secondaryColor};
+                    transition: background-color .15s;
+
                 }
 
                 .scroll-container {
