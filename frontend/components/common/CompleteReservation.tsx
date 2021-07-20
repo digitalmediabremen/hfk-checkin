@@ -1,18 +1,16 @@
-import React, { useRef } from "react";
-import { NonNullExpression } from "ts-morph";
+import React from "react";
 import { useTranslation } from "../../localization";
-import useGenderDiscrimination from "../../src/hooks/useGenderDiscrimination";
 import useTheme from "../../src/hooks/useTheme";
 import Reservation from "../../src/model/api/Reservation";
 import {
     attendeePresenter,
     extraAttendeesPresenter,
-    purposeFormValuePresenter,
+    purposeFormValuePresenter
 } from "../../src/util/ReservationPresenterUtil";
 import {
     getAttendanceStateIcon,
     getIcon,
-    getStateLabel,
+    getStateLabel
 } from "../../src/util/ReservationUtil";
 import FormElement, { FormElementProps } from "./FormElement";
 import ReservationComponent from "./Reservation";
@@ -42,10 +40,6 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
             density: "narrow",
             disabled,
         };
-
-        const genderize = useGenderDiscrimination();
-
-        const isConfirmed = state === "confirmed";
 
         const Icon = getIcon(state);
         return (
@@ -86,8 +80,8 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                 />
                 {attendees && attendees.length > 0 && (
                     <>
-                        <SectionTitle bottomSpacing={0.5}>
-                            {genderize(t("Teilnehmerinnen"), t("Teilnehmer"))}
+                        <SectionTitle bottomSpacing={.5}>
+                            {t("Teilnehmerinnen||Teilnehmer")}
                         </SectionTitle>
                         {attendees?.map((attendee, index, arr) => {
                             const AttendeeStateIcon = getAttendanceStateIcon(
@@ -103,8 +97,8 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                         <AttendeeStateIcon strokeWidth={1} />
                                     }
                                     bottomSpacing={bottomSpacing}
-                                    density="super-narrow"
                                     {...formElementProps}
+                                    density="super-narrow"
                                     value={attendeePresenter(attendee, locale)}
                                 />
                             );
@@ -113,12 +107,13 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                             numberOfExtraAttendees > 0 && (
                                 <FormElement
                                     labelIcon={" "}
-                                    density="super-narrow"
                                     {...formElementProps}
+                                    density="super-narrow"
                                     value={extraAttendeesPresenter(
                                         numberOfExtraAttendees,
                                         locale
                                     )}
+                                    bottomSpacing={2}
                                 />
                             )}
                     </>
@@ -132,12 +127,13 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                             {...formElementProps}
                             maxRows={2}
                             value={purposeValue}
+                            bottomSpacing={2}
                         />
                     </>
                 )}
                 {message && (
                     <>
-                        <SectionTitle bottomSpacing={1}>
+                        <SectionTitle bottomSpacing={-0.5}>
                             {t("Nachricht")}
                         </SectionTitle>
                         <FormElement
