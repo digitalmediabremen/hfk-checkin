@@ -26,15 +26,18 @@ export interface AppState {
     subPageTransitionDirection: TransitionDirection;
     currentLocale: Locale;
     theme: Theme;
+    overwriteColorScheme?: ColorScheme;
 }
 
 export type AppAction =
     | {
           type: "status";
-          status: {
-              message: string;
-              isError: boolean;
-          } | undefined;
+          status:
+              | {
+                    message: string;
+                    isError: boolean;
+                }
+              | undefined;
       }
     | {
           type: "profile";
@@ -78,9 +81,14 @@ export type AppAction =
     | {
           type: "updateLocale";
           locale: string;
-      } | {
+      }
+    | {
           type: "updateTheme";
-          isDesktop?: boolean,
-          isPWA?: boolean,
-          colorScheme?: ColorScheme
+          isDesktop?: boolean;
+          isPWA?: boolean;
+          colorScheme?: ColorScheme;
+      }
+    | {
+          type: "overwriteColorScheme";
+          colorScheme: ColorScheme | undefined;
       };

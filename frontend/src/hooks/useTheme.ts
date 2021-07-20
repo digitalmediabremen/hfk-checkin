@@ -2,8 +2,8 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import useMedia from "use-media";
 import { useAppState } from "../../components/common/AppStateProvider";
 import { isClient } from "../../config";
-import { ColorScheme } from "../model/Theme";
-import useLocalStorage, { useReadLocalStorage } from "./useLocalStorage";
+import { ColorScheme, validateColorScheme } from "../model/Theme";
+import { useReadLocalStorage } from "./useLocalStorage";
 
 export default function useTheme() {
     const { appState } = useAppState();
@@ -12,25 +12,25 @@ export default function useTheme() {
     return theme;
 }
 
-function validateColorScheme(o: any): ColorScheme {
-    if (!["light", "dark"].includes(o)) throw "invalid";
-    return o;
+function useDefaultColorScheme(): ColorScheme {
+    const prefersDarkMode = useMedia({ prefersColorScheme: "dark" });
+    return prefersDarkMode ? "dark" : "light";
 }
 
-export function useActiveColorScheme() {
-    const savedColorSchemeSetting = useReadLocalStorage(
-        "scheme",
-        validateColorScheme
-    );
+function useActiveColorScheme(): ColorScheme {
+    const { appState } = useAppState();
+    const overwrittenColorScheme = appState.overwriteColorScheme;
 
-    const prefersDarkMode = useMedia({ prefersColorScheme: "dark" });
+    const defaultColorScheme = useDefaultColorScheme();
     const colorScheme: ColorScheme =
-        savedColorSchemeSetting || (prefersDarkMode ? "dark" : "light");
+        overwrittenColorScheme === undefined
+            ? defaultColorScheme
+            : overwrittenColorScheme;
     const [activeColorScheme, setActiveColorScheme] = useState(colorScheme);
 
     useEffect(() => {
         setActiveColorScheme(colorScheme);
-    }, [colorScheme])
+    }, [colorScheme]);
 
     return activeColorScheme;
 }

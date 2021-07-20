@@ -6,6 +6,7 @@ import useLocalStorage from "./useLocalStorage";
 import useSWRefreshToUpdate from "./useSWRefreshToUpdate";
 import { useInitTheme } from "./useTheme";
 import { useUpdateProfileFromAppStateAndUpdate } from "../../components/api/ApiHooks";
+import { validateColorScheme } from "../model/Theme";
 
 // state initialization of the app
 export default function useInitApp() {
@@ -31,6 +32,18 @@ export default function useInitApp() {
                 type: "updateReservationRequestTemplate",
                 reservation: r,
             })
+    );
+
+    useLocalStorage(
+        "scheme",
+        appState.overwriteColorScheme,
+        validateColorScheme,
+        (colorScheme) => {
+            dispatch({
+                type: "overwriteColorScheme",
+                colorScheme
+            });
+        }
     );
 
     useSWRefreshToUpdate();

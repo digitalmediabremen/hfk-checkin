@@ -139,6 +139,11 @@ const useReduceAppState = () =>
                         action.colorScheme || previousState.theme.colorScheme
                     ),
                 };
+            case "overwriteColorScheme": 
+                return {
+                    ...previousState,
+                    overwriteColorScheme: action.colorScheme
+                }
             default:
                 assertNever(
                     action,

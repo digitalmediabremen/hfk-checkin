@@ -50,7 +50,7 @@ export default function useLocalStorage<T extends Object>(
     key: string,
     object: T | undefined,
     validateObject?: (o: any) => T,
-    onLoad?: (object: T) => void
+    onLoad?: (object: T | undefined) => void
 ) {
     const firstRender = useRef(true);
 
@@ -59,9 +59,11 @@ export default function useLocalStorage<T extends Object>(
         1000
     );
 
+    const [item, setItem] = useState<T | undefined>();
+
     useEffect(() => {
         updateFirstRender();
-        if (!!onLoad) load();
+        load();
     }, []);
 
     useEffect(() => {
@@ -71,7 +73,8 @@ export default function useLocalStorage<T extends Object>(
 
     const load = useCallback(() => {
         const r = loadItemFromLocalStorage(key, validateObject);
-        if (r) onLoad?.(r);
+        setItem(r);
+        onLoad?.(r);
     }, [key, validateObject]);
 
     const persistImmediate = useCallback(() => {
@@ -79,4 +82,6 @@ export default function useLocalStorage<T extends Object>(
         localStorage.setItem(key, JSON.stringify(object));
     }, [key, object]);
     const persist = useDelayedCallback(() => persistImmediate(), 1000);
+
+    return item;
 }

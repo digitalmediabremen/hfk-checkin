@@ -19,9 +19,12 @@ interface Theme {
     boxShadow: () => string;
 }
 
-
-
-type ReadonlyTheme = Readonly<Theme>;
+export function validateColorScheme(o: any): ColorScheme {
+    if (!["light", "dark", undefined].includes(o)) throw "invalid";
+    return o;
+}
 
 export type ColorScheme = "light" | "dark"; 
+
+type ReadonlyTheme = Readonly<Theme>;
 export default ReadonlyTheme;

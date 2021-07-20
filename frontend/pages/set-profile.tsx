@@ -1,6 +1,5 @@
 import { isValidNumber } from "libphonenumber-js";
 import { NextPage } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -17,23 +16,19 @@ import NewFormGroup from "../components/common/NewFormGroup";
 import Notice from "../components/common/Notice";
 import SectionTitle from "../components/common/SectionTitle";
 import SubPageBar from "../components/common/SubPageBar";
-import Title from "../components/common/Title";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
-import useLocalStorage from "../src/hooks/useLocalStorage";
-import { useActiveColorScheme } from "../src/hooks/useTheme";
+import useColorSchemeSetting, {
+    ColorSchemeSetting,
+} from "../src/hooks/useColorSchemeSetting";
 import Locale from "../src/model/api/Locale";
 import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
-import { ColorScheme } from "../src/model/Theme";
 import { getLocaleLabelMap } from "../src/util/LocaleUtil";
 import { Entries } from "../src/util/ReservationUtil";
-import reservation from "./reservation";
 
 interface EditProfileProps {
     profile?: MyProfile;
 }
-
-type ColorSchemeSetting = ColorScheme | "auto";
 
 const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const { appState, dispatch } = useAppState();
@@ -54,15 +49,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         light: t("Hell"),
         dark: t("Dunkel"),
     };
-    const activeColorScheme = appState.theme.colorScheme;
-    useLocalStorage("scheme", activeColorScheme, undefined, undefined);
-    const handleColorSchemeChange = (cs: ColorSchemeSetting) => {
-        if (activeColorScheme === cs) return;
-        dispatch({
-            type: "updateTheme",
-            colorScheme: cs,
-        });
-    };
+    const { colorSchemeSetting, handleColorSchemeSettingChange } =
+        useColorSchemeSetting();
 
     const handleLocaleChange = (locale: Locale) => {
         setValue("preferred_language", locale);
@@ -203,7 +191,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 )}
 
                 <Controller
-                    as={<FormPhoneInput />}
+                    as={<FormPhoneInput bottomSpacing={1} />}
                     {...controllerProps("phone", t("Telefonnummer"), {
                         validate: (value: string) =>
                             !isValidNumber(value, "DE")
@@ -263,13 +251,15 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         >
                     ).map(([colorScheme, label]) => (
                         <FormElement
-                            primary={activeColorScheme === colorScheme}
+                            primary={colorSchemeSetting === colorScheme}
                             density="super-narrow"
                             value={label}
                             adaptiveWidth
                             key={colorScheme}
                             noBottomSpacing
-                            onClick={() => handleColorSchemeChange(colorScheme)}
+                            onClick={() =>
+                                handleColorSchemeSettingChange(colorScheme)
+                            }
                         />
                     ))}
                 </NewFormGroup>
