@@ -205,7 +205,11 @@ const translation: Translation = {
             Speichern: "Save",
             "Eingeloggt als": "Logged in as",
             "Ausloggen": "Log out",
-            "Sprache": "Language"
+            "Sprache": "Language",
+            "Farben": "Colors",
+            "Automatisch": "Automatic",
+            "Hell": "Light",
+            "Dunkel": "Dark"
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
