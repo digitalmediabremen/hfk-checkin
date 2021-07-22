@@ -56,6 +56,10 @@ class UserQuerySet(models.QuerySet):
     def exclude_anonymous_users(self):
         return self.filter(id__gte=0)
 
+    def filter_internal_and_verifed_users(self):
+        q = Q(Q(is_external=False) | Q(is_external__isnull=True), Q(verified=True) | Q(verified__isnull=True)).prefix('profile')
+        return self.filter(q)
+
     def filter_for_user(self, user, force_any=False):
         qs = self
         if force_any or user.is_superuser or user.has_perm('users.can_view_any_user'):

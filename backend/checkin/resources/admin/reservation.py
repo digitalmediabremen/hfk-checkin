@@ -26,8 +26,11 @@ from ..auth import is_general_admin
 from guardian.shortcuts import get_objects_for_user
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.timezone import now
+from django.contrib.auth import get_user_model
+from django.contrib.admin.widgets import AutocompleteSelect
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 # model-wide filter on Users that can be assigned to reservations.
@@ -93,6 +96,9 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=User.objects.filter_internal_and_verifed_users(),
+                                  widget=AutocompleteSelect(Reservation._meta.get_field('user').remote_field, admin.site)
+                                  )
     PURPOSE_CHOICES = [('', '---------')] + StaticReservationPurpose.choices # add blank option
     purpose = forms.ChoiceField(required=False, label=_("Purpose"), choices=PURPOSE_CHOICES)
     state = forms.ChoiceField(required=True, label=_("State"), choices=Reservation.STATE_CHOICES, initial=Reservation.CREATED,
