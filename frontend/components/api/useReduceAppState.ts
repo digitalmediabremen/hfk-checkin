@@ -1,7 +1,7 @@
 import { Reducer, useReducer } from "react";
 import { createExpressionWithTypeArguments } from "typescript";
 import { AppAction, AppState } from "../../src/model/AppState";
-import { assertNever } from "../../src/util/TypeUtil";
+import { assertNever, empty, notEmpty } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/util/ReservationValidationUtil";
 import createTheme from "../../styles/theme";
 import Locale from "../../src/model/api/Locale";
@@ -134,16 +134,22 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     theme: createTheme(
-                        action.isDesktop || previousState.theme.isDesktop,
-                        action.isPWA || previousState.theme.isPWA,
-                        action.colorScheme || previousState.theme.colorScheme
+                        notEmpty(action.isDesktop)
+                            ? action.isDesktop
+                            : previousState.theme.isDesktop,
+                        notEmpty(action.isPWA)
+                            ? action.isPWA
+                            : previousState.theme.isPWA,
+                        notEmpty(action.colorScheme)
+                            ? action.colorScheme
+                            : previousState.theme.colorScheme
                     ),
                 };
-            case "overwriteColorScheme": 
+            case "overwriteColorScheme":
                 return {
                     ...previousState,
-                    overwriteColorScheme: action.colorScheme
-                }
+                    overwriteColorScheme: action.colorScheme,
+                };
             default:
                 assertNever(
                     action,
