@@ -1,9 +1,18 @@
-import { CheckCircle, Clock, MinusCircle, UserCheck, UserX, Watch, XCircle } from "react-feather";
+import {
+    CheckCircle,
+    Clock,
+    MinusCircle,
+    UserCheck,
+    UserX,
+    Watch,
+    XCircle,
+} from "react-feather";
 import { _t } from "../../localization";
 import { AttendanceState } from "../model/api/MyProfile";
 import NewReservation from "../model/api/NewReservation";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
-import { ReservationPurpose, ReservationState } from "../model/api/Reservation";
+import { ReservationState } from "../model/api/Reservation";
+import ReservationPurpose from "../model/api/ReservationPurpose";
 import { assertNever } from "./TypeUtil";
 
 export function getIcon(state: ReservationState) {
@@ -32,7 +41,7 @@ export function getStateLabel(state: ReservationState, locale: string) {
 }
 
 type MapToStringRecord<T> = Record<Exclude<keyof T, undefined>, string>;
-type Entries<T extends {}> = {
+export type Entries<T extends {}> = {
     [K in Exclude<keyof T, undefined>]: [K, T[K]];
 }[Exclude<keyof T, undefined>][];
 
@@ -46,13 +55,17 @@ const getRequestFieldLabelMap = (
     agreed_to_phone_contact: _t(locale, "request", "Telefonkontakt"),
     resource_uuid: _t(locale, "request", "Raum"),
     exclusive_resource_usage: _t(locale, "request", "Alleinnutzung"),
-    attendees: _t(locale, "request", "Externe Personen"),
+    attendees: _t(locale, "request", "Externe Teilnehmer||Teilnehmerinnen"),
     begin: _t(locale, "request", "Anfang"),
     end: _t(locale, "request", "Ende"),
     message: _t(locale, "request", "Nachricht"),
-    number_of_extra_attendees: _t(locale, "request", "Weitere Personen"),
+    number_of_extra_attendees: _t(
+        locale,
+        "request",
+        "Weitere Teilnehmer||Teilnehmerinnen"
+    ),
     purpose: _t(locale, "request", "Grund"),
-    templateId: ""
+    templateId: "",
 });
 
 // returns the bookable range for a requested resource in days
@@ -120,9 +133,8 @@ export function newReservationRequestFromTemplate(
     withResource: boolean,
     withAdditionalFields: boolean
 ) {
-    const additionalFields = additionalFilledReservationRequestFields(
-        reservation
-    );
+    const additionalFields =
+        additionalFilledReservationRequestFields(reservation);
     const resourceFields = resourceReservationRequestFields(reservation);
     const timeFields = timeReservationRequestFields(reservation);
 
@@ -154,30 +166,16 @@ export function getPurposeLabelMap(
     locale: string
 ): Record<ReservationPurpose, string> {
     return {
-        FOR_EXAM: _t(
-            locale,
-            "request-purpose",
-            "Prüfung"
-        ),
+        FOR_EXAM: _t(locale, "request-purpose", "Prüfung"),
         FOR_EXAM_PREPARATION: _t(
             locale,
             "request-purpose",
             "Prüfungsvorbereitung"
         ),
-        FOR_PICKUP: _t(
-            locale,
-            "request-purpose",
-            "Abholung"
-        ),
-        FOR_COUNCIL_MEETING: _t(
-            locale,
-            "request-purpose",
-            "Gremiensitzung"
-        ),
-        OTHER: _t(
-            locale,
-            "request-purpose",
-            "Anderer Grund"
-        ),
+        FOR_PICKUP: _t(locale, "request-purpose", "Abholung"),
+        FOR_COUNCIL_MEETING: _t(locale, "request-purpose", "Gremiensitzung"),
+        FOR_TEACHING: _t(locale, "request-purpose", "Lehrveranstaltung"),
+        FOR_APPOINTMENT: _t(locale, "request-purpose", "Terminbuchung"),
+        OTHER: _t(locale, "request-purpose", "Anderer Grund"),
     };
 }

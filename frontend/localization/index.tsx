@@ -1,8 +1,6 @@
 import getUserLocale from "get-user-locale";
 import { IncomingHttpHeaders } from "http";
-import { browser } from "process";
 import { createContext, useCallback, useContext, useEffect } from "react";
-import { useAppState } from "../components/common/AppStateProvider";
 import {
     appUrls,
     baseLocale,
@@ -57,10 +55,6 @@ export const LocaleProvider: React.FunctionComponent<{ locale: string }> = ({
     locale,
     children,
 }) => {
-    const { dispatch } = useAppState();
-    useEffect(() => {
-        dispatch({ type: "updateLocale", locale });
-    }, [locale]);
     return <Provider value={{ locale }}>{children}</Provider>;
 };
 
@@ -85,7 +79,7 @@ export const useTranslation = (inModule: TranslationModules = "common") => {
     const t: TFunction = useCallback(
         (s, data?, alternativeId?) =>
             _t(locale, inModule, s, data, alternativeId),
-        []
+        [locale]
     );
     return { locale, t };
 };
@@ -98,12 +92,13 @@ export function _t(
     alternativeId?: string
 ) {
     const id = alternativeId || s;
+    const gender = Date.now() % 30000 > 15000;
     const replace = (string?: string) =>
         string?.replace(
-            /{([A-Za-z]+)}/g,
+            /{([A-Za-z]+?)}/g,
             (string: string, match: string) =>
                 `${!!data && data[match] !== undefined ? data[match] : string}`
-        );
+        ).replace(/([A-Za-z]+)\|\|([A-Za-z]+)/g, (string: string, match1: string, match2: string) => gender ? match1 : match2)
     if (locale === baseLocale) return replace(s)!;
     const translatedString =
         replace(translation[locale]?.[inModule]?.[id]) ||

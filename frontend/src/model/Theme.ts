@@ -1,4 +1,3 @@
-
 interface Theme {
     fontSize: number;
     unit: number;
@@ -12,11 +11,20 @@ interface Theme {
     borderRadius: number;
     footerHeight: () => number;
     topBarHeight: () => number;
+    isDesktop: boolean;
+    isPWA: boolean;
+    colorScheme: ColorScheme;
     desktopWidth: number;
     offsetTopBar: number;
     boxShadow: () => string;
 }
 
-type ReadonlyTheme = Readonly<Theme>;
+export function validateColorScheme(o: any): ColorScheme {
+    if (!["light", "dark", undefined].includes(o)) throw "invalid";
+    return o;
+}
 
+export type ColorScheme = "light" | "dark"; 
+
+type ReadonlyTheme = Readonly<Theme>;
 export default ReadonlyTheme;

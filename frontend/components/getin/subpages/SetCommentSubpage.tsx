@@ -8,7 +8,7 @@ interface SetCommentSubpageProps {}
 
 const SetCommentSubpage: React.FunctionComponent<SetCommentSubpageProps> = ({}) => {
     const [message, setMessage] = useReservationState("message");
-    const [messageLocalState, setMessageLocalState] = useState<string>();
+    const [messageLocalState, setMessageLocalState] = useState<string>(message || "");
     const { t } = useTranslation("request-message");
 
     const updateMessage = useDelayedCallback(setMessage, 200)

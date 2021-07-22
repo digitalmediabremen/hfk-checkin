@@ -24,7 +24,7 @@ import useValidation from "../../src/hooks/useValidation";
 import MyProfile from "../../src/model/api/MyProfile";
 import {
     timeFormValuePresenter,
-    resourceFormValuePresenter,
+    useResourceFormValuePresenter,
     attendeesFormValuePresenter,
     purposeFormValuePresenter,
 } from "../../src/util/ReservationPresenterUtil";
@@ -44,6 +44,8 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const { message: comment } = reservation;
 
     const { submit, loading } = useSubmitReservation();
+
+    const resourceFormValuePresenter = useResourceFormValuePresenter();
 
     const [agreedToPhoneContact, setAgreedToPhoneContact] = useReservationState(
         "agreed_to_phone_contact"
@@ -95,8 +97,8 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
             <FormElement
                 {...handlerProps("attendees")}
                 value={attendeesFormValuePresenter(reservation, locale)}
-                label={t("Externe Personen")}
-                shortLabel={t("Pers.")}
+                label={t("Teilnehmer||Teilnehmerinnen")}
+                shortLabel={t("Teiln.")}
                 arrow
                 extendedWidth
                 dotted={!attendeesFormValuePresenter(reservation, locale)}
@@ -144,6 +146,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 iconRight={LoadingIcon}
                 disabled={loading}
                 extendedWidth
+                noBottomSpacing
             >
                 {t("Anfragen")}
             </NewButton>

@@ -23,7 +23,7 @@ const DigitInputElement = React.forwardRef<
             <style jsx>{`
                 label {
                     position: relative;
-                    width: 1em;
+                    width: 1.2em;
                     height: 1.4em;
                     line-height: 1.35em;
                     font-size: 1em;
@@ -69,7 +69,7 @@ const DigitInputElement = React.forwardRef<
 
                 div.digit {
                     // font-weight: bold;
-                    color: black;
+                    color: ${theme.primaryColor};
                     position: absolute;
                     width: 100%;
                     height: 100%;

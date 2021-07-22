@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "../../localization";
 import Reservation from "../../src/model/api/Reservation";
-import { resourceFormValuePresenter } from "../../src/util/ReservationPresenterUtil";
+import { useResourceFormValuePresenter } from "../../src/util/ReservationPresenterUtil";
 import {
     getIcon,
     getStateLabel,
@@ -29,6 +29,7 @@ const ReservationComponent: React.FunctionComponent<ReservationProps> = ({
     includeResourceNumber: _includeResourceNumber,
     ...formElementBaseProps
 }) => {
+    const resourceFormValuePresenter = useResourceFormValuePresenter();
     const { resource, begin, end, state, identifier } = reservation;
     const includeTime = _includeTime ?? true;
     const includeDate = _includeDate ?? true;

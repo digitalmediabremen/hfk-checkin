@@ -1,4 +1,5 @@
 import { Attendance } from "./MyProfile";
+import ReservationPurpose from "./ReservationPurpose";
 import Resource from "./Resource";
 
 export type ReservationState =
@@ -7,13 +8,6 @@ export type ReservationState =
     | "confirmed"
     | "denied"
     | "requested";
-
-export type ReservationPurpose =
-    | "FOR_EXAM"
-    | "FOR_EXAM_PREPARATION"
-    | "FOR_COUNCIL_MEETING"
-    | "FOR_PICKUP"
-    | "OTHER";
 
 export default interface Reservation {
     /**

@@ -10,7 +10,7 @@ import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
 import { scrollIntoView } from "../../../src/util/DomUtil";
-import { resourceFormValuePresenter } from "../../../src/util/ReservationPresenterUtil";
+import { useResourceFormValuePresenter } from "../../../src/util/ReservationPresenterUtil";
 import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
 import Fade from "../../common/Fade";
@@ -34,14 +34,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const queryResourceRequest = useResources(false);
     const unitsApi = useUnits();
     const { goForward } = useSubPage(requestSubpages);
-    const [
-        selectedResource,
-        setSelectedResource,
-    ] = useReservationState("resource");
+    const [selectedResource, setSelectedResource] =
+        useReservationState("resource");
     const [units, setUnits] = useReservationState("units");
-    const [selectedUnitId, setSelectedUnitId] = useReservationState(
-        "selectedUnitId"
-    );
+    const [selectedUnitId, setSelectedUnitId] =
+        useReservationState("selectedUnitId");
     const [checked, setChecked] = useReservationState(
         "exclusive_resource_usage"
     );
@@ -54,8 +51,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const { has, getError } = useValidation();
     const theme = useTheme();
+    const resourceFormValuePresenter = useResourceFormValuePresenter();
+
 
     useEffect(() => {
+        unitsApi.requestUnits();
         const timer = window.setTimeout(() => inputRef.current?.focus(), 300);
         return () => window.clearTimeout(timer);
     }, []);
@@ -78,8 +78,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                 setSelectedUnitId(unit.slug);
             }
         }
-        if (unitsApi.state === "initial") unitsApi.requestUnits();
-    }, [units, unitsApi.state]);
+    }, [units]);
 
     useEffect(() => {
         if (unitsApi.state !== "success") return;
@@ -150,7 +149,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         <FormElement
                             primary={unit.slug === selectedUnitId}
                             onClick={() => handleSetUnit(unit.slug)}
-                            superNarrow
+                            density="super-narrow"
                             value={unit.name}
                             adaptiveWidth
                             key={unit.uuid}
@@ -171,6 +170,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             value={resourceFormValuePresenter(
                                 selectedResource,
                                 locale,
+                                true,
                                 true
                             )}
                             actionIcon={<X />}
@@ -193,7 +193,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     ref={inputRef}
                                     value={searchValue}
                                     placeholder={t(
-                                        "Name oder Nummer eingeben..."
+                                        "Suche nach Name, Nummer oder Austattungsmerkmalen ..."
                                     )}
                                     onChange={(e) =>
                                         setSearchValue(e.target.value)
@@ -262,7 +262,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             // label="Info"
                             labelIcon={<Info />}
                             alignLabelIconTop
-                            superNarrow
+                            density="super-narrow"
                             noOutline
                             noPadding
                             value={<>{selectedResource?.description}</>}
@@ -295,7 +295,9 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
 
                     <FormCheckbox
                         value={checked ?? false}
-                        label={t("Ich möchte den Raum allein nutzen.")}
+                        label={t(
+                            "Keine anderen Buchungen im Zeitraum zulassen."
+                        )}
                         onChange={setChecked}
                         bottomSpacing={2}
                     />

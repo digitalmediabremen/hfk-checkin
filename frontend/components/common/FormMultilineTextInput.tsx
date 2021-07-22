@@ -18,6 +18,7 @@ const FormMultilineTextInput: React.FunctionComponent<FormMultilineTextInputProp
     const { styles, className } = css.resolve`
         textarea {
             color: ${theme.primaryColor};
+            background-color: ${theme.secondaryColor};
             width: 100%;
             resize: none;
             border: none;

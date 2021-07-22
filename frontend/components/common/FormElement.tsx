@@ -5,7 +5,7 @@ import useTheme from "../../src/hooks/useTheme";
 import FormMultilineValue from "../FormMultilineValue";
 import FormElementBase, {
     FormElementBaseProps,
-    FormElementBaseRefType
+    FormElementBaseRefType,
 } from "./FormElementBase";
 import FormElementLabel from "./FormElementLabel";
 
@@ -24,7 +24,7 @@ export interface FormElementProps extends FormElementBaseProps {
 }
 
 const FormElement = forwardRef<FormElementBaseRefType, FormElementProps>(
-    (
+    function FormElement(
         {
             label,
             shortLabel,
@@ -40,7 +40,7 @@ const FormElement = forwardRef<FormElementBaseRefType, FormElementProps>(
             ...formElementBaseProps
         },
         ref
-    ) => {
+    ) {
         const theme = useTheme();
         const handleIconClick = (
             event: React.MouseEvent<HTMLSpanElement, MouseEvent>
@@ -89,7 +89,9 @@ const FormElement = forwardRef<FormElementBaseRefType, FormElementProps>(
                         padding-right: ${theme.spacing(1)}px;
                         line-height: 0;
                         flex: 0 0 ${theme.spacing(5)}px;
-                        align-self: ${alignLabelIconTop ? "flex-start" : "center"};
+                        align-self: ${alignLabelIconTop
+                            ? "flex-start"
+                            : "center"};
                     }
                 `}</style>
                 <FormElementBase {...formElementBaseProps} ref={ref}>

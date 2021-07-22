@@ -4,18 +4,27 @@ import { useRouter } from "next/router";
 import React, { useCallback, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useUpdateProfile } from "../components/api/ApiHooks";
+import AlignContent from "../components/common/AlignContent";
 import { useAppState } from "../components/common/AppStateProvider";
+import FormElement from "../components/common/FormElement";
 import FormPhoneInput from "../components/common/FormPhoneInput";
 import FormTextInput from "../components/common/FormTextInput";
 import Layout from "../components/common/Layout";
 import { LoadingInline } from "../components/common/Loading";
 import NewButton from "../components/common/NewButton";
+import NewFormGroup from "../components/common/NewFormGroup";
 import Notice from "../components/common/Notice";
+import SectionTitle from "../components/common/SectionTitle";
 import SubPageBar from "../components/common/SubPageBar";
 import { appUrls } from "../config";
 import { useTranslation } from "../localization";
+import useColorSchemeSetting, {
+    ColorSchemeSetting,
+} from "../src/hooks/useColorSchemeSetting";
+import Locale from "../src/model/api/Locale";
 import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
-import reservation from "./reservation";
+import { getLocaleLabelMap } from "../src/util/LocaleUtil";
+import { Entries } from "../src/util/ReservationUtil";
 
 interface EditProfileProps {
     profile?: MyProfile;
@@ -33,7 +42,23 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         result: updatedProfile,
     } = useUpdateProfile();
     const router = useRouter();
-    const { t } = useTranslation("setprofile");
+    const { t, locale: currentLocale } = useTranslation("setprofile");
+    const localeMap = getLocaleLabelMap(currentLocale);
+    const colorSchemeMap: Record<ColorSchemeSetting, string> = {
+        auto: t("Automatisch"),
+        light: t("Hell"),
+        dark: t("Dunkel"),
+    };
+    const { colorSchemeSetting, handleColorSchemeSettingChange } =
+        useColorSchemeSetting();
+
+    const handleLocaleChange = (locale: Locale) => {
+        setValue("preferred_language", locale);
+        dispatch({
+            type: "updateLocale",
+            locale,
+        });
+    };
 
     useEffect(() => {
         if (!success) return;
@@ -56,6 +81,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
             first_name: initialProfile?.first_name || "",
             last_name: initialProfile?.last_name || "",
             phone: initialProfile?.phone || "",
+            preferred_language:
+                initialProfile?.preferred_language || appState.currentLocale,
         },
     });
 
@@ -63,6 +90,10 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         setValue("first_name", initialProfile?.first_name || "");
         setValue("last_name", initialProfile?.last_name || "");
         setValue("phone", initialProfile?.phone || "");
+        setValue(
+            "preferred_language",
+            initialProfile?.preferred_language || appState.currentLocale
+        );
     }, [initialProfile]);
 
     const controllerProps = useCallback(
@@ -87,6 +118,11 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         updateProfile(value);
     };
 
+    const handleLogout = () => {
+        const confirm = window.confirm(t("Wirklich ausloggen?"));
+        if (confirm) router.push(appUrls.logout);
+    };
+
     const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
 
     if (!appState.initialized) return null;
@@ -104,6 +140,31 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 />
             }
         >
+            {!isUserCreation && (
+                <>
+                    <SectionTitle noMarginBottom>
+                        {t("Eingeloggt als")}
+                    </SectionTitle>
+                    <FormElement
+                        value={initialProfile?.display_name}
+                        noOutline
+                        noPadding
+                        density="super-narrow"
+                        bottomSpacing={3}
+                        actionIcon={
+                            <NewButton
+                                componentType="a"
+                                noBottomSpacing
+                                noOutline
+                                noPadding
+                                onClick={handleLogout}
+                            >
+                                {t("Ausloggen")}
+                            </NewButton>
+                        }
+                    />
+                </>
+            )}
             <form
                 onSubmit={handleSubmit(handleProfileUpdate)}
                 autoComplete="off"
@@ -111,23 +172,26 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 spellCheck="false"
             >
                 <style jsx>{``}</style>
-                <Controller
-                    as={<FormTextInput disabled={!isUserCreation} />}
-                    {...controllerProps("first_name", t("Vorname"))}
-                />
-
-                <Controller
-                    as={
-                        <FormTextInput
-                            bottomSpacing={4}
-                            disabled={!isUserCreation}
+                {isUserCreation && (
+                    <>
+                        <Controller
+                            as={<FormTextInput disabled={!isUserCreation} />}
+                            {...controllerProps("first_name", t("Vorname"))}
                         />
-                    }
-                    {...controllerProps("last_name", t("Nachname"))}
-                />
+                        <Controller
+                            as={
+                                <FormTextInput
+                                    bottomSpacing={4}
+                                    disabled={!isUserCreation}
+                                />
+                            }
+                            {...controllerProps("last_name", t("Nachname"))}
+                        />
+                    </>
+                )}
 
                 <Controller
-                    as={<FormPhoneInput />}
+                    as={<FormPhoneInput bottomSpacing={1} />}
                     {...controllerProps("phone", t("Telefonnummer"), {
                         validate: (value: string) =>
                             !isValidNumber(value, "DE")
@@ -136,7 +200,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     })}
                 />
                 {!initialProfile?.phone && (
-                    <Notice bottomSpacing={2}>
+                    <Notice bottomSpacing={3}>
                         {t(
                             "Deine Daten werden ausschließlich im Falle einer Infektionsnachverfolgung verwendet. Mit der Registrierung bestätigst du, den Datenschutzhinweis der HfK gelesen und verstanden zu haben und mit der Erfassung deiner Daten zum Zwecke der Rückverfolgung bei einem Infektionsfall einverstanden zu sein. Du bestätigst das gültige HfK Hygienekonzept gelesen und verstanden zu haben und es zu befolgen. Die Datenschutzhinweise und die Hygieneregeln der HfK findest du auf Sie auf faq.hfk-bremen.de und https://www.hfk-bremen.de/corona-downloads und im Aushang am Empfang.",
                             {},
@@ -145,19 +209,73 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                     </Notice>
                 )}
                 {initialProfile?.phone && (
-                    <Notice bottomSpacing={2}>
+                    <Notice bottomSpacing={3}>
                         {t(
-                            "Die Telefonnummer wird auschliesslich im Falle einer Infektionsnachverfolgung verwendet."
+                            "Die Telefonnummer wird im Falle einer Infektionsnachverfolgung verwendet."
                         )}
                     </Notice>
                 )}
-                <NewButton
-                    disabled={loading}
-                    primary
-                    iconRight={loading ? <LoadingInline loading /> : undefined}
-                >
-                    {isUserCreation ? t("Erstellen") : t("Speichern")}
-                </NewButton>
+                <SectionTitle>{t("Sprache")}</SectionTitle>
+                <Controller
+                    control={control}
+                    name="preferred_language"
+                    render={(field) => (
+                        <NewFormGroup bottomSpacing={3}>
+                            {Object.entries(localeMap).map(
+                                ([locale, label]) => (
+                                    <FormElement
+                                        primary={field.value === locale}
+                                        density="super-narrow"
+                                        value={label}
+                                        adaptiveWidth
+                                        key={locale}
+                                        noBottomSpacing
+                                        onClick={() =>
+                                            handleLocaleChange(
+                                                locale as unknown as Locale
+                                            )
+                                        }
+                                    />
+                                )
+                            )}
+                        </NewFormGroup>
+                    )}
+                />
+
+                <SectionTitle>{t("Farben")}</SectionTitle>
+
+                <NewFormGroup bottomSpacing={3}>
+                    {(
+                        Object.entries<string>(colorSchemeMap) as Entries<
+                            Record<ColorSchemeSetting, string>
+                        >
+                    ).map(([colorScheme, label]) => (
+                        <FormElement
+                            primary={colorSchemeSetting === colorScheme}
+                            density="super-narrow"
+                            value={label}
+                            adaptiveWidth
+                            key={colorScheme}
+                            noBottomSpacing
+                            onClick={() =>
+                                handleColorSchemeSettingChange(colorScheme)
+                            }
+                        />
+                    ))}
+                </NewFormGroup>
+
+                <AlignContent align="bottom" offsetBottomPadding>
+                    <NewButton
+                        disabled={loading}
+                        primary
+                        iconRight={
+                            loading ? <LoadingInline loading /> : undefined
+                        }
+                        noBottomSpacing
+                    >
+                        {isUserCreation ? t("Erstellen") : t("Speichern")}
+                    </NewButton>
+                </AlignContent>
             </form>
         </Layout>
     );

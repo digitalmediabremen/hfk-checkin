@@ -1,18 +1,20 @@
 import { Reducer, useReducer } from "react";
 import { createExpressionWithTypeArguments } from "typescript";
 import { AppAction, AppState } from "../../src/model/AppState";
-import { assertNever } from "../../src/util/TypeUtil";
+import { assertNever, empty, notEmpty } from "../../src/util/TypeUtil";
 import validateReservation from "../../src/util/ReservationValidationUtil";
 import createTheme from "../../styles/theme";
+import Locale from "../../src/model/api/Locale";
+import { getTypeSafeLocale } from "../../src/util/LocaleUtil";
 
 export const initialAppState: AppState = {
     initialized: false,
     disableNextUpdate: false,
     subPageTransitionDirection: "right",
     reservationValidation: [],
-    currentLocale: "en",
+    currentLocale: getTypeSafeLocale(),
     status: undefined,
-    theme: createTheme(),
+    theme: createTheme(false, false, "light"),
 };
 
 const useReduceAppState = () =>
@@ -27,6 +29,9 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     initialized: true,
+                    currentLocale:
+                        action.profile?.preferred_language ||
+                        previousState.currentLocale,
                     myProfile: action.profile,
                 };
 
@@ -119,7 +124,7 @@ const useReduceAppState = () =>
             case "updateLocale":
                 return {
                     ...previousState,
-                    currentLocale: action.locale,
+                    currentLocale: action.locale as unknown as Locale,
                     reservationValidation: validateReservation(
                         previousState.reservationRequest || {},
                         action.locale
@@ -128,13 +133,30 @@ const useReduceAppState = () =>
             case "updateTheme":
                 return {
                     ...previousState,
-                    theme: {
-                        ...previousState.theme,
-                        ...action.theme,
-                    },
+                    theme: createTheme(
+                        notEmpty(action.isDesktop)
+                            ? action.isDesktop
+                            : previousState.theme.isDesktop,
+                        notEmpty(action.isPWA)
+                            ? action.isPWA
+                            : previousState.theme.isPWA,
+                        notEmpty(action.colorScheme)
+                            ? action.colorScheme
+                            : previousState.theme.colorScheme
+                    ),
+                };
+            case "overwriteColorScheme":
+                return {
+                    ...previousState,
+                    overwriteColorScheme: action.colorScheme,
                 };
             default:
-                assertNever(action, `Unhandled state change "${action!.type}"`);
+                assertNever(
+                    action,
+                    `Unhandled state change "${
+                        (action as unknown as AppAction).type
+                    }"`
+                );
         }
     }, initialAppState);
 

@@ -45,7 +45,7 @@ const HelpTitle: React.FunctionComponent = ({ children }) => {
                 h3:hover {
                     cursor: pointer;
                     background-color: ${theme.primaryColor};
-                    color: #fff;
+                    color: ${theme.secondaryColor};
                 }
             `}</style>
             <div>

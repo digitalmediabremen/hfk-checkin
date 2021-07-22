@@ -26,7 +26,7 @@ const StatusBar: React.FunctionComponent<StatusBarProps> = ({ status }) => {
                     }
                     // noPadding
                     noBottomSpacing
-                    narrow
+                    density="narrow"
                     maxRows={10}
                 />
             </Bar>

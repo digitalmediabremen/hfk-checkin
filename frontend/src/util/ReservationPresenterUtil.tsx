@@ -2,7 +2,10 @@ import React, { Fragment } from "react";
 import { Lock, Unlock } from "react-feather";
 import { _t } from "../../localization";
 import useTheme from "../hooks/useTheme";
-import { Attendance, AttendanceUpdate } from "../model/api/MyProfile";
+import MyProfile, {
+    Attendance,
+    AttendanceUpdate,
+} from "../model/api/MyProfile";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import Reservation from "../model/api/Reservation";
 import Resource from "../model/api/Resource";
@@ -28,9 +31,27 @@ export const attendeePresenter = (a: Attendance, locale: string) => {
                     {a.first_name} {a.last_name}
                 </b>
                 {a.is_external && (
-                    <> {_t(locale, "request-purpose", "Extern")}</>
+                    <> ({_t(locale, "request-purpose", "Extern")})</>
+                )}
+                {a.is_organizer && (
+                    <> ({_t(locale, "request-purpose", "Organisator")})</>
                 )}
             </StrikeIfDenied>
+        </>
+    );
+};
+
+export const extraAttendeesPresenter = (
+    numberOfExtraAttendees: number,
+    locale: string
+) => {
+    const label =
+        numberOfExtraAttendees > 1
+            ? _t(locale, "request-purpose", "HfK-Mitglieder")
+            : _t(locale, "request-purpose", "HfK-Mitglied");
+    return (
+        <>
+            +{numberOfExtraAttendees} {label}
         </>
     );
 };
@@ -40,12 +61,45 @@ export const requestedAttendeePresenter = (
     locale: string
 ) => (
     <>
+    <b>
+        {a.first_name} {a.last_name}
+    </b>{" "}
+    ({_t(locale, "request-purpose", "Extern")})
+</>
+)
+
+
+export const requestedAttendeeFormValuePresenter = (
+    a: AttendanceUpdate,
+    locale: string
+) => [
+    requestedAttendeePresenter(a, locale),
+    <>Tel: {a.phone}</>
+];
+
+export const myselfAttendeeFormValuePresenter = (
+    myProfile: MyProfile,
+    locale: string
+) => [
+    <>
         <b>
-            {a.first_name} {a.last_name}
+            {myProfile.first_name} {myProfile.last_name}
         </b>{" "}
-        {_t(locale, "request-purpose", "Extern")}
-    </>
-);
+        ({_t(locale, "request-attendees", "Organisator")})
+    </>,
+    ,
+    <>Tel: {myProfile.phone}</>
+];
+
+export const requestedAttendeePresenterString = (
+    a: AttendanceUpdate,
+    locale: string
+) =>
+    `${a.first_name} ${a.last_name} (${_t(
+        locale,
+        "request-purpose",
+        "Extern"
+    )})`;
 
 export const attendeesFormValuePresenter = (
     r: NewReservationBlueprint | Reservation,
@@ -57,48 +111,64 @@ export const attendeesFormValuePresenter = (
         (extraAttendees && extraAttendees > 0);
     return show
         ? [
-              ...(((attendees as unknown) as AttendanceUpdate[])?.map((a) =>
+              ...((attendees as unknown as AttendanceUpdate[])?.map((a) =>
                   requestedAttendeePresenter(a, locale)
               ) || []),
               ...insertIf(
-                  [
-                      <>
-                          +{extraAttendees || 0}{" "}
-                          {_t(locale, "request-purpose", "weitere")}
-                      </>,
-                  ],
-                  (extraAttendees || 0) !== 0
+                  [extraAttendeesPresenter(extraAttendees || 0, locale)],
+                  !!extraAttendees
               ),
           ]
         : undefined;
 };
 
-export const resourceFormValuePresenter = (
-    resource: Resource,
-    locale: string,
-    includeResourceNumber: boolean = true,
-) => {
+export const useResourceFormValuePresenter = () => {
     const theme = useTheme();
+    return function resourceFormValuePresenter(
+        resource: Resource,
+        locale: string,
+        includeResourceNumber: boolean = true,
+        includeAlternativeTitle: boolean = true
+    ) {
+        const alternativeNamesAsSeperateRow = !theme.isDesktop;
+        const alternativeNamesString = resource.alternative_names?.join(", ");
 
-    const PermissionIcon = resourcePermissionIcon(resource);
-    return [
-        ...insertIf([resource.display_numbers || ""], includeResourceNumber),
-        <b>
-            {resource.name}{" "}
-            {resource.access_restricted && (
-                <PermissionIcon
-                    strokeWidth={(2 / 20) * 24}
-                    height={theme.fontSize * 1.111}
-                    width={theme.fontSize}
-                    preserveAspectRatio="none"
-                    style={{
-                        verticalAlign: "text-bottom",
-                        transform: "translateY(-2px)",
-                    }}
-                />
-            )}
-        </b>,
-    ];
+        const PermissionIcon = resourcePermissionIcon(resource);
+        return [
+            ...insertIf(
+                [resource.display_numbers || ""],
+                includeResourceNumber
+            ),
+            <>
+                <b>
+                    {resource.name}{" "}
+                    {resource.access_restricted && (
+                        <PermissionIcon
+                            strokeWidth={(2 / 20) * 24}
+                            height={"1.111em"}
+                            width={"1em"}
+                            preserveAspectRatio="none"
+                            style={{
+                                verticalAlign: "text-bottom",
+                                transform: "translateY(-2px)",
+                            }}
+                        />
+                    )}
+                </b>{" "}
+                {includeAlternativeTitle &&
+                    !!alternativeNamesString &&
+                    !alternativeNamesAsSeperateRow && (
+                        <i>{alternativeNamesString}</i>
+                    )}
+            </>,
+            ...insertIf(
+                [<i>{alternativeNamesString}</i>],
+                includeAlternativeTitle &&
+                    !!alternativeNamesString &&
+                    alternativeNamesAsSeperateRow
+            ),
+        ];
+    };
 };
 export const resourcePermissionIcon = (r: Resource) =>
     r.access_allowed_to_current_user ? Unlock : Lock;

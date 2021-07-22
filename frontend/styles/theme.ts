@@ -1,22 +1,41 @@
 import { getPrimaryColor } from "../features";
-import Theme from "../src/model/Theme";
+import Theme, { ColorScheme } from "../src/model/Theme";
 
 const shadeColor = (color: string, u: number): string => {
-    const [
-        ,
-        r,
-        g,
-        b,
-        a,
-    ] = /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/.exec(
-        color
-    )!;
+    const [, r, g, b, a] =
+        /^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/.exec(
+            color
+        )!;
     return `rgba(${r}, ${g}, ${b}, ${Math.max(0, Math.min(u, 1))})`;
 };
 
-const createTheme = (unit: number = 8, fontSize: number = 16): Theme => ({
-    fontSize,
-    unit,
+const colorPallete: Record<
+    ColorScheme,
+    {
+        primaryColor: string;
+        secondaryColor: string;
+        disabledColor: string;
+    }
+> = {
+    light: {
+        primaryColor: getPrimaryColor("light"),
+        secondaryColor: "rgba(255,255,255,1)",
+        disabledColor: "rgba(102,102,102,1)"
+    }, dark: {
+        primaryColor: getPrimaryColor("dark"),
+        secondaryColor: "rgba(50,50,50,1)",
+        disabledColor: "rgba(160,160,160,1)"
+    }
+};
+
+const createTheme = (
+    isDesktop: boolean,
+    isPWA: boolean,
+    colorScheme: ColorScheme
+): Theme => ({
+    ...colorPallete[colorScheme],
+    fontSize: isDesktop ? 18 : 16,
+    unit: isDesktop ? 9 : 8,
     spacing: function (u: number) {
         return u * this.unit;
     },
@@ -29,18 +48,18 @@ const createTheme = (unit: number = 8, fontSize: number = 16): Theme => ({
     shadeDisabledColor: function (u: number) {
         return shadeColor(this.disabledColor, u);
     },
-    borderRadius: 5,
-    primaryColor: getPrimaryColor(),
-    secondaryColor: "rgba(255, 255, 255, 1)",
-    disabledColor: "rgba(102,102,102,1)",
+    borderRadius: isDesktop ? 6 : 5,
     footerHeight: function () {
         return this.unit * 10;
     },
     desktopWidth: 600,
+    isDesktop,
+    isPWA,
+    colorScheme,
     topBarHeight: function () {
         return this.unit * 8 + this.offsetTopBar;
     },
-    offsetTopBar: 0,
+    offsetTopBar: isPWA ? 0 : 0,
     boxShadow: function () {
         return `0 0 ${this.spacing(1)}px ${this.shadePrimaryColor(0.3)}`;
     },

@@ -72,7 +72,6 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
                     top: 0;
                     left: 0;
                     right: 0;
-                    background: #fff;
                     margin-top: ${theme.offsetTopBar}px;
                 }
 

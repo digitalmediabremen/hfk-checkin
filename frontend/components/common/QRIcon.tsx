@@ -1,4 +1,7 @@
+import useTheme from "../../src/hooks/useTheme";
+
 const QRIcon = () => {
+    const theme = useTheme();
     return (
         <svg
             width="37px"
@@ -18,7 +21,7 @@ const QRIcon = () => {
                 <g
                     id="Checkin-Manual"
                     transform="translate(-33.000000, -340.000000)"
-                    stroke="#D81830"
+                    stroke={theme.primaryColor}
                 >
                     <g
                         id="Group-6-Copy"
@@ -59,7 +62,7 @@ const QRIcon = () => {
                         </g>
                         <rect
                             id="Rectangle-Copy-61"
-                            fill="#D81830"
+                            fill={theme.primaryColor}
                             x="2"
                             y="2"
                             width="4"

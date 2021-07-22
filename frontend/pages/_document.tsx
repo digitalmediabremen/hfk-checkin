@@ -6,10 +6,10 @@ import Document, {
     NextScript
 } from "next/document";
 import React, { Fragment } from "react";
+import { AppStateConsumer } from "../components/common/AppStateProvider";
 import {
     getManifestUrl,
     getName,
-    getPrimaryColorHex,
     getTitle
 } from "../features";
 import { getInitialLocale, LocaleConsumer } from "../localization";
@@ -44,9 +44,9 @@ class MyDocument extends Document {
 
     render() {
         return (
-            <LocaleConsumer>
-                {({ locale }) => (
-                    <Html lang={locale} translate="no">
+            <AppStateConsumer>
+                {({ appState }) => (
+                    <Html lang={appState.currentLocale} translate="no">
                         <Head>
                             <link rel="manifest" href={getManifestUrl()} />
                             <link
@@ -98,12 +98,12 @@ class MyDocument extends Document {
                             />
                             <meta
                                 name="theme-color"
-                                content={getPrimaryColorHex()}
+                                content={appState.theme.primaryColor}
                             />
 
                             <meta
                                 name="msapplication-navbutton-color"
-                                content={getPrimaryColorHex()}
+                                content={appState.theme.primaryColor}
                             />
                             <meta
                                 name="apple-mobile-web-app-status-bar-style"
@@ -119,7 +119,7 @@ class MyDocument extends Document {
                         </body>
                     </Html>
                 )}
-            </LocaleConsumer>
+            </AppStateConsumer>
         );
     }
 }

@@ -32,7 +32,6 @@ export default function useSubmitReservation() {
                 reservationId: reservationObject.uuid,
                 reservationRequestTemplate: validReservationRequest,
             });
-            console.log("set to null")
             dispatch({
                 type: "updateReservationRequest",
                 reservation: undefined,
@@ -48,7 +47,9 @@ export default function useSubmitReservation() {
         const validReservation = validateModel();
 
         (async () => {
-            const result = await submitReservationRequest(validReservation);
+            const { data: result } = await submitReservationRequest(
+                validReservation
+            );
             if (!result) return;
             onSuccess(result, validReservation);
         })();

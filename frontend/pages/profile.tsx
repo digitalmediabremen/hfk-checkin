@@ -68,7 +68,7 @@ const ProfilePage: React.FunctionComponent<ProfilePageProps> = ({
             )}
             <AlignContent offsetBottomPadding>
                 <Link href={appUrls.setprofile} passHref>
-                    <NewButton noBottomSpacing>{t("Telefon ändern")}</NewButton>
+                    <NewButton noBottomSpacing>{t("Profil ändern")}</NewButton>
                 </Link>
             </AlignContent>
         </Layout>

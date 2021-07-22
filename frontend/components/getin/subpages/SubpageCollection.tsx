@@ -57,13 +57,13 @@ const SubpageList: React.FunctionComponent<SubpageListProps> = ({
                 {() => <DynamicSetRoomSubpage />}
             </SubPage>
             <SubPage
-                title={t("Externe Personen")}
+                title={t("Teilnehmer||Teilnehmerinnen")}
                 {...subPageProps("attendees")}
             >
                 {() => <DynamicSetPersonSubpage />}
             </SubPage>
             <SubPage
-                title={t("Person hinzufügen")}
+                title={t("Teilnehmer||Teilnehmerin hinzufügen")}
                 {...subPageProps("attendee-set", "attendees")}
             >
                 {() => <DynamicAddExternalPersonSubpage />}

@@ -1,10 +1,11 @@
 import { Writable } from "../../util/TypeUtil";
 import { LastCheckin } from "./Checkin";
-import { MyReservation } from "./Reservation";
+import Locale from "./Locale";
 
 export default interface MyProfile extends PrivateProfile {
     readonly verified: boolean;
     readonly last_checkins: Array<LastCheckin>;
+    preferred_language: Locale | null;
     // readonly reservations: Array<MyReservation>;
 }
 
@@ -29,6 +30,7 @@ export interface Attendance extends Omit<BaseProfile, "id"> {
     readonly profile_id: number;
     readonly uuid: string;
     readonly is_external: boolean;
+    readonly is_organizer: boolean;
     readonly state: AttendanceState | null;
 }
 

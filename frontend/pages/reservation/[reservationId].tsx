@@ -29,9 +29,10 @@ import Page404 from "../404";
 
 interface ReservationPageProps {}
 
-const DynamicAdditionalRequestSubPage = createDynamicPage<AdditionalRequestSubPageProps>(
-    () => import("../../components/getin/subpages/AdditionalRequestSubPage")
-);
+const DynamicAdditionalRequestSubPage =
+    createDynamicPage<AdditionalRequestSubPageProps>(
+        () => import("../../components/getin/subpages/AdditionalRequestSubPage")
+    );
 
 const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const [id] = useParam("reservationId");
@@ -73,14 +74,16 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
         if (!c) return;
 
         (async () => {
-            await cancel();
-            if (error) return;
+            const { error } = await cancel();
             await router.push(appUrls.reservations);
-            setNotice(
-                t("Deine Buchung {identifier} wurde storniert.", {
-                    identifier: reservation.identifier,
-                })
-            );
+            
+            if (!error) {
+                setNotice(
+                    t("Deine Buchung {identifier} wurde storniert.", {
+                        identifier: reservation.identifier,
+                    })
+                );
+            }
         })();
     };
 
@@ -124,7 +127,9 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                         {reservationSuccess && (
                             <>
                                 <>
-                                    <AnimatedIcon icon={getIcon(reservation.state)}/>
+                                    <AnimatedIcon
+                                        icon={getIcon(reservation.state)}
+                                    />
                                     <Subtitle>
                                         {t("Deine Anfrage ist eingegangen.")}
                                     </Subtitle>
