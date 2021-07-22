@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAu
     DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
+from rest_framework.utils import html, model_meta, representation
 from .models import *
 from rest_framework.exceptions import PermissionDenied, NotFound, ValidationError
 from django.db.utils import IntegrityError
@@ -77,12 +78,16 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(source='profile.phone')
     email = serializers.EmailField(source='profile.email', read_only=True) # can only be writable if we validate emails
     is_external = serializers.BooleanField(source='profile.is_external', read_only=True)
-    preferred_language = serializers.ChoiceField(choices=settings.LANGUAGES, required=False, read_only=True)
+    preferred_language = serializers.ChoiceField(choices=settings.LANGUAGES, required=False, allow_null=True)
     #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     # TODO limited qs on reservations etc. ListField to ReservationsViewSet?
     #reservations = serializers.ListField(serializers=)
     verified = serializers.ReadOnlyField(source='profile.verified', read_only=True)
     complete = serializers.ReadOnlyField(source='profile.complete', read_only=True)
+
+    # FIXME attention!
+    # All fields are mapped manually to either user.profile or user.
+    # If you change fields you must change the create() and update() methods below as well.
 
     class Meta:
         model = User
@@ -91,66 +96,88 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     def validate_phone(self, value):
         return value.strip()
 
-    def get_preferred_language(self, validated_data):
+    def get_default_preferred_language(self):
         request = self.context.get("request")
-        # take language from serializer data if exists
-        # FIXME 'preferred_language' is not in validated_data. why?
-        # if 'preferred_language' in validated_data:
-        #     return {'preferred_language': validated_data['preferred_language']}
-        # take language form request otherwise
         if request and hasattr(request, "user"):
-            preferred_language = get_language_from_request(request)
-            return{'preferred_language': preferred_language}
-        return {}
+            return get_language_from_request(request)
+        return None
 
     def create(self, validated_data, user_extra={}, profile_extra={}):
         userprofile_data = validated_data.pop('profile')
-
         user = User.objects.create_user(**{
             User.USERNAME_FIELD: generate_username_for_new_user(userprofile_data),
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
-            'disable_notifications': True,
-            **self.get_preferred_language(userprofile_data),
+            'disable_notifications': True, # only for "guest users". regular users will never pass this method.
+            'preferred_language': validated_data.pop('preferred_language', self.get_default_preferred_language()),
+            #**self.get_preferred_language(userprofile_data),
             **user_extra,
         })
         # create profile object
         profile_dict = {
             'user': user,
-            'first_name': userprofile_data['first_name'],
-            'last_name': userprofile_data['last_name'],
-            'phone': userprofile_data['phone'],
+            'first_name': userprofile_data['first_name'], # required
+            'last_name': userprofile_data['last_name'], # required
+            'phone': userprofile_data['phone'], # required
             #'email': userprofile_data['email'], # can only be writable if we validate emails
-            'verified': False,
+            'verified': False, # default for non-authenticated account-creations
+            'is_external': None, # default for non-authenticated account-creations
             **profile_extra,
         }
         try:
             # FIXME will never exists if the username is time dependent
             profile = Profile.objects.get(user=user)
-            profile.__dict__.update(**profile_dict)
+            # update profile
+            for attr, value in profile_dict.items():
+                setattr(profile, attr, value)
             profile.save()
         except Profile.DoesNotExist:
             profile = Profile.objects.create(**profile_dict)
         user.profile = profile
         return user
 
-    def update(self, instance, validated_data):
+    def update(self, instance, validated_data, user_extra={}, profile_extra={}):
+        info = model_meta.get_field_info(instance)
+        # get "sub-data" form validated_data
         userprofile_data = validated_data.pop('profile')
-        # update user object
-        instance.__dict__.update(**{
-            'first_name': userprofile_data['first_name'],
-            'last_name': userprofile_data['last_name'],
-            **self.get_preferred_language(userprofile_data),
-        })
-        # update profile object
-        instance.profile.__dict__.update(**{
-            'first_name': userprofile_data['first_name'],
-            'last_name': userprofile_data['last_name'],
-            'phone': userprofile_data['phone'],
-            #'email': userprofile_data['email'], # can only be writable if we validate emails
-        })
+
+        # allocated both instances
+        user = instance
+        profile = instance.profile
+
+        # native (optional) fields, with dual use (profile and user) and dynamic defaults first
+        if 'first_name' in userprofile_data:
+            setattr(user, 'first_name', userprofile_data['first_name']), # not required on partial update
+            setattr(profile, 'first_name', userprofile_data.pop('first_name')), # not required on partial update
+        if 'last_name' in userprofile_data:
+            setattr(user, 'last_name', userprofile_data['last_name']), # not required on partial update
+            setattr(profile, 'last_name', userprofile_data.pop('last_name')), # not required on partial update
+
+        # get fields with dynamic defaults or other special needs
+        if 'preferred_language' in validated_data:
+            setattr(user, 'preferred_language', validated_data.pop('preferred_language') or self.get_default_preferred_language())
+
+        # remaining non-m2m fields on user
+        m2m_fields = []
+        # apply fields form data end extra-fields
+        for attr, value in {**validated_data, **user_extra}.items():
+            if attr in info.relations and info.relations[attr].to_many:
+                m2m_fields.append((attr, value))
+            else:
+                setattr(instance, attr, value)
+        # skip m2m fields, because they are empty
+        if m2m_fields != []:
+            raise NotImplementedError("m2m_fields are not empty, yet a handler is not implemented. See super().update() method.")
+
+        # remaining non-m2m fields on profile
+        # apply fields form userprofile_data end extra-fields
+        for attr, value in {**userprofile_data, **profile_extra}.items():
+            setattr(instance.profile, attr, value)
+
+        # save both instances
         instance.profile.save()
         instance.save()
+
         return instance
 
 class SimpleUserProfileSerializer(BaseUserProfileSerializer):

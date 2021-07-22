@@ -1,3 +1,9 @@
+.fc {
+    --fc-button-text-color: white;
+    --fc-button-bg-color: var(--theme-color-primary);
+    --fc-button-border-color: var(--theme-color-primary);
+}
+
 .fc-event {
     background: white;
     color: var(--theme-color-primary);
@@ -27,4 +33,23 @@
     .fc, #calendar, .reservation-calendar {
         display: none;
     }
+}
+.fc-h-event .fc-event-title-container{
+    flex-grow: 1;
+    flex-shrink: 1;
+    left: 2px;
+}
+.fc-h-event .fc-event-title-end-container{
+    align-self: flex-end;
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-align: right;
+    right: 2px;
+}
+.fc-event-title-end {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0 2px 2px 0;
 }

@@ -15,18 +15,22 @@ from post_office.models import Email
 from django.urls import reverse
 from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from .resource import ResourceAdmin
-from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter
+from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, PurposeFilter
 from django.contrib.admin.utils import format_html
 from ..models.reservation import StaticReservationPurpose
 from ..models.resource import Resource
 from ..models.users import ReservationUserGroup
+from ..models.utils import user_list_to_email_formatted_addresses
 from .other import DisableableRadioSelect
 from ..auth import is_general_admin
 from guardian.shortcuts import get_objects_for_user
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.timezone import now
+from django.contrib.auth import get_user_model
+from django.contrib.admin.widgets import AutocompleteSelect
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 # model-wide filter on Users that can be assigned to reservations.
@@ -92,6 +96,11 @@ class RelatedEmailInline(admin.TabularInline):
 
 
 class ReservationAdminForm(forms.ModelForm):
+    user = forms.ModelChoiceField(queryset=User.objects.filter_internal_and_verifed_users(),
+                                  widget=AutocompleteSelect(Reservation._meta.get_field('user').remote_field, admin.site)
+                                  )
+    PURPOSE_CHOICES = [('', '---------')] + StaticReservationPurpose.choices # add blank option
+    purpose = forms.ChoiceField(required=False, label=_("Purpose"), choices=PURPOSE_CHOICES)
     state = forms.ChoiceField(required=True, label=_("State"), choices=Reservation.STATE_CHOICES, initial=Reservation.CREATED,
                               widget=DisableableRadioSelect(
                                   disabled_choices=[Reservation.CREATED]))
@@ -121,9 +130,9 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                        admin.ModelAdmin):
     # extra_readonly_fields_on_update = ('access_code',)
     list_display = (
-    'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'get_collisions',
+    'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'title', 'get_collisions',
     'get_exclusive', 'get_created_at_display') #'get_priority',
-    list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', 'purpose',
+    list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', PurposeFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('begin', DateTimeRangeFilter),
                    ('end', DateTimeRangeFilter),
@@ -134,9 +143,10 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     'uuid', 'resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
     autocomplete_fields = ('user', 'resource')
     readonly_fields = (
-    'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_phone_number',
-    'get_purpose_display', 'created_at','created_by','modified_at','modified_by')
-    extra_readonly_fields_edit = ('user', 'purpose','organizer_is_attending', 'type', 'message', 'purpose')
+    'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_reservation_delegates',
+    'get_phone_number', 'created_at','created_by','modified_at','modified_by')
+    #extra_readonly_fields_edit = ('user', 'purpose','organizer_is_attending', 'type', 'message', 'purpose')
+    extra_readonly_fields_edit = ('user', 'organizer_is_attending', 'type')
     inlines = [AttendanceInline, RelatedEmailInline]
     form = ReservationAdminForm
     date_hierarchy = 'begin'
@@ -150,15 +160,14 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     fieldsets = (
         (None, {
             'fields': ('user', 'resource', 'begin', 'end', 'number_of_attendees', 'exclusive_resource_usage',
-                       'get_purpose_display', 'message')  # 'short_uuid')
+                       'purpose', 'title', 'message', 'link')  # 'short_uuid')
         }),
         (_('State'), {
-            'fields': ('state', 'message_state_update', 'approver', 'get_reservation_info','comment'),
+            'fields': ('state', 'message_state_update', 'approver', 'get_reservation_info','get_reservation_delegates','comment'),
         }),
         (_('Request details'), {
             # 'classes': ('collapse',),
-            # 'has_priority', 'number_of_extra_attendees','organizer_is_attending',
-            'fields': ('agreed_to_phone_contact', 'get_phone_number', 'type', 'uuid'),
+            'fields': ('has_priority', 'number_of_extra_attendees','organizer_is_attending','agreed_to_phone_contact', 'get_phone_number', 'type', 'uuid'),
         }),
         (_('Creation and modifications'), {
             'classes': ('collapse',),
@@ -197,6 +206,13 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             return obj.resource.reservation_info
         return self.get_empty_value_display()
     get_reservation_info.short_description = _("Resource instructions")
+
+    def get_reservation_delegates(self, obj):
+        if obj and obj.resource:
+            return user_list_to_email_formatted_addresses(obj.resource.get_reservation_delegates())
+        return self.get_empty_value_display()
+    get_reservation_delegates.short_description = _("Resource reservation delegates")
+
 
     def get_organizer_display(self, obj):
         return obj.user.get_display_name()

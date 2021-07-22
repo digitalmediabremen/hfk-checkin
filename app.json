@@ -1,0 +1,45 @@
+{
+  "name": "hfk-checkin",
+  "description": "Python/Django web application and API service.",
+  "env": {
+    "DISABLE_COLLECTSTATIC": {
+      "description": "Heroku setting to disable Django collectstatic (it is run by bin/post_compile)",
+      "value": "1"
+    },
+    "DJANGO_SECRET_KEY": {
+      "description": "Django SECRET_KEY setting",
+      "generator": "secret"
+    },
+    "DJANGO_SETTINGS_MODULE": {
+      "description": "The django configuration to use",
+      "value": "checkin.settings.production"
+    },
+    "APP_BASE": {
+      "description": "App base for monorepo buildpack",
+      "required": true,
+      "value": "backend"
+    }
+  },
+  "environments": {
+    "test": {
+      "addons": ["heroku-postgresql:in-dyno"],
+      "scripts": {
+        "test": "pytest --disable-warnings"
+      }
+    }
+  },
+  "formation": {
+    "test": {
+      "quantity": 1,
+      "size": "standard-1x"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "https://github.com/lstoll/heroku-buildpack-monorepo"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

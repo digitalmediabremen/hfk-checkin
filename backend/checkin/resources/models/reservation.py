@@ -231,6 +231,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     agreed_to_phone_contact = models.BooleanField(_("Phone contact agreed"), blank=True, default=False)
     exclusive_resource_usage = models.BooleanField(_('Exclusive resource usage'), blank=True, default=False)
     organizer_is_attending = models.BooleanField(_("Organizer is attending"), blank=True, default=True)
+    title = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Title'), help_text=_("Optional title or reference for events, courses, classes etc. (For internal use only.)"))
+    link = models.URLField(null=True, blank=True, verbose_name=_('Link'), help_text=_("Optional link or web reference for this reservation. e.g. ARTIST page, event annoucement, etc. (For internal use only.)"))
 
     objects = ReservationManager()
     #objects = ReservationQuerySet.as_manager()
@@ -726,8 +728,8 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             #     }, ReservationCollisionWarning)
 
             total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end)
-            if self.resource.people_capacity and total_number_of_attendees >= self.resource.people_capacity:
-                warnings.warn(gettext("The resource's capacity (%(resource_capacity)d) is already exhausted for some of the period." \
+            if self.resource.people_capacity is not None and total_number_of_attendees >= self.resource.people_capacity:
+                warnings.warn(gettext("The resource's capacity (%(resource_capacity)d) is already exhausted for some of the period. " \
                                       "Total attendance (incl. this one): %(attendance_sum)d." % {
                     'resource_capacity': self.resource.people_capacity,
                     'attendance_sum': total_number_of_attendees
@@ -863,6 +865,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         """
 
         from django.core.mail.message import sanitize_address, formataddr, forbid_multi_line_headers
+        from .utils import user_list_to_email_formatted_addresses
         encoding = 'utf-8'
         recipient = user
 
@@ -915,7 +918,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 logger.warning(
                     "Skipping %s. Can not send emails to external Users. External users do not have valid e-mail addresses." % u)
                 reply_to_users.remove(u)
-        reply_to_address = ", ".join([formataddr((u.get_display_name(), u.email)) for u in reply_to_users])
+        reply_to_address = user_list_to_email_formatted_addresses(reply_to_users)
 
         h, from_address = forbid_multi_line_headers('From', from_address, encoding)
         h, reply_to_address = forbid_multi_line_headers('Reply-To', reply_to_address, encoding)
@@ -1128,6 +1131,8 @@ class ReservationPurpose(ModifiableModel, NameIdentifiedModel):
 
 
 class StaticReservationPurpose(models.TextChoices):
+    FOR_TEACHING = 'FOR_TEACHING', _("Teaching")
+    FOR_APPOINTMENT = 'FOR_APPOINTMENT', _("Appointment")
     FOR_EXAM = 'FOR_EXAM', _("Exam")
     FOR_EXAM_PREPARATION = 'FOR_EXAM_PREPARATION', _("Exam preperation")
     FOR_COUNCIL_MEETING = 'FOR_COUNCIL_MEETING', _("Council meeting")

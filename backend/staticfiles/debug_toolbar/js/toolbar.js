@@ -44,6 +44,7 @@ const djdt = {
                             inner.previousElementSibling.remove(); // Remove AJAX loader
                             inner.innerHTML = data.content;
                             $$.executeScripts(data.scripts);
+                            $$.applyStyles(inner);
                         });
                     }
                 }
@@ -270,6 +271,9 @@ const djdt = {
                 options.path ? "; path=" + options.path : "",
                 options.domain ? "; domain=" + options.domain : "",
                 options.secure ? "; secure" : "",
+                "sameSite" in options
+                    ? "; sameSite=" + options.samesite
+                    : "; sameSite=Lax",
             ].join("");
 
             return value;
