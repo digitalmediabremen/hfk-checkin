@@ -167,7 +167,6 @@ class ContactReport(object):
         ds.append(('Gesuchtes Profil (ID)', self.infected_profile_id))
         ds.append(('Zeitpunkt der Auswertung', format_datetime(self.now)))
         ds.append(('Beginn des Auswertungszeitraums', format_datetime(self.lookback_start)))
-        ds.append(('Beginn des Auswertungszeitraums', format_datetime(self.lookback_start)))
         ds.append(('Standardaufenthaltsdauer', format_timedelta(self.CHECKIN_DEFAULT_LENGTH)))
         ds.append(('Kontaktkorrekturzeit', format_timedelta(self.INFECTION_LOOKBACK_BUFFER)))
         ds.append(('Ausgeschlossene Standorte (IDs)', ','.join([str(l) for l in self.exclude_location_ids])))
