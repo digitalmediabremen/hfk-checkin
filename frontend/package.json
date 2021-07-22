@@ -11,7 +11,9 @@
         "test-build": "next build",
         "start": "next start -p $PORT",
         "deploy-getin:staging": "git push heroku-getin-frontend-staging HEAD:master",
-        "deploy-getin:production": "git push heroku-getin-frontend HEAD:master",
+        "deploy-getin:production": "git push heroku-getin-frontend master:master",
+        "deploy-checkin:staging": "git push heroku-checkin-frontend-staging HEAD:master",
+        "deploy-checkin:production": "git push heroku-checkin-frontend master:master",
         "translate": "ts-node --project tsconfig.json -O '{\"module\": \"commonjs\"}' findTranslations.ts -",
         "gen": "run-for-every-file --src 'src/model/api/' --file '*.ts' --not-file '*.validator.ts'  --run 'typescript-json-validator {{src-file}} && replace \"^export [{].*$\" \"\" src/model/api/{{file-name}}.validator.ts'"
     },
