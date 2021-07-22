@@ -12,6 +12,7 @@ from django.http import Http404
 from django.core.exceptions import ValidationError
 from ..admin.reservation import RESERVATION_STATE_COLORS
 from django.utils.translation import gettext
+from django.utils.translation import gettext as _
 
 class ReservationCalendarEventSerializer(ReservationSerializer):
     start = serializers.DateTimeField(source='begin')
@@ -32,9 +33,15 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
         return reverse('admin:{0}_{1}_change'.format(obj._meta.app_label, obj._meta.model_name), args=(obj.pk,))
 
     def get_title(self, obj):
-        return "%(user)s (%(attendees)s) #%(id)s (%(state)s)" % {
+        flags = {
+            gettext('has priority'): obj.has_priority,
+            gettext('exclusive resource usage'): obj.exclusive_resource_usage,
+        }
+        flags_str_list = [key for (key, value) in flags.items() if value]
+        return "%(user)s (%(flags)s%(attendees)s) #%(id)s (%(state)s)" % {
             'user':obj.organizer.get_full_name(),
-            'attendees': gettext('Exclusive resource usage') + ': ' + str(obj.number_of_attendees) if obj.exclusive_resource_usage else str(obj.number_of_attendees),
+            'attendees': str(obj.number_of_attendees),
+            'flags': ', '.join(flags_str_list) + ": " if flags_str_list else "",
             'id': obj.identifier,
             'state': obj.get_state_display(),
             #'description': obj.get_state_display(),
