@@ -33,8 +33,8 @@ function getPrimaryColor(colorScheme) {
         if (features.checkin) return "rgba(216, 24, 48, 1)";
         if (features.getin) return "rgba(0,46,255, 1)";
     } else if (colorScheme === "dark") {
-        if (features.checkin) return "rgba(227, 166, 173)";
-        if (features.getin) return "rgba(183, 196, 255, 1)";
+        if (features.checkin) return "rgba(255, 186, 194, 1)";
+        if (features.getin) return "rgba(209, 218, 255, 1)";
     }
     throw "error in app configuration";
 }
