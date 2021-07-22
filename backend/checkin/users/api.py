@@ -166,7 +166,8 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             else:
                 setattr(instance, attr, value)
         # skip m2m fields, because they are empty
-        assert(m2m_fields, [])
+        if m2m_fields != []:
+            raise NotImplementedError("m2m_fields are not empty, yet a handler is not implemented. See super().update() method.")
 
         # remaining non-m2m fields on profile
         # apply fields form userprofile_data end extra-fields
