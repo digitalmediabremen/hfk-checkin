@@ -89,6 +89,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
     profile_id = serializers.ReadOnlyField(source='user.id', read_only=True)
     display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
     is_external = serializers.BooleanField(source='is_external_user', read_only=True, initial=True, default=True)
+    is_organizer = serializers.BooleanField(read_only=True)
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     phone = serializers.CharField(source='user.phone', write_only=True)
@@ -96,7 +97,7 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendance
-        fields = ('uuid','profile_id','first_name', 'last_name', 'display_name', 'phone','state', 'is_external')
+        fields = ('uuid','profile_id','first_name', 'last_name', 'display_name', 'phone','state', 'is_external', 'is_organizer')
 
     def validate(self, data):
         # profile_data = data.pop('user')
