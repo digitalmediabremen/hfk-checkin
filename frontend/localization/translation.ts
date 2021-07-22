@@ -82,6 +82,7 @@ const translation: Translation = {
             "Weitere Teilnehmer||Teilnehmerinnen": "Additional attendees",
         },
         "request-attendees": {
+            "Organisator": "Organizer",
             "Möchtest du {name} aus der Liste entfernen?":
                 "Do you want to delete {name} from the list?",
             "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en.":

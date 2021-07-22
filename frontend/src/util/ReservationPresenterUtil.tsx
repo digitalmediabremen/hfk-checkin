@@ -2,7 +2,10 @@ import React, { Fragment } from "react";
 import { Lock, Unlock } from "react-feather";
 import { _t } from "../../localization";
 import useTheme from "../hooks/useTheme";
-import { Attendance, AttendanceUpdate } from "../model/api/MyProfile";
+import MyProfile, {
+    Attendance,
+    AttendanceUpdate,
+} from "../model/api/MyProfile";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
 import Reservation from "../model/api/Reservation";
 import Resource from "../model/api/Resource";
@@ -28,7 +31,7 @@ export const attendeePresenter = (a: Attendance, locale: string) => {
                     {a.first_name} {a.last_name}
                 </b>
                 {a.is_external && (
-                    <> {_t(locale, "request-purpose", "Extern")}</>
+                    <> ({_t(locale, "request-purpose", "Extern")})</>
                 )}
             </StrikeIfDenied>
         </>
@@ -55,12 +58,35 @@ export const requestedAttendeePresenter = (
     locale: string
 ) => (
     <>
+    <b>
+        {a.first_name} {a.last_name}
+    </b>{" "}
+    ({_t(locale, "request-purpose", "Extern")})
+</>
+)
+
+
+export const requestedAttendeeFormValuePresenter = (
+    a: AttendanceUpdate,
+    locale: string
+) => [
+    requestedAttendeePresenter(a, locale),
+    <>Tel: {a.phone}</>
+];
+
+export const myselfAttendeeFormValuePresenter = (
+    myProfile: MyProfile,
+    locale: string
+) => [
+    <>
         <b>
-            {a.first_name} {a.last_name}
+            {myProfile.first_name} {myProfile.last_name}
         </b>{" "}
-        {_t(locale, "request-purpose", "Extern")}
-    </>
-);
+        ({_t(locale, "request-attendees", "Organisator")})
+    </>,
+    ,
+    <>Tel: {myProfile.phone}</>
+];
 
 export const requestedAttendeePresenterString = (
     a: AttendanceUpdate,
