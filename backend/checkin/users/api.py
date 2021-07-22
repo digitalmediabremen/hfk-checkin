@@ -120,7 +120,8 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             'last_name': userprofile_data['last_name'], # required
             'phone': userprofile_data['phone'], # required
             #'email': userprofile_data['email'], # can only be writable if we validate emails
-            'verified': False,
+            'verified': False, # default for non-authenticated account-creations
+            'is_external': None, # default for non-authenticated account-creations
             **profile_extra,
         }
         try:
