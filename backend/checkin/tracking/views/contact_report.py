@@ -5,12 +5,13 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from ..report import ContactReport
 from datetime import timedelta
-import io
+import io, pytz
 from django.http import HttpResponse
 from dal import autocomplete
 from django.contrib.admin import ModelAdmin, site
 from ..models import Checkin
 #from ..admin import CheckinAdmin
+from django.utils import timezone
 
 OUTPUT_FILENAME_XLSX = 'hfk-checkin-auswertung_%s.xlsx'
 OUTPUT_FILENAME_CSV = 'hfk-checkin-auswertung_%s.csv'
@@ -38,6 +39,8 @@ class CaseEvaluationSettingsForm(forms.Form):
     infection_lookback_time = forms.DurationField(label=_('Zeitraum'),
                                                   initial=ContactReport.INFECTION_LOOKBACK_TIME, help_text=_(
             "Dauer ab jetzt in die Vergangenheit, die für die Protokollauswertung durchsucht werden soll. (21 00:00:00 = 21 Tage = 3 Wochen)"))
+    TIMEZONE_CHOICES = zip(pytz.all_timezones, pytz.all_timezones)
+    timezone = forms.ChoiceField(label=_('Timezone'), initial=timezone.get_current_timezone(), choices=TIMEZONE_CHOICES, help_text=_('Zeitzone der Protokollauswertung / Anzeige'))
 
 
 class CaseEvaluationView(PermissionRequiredMixin, FormView):
@@ -65,20 +68,24 @@ class CaseEvaluationView(PermissionRequiredMixin, FormView):
         context = self.get_context_data()
         profile_id = form.cleaned_data['profile'].pk
         exclude_location_ids = [l.pk for l in form.cleaned_data['exclude_locations']]
+        tz = form.cleaned_data['timezone']
+
+        timezone.activate(tz)
 
         output = io.StringIO()
         ContactReport.INFECTION_LOOKBACK_TIME = form.cleaned_data['infection_lookback_time']
         ContactReport.INFECTION_LOOKBACK_BUFFER = form.cleaned_data['infection_lookback_buffer']
         ContactReport.CHECKIN_DEFAULT_LENGTH = form.cleaned_data['checkin_default_length']
-        report = ContactReport(profile_id=profile_id, exclude_location_ids=exclude_location_ids)
+        report = ContactReport(profile_id=profile_id, exclude_location_ids=exclude_location_ids, tz=tz)
 
         format = self.request.GET.get('format')
         if format == 'xlsx':
             data = report.report(form.cleaned_data['report_checkins'], form.cleaned_data['report_encounters'],
                           form.cleaned_data['report_personal_data'], output_format=ContactReport.XLSX_FORMAT)
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Content-Disposition'] = 'attachment; filename=%s' % OUTPUT_FILENAME_XLSX % report.now.strftime("%Y-%m-%d_%H-%M-%S")  # force browser to download file
+            response['Content-Disposition'] = 'attachment; filename=%s' % OUTPUT_FILENAME_XLSX % timezone.localtime(report.now).strftime("%Y-%m-%d_%H-%M-%S")  # force browser to download file
             response.write(data)
+            timezone.deactivate()
             return response
 
         # else text / html out
@@ -89,6 +96,7 @@ class CaseEvaluationView(PermissionRequiredMixin, FormView):
         report.report(form.cleaned_data['report_checkins'], form.cleaned_data['report_encounters'], form.cleaned_data['report_personal_data'])
 
         context['result'] = output.getvalue()
+        timezone.deactivate()
         return super().render_to_response(context)
 
 case_evaluation_view = CaseEvaluationView.as_view()
