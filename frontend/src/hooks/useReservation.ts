@@ -44,7 +44,7 @@ export default function useReservation(reservationId?: string) {
     }, [visible]);
 
     const cancelReservation = () => {
-        if (!reservationId) return;
+        if (!reservationId) throw "cannot cancel reservation without id";
         return api.request(() => cancelReservationRequest(reservationId));
     };
 
