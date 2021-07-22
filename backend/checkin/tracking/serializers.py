@@ -58,11 +58,12 @@ class ProfileSerializer(BaseProfileSerializer):
     # reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
     verified = ReadOnlyField()
     complete = ReadOnlyField()
+    preferred_language = serializers.CharField(read_only=True, source='user.preferred_language', allow_null=True)
     id = ReadOnlyField()
 
     class Meta:
         model = Profile
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'last_checkins']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'preferred_language', 'last_checkins']
 
     def validate_phone(self, value):
         return value.strip()
