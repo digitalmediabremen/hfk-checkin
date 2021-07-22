@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-22 16:46+0200\n"
+"POT-Creation-Date: 2021-07-22 17:42+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -694,70 +694,75 @@ msgid "Attendance list for reservations"
 msgstr "Teilnehmerliste für Buchungen"
 
 #: checkin/resources/api/calendar.py:37
-#: checkin/resources/models/reservation.py:232
-msgid "Exclusive resource usage"
+#| msgid "Has priority"
+msgid "has priority"
+msgstr "Hat Priorität"
+
+#: checkin/resources/api/calendar.py:38
+#| msgid "Exclusive resource usage"
+msgid "exclusive resource usage"
 msgstr "Alleinige Nutzung"
 
-#: checkin/resources/api/reservation.py:233
+#: checkin/resources/api/reservation.py:234
 msgid "Illegal state change"
 msgstr "Unzulässige Statusänderung"
 
-#: checkin/resources/api/reservation.py:250
+#: checkin/resources/api/reservation.py:251
 msgid "You cannot make a reservation in the past"
 msgstr "Du kannst keine Anfragen in der Vergangenheit stellen."
 
-#: checkin/resources/api/reservation.py:258
+#: checkin/resources/api/reservation.py:259
 #: checkin/resources/models/reservation.py:680
 msgid "This resource is blocked during this time. Sorry."
 msgstr "Dieser Raum ist zum gewählten Zeitpunkt (noch) nicht verfügbar."
 
-#: checkin/resources/api/reservation.py:263
+#: checkin/resources/api/reservation.py:264
 #, python-format
 msgid "The resource is reservable only before %(datetime)s"
 msgstr "Dieser Bereich ist buchbar ab %(datetime)s."
 
-#: checkin/resources/api/reservation.py:267
+#: checkin/resources/api/reservation.py:268
 #, python-format
 msgid "The resource is reservable only after %(datetime)s"
 msgstr "Dieser Bereich ist buchbar nach %(datetime)s"
 
-#: checkin/resources/api/reservation.py:279
+#: checkin/resources/api/reservation.py:280
 msgid "Only allowed to be set by resource managers"
 msgstr ""
 
-#: checkin/resources/api/reservation.py:284
+#: checkin/resources/api/reservation.py:285
 msgid "You are not allowed to make a reservation of this type"
 msgstr "Du hast keine Freigabe, um Buchungen von dieser Art zu machen."
 
-#: checkin/resources/api/reservation.py:288
+#: checkin/resources/api/reservation.py:289
 msgid "Only allowed to be set by staff members"
 msgstr "Kann nur von Mitarbeitern eingestellt werden"
 
-#: checkin/resources/api/reservation.py:297
+#: checkin/resources/api/reservation.py:298
 msgid "This field cannot have a value with this resource"
 msgstr ""
 
-#: checkin/resources/api/reservation.py:300
+#: checkin/resources/api/reservation.py:301
 msgid "This field cannot be changed"
 msgstr "Dieses Feld kann nicht verändert werden"
 
-#: checkin/resources/api/reservation.py:323
+#: checkin/resources/api/reservation.py:324
 #, python-format
 msgid "Patching of field %(field)s is not allowed"
 msgstr ""
 
-#: checkin/resources/api/reservation.py:359
+#: checkin/resources/api/reservation.py:360
 #, python-brace-format
 msgid "Invalid pk \"{pk_value}\" - object does not exist."
 msgstr "Ungültige Eingabe \"{pk_value}\"."
 
-#: checkin/resources/api/reservation.py:462
-#: checkin/resources/api/reservation.py:476
+#: checkin/resources/api/reservation.py:463
+#: checkin/resources/api/reservation.py:477
 #, python-format
 msgid "Invalid value in filter %(filter)s"
 msgstr "Ungültiger Wert für Filter %(filter)s"
 
-#: checkin/resources/api/reservation.py:810
+#: checkin/resources/api/reservation.py:811
 msgid "Can not cancel event in the past."
 msgstr "Du kannst keine Anfragen in der Vergangenheit stellen."
 
@@ -1292,6 +1297,10 @@ msgstr "Hat Priorität"
 #: checkin/resources/models/reservation.py:231
 msgid "Phone contact agreed"
 msgstr "Telefonische Kontaktaufnahme erlaubt"
+
+#: checkin/resources/models/reservation.py:232
+msgid "Exclusive resource usage"
+msgstr "Alleinige Nutzung"
 
 #: checkin/resources/models/reservation.py:233
 msgid "Organizer is attending"
@@ -2345,7 +2354,6 @@ msgid ""
 msgstr ""
 
 #: checkin/tracking/views/contact_report.py:43
-#| msgid "Time zone"
 msgid "Timezone"
 msgstr "Zeitzone"
 
