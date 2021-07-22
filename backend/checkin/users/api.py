@@ -109,7 +109,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
             'first_name': userprofile_data['first_name'],
             'last_name': userprofile_data['last_name'],
             'disable_notifications': True, # only for "guest users". regular users will never pass this method.
-            'preferred_language': validated_data.pop('preferred_language') or self.get_default_preferred_language(),
+            'preferred_language': validated_data.pop('preferred_language', self.get_default_preferred_language()),
             #**self.get_preferred_language(userprofile_data),
             **user_extra,
         })
