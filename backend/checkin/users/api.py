@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAu
     DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
+from rest_framework.utils import html, model_meta, representation
 from .models import *
 from rest_framework.exceptions import PermissionDenied, NotFound, ValidationError
 from django.db.utils import IntegrityError
@@ -115,9 +116,9 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
         # create profile object
         profile_dict = {
             'user': user,
-            'first_name': userprofile_data['first_name'],
-            'last_name': userprofile_data['last_name'],
-            'phone': userprofile_data['phone'],
+            'first_name': userprofile_data['first_name'], # required
+            'last_name': userprofile_data['last_name'], # required
+            'phone': userprofile_data['phone'], # required
             #'email': userprofile_data['email'], # can only be writable if we validate emails
             'verified': False,
             **profile_extra,
@@ -135,30 +136,46 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data, user_extra={}, profile_extra={}):
+        info = model_meta.get_field_info(instance)
+        # get "sub-data" form validated_data
         userprofile_data = validated_data.pop('profile')
-        # update user object
-        user_data = {
-            'first_name': userprofile_data['first_name'],
-            'last_name': userprofile_data['last_name'],
-            'preferred_language': validated_data.pop('preferred_language') or self.get_default_preferred_language(),
-            **user_extra,
-        }
-        # update instance
-        for attr, value in user_data.items():
-            setattr(instance, attr, value)
-        # update profile object
-        profile_data = {
-            'first_name': userprofile_data['first_name'],
-            'last_name': userprofile_data['last_name'],
-            'phone': userprofile_data['phone'],
-            #'email': userprofile_data['email'], # can only be writable if we validate emails
-            **profile_extra,
-        }
-        # update instance.profile
-        for attr, value in profile_data.items():
+
+        # allocated both instances
+        user = instance
+        profile = instance.profile
+
+        # native (optional) fields, with dual use (profile and user) and dynamic defaults first
+        if 'first_name' in userprofile_data:
+            setattr(user, 'first_name', userprofile_data['first_name']), # not required on partial update
+            setattr(profile, 'first_name', userprofile_data.pop('first_name')), # not required on partial update
+        if 'last_name' in userprofile_data:
+            setattr(user, 'last_name', userprofile_data['last_name']), # not required on partial update
+            setattr(profile, 'last_name', userprofile_data.pop('last_name')), # not required on partial update
+
+        # get fields with dynamic defaults or other special needs
+        if 'preferred_language' in validated_data:
+            setattr(user, 'preferred_language', validated_data.pop('preferred_language') or self.get_default_preferred_language())
+
+        # remaining non-m2m fields on user
+        m2m_fields = []
+        # apply fields form data end extra-fields
+        for attr, value in {**validated_data, **user_extra}.items():
+            if attr in info.relations and info.relations[attr].to_many:
+                m2m_fields.append((attr, value))
+            else:
+                setattr(instance, attr, value)
+        # skip m2m fields, because they are empty
+        assert(m2m_fields, [])
+
+        # remaining non-m2m fields on profile
+        # apply fields form userprofile_data end extra-fields
+        for attr, value in {**userprofile_data, **profile_extra}.items():
             setattr(instance.profile, attr, value)
+
+        # save both instances
         instance.profile.save()
         instance.save()
+
         return instance
 
 class SimpleUserProfileSerializer(BaseUserProfileSerializer):
