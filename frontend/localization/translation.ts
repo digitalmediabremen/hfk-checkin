@@ -212,7 +212,8 @@ const translation: Translation = {
             "Farben": "Colors",
             "Automatisch": "Automatic",
             "Hell": "Light",
-            "Dunkel": "Dark"
+            "Dunkel": "Dark",
+            "Wirklich ausloggen?": "Are you sure?"
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
