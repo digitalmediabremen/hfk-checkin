@@ -16,7 +16,7 @@ def OVERLAP_Q(start, end):
     #         Q(time_entered__lt=end, time_left_or_default__gte=end)
 
 def format_datetime(dt):
-    return dt.strftime("%Y-%m-%d %H:%M:%S")
+    return timezone.localtime(dt).strftime("%Y-%m-%d %H:%M:%S")
 
 def format_timedelta(tdelta):
     if timedelta(seconds=1) > tdelta > timedelta(seconds=0):
@@ -66,7 +66,7 @@ class ContactReport(object):
         self.write_out(len(headline) * "-")
         self.write_out("")
 
-    def __init__(self, profile_id, exclude_location_ids=None):
+    def __init__(self, profile_id, exclude_location_ids=None, tz=timezone.get_default_timezone()):
 
         if not isinstance(profile_id, int):
             raise TypeError("'profile_id' must be a integer.")
@@ -81,57 +81,70 @@ class ContactReport(object):
         self.infected_profile_id = profile_id
         self.exclude_location_ids = exclude_location_ids or []
         self.lookback_start = self.now - self.INFECTION_LOOKBACK_TIME - self.CHECKIN_DEFAULT_LENGTH
+        self.timezone = tz
 
     def report(self, include_infected_checkins=True, include_encountered_checkins=True, include_personal_data=False, output_format=OUTPUT_WRITE_FORMAT):
 
+        #change tz
         try:
-            infected_profile = Profile.objects.get(id=self.infected_profile_id)
-        except Profile.DoesNotExist:
-            raise CommandError('Profile "%s" does not exist' % self.infected_profile_id)
+            timezone.activate(self.timezone)
+            print(self.timezone)
+            print(timezone.now())
+            print(timezone.localtime(timezone.now()))
 
-        # ANALYSE
 
-        (infected_checkins, infected_checkins_ds) = self.get_infected_checkins_ds(infected_profile)
-        (encountered_checkins, encountered_profiles, encountered_checkins_ds) = self.get_encountered_checkins_ds(infected_profile, infected_checkins)
-        encountered_profiles_ds = self.get_encounterd_profiles_ds(encountered_profiles)
+            try:
+                infected_profile = Profile.objects.get(id=self.infected_profile_id)
+            except Profile.DoesNotExist:
+                raise CommandError('Profile "%s" does not exist' % self.infected_profile_id)
 
-        # OUTPUT
+            # ANALYSE
 
-        if output_format is self.OUTPUT_WRITE_FORMAT:
+            (infected_checkins, infected_checkins_ds) = self.get_infected_checkins_ds(infected_profile)
+            (encountered_checkins, encountered_profiles, encountered_checkins_ds) = self.get_encountered_checkins_ds(infected_profile, infected_checkins)
+            encountered_profiles_ds = self.get_encounterd_profiles_ds(encountered_profiles)
 
-            if not self.out_callable:
-                raise RuntimeError("Output not set. Please set_output first.")
+            # OUTPUT
 
-            self.write_headline("Konfiguration dieses Reports:")
-            self.write_dataset(self.get_report_info_ds())
+            if output_format is self.OUTPUT_WRITE_FORMAT:
 
-            if include_infected_checkins:
-                self.write_headline("Protokolleinträge der gesuchten Person:")
-                self.write_dataset(infected_checkins_ds)
+                if not self.out_callable:
+                    raise RuntimeError("Output not set. Please set_output first.")
 
-            if include_encountered_checkins:
-                self.write_headline("Protokolleinträge von anderen Personen mit Überlappungen zur gesuchten Person:")
-                self.write_dataset(encountered_checkins_ds)
+                self.write_headline("Konfiguration dieses Reports:")
+                self.write_dataset(self.get_report_info_ds())
 
-            if include_personal_data:
-                self.write_headline("Personendaten und Kontaktdaten mit Überlappungszeit:")
-                self.write_dataset(encountered_profiles_ds)
+                if include_infected_checkins:
+                    self.write_headline("Protokolleinträge der gesuchten Person:")
+                    self.write_dataset(infected_checkins_ds)
 
-        if output_format is self.XLSX_FORMAT:
+                if include_encountered_checkins:
+                    self.write_headline("Protokolleinträge von anderen Personen mit Überlappungen zur gesuchten Person:")
+                    self.write_dataset(encountered_checkins_ds)
 
-            book = tablib.Databook()
-            book.add_sheet(self.get_report_info_ds())
+                if include_personal_data:
+                    self.write_headline("Personendaten und Kontaktdaten mit Überlappungszeit:")
+                    self.write_dataset(encountered_profiles_ds)
 
-            if include_infected_checkins:
-                book.add_sheet(infected_checkins_ds)
+            if output_format is self.XLSX_FORMAT:
 
-            if include_encountered_checkins:
-                book.add_sheet(encountered_checkins_ds)
+                book = tablib.Databook()
+                book.add_sheet(self.get_report_info_ds())
 
-            if include_personal_data:
-                book.add_sheet(encountered_profiles_ds)
+                if include_infected_checkins:
+                    book.add_sheet(infected_checkins_ds)
 
-            return book.export(format='xlsx')
+                if include_encountered_checkins:
+                    book.add_sheet(encountered_checkins_ds)
+
+                if include_personal_data:
+                    book.add_sheet(encountered_profiles_ds)
+
+                return book.export(format='xlsx')
+
+        finally:
+            # end tz change
+            timezone.deactivate()
 
 
     def _checkin_base_qs(self):
@@ -154,10 +167,12 @@ class ContactReport(object):
         ds.append(('Gesuchtes Profil (ID)', self.infected_profile_id))
         ds.append(('Zeitpunkt der Auswertung', format_datetime(self.now)))
         ds.append(('Beginn des Auswertungszeitraums', format_datetime(self.lookback_start)))
+        ds.append(('Beginn des Auswertungszeitraums', format_datetime(self.lookback_start)))
         ds.append(('Standardaufenthaltsdauer', format_timedelta(self.CHECKIN_DEFAULT_LENGTH)))
         ds.append(('Kontaktkorrekturzeit', format_timedelta(self.INFECTION_LOOKBACK_BUFFER)))
         ds.append(('Ausgeschlossene Standorte (IDs)', ','.join([str(l) for l in self.exclude_location_ids])))
         ds.append(('Ausgeschlossene Standorte (Bezeichnung)', ','.join([l.__str__() for l in Location.objects.filter(pk__in=self.exclude_location_ids)])))
+        ds.append(('Zeitzone', self.timezone))
 
         return ds
 
