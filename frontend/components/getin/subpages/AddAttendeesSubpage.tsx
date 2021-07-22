@@ -35,7 +35,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
 
         return (
             <>
-                <SectionTitle>{t("HfK-Mitglieder anmelden")}</SectionTitle>
+                {/* <SectionTitle>{t("HfK-Mitglieder anmelden")}</SectionTitle>
                 <FormAmountInput
                     value={amount}
                     label={
@@ -51,7 +51,7 @@ const SetPersonSubpage: React.FunctionComponent<SetPersonSubpageProps> =
                         "Gib die Anzahl der HfK-Mitglieder an, die an dieser Buchung teilnehmen."
                     )}
                 </Notice>
-                <Divider />
+                <Divider /> */}
                 <SectionTitle>{t("Externe Teilnehmer anmelden")}</SectionTitle>
                 {attendees?.map((profile, index) => {
                     const attendeeLabel = requestedAttendeePresenterString(profile, locale);
