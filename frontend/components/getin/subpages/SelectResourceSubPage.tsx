@@ -193,7 +193,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                                     ref={inputRef}
                                     value={searchValue}
                                     placeholder={t(
-                                        "Name oder Nummer eingeben..."
+                                        "Suche nach Name, Nummer oder Austattungsmerkmalen ..."
                                     )}
                                     onChange={(e) =>
                                         setSearchValue(e.target.value)

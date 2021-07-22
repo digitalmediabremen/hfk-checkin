@@ -50,8 +50,7 @@ const translation: Translation = {
             erstellt: "created",
         },
         request: {
-            Teilnehmerinnen: "Attendees",
-            Teilnehmer: "Attendees",
+            "Teilnehmerinnen||Teilnehmer": "Attendees",
             Buchungsgrund: "Purpose",
             Nachricht: "Message",
             "Datum und Uhrzeit": "Date and time",
@@ -110,7 +109,7 @@ const translation: Translation = {
         "request-resource": {
             "Gebäude auswählen": "select building",
             "Raum suchen": "search room",
-            "Name oder Nummer eingeben...": "Enter room name or number...",
+            "Suche nach Name, Nummer oder Austattungsmerkmalen ...": "Search by name, number or features...",
             "Keine Ergebnisse": "no results",
             "Aus Liste wählen": "select from list",
             "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern.":
@@ -122,7 +121,7 @@ const translation: Translation = {
         },
         "request-message": {
             "message-placeholder":
-                "Please explain you request if needed. \n\nFor example you can add relevant information for workshop leaders or teh room-booking-team.",
+                "Please explain you request if needed. \n\nFor example you can add relevant information for workshop leaders or the room-booking-team.",
         },
         "request-purpose": {
             "Bitte ergänze deine Anfrage mit folgender Information.":
