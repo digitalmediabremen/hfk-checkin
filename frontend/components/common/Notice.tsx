@@ -56,7 +56,7 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 )}
                 <div className="content">
                     {title && <h3>{title}</h3>}
-                    <Text secondary={!error}>{children}</Text>
+                    <Text bottomSpacing={0} secondary={!error}>{children}</Text>
                 </div>
             </div>
         </>

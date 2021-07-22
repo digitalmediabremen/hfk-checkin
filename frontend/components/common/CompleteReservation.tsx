@@ -5,14 +5,15 @@ import Reservation from "../../src/model/api/Reservation";
 import {
     attendeePresenter,
     extraAttendeesPresenter,
-    purposeFormValuePresenter
+    purposeFormValuePresenter,
 } from "../../src/util/ReservationPresenterUtil";
 import {
     getAttendanceStateIcon,
     getIcon,
-    getStateLabel
+    getStateLabel,
 } from "../../src/util/ReservationUtil";
 import FormElement, { FormElementProps } from "./FormElement";
+import Notice from "./Notice";
 import ReservationComponent from "./Reservation";
 import SectionTitle from "./SectionTitle";
 
@@ -33,6 +34,8 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
         const { t, locale } = useTranslation("request");
         const purposeValue = purposeFormValuePresenter(reservation, locale);
         const disabled = state === "cancelled" || state === "denied";
+        const allAttendeesAccepted =
+            attendees?.every((a) => a.state === "confirmed") || true;
 
         const formElementProps: Partial<FormElementProps> = {
             noPadding: true,
@@ -80,7 +83,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                 />
                 {attendees && attendees.length > 0 && (
                     <>
-                        <SectionTitle bottomSpacing={.5}>
+                        <SectionTitle bottomSpacing={0.5}>
                             {t("Teilnehmerinnen||Teilnehmer")}
                         </SectionTitle>
                         {attendees?.map((attendee, index, arr) => {
@@ -94,7 +97,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                 <FormElement
                                     key={attendee.uuid}
                                     labelIcon={
-                                        <AttendeeStateIcon strokeWidth={1} />
+                                        <AttendeeStateIcon strokeWidth={2} />
                                     }
                                     bottomSpacing={bottomSpacing}
                                     {...formElementProps}
@@ -116,6 +119,15 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                     bottomSpacing={2}
                                 />
                             )}
+                        {allAttendeesAccepted && (
+                            <Notice
+                                error
+                                title={t("Deine Teilnehmer||Teilnehmerinnen sind noch nicht bestätigt")}
+                                bottomSpacing={3}
+                            >
+                                {t("Bedenke, dass alle externen Teilnehmer||Teilnehmerinnen der Buchung seperat durch das Dekanat bestätigt werden müssen. Den Buchungstatus der Teilnehmer||Teilnehmerinnen erkennst du am Symbol vor dem Namen.")}
+                            </Notice>
+                        )}
                     </>
                 )}
                 {purposeValue && (

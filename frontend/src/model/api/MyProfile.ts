@@ -30,6 +30,7 @@ export interface Attendance extends Omit<BaseProfile, "id"> {
     readonly profile_id: number;
     readonly uuid: string;
     readonly is_external: boolean;
+    readonly is_organizer: boolean;
     readonly state: AttendanceState | null;
 }
 

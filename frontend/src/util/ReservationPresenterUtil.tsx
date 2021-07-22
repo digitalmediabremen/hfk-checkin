@@ -33,6 +33,9 @@ export const attendeePresenter = (a: Attendance, locale: string) => {
                 {a.is_external && (
                     <> ({_t(locale, "request-purpose", "Extern")})</>
                 )}
+                {a.is_organizer && (
+                    <> ({_t(locale, "request-purpose", "Organisator")})</>
+                )}
             </StrikeIfDenied>
         </>
     );

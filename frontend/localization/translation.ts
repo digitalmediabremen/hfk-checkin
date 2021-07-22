@@ -79,6 +79,8 @@ const translation: Translation = {
             "Teiln.": "Atts.",
             "Externe Teilnehmer||Teilnehmerinnen": "External attendees",
             "Weitere Teilnehmer||Teilnehmerinnen": "Additional attendees",
+            "Deine Teilnehmer||Teilnehmerinnen sind noch nicht bestätigt": "Your attendees are not approved yet.",
+            "Bedenke, dass alle externen Teilnehmer||Teilnehmerinnen der Buchung seperat durch das Dekanat bestätigt werden müssen. Den Buchungstatus der Teilnehmer||Teilnehmerinnen erkennst du am Symbol vor dem Namen.": "Every external attendee has to be approved by the Dekanat. The current state is displayed in front of the attendees name."
         },
         "request-attendees": {
             "Organisator": "Organizer",
@@ -134,6 +136,7 @@ const translation: Translation = {
             Gremiensitzung: "Board meeting",
             "Anderer Grund": "Other",
             Extern: "External",
+            "Organisator": "Organizer",
             "Dieser Buchungsgrund soll zur Anmeldung einer Lehrveranstaltung durch Lehrende verwendet werden.":
                 "This booking purpose should only be used for pre-registering of classes by teaching staff.",
             Lehrveranstaltung: "Teaching",

@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 import useTheme from "../../src/hooks/useTheme";
+import { empty } from "../../src/util/TypeUtil";
 interface TextProps {
     paragraph?: true;
     secondary?: boolean;
@@ -16,7 +17,7 @@ const Text: React.FunctionComponent<TextProps> = ({children, paragraph, secondar
             color: ${secondary ? theme.disabledColor : theme.primaryColor};
             display: block;
             line-height: ${theme.unit > 8 ? 1.5 : 1.25}em;
-            margin-bottom: ${theme.spacing(bottomSpacing || 1)}px;
+            margin-bottom: ${theme.spacing(empty(bottomSpacing) ? 1 : bottomSpacing)}px;
     
             p {
                 margin: 0;
