@@ -10,7 +10,7 @@ import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
 import Resource from "../../../src/model/api/Resource";
 import { scrollIntoView } from "../../../src/util/DomUtil";
-import { resourceFormValuePresenter } from "../../../src/util/ReservationPresenterUtil";
+import { useResourceFormValuePresenter } from "../../../src/util/ReservationPresenterUtil";
 import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
 import Fade from "../../common/Fade";
@@ -51,8 +51,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const { has, getError } = useValidation();
     const theme = useTheme();
+    const resourceFormValuePresenter = useResourceFormValuePresenter();
+
 
     useEffect(() => {
+        unitsApi.requestUnits();
         const timer = window.setTimeout(() => inputRef.current?.focus(), 300);
         return () => window.clearTimeout(timer);
     }, []);
@@ -75,8 +78,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                 setSelectedUnitId(unit.slug);
             }
         }
-        if (unitsApi.state === "initial") unitsApi.requestUnits();
-    }, [units, unitsApi.state]);
+    }, [units]);
 
     useEffect(() => {
         if (unitsApi.state !== "success") return;

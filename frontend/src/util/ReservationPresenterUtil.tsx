@@ -93,49 +93,53 @@ export const attendeesFormValuePresenter = (
         : undefined;
 };
 
-export const resourceFormValuePresenter = (
-    resource: Resource,
-    locale: string,
-    includeResourceNumber: boolean = true,
-    includeAlternativeTitle: boolean = true
-) => {
+export const useResourceFormValuePresenter = () => {
     const theme = useTheme();
+    return function resourceFormValuePresenter(
+        resource: Resource,
+        locale: string,
+        includeResourceNumber: boolean = true,
+        includeAlternativeTitle: boolean = true
+    ) {
+        const alternativeNamesAsSeperateRow = !theme.isDesktop;
+        const alternativeNamesString = resource.alternative_names?.join(", ");
 
-    const alternativeNamesAsSeperateRow = !theme.isDesktop;
-    const alternativeNamesString = resource.alternative_names?.join(", ");
-
-    const PermissionIcon = resourcePermissionIcon(resource);
-    return [
-        ...insertIf([resource.display_numbers || ""], includeResourceNumber),
-        <>
-            <b>
-                {resource.name}{" "}
-                {resource.access_restricted && (
-                    <PermissionIcon
-                        strokeWidth={(2 / 20) * 24}
-                        height={theme.fontSize * 1.111}
-                        width={theme.fontSize}
-                        preserveAspectRatio="none"
-                        style={{
-                            verticalAlign: "text-bottom",
-                            transform: "translateY(-2px)",
-                        }}
-                    />
-                )}
-            </b>{" "}
-            {includeAlternativeTitle &&
-                !!alternativeNamesString &&
-                !alternativeNamesAsSeperateRow && (
-                    <i>{alternativeNamesString}</i>
-                )}
-        </>,
-        ...insertIf(
-            [<i>{alternativeNamesString}</i>],
-            includeAlternativeTitle &&
-                !!alternativeNamesString &&
-                alternativeNamesAsSeperateRow
-        ),
-    ];
+        const PermissionIcon = resourcePermissionIcon(resource);
+        return [
+            ...insertIf(
+                [resource.display_numbers || ""],
+                includeResourceNumber
+            ),
+            <>
+                <b>
+                    {resource.name}{" "}
+                    {resource.access_restricted && (
+                        <PermissionIcon
+                            strokeWidth={(2 / 20) * 24}
+                            height={"1.111em"}
+                            width={"1em"}
+                            preserveAspectRatio="none"
+                            style={{
+                                verticalAlign: "text-bottom",
+                                transform: "translateY(-2px)",
+                            }}
+                        />
+                    )}
+                </b>{" "}
+                {includeAlternativeTitle &&
+                    !!alternativeNamesString &&
+                    !alternativeNamesAsSeperateRow && (
+                        <i>{alternativeNamesString}</i>
+                    )}
+            </>,
+            ...insertIf(
+                [<i>{alternativeNamesString}</i>],
+                includeAlternativeTitle &&
+                    !!alternativeNamesString &&
+                    alternativeNamesAsSeperateRow
+            ),
+        ];
+    };
 };
 export const resourcePermissionIcon = (r: Resource) =>
     r.access_allowed_to_current_user ? Unlock : Lock;

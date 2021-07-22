@@ -24,7 +24,7 @@ import useValidation from "../../src/hooks/useValidation";
 import MyProfile from "../../src/model/api/MyProfile";
 import {
     timeFormValuePresenter,
-    resourceFormValuePresenter,
+    useResourceFormValuePresenter,
     attendeesFormValuePresenter,
     purposeFormValuePresenter,
 } from "../../src/util/ReservationPresenterUtil";
@@ -44,6 +44,8 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const { message: comment } = reservation;
 
     const { submit, loading } = useSubmitReservation();
+
+    const resourceFormValuePresenter = useResourceFormValuePresenter();
 
     const [agreedToPhoneContact, setAgreedToPhoneContact] = useReservationState(
         "agreed_to_phone_contact"
