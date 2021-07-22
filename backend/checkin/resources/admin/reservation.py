@@ -167,8 +167,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         }),
         (_('Request details'), {
             # 'classes': ('collapse',),
-            # 'has_priority', 'number_of_extra_attendees','organizer_is_attending',
-            'fields': ('agreed_to_phone_contact', 'get_phone_number', 'type', 'uuid'),
+            'fields': ('has_priority', 'number_of_extra_attendees','organizer_is_attending','agreed_to_phone_contact', 'get_phone_number', 'type', 'uuid'),
         }),
         (_('Creation and modifications'), {
             'classes': ('collapse',),
