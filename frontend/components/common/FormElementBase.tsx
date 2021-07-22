@@ -176,8 +176,15 @@ const FormElementBase = forwardRef<
                 }
 
                 .form-element-base.outline.above {
-                    background-color: ${theme.secondaryColor};
                     box-shadow: ${theme.boxShadow()};
+                }
+
+                .form-element-base.outline.above.primary {
+                    background-color: ${theme.primaryColor};
+                }
+
+                .form-element-base.outline.above:not(.primary) {
+                    background-color: ${theme.secondaryColor};
                 }
             `}</style>
             <ComponentType
