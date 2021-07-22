@@ -119,7 +119,7 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
                                     bottomSpacing={2}
                                 />
                             )}
-                        {allAttendeesAccepted && (
+                        {!allAttendeesAccepted && (
                             <Notice
                                 error
                                 title={t("Deine Teilnehmer||Teilnehmerinnen sind noch nicht bestätigt")}
