@@ -86,6 +86,14 @@ class NullableDateTimeField(serializers.DateTimeField):
         return super().to_representation(value)
 
 
+class NullableCharField(serializers.CharField):
+
+    def to_representation(self, value):
+        if not value:
+            return None
+        return super().to_representation(value)
+
+
 class DRFFilterBooleanWidget(django_filters.widgets.BooleanWidget):
     """
     Without this Django complains about missing render method when DRF renders HTML version of API.

@@ -35,10 +35,11 @@ from django.utils.timezone import localtime
 from .resource import ResourceSerializer, ResourceListViewSet
 
 from ..models import (
-    Reservation, Resource, RESERVATION_EXTRA_FIELDS
+    Reservation, Resource, RESERVATION_EXTRA_FIELDS,
     # ReservationMetadataSet, ReservationCancelReasonCategory, ReservationCancelReason
     )
 from ..models.attendance import Attendance
+from ..models.reservation import StaticReservationPurpose
 #from resources.pagination import ReservationPagination
 #from resources.models.utils import generate_reservation_xlsx
 from ..models.utils import get_object_or_none
@@ -46,7 +47,7 @@ from ..models.utils import get_object_or_none
 from ..auth import is_general_admin, is_staff
 from .base import (
     NullableDateTimeField, TranslatedModelSerializer, register_view, DRFFilterBooleanWidget,
-    ExtraDataMixin, ModifiableModelSerializerMixin
+    ExtraDataMixin, ModifiableModelSerializerMixin, NullableCharField
 )
 ResourcesBrowsableAPIRenderer = renderers.BrowsableAPIRenderer
 #from respa.renderers import ResourcesBrowsableAPIRenderer
@@ -129,6 +130,9 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
     state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
+    purpose = NullableCharField(allow_null=True, allow_blank=False, required=False) # choices=StaticReservationPurpose.choices) # will limit values!
+    link = NullableCharField(allow_null=True, allow_blank=False, required=False)
+    title = NullableCharField(allow_null=True, allow_blank=False, required=False)
     need_manual_confirmation = serializers.ReadOnlyField()
     attendees = AttendanceSerializer(many=True, source='attendance_set', required=False)
     # comment or reason or usage
