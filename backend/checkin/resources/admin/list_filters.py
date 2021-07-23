@@ -85,4 +85,6 @@ class PurposeFilter(admin.SimpleListFilter):
         return StaticReservationPurpose.choices
 
     def queryset(self, request, queryset):
+        if self.value() == None: # None == "All" value
+            return queryset
         return queryset.filter(purpose=self.value())
