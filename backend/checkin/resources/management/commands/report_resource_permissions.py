@@ -4,6 +4,7 @@ from guardian.shortcuts import get_users_with_perms
 from guardian.managers import UserObjectPermissionManager
 from guardian.utils import get_user_obj_perms_model
 from django.contrib.auth.models import Permission
+from checkin.resources.models.resource import Resource
 
 UserObjectPermission = get_user_obj_perms_model()
 PERMISSION_CODENAME = "resource:has_permanent_access"
@@ -16,6 +17,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         permission = Permission.objects.get(codename=PERMISSION_CODENAME)
+
+        resources_with_access_restriction = Resource.objects.filter(access_restricted=True)
+        print("Number of  resources with restricted access")
+        print(resources_with_access_restriction.count())
 
         resources_with_permissions = UserObjectPermission.objects.filter(permission=permission).distinct("object_pk")
         print("Number of distinct resources with `%s`" % PERMISSION_CODENAME)
