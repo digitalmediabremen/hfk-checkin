@@ -47,7 +47,7 @@ class AccessPermissionAdmin(ModelAdmin):
     # 'user', 'content_object', 'modified_at')
     readonly_fields = ('get_first_name', 'get_last_name', 'get_student_number', 'get_email', 'get_resource','get_permission_name', 'modified_at')
     fields = readonly_fields
-    list_display_links = ('get_first_name', 'get_last_name')
+    list_display_links = ('get_first_name', 'get_last_name', 'get_resource')
     list_filter = (UserFilter,ResourceFilter)
     search_fields = ('user__first_name', 'user__last_name',)
 
