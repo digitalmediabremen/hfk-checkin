@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-05 18:01+0200\n"
+"POT-Creation-Date: 2021-08-07 21:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -394,15 +394,43 @@ msgstr "Anzahl zugeordneter Resourcen"
 msgid "HH:mm"
 msgstr "hh:mm"
 
-#: checkin/resources/admin/permission.py:17
-#| msgid "Access Permissions"
+#: checkin/resources/admin/permission.py:15
+#: checkin/resources/admin/permission.py:91
+#: checkin/resources/models/accessibility.py:79
+#: checkin/resources/models/accessibility.py:105
+#: checkin/resources/models/availability.py:110 checkin/tracking/models.py:120
+msgid "Resource"
+msgstr "Ressource"
+
+#: checkin/resources/admin/permission.py:34 checkin/resources/admin/user.py:19
 msgid "Resource access permission"
 msgstr "Zugangsberechtigung"
 
-#: checkin/resources/admin/permission.py:18
-#| msgid "Access Permissions"
+#: checkin/resources/admin/permission.py:35 checkin/resources/admin/user.py:20
 msgid "Resource access permissions"
 msgstr "Zugangsberechtigungen"
+
+#: checkin/resources/admin/permission.py:70
+#: checkin/resources/admin/reception.py:110
+msgid "First name"
+msgstr "Vorname"
+
+#: checkin/resources/admin/permission.py:75
+#: checkin/resources/admin/reception.py:115
+msgid "Last name"
+msgstr "Nachname"
+
+#: checkin/resources/admin/permission.py:81
+msgid "Student number"
+msgstr "Matrikelnummer"
+
+#: checkin/resources/admin/permission.py:86
+msgid "Email"
+msgstr ""
+
+#: checkin/resources/admin/permission.py:96
+msgid "Permission"
+msgstr "Berechtigung"
 
 #: checkin/resources/admin/permission_inlines.py:27
 msgid "User with permitted access"
@@ -474,14 +502,6 @@ msgstr "Zeitraum"
 #: checkin/tracking/admin_list_filters.py:6 checkin/users/models.py:274
 msgid "User"
 msgstr "Nutzer"
-
-#: checkin/resources/admin/reception.py:110
-msgid "First name"
-msgstr "Vorname"
-
-#: checkin/resources/admin/reception.py:115
-msgid "Last name"
-msgstr "Nachname"
 
 #: checkin/resources/admin/reception.py:120
 msgid "Begin"
@@ -846,12 +866,6 @@ msgstr ""
 #: checkin/resources/models/accessibility.py:103
 msgid "Resource Accessibility"
 msgstr ""
-
-#: checkin/resources/models/accessibility.py:79
-#: checkin/resources/models/accessibility.py:105
-#: checkin/resources/models/availability.py:110 checkin/tracking/models.py:120
-msgid "Resource"
-msgstr "Ressource"
 
 #: checkin/resources/models/accessibility.py:82
 #: checkin/resources/models/accessibility.py:108
