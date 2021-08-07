@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-22 17:42+0200\n"
+"POT-Creation-Date: 2021-08-07 21:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -312,7 +312,8 @@ msgstr "Raum"
 #: checkin/resources/admin/list_filters.py:15
 #: checkin/resources/admin/reception.py:29
 #: checkin/resources/admin/reception.py:45
-#: checkin/resources/admin/reservation.py:219
+#: checkin/resources/admin/reservation.py:102
+#: checkin/resources/admin/reservation.py:220
 #: checkin/resources/models/reservation.py:206
 msgid "Organizer"
 msgstr "Nutzer"
@@ -335,9 +336,9 @@ msgid "Now and future"
 msgstr "Jetzt oder in Zukunft"
 
 #: checkin/resources/admin/list_filters.py:49
-#: checkin/resources/admin/reservation.py:104
-#: checkin/resources/admin/reservation.py:165
-#: checkin/resources/admin/reservation.py:293
+#: checkin/resources/admin/reservation.py:105
+#: checkin/resources/admin/reservation.py:166
+#: checkin/resources/admin/reservation.py:294
 #: checkin/resources/models/reservation.py:207
 msgid "State"
 msgstr "Status"
@@ -369,8 +370,8 @@ msgstr "storniert"
 
 #: checkin/resources/admin/list_filters.py:82
 #: checkin/resources/admin/reception.py:142
-#: checkin/resources/admin/reservation.py:103
-#: checkin/resources/admin/reservation.py:247
+#: checkin/resources/admin/reservation.py:104
+#: checkin/resources/admin/reservation.py:248
 #: checkin/resources/models/reservation.py:205
 msgid "Purpose"
 msgstr "Grund"
@@ -392,6 +393,44 @@ msgstr "Anzahl zugeordneter Resourcen"
 #: checkin/resources/admin/period_inline.py:38
 msgid "HH:mm"
 msgstr "hh:mm"
+
+#: checkin/resources/admin/permission.py:15
+#: checkin/resources/admin/permission.py:91
+#: checkin/resources/models/accessibility.py:79
+#: checkin/resources/models/accessibility.py:105
+#: checkin/resources/models/availability.py:110 checkin/tracking/models.py:120
+msgid "Resource"
+msgstr "Ressource"
+
+#: checkin/resources/admin/permission.py:34 checkin/resources/admin/user.py:19
+msgid "Resource access permission"
+msgstr "Zugangsberechtigung"
+
+#: checkin/resources/admin/permission.py:35 checkin/resources/admin/user.py:20
+msgid "Resource access permissions"
+msgstr "Zugangsberechtigungen"
+
+#: checkin/resources/admin/permission.py:70
+#: checkin/resources/admin/reception.py:110
+msgid "First name"
+msgstr "Vorname"
+
+#: checkin/resources/admin/permission.py:75
+#: checkin/resources/admin/reception.py:115
+msgid "Last name"
+msgstr "Nachname"
+
+#: checkin/resources/admin/permission.py:81
+msgid "Student number"
+msgstr "Matrikelnummer"
+
+#: checkin/resources/admin/permission.py:86
+msgid "Email"
+msgstr ""
+
+#: checkin/resources/admin/permission.py:96
+msgid "Permission"
+msgstr "Berechtigung"
 
 #: checkin/resources/admin/permission_inlines.py:27
 msgid "User with permitted access"
@@ -455,7 +494,7 @@ msgid "Attendance records"
 msgstr "Anwesenheitsdokuemtationen"
 
 #: checkin/resources/admin/reception.py:100
-#: checkin/resources/admin/reservation.py:252
+#: checkin/resources/admin/reservation.py:253
 msgid "Timespan"
 msgstr "Zeitraum"
 
@@ -463,14 +502,6 @@ msgstr "Zeitraum"
 #: checkin/tracking/admin_list_filters.py:6 checkin/users/models.py:274
 msgid "User"
 msgstr "Nutzer"
-
-#: checkin/resources/admin/reception.py:110
-msgid "First name"
-msgstr "Vorname"
-
-#: checkin/resources/admin/reception.py:115
-msgid "Last name"
-msgstr "Nachname"
 
 #: checkin/resources/admin/reception.py:120
 msgid "Begin"
@@ -510,15 +541,15 @@ msgstr "Ausgang erfassen"
 msgid "Leave"
 msgstr "Ausgang"
 
-#: checkin/resources/admin/reservation.py:60
+#: checkin/resources/admin/reservation.py:61
 msgid "🎩"
 msgstr "Organ."
 
-#: checkin/resources/admin/reservation.py:107
+#: checkin/resources/admin/reservation.py:108
 msgid "Notification Message"
 msgstr "Mitteilung zur Statusänderung"
 
-#: checkin/resources/admin/reservation.py:110
+#: checkin/resources/admin/reservation.py:111
 msgid ""
 "This message might be used in the notification send to the organizer on this "
 "update. The message will not be saved."
@@ -526,107 +557,107 @@ msgstr ""
 "Diese Nachricht wird in der Statusbenachrichtigung verwendet, die beim "
 "Sichern versandt wird. Diese Nachricht wird darüber hinaus nicht gesichert."
 
-#: checkin/resources/admin/reservation.py:119
+#: checkin/resources/admin/reservation.py:120
 #, python-format
 msgid "Already existing reservations can not have state %s"
 msgstr "Bereits erstellte Buchungsanfragen können nicht den Status %s haben"
 
-#: checkin/resources/admin/reservation.py:125
+#: checkin/resources/admin/reservation.py:126
 #, python-format
 msgid "'%s' can not be set as organizer, until they have a valid user profile."
 msgstr ""
 "'%s' kann nicht als Nutzer eingesetzt werden, es kein gültiges "
 "Benutzerprofil gibt."
 
-#: checkin/resources/admin/reservation.py:168
+#: checkin/resources/admin/reservation.py:169
 msgid "Request details"
 msgstr "Anfragedetails"
 
-#: checkin/resources/admin/reservation.py:172
+#: checkin/resources/admin/reservation.py:173
 msgid "Creation and modifications"
 msgstr "Erstellung und Änderungen"
 
-#: checkin/resources/admin/reservation.py:208
+#: checkin/resources/admin/reservation.py:209
 msgid "Resource instructions"
 msgstr "Raumhinweise"
 
-#: checkin/resources/admin/reservation.py:214
+#: checkin/resources/admin/reservation.py:215
 msgid "Resource reservation delegates"
 msgstr "Buchungsverantwortliche"
 
-#: checkin/resources/admin/reservation.py:226
+#: checkin/resources/admin/reservation.py:227
 msgid "(phone contact not allowed)"
 msgstr "(telefonische Kontaktaufnahme nicht erlaubt)"
 
-#: checkin/resources/admin/reservation.py:227
+#: checkin/resources/admin/reservation.py:228
 msgid "Phone number"
 msgstr "Telefonnummer"
 
-#: checkin/resources/admin/reservation.py:231
+#: checkin/resources/admin/reservation.py:232
 msgid "Prio."
 msgstr "Prio."
 
-#: checkin/resources/admin/reservation.py:237
+#: checkin/resources/admin/reservation.py:238
 msgid "Excl."
 msgstr "Exkl."
 
-#: checkin/resources/admin/reservation.py:257
+#: checkin/resources/admin/reservation.py:258
 msgid "Date"
 msgstr "Datum"
 
-#: checkin/resources/admin/reservation.py:262
+#: checkin/resources/admin/reservation.py:263
 msgid "Time"
 msgstr "Zeit"
 
-#: checkin/resources/admin/reservation.py:267
+#: checkin/resources/admin/reservation.py:268
 msgid "Created at"
 msgstr "Erstellt"
 
-#: checkin/resources/admin/reservation.py:283
+#: checkin/resources/admin/reservation.py:284
 msgid "Avail."
 msgstr "Auslastung"
 
-#: checkin/resources/admin/reservation.py:287
+#: checkin/resources/admin/reservation.py:288
 msgid "BLOCKED"
 msgstr "BLOCKIERT"
 
-#: checkin/resources/admin/reservation.py:314
+#: checkin/resources/admin/reservation.py:315
 #, python-format
 msgid "%s preferred language is: %s"
 msgstr "%s bevorzugte Sprache ist: %s"
 
-#: checkin/resources/admin/reservation.py:316
+#: checkin/resources/admin/reservation.py:317
 msgid "Has been cancelled or denied."
 msgstr "Wurde storniert oder abgelehnt."
 
-#: checkin/resources/admin/reservation.py:318
+#: checkin/resources/admin/reservation.py:319
 msgid "Has priority."
 msgstr "Hat Priorität."
 
-#: checkin/resources/admin/reservation.py:320
+#: checkin/resources/admin/reservation.py:321
 msgid "Uses space exclusively."
 msgstr "Alleinige Nutzung."
 
-#: checkin/resources/admin/reservation.py:322
+#: checkin/resources/admin/reservation.py:323
 msgid "Reservation occurred in the past."
 msgstr "Buchung liegt in der Vergangenheit."
 
-#: checkin/resources/admin/reservation.py:326
+#: checkin/resources/admin/reservation.py:327
 msgid ""
 "Organizer does not want to attend. Yet the organizer is in the attendance "
 "list."
 msgstr ""
 "Nutzer will nicht teilnehmen. Trotzdem ist der Nutzer in der Teilnehmerliste."
 
-#: checkin/resources/admin/reservation.py:328
+#: checkin/resources/admin/reservation.py:329
 msgid "Organizer does not want to attend."
 msgstr "Nutzer will nicht teilnehmen."
 
-#: checkin/resources/admin/reservation.py:330
+#: checkin/resources/admin/reservation.py:331
 msgid "Organizer is missing from attendance list."
 msgstr "Der Nutzer fehlt in der Teilnehmerliste."
 
-#: checkin/resources/admin/reservation.py:335
+#: checkin/resources/admin/reservation.py:336
 #, python-format
 msgid "%(user)s has one or more group assignments: %(assigned_groups)s"
 msgstr "%(user)s gehört zu folgenden Gruppen: %(assigned_groups)s"
@@ -694,75 +725,73 @@ msgid "Attendance list for reservations"
 msgstr "Teilnehmerliste für Buchungen"
 
 #: checkin/resources/api/calendar.py:37
-#| msgid "Has priority"
 msgid "has priority"
 msgstr "Hat Priorität"
 
 #: checkin/resources/api/calendar.py:38
-#| msgid "Exclusive resource usage"
 msgid "exclusive resource usage"
 msgstr "Alleinige Nutzung"
 
-#: checkin/resources/api/reservation.py:234
+#: checkin/resources/api/reservation.py:238
 msgid "Illegal state change"
 msgstr "Unzulässige Statusänderung"
 
-#: checkin/resources/api/reservation.py:251
+#: checkin/resources/api/reservation.py:255
 msgid "You cannot make a reservation in the past"
 msgstr "Du kannst keine Anfragen in der Vergangenheit stellen."
 
-#: checkin/resources/api/reservation.py:259
+#: checkin/resources/api/reservation.py:263
 #: checkin/resources/models/reservation.py:680
 msgid "This resource is blocked during this time. Sorry."
 msgstr "Dieser Raum ist zum gewählten Zeitpunkt (noch) nicht verfügbar."
 
-#: checkin/resources/api/reservation.py:264
+#: checkin/resources/api/reservation.py:268
 #, python-format
 msgid "The resource is reservable only before %(datetime)s"
 msgstr "Dieser Bereich ist buchbar ab %(datetime)s."
 
-#: checkin/resources/api/reservation.py:268
+#: checkin/resources/api/reservation.py:272
 #, python-format
 msgid "The resource is reservable only after %(datetime)s"
 msgstr "Dieser Bereich ist buchbar nach %(datetime)s"
 
-#: checkin/resources/api/reservation.py:280
+#: checkin/resources/api/reservation.py:284
 msgid "Only allowed to be set by resource managers"
 msgstr ""
 
-#: checkin/resources/api/reservation.py:285
+#: checkin/resources/api/reservation.py:289
 msgid "You are not allowed to make a reservation of this type"
 msgstr "Du hast keine Freigabe, um Buchungen von dieser Art zu machen."
 
-#: checkin/resources/api/reservation.py:289
+#: checkin/resources/api/reservation.py:293
 msgid "Only allowed to be set by staff members"
 msgstr "Kann nur von Mitarbeitern eingestellt werden"
 
-#: checkin/resources/api/reservation.py:298
+#: checkin/resources/api/reservation.py:302
 msgid "This field cannot have a value with this resource"
 msgstr ""
 
-#: checkin/resources/api/reservation.py:301
+#: checkin/resources/api/reservation.py:305
 msgid "This field cannot be changed"
 msgstr "Dieses Feld kann nicht verändert werden"
 
-#: checkin/resources/api/reservation.py:324
+#: checkin/resources/api/reservation.py:328
 #, python-format
 msgid "Patching of field %(field)s is not allowed"
 msgstr ""
 
-#: checkin/resources/api/reservation.py:360
+#: checkin/resources/api/reservation.py:364
 #, python-brace-format
 msgid "Invalid pk \"{pk_value}\" - object does not exist."
 msgstr "Ungültige Eingabe \"{pk_value}\"."
 
-#: checkin/resources/api/reservation.py:463
-#: checkin/resources/api/reservation.py:477
+#: checkin/resources/api/reservation.py:467
+#: checkin/resources/api/reservation.py:481
 #, python-format
 msgid "Invalid value in filter %(filter)s"
 msgstr "Ungültiger Wert für Filter %(filter)s"
 
-#: checkin/resources/api/reservation.py:811
+#: checkin/resources/api/reservation.py:815
 msgid "Can not cancel event in the past."
 msgstr "Du kannst keine Anfragen in der Vergangenheit stellen."
 
@@ -837,12 +866,6 @@ msgstr ""
 #: checkin/resources/models/accessibility.py:103
 msgid "Resource Accessibility"
 msgstr ""
-
-#: checkin/resources/models/accessibility.py:79
-#: checkin/resources/models/accessibility.py:105
-#: checkin/resources/models/availability.py:110 checkin/tracking/models.py:120
-msgid "Resource"
-msgstr "Ressource"
 
 #: checkin/resources/models/accessibility.py:82
 #: checkin/resources/models/accessibility.py:108
