@@ -46,7 +46,7 @@ class Attendance(ModifiableModel, UUIDModelMixin, models.Model):
     @property
     def is_external_user(self):
         #return self.state == AttendanceStates.REQUESTED or False
-        return self.user.is_external
+        return bool(self.user.is_external)
     is_external_user.fget.short_description = _("External")
     is_external_user.fget.boolean = True
 

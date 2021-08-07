@@ -89,7 +89,7 @@ except Exception:
 class AttendanceSerializer(serializers.ModelSerializer):
     profile_id = serializers.ReadOnlyField(source='user.id', read_only=True)
     display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
-    is_external = serializers.BooleanField(source='is_external_user', read_only=True, initial=True, default=True)
+    is_external = serializers.BooleanField(source='is_external_user', allow_null=False, read_only=True, initial=True, default=True)
     is_organizer = serializers.BooleanField(read_only=True)
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
@@ -349,6 +349,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
 
     def to_internal_value(self, data):
         from checkin.users.api import UserProfileSerializer as UserSerializer
+        # FIXME why copy and not get('user', default=None) see Rollbar #44
         user_data = data.copy().pop('user', None)  # handle user manually
         deserialized_data = super().to_internal_value(data)
 
