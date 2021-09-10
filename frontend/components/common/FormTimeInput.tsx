@@ -4,13 +4,16 @@ import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
 import {
     assertTimeString,
-
-    fromTime, Time, timeFromTimeString
+    fromTime,
+    Time,
+    timeFromTimeString,
 } from "../../src/util/DateTimeUtil";
 import { empty } from "../../src/util/TypeUtil";
 import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import FormElementLabel from "./FormElementLabel";
 import FormInput from "./FormInput";
+import Modernizr from "modernizr";
+import TimeField from "react-simple-timefield";
 
 const { className, styles } = css.resolve`
     input {
@@ -65,7 +68,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
     const theme = useTheme();
 
     const handleChange = (event: Event | ChangeEvent<HTMLInputElement>) => {
-        const e = (event as unknown) as ChangeEvent<HTMLInputElement>;
+        const e = event as unknown as ChangeEvent<HTMLInputElement>;
         const timeString = e.target.value as string | null;
 
         // validate input
@@ -97,34 +100,31 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
             {styles}
             <FormElementBase {...formElementBaseProps}>
                 <FormElementLabel name={label} />
-
                 <div className="date-wrapper">
                     {hasOverlap && (
                         <span className="plus-one-day">
                             {t("+{days} Tag", { days: 1 })}
                         </span>
                     )}
-                    {/* <TimeInputPolyfill
-                        step={300}
-                        title=""
-                        aria-label="Close"
-                        type="time"
-                        name="time"
-                        style={{color: theme.primaryColor}}
-                        className={className}
-                        onChange={({ value }) => {
-                            handleChange(value);
-                        }}
-                        value={inputTimeString}
-                    /> */}
-                    <FormInput
-                        style={{
-                            textAlign: "center",
-                        }}
-                        type="time"
-                        value={inputTimeString}
-                        onChange={handleChange}
-                    ></FormInput>
+                    {Modernizr.inputtypes.time ? (
+                        <FormInput
+                            style={{
+                                textAlign: "center",
+                            }}
+                            type="time"
+                            value={inputTimeString}
+                            onChange={handleChange}
+                        ></FormInput>
+                    ) : (
+                        <TimeField
+                            style={{
+                                textAlign: "center",
+                            }}
+                            input={<FormInput />}
+                            value={inputTimeString}
+                            onChange={handleChange}
+                        />
+                    )}
                 </div>
             </FormElementBase>
         </>

@@ -34,6 +34,7 @@
         "json.date-extensions": "^1.2.2",
         "libphonenumber-js": "^1.9.21",
         "next": "^10.2.3",
+        "next-plugin-modernizr": "0.0.3",
         "next-pwa": "^5.2.23",
         "normalize.css": "^8.0.1",
         "react": "16.13.1",
@@ -43,6 +44,7 @@
         "react-feather": "^2.0.9",
         "react-hook-form": "^6.15.8",
         "react-page-visibility": "^6.4.0",
+        "react-simple-timefield": "^3.2.3",
         "react-smooth-collapse": "^2.1.0",
         "react-textarea-autosize": "^8.3.3",
         "react-transition-group": "^4.4.2",
@@ -56,6 +58,7 @@
     "devDependencies": {
         "@types/classnames": "^2.3.1",
         "@types/colors": "^1.2.1",
+        "@types/modernizr": "^3.5.3",
         "@types/node": "^14.17.5",
         "@types/react": "^16.14.11",
         "@types/react-textarea-autosize": "^4.3.6",
