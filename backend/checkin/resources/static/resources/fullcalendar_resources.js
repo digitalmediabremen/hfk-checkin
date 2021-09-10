@@ -24,19 +24,19 @@ var resources_fullcalendar = {
                     url: '/api/calendar/event/?all=true',
                     method: 'GET',
                     extraParams: function () {
-                        return {current_uuid: resources_fullcalendar.parameters.current_uuid}
+                        return {resources: resources_fullcalendar.parameters.resources_uuids.join('.'), current_uuid: resources_fullcalendar.parameters.current_uuid}
                     },
-                    failure: function () {
-                        resources_fullcalendar.parameters.resources_uuids.pop(resources_fullcalendar.parameters.last_added_resource);
-                        resources_fullcalendar.parameters.last_added_resource = null;
-                        calendar.addResource({
-                            title: "Nicht gefunden",
-                            id: "NOT_FOUND"
-                        });
-                        setTimeout(() => {
-                            calendar.getResourceById('NOT_FOUND').remove()
-                        }, 2000);
-                    },
+                    // failure: function () {
+                    //     resources_fullcalendar.parameters.resources_uuids.pop(resources_fullcalendar.parameters.last_added_resource);
+                    //     resources_fullcalendar.parameters.last_added_resource = null;
+                    //     calendar.addResource({
+                    //         title: "Nicht gefunden",
+                    //         id: "NOT_FOUND"
+                    //     });
+                    //     setTimeout(() => {
+                    //         calendar.getResourceById('NOT_FOUND').remove()
+                    //     }, 2000);
+                    // },
                     success: function () {
                         calendar.refetchResources()
                     },
