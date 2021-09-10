@@ -30,6 +30,7 @@ from psycopg2.extras import DateTimeTZRange
 from guardian.shortcuts import get_objects_for_user, get_users_with_perms
 from guardian.core import ObjectPermissionChecker
 from simple_history.models import HistoricalRecords
+from django.db import connection
 
 from ..auth import is_authenticated_user, is_general_admin, is_superuser
 #from ..errors import InvalidImage
@@ -44,6 +45,7 @@ from .permissions import RESOURCE_GROUP_PERMISSIONS, RESOURCE_PERMISSIONS
 #from ..enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
 from .mixins import AbstractReservableModel, AbstractAccessRestrictedModel
 from .permissions import NoSuperuserObjectPermissionChecker
+
 
 # TODO remove UNIT_ROLE_PERMISSIONS
 UNIT_ROLE_PERMISSIONS = {}
@@ -674,6 +676,67 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     #     ]
     #     if add_objs:
     #         ResourceDailyOpeningHours.objects.bulk_create(add_objs)
+
+    def get_availability(self, begin, end):
+        """
+        Retrieves resource availability form database using custom SQL (!) performing a common table expression (CTE).
+        Lookup: Collapse begins and ends of reservation to identify all 'touchtimes' (timeframes).
+        Than: Lookup reservations within identified timeframes.
+
+        django-cte currently does not match requirements. Queries should not be WITH RECURSIVE.
+        see: https://github.com/dimagi/django-cte/issues/31
+
+        :param begin: datetime for begin of availability lookup
+        :param end: datetime for end of availability lookup
+        :return: dict or list #FIXME
+        """
+
+        from collections import namedtuple
+
+        sql = """
+            WITH GRID AS
+            (
+              SELECT
+                START_TIME,
+                LEAD(START_TIME) OVER (ORDER BY START_TIME) AS END_TIME
+              FROM
+                   (
+                       SELECT DISTINCT touchtime AS START_TIME
+                       from resources_reservation
+                                cross join lateral -- combine begin and end columns to find all "touchtimes"
+                           (values (resources_reservation.begin), (resources_reservation.end)) as t(touchtime)
+                       where touchtime is not null AND
+                       resources_reservation.resource_id = %(resource_uuid)s AND -- select resource
+                       resources_reservation.begin < %(availability_end)s AND -- ! overlap-like: reservation begin before lookup end
+                       resources_reservation.end > %(availability_begin)s -- ! overlap-like: reservation end past lookup begin
+                       order by touchtime
+              ) x
+            )
+            SELECT
+                START_TIME,
+                END_TIME,
+                COUNT(resources_reservation.uuid) AS reservation_count,
+                COUNT("resources_attendance"."uuid") AS "number_of_attendances",
+                (COUNT("resources_attendance"."uuid") + "resources_reservation"."number_of_extra_attendees") AS "total_number_of_attendees",
+                'BUSY' as status
+            FROM GRID
+            LEFT JOIN resources_reservation ON
+                (resources_reservation.begin, resources_reservation.end) OVERLAPS (GRID.START_TIME, GRID.END_TIME) AND
+                resources_reservation.resource_id = %(resource_uuid)s
+            LEFT OUTER JOIN "resources_attendance"
+                ON ("resources_reservation"."uuid" = "resources_attendance"."reservation_id")
+            GROUP BY START_TIME, END_TIME, "resources_reservation"."uuid"
+            HAVING COUNT(resources_reservation.uuid) > 0
+            ORDER BY 1
+        """
+
+        # FIXME use ORM for table_names, ggf. field_names
+
+        nt_result = namedtuple('ResourceAvailabilityTimeframe', ['begin', 'end', 'reservation_count', 'number_of_attendances', 'total_number_of_attendees', 'status'])
+
+        with connection.cursor() as cursor:
+            cursor.execute(sql, {'resource_uuid': self.uuid, 'availability_begin': begin, 'availability_end': end})
+            return [nt_result(*row) for row in cursor.fetchall()]
 
     def is_admin(self, user):
         """

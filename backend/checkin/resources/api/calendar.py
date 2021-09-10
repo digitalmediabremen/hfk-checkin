@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from .base import register_view
-from rest_framework import serializers
+from rest_framework import serializers, exceptions, response
 from rest_framework.permissions import IsAdminUser
 from .reservation import ReservationSerializer, ReservationListViewSet, Reservation, DjangoFilterBackend, \
     ReservationFilterBackend, PastFilterBackend, \
@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from ..admin.reservation import RESERVATION_STATE_COLORS
 from django.utils.translation import gettext
 from django.utils.translation import gettext as _
+from .resource import deserialize_datetime
 
 class ReservationCalendarEventSerializer(ReservationSerializer):
     start = serializers.DateTimeField(source='begin')
@@ -74,7 +75,6 @@ class ReservationCalendarViewSet(ReservationListViewSet):
     permission_classes = (IsAdminUser,)
     filter_backends = (ReservationFilterBackend,)
 
-
     def get_serializer_class(self):
         return ReservationCalendarEventSerializer
 
@@ -105,8 +105,45 @@ class ReservationCalendarViewSet(ReservationListViewSet):
 
         return qs
 
-
 register_view(ReservationCalendarViewSet, 'calendar/event', base_name='calendarevent')
+
+
+
+class ReservationCalendarAvailabilitySerializer(ReservationSerializer):
+    start = serializers.DateTimeField(source='begin')
+    end = serializers.DateTimeField()
+
+
+class ReservationCalendarViewSet(ReservationListViewSet):
+    pagination_class = None
+    http_method_names = ['get', 'head']
+    permission_classes = (IsAdminUser,)
+    filter_backends = (ReservationFilterBackend,)
+
+    def get_serializer_class(self):
+        return ReservationCalendarEventSerializer
+
+    def list(self, request, *args, **kwargs):
+        #FIXME DUPLICATE of api.resource @action freebusy
+
+        user = request.user
+        query_params = self.request.query_params
+
+        resource = Resource.objects.get(uuid=query_params['current_uuid'])
+
+        if 'start' not in query_params or 'end' not in query_params:
+            raise exceptions.ParseError("Availability requests require `start` and `end` query parameters.")
+
+        available_start = deserialize_datetime(query_params['start'])
+        available_end = deserialize_datetime(query_params['end'])
+
+        availability_result = resource.get_availability(available_start, available_end)
+        # TODO cacheing result
+
+        serializer = self.get_serializer_class()(availability_result, many=True)
+        return response.Response(serializer.data)
+
+register_view(ReservationCalendarViewSet, 'calendar/availability', base_name='calendaravailability')
 
 
 class CalendarResourceSerializer(ResourceSerializer):

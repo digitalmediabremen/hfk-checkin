@@ -21,7 +21,7 @@ var resources_fullcalendar = {
                 },
                 initialDate: resources_fullcalendar.parameters.initialDate,
                 eventSources: [{
-                    url: '/api/calendar/event/?all=true',
+                    url: '/api/calendar/event/?all=true', // ?all = includes past events
                     method: 'GET',
                     extraParams: function () {
                         return {resources: resources_fullcalendar.parameters.resources_uuids.join('.'), current_uuid: resources_fullcalendar.parameters.current_uuid}
@@ -44,9 +44,18 @@ var resources_fullcalendar = {
                     {
                         start: resources_fullcalendar.parameters.start,
                         end: resources_fullcalendar.parameters.end,
-                        display: 'background'
+                        display: 'background',
+                        color: 'lightgrey'
                     }
-                ]],
+                ], {
+                    url: '/api/calendar/availability/',
+                    method: 'GET',
+                    extraParams: function () {
+                        return {current_uuid: resources_fullcalendar.parameters.current_uuid}
+                    },
+                    display: 'background',
+                    color: 'red',
+                }],
                 eventContent: function(args) {
                     var description = args.event.extendedProps.description;
                     var title = args.event.title;

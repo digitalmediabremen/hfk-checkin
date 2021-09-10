@@ -42,9 +42,17 @@ from .base import ExtraDataMixin, TranslatedModelSerializer, register_view, DRFF
 from .unit import UnitSerializer
 #from .equipment import EquipmentSerializer
 from rest_framework.settings import api_settings as drf_settings
+from .availability import ResourceAvailabilitySerializer
 
 
 logger = logging.getLogger(__name__)
+
+
+def deserialize_datetime(value):
+    try:
+        return arrow.get(value).datetime
+    except ParserError:
+        raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % value)
 
 
 def parse_query_time_range(params):
@@ -499,12 +507,12 @@ class ResourceFilterSet(django_filters.rest_framework.FilterSet):
     # is_favorite = django_filters.BooleanFilter(method='filter_is_favorite', widget=DRFFilterBooleanWidget)
     unit_uuid = django_filters.CharFilter(field_name='unit__uuid', lookup_expr='iexact')
     unit_slug = django_filters.CharFilter(field_name='unit__slug', lookup_expr='iexact')
-    # resource_group = django_filters.Filter(field_name='groups__identifier', lookup_expr='in',
-    #                                        widget=django_filters.widgets.CSVWidget, distinct=True)
+    resource_group = django_filters.Filter(field_name='groups__identifier', lookup_expr='in',
+                                           widget=django_filters.widgets.CSVWidget, distinct=True)
     # equipment = django_filters.Filter(field_name='resource_equipment__equipment__id', lookup_expr='in',
     #                                   widget=django_filters.widgets.CSVWidget, distinct=True)
-    # available_between = django_filters.Filter(method='filter_available_between',
-    #                                           widget=django_filters.widgets.CSVWidget)
+    available_between = django_filters.Filter(method='filter_available_between',
+                                              widget=django_filters.widgets.CSVWidget)
     # free_of_charge = django_filters.BooleanFilter(method='filter_free_of_charge',
     #                                               widget=DRFFilterBooleanWidget)
     # municipality = django_filters.Filter(field_name='unit__municipality_id', lookup_expr='in',
@@ -544,48 +552,43 @@ class ResourceFilterSet(django_filters.rest_framework.FilterSet):
     #     else:
     #         return queryset.exclude(qs)
     #
-    # def _deserialize_datetime(self, value):
-    #     try:
-    #         return arrow.get(value).datetime
-    #     except ParserError:
-    #         raise exceptions.ParseError("'%s' must be a timestamp in ISO 8601 format" % value)
-    #
-    # def filter_available_between(self, queryset, name, value):
-    #     if len(value) < 2 or len(value) > 3:
-    #         raise exceptions.ParseError('available_between takes two or three comma-separated values.')
-    #
-    #     available_start = self._deserialize_datetime(value[0])
-    #     available_end = self._deserialize_datetime(value[1])
-    #
-    #     if available_start.date() != available_end.date():
-    #         raise exceptions.ParseError('available_between timestamps must be on the same day.')
-    #     overlapping_reservations = Reservation.objects.filter(
-    #         resource__in=queryset, end__gt=available_start, begin__lt=available_end
-    #     ).current()
-    #
-    #     if len(value) == 2:
-    #         return self._filter_available_between_whole_range(
-    #             queryset, overlapping_reservations, available_start, available_end
-    #         )
-    #     else:
-    #         try:
-    #             period = datetime.timedelta(minutes=int(value[2]))
-    #         except ValueError:
-    #             raise exceptions.ParseError('available_between period must be an integer.')
-    #         return self._filter_available_between_with_period(
-    #             queryset, overlapping_reservations, available_start, available_end, period
-    #         )
-    #
-    # def _filter_available_between_whole_range(self, queryset, reservations, available_start, available_end):
-    #     # exclude resources that have reservation(s) overlapping with the available_between range
-    #     queryset = queryset.exclude(reservations__in=reservations)
-    #     closed_resource_ids = {
-    #         resource.pk
-    #         for resource in queryset
-    #         if not self._is_resource_open(resource, available_start, available_end)
-    #     }
-    #
-    #     return queryset.exclude(id__in=closed_resource_ids)
+
+    def filter_available_between(self, queryset, name, value):
+        if len(value) < 2 or len(value) > 3:
+            raise exceptions.ParseError('available_between takes two or three comma-separated values.')
+
+        available_start = deserialize_datetime(value[0])
+        available_end = deserialize_datetime(value[1])
+
+        if available_start.date() != available_end.date():
+            raise exceptions.ParseError('available_between timestamps must be on the same day.')
+        overlapping_reservations = Reservation.objects.filter(
+            resource__in=queryset, end__gt=available_start, begin__lt=available_end
+        ).current()
+
+        if len(value) == 2:
+            return self._filter_available_between_whole_range(
+                queryset, overlapping_reservations, available_start, available_end
+            )
+        else:
+            try:
+                period = datetime.timedelta(minutes=int(value[2]))
+            except ValueError:
+                raise exceptions.ParseError('available_between period must be an integer.')
+            return self._filter_available_between_with_period(
+                queryset, overlapping_reservations, available_start, available_end, period
+            )
+
+    def _filter_available_between_whole_range(self, queryset, reservations, available_start, available_end):
+        # exclude resources that have reservation(s) overlapping with the available_between range
+        queryset = queryset.exclude(reservations__in=reservations)
+        closed_resource_ids = {
+            resource.pk
+            for resource in queryset
+            if not self._is_resource_open(resource, available_start, available_end)
+        }
+
+        return queryset.exclude(id__in=closed_resource_ids)
     #
     # @staticmethod
     # def _is_resource_open(resource, start, end):
@@ -913,6 +916,35 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
     # @action(detail=True, methods=['get'])
     # def calendar(self, request, pk=None):
     #     Reser
+
+    @action(detail=True, methods=['get'])
+    def freebusy(self, request, pk=None):
+        """
+        Returns a list of availability timeframes of selected resource.
+        """
+
+        #FIXME DUPLICATES with calender.py API / different format
+
+        resource = self.get_object()
+        user = request.user
+        query_params = self.request.query_params
+
+        # page = self.paginate_queryset(queryset)
+        # if page is not None:
+        #     serializer = self.get_serializer(page, many=True)
+        #     return self.get_paginated_response(serializer.data)
+
+        if 'start' not in query_params or 'end' not in query_params:
+            raise exceptions.ParseError("Availability requests require `start` and `end` query parameters.")
+
+        available_start = deserialize_datetime(query_params['start'])
+        available_end = deserialize_datetime(query_params['end'])
+
+        availability_result = resource.get_availability(available_start, available_end)
+        # TODO cacheing result
+
+        serializer = ResourceAvailabilitySerializer(availability_result, many=True)
+        return response.Response(serializer.data)
 
 
 register_view(ResourceListViewSet, 'space')
