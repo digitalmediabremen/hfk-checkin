@@ -1,19 +1,16 @@
-import React, { useRef } from "react";
-import TimeInput from "react-time-input-polyfill";
-import TimeInputPolyfill from "react-time-input-polyfill";
+import React, { ChangeEvent } from "react";
 import css from "styled-jsx/css";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
 import {
-    timeFromTimeString,
-    TimeString,
     assertTimeString,
-    Time,
-    fromTime,
-    hasOverlap,
+
+    fromTime, Time, timeFromTimeString
 } from "../../src/util/DateTimeUtil";
+import { empty } from "../../src/util/TypeUtil";
 import FormElementBase, { FormElementBaseProps } from "./FormElementBase";
 import FormElementLabel from "./FormElementLabel";
+import FormInput from "./FormInput";
 
 const { className, styles } = css.resolve`
     input {
@@ -39,7 +36,7 @@ const { className, styles } = css.resolve`
     }
 
     input[type="time"]::-webkit-calendar-picker-indicator {
-        display: none;
+        display: block;
     }
 
     input {
@@ -67,8 +64,13 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
     const { t } = useTranslation();
     const theme = useTheme();
 
-    const handleChange = (timeString: string) => {
-        if (timeString === "") return onChange?.(undefined);
+    const handleChange = (event: Event | ChangeEvent<HTMLInputElement>) => {
+        const e = (event as unknown) as ChangeEvent<HTMLInputElement>;
+        const timeString = e.target.value as string | null;
+
+        // validate input
+        if (empty(timeString) || timeString === "")
+            return onChange?.(undefined);
         assertTimeString(timeString);
         const time = timeFromTimeString(timeString);
         onChange?.(time);
@@ -102,7 +104,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                             {t("+{days} Tag", { days: 1 })}
                         </span>
                     )}
-                    <TimeInputPolyfill
+                    {/* <TimeInputPolyfill
                         step={300}
                         title=""
                         aria-label="Close"
@@ -114,7 +116,15 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                             handleChange(value);
                         }}
                         value={inputTimeString}
-                    />
+                    /> */}
+                    <FormInput
+                        style={{
+                            textAlign: "center",
+                        }}
+                        type="time"
+                        value={inputTimeString}
+                        onChange={handleChange}
+                    ></FormInput>
                 </div>
             </FormElementBase>
         </>
