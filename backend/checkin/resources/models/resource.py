@@ -677,7 +677,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     #     if add_objs:
     #         ResourceDailyOpeningHours.objects.bulk_create(add_objs)
 
-    def get_availability(self, begin, end):
+    def get_availability_from_reservations(self, begin, end):
         """
         Retrieves resource availability form database using custom SQL (!) performing a common table expression (CTE).
         Lookup: Collapse begins and ends of reservation to identify all 'touchtimes' (timeframes).
@@ -688,10 +688,23 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
 
         :param begin: datetime for begin of availability lookup
         :param end: datetime for end of availability lookup
-        :return: dict or list #FIXME
+        :return: dict or list # FIXME
         """
 
         from collections import namedtuple
+
+        # sql_for_interval_based_query = """
+        #   SELECT
+        #     START_TIME,
+        #     LEAD(START_TIME) OVER (ORDER BY START_TIME) AS END_TIME
+        #   FROM
+        #   (
+        #     SELECT
+        #       GENERATE_SERIES('2021-03-27T14:45:16', '2021-10-27T14:45:16', INTERVAL '1 days') AS START_TIME
+        #     FROM resources_reservation
+        #   ) x
+        # )
+        # """
 
         sql = """
             WITH GRID AS
@@ -730,12 +743,19 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             ORDER BY 1
         """
 
+        # FIXME: Query erzeugt aktuell eine Zeile für jede Reservierung auch, wenn Reservierungen/Timeframes genau übereinander liegen.
+        # Das Gird wird korrekt erstellt. Der Join mit resrouces_reservation führt offenbar jedoch zu notwendig mehreren Zeilen.
+        # Mit DISTINCT könnten die gelöscht werden. Ist aber nicht Sinnvoll: Hingegen müssten COUNT in Wirklichkeint SUM( of COUNT() ) werden.
+        # Lösungsansatz: https://dba.stackexchange.com/questions/154586/sum-over-distinct-rows-with-multiple-joins
+
         # FIXME use ORM for table_names, ggf. field_names
+        # TODO make (user) timezone aware!
 
         nt_result = namedtuple('ResourceAvailabilityTimeframe', ['begin', 'end', 'reservation_count', 'number_of_attendances', 'total_number_of_attendees', 'status'])
 
         with connection.cursor() as cursor:
             cursor.execute(sql, {'resource_uuid': self.uuid, 'availability_begin': begin, 'availability_end': end})
+            print(cursor.query)
             return [nt_result(*row) for row in cursor.fetchall()]
 
     def is_admin(self, user):

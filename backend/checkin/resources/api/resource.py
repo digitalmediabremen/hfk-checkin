@@ -940,7 +940,7 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
         available_start = deserialize_datetime(query_params['start'])
         available_end = deserialize_datetime(query_params['end'])
 
-        availability_result = resource.get_availability(available_start, available_end)
+        availability_result = resource.get_availability_from_reservations(available_start, available_end)
         # TODO cacheing result
 
         serializer = ResourceAvailabilitySerializer(availability_result, many=True)

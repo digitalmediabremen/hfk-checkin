@@ -109,9 +109,11 @@ register_view(ReservationCalendarViewSet, 'calendar/event', base_name='calendare
 
 
 
-class ReservationCalendarAvailabilitySerializer(ReservationSerializer):
+class ResourceCalendarAvailabilitySerializer(serializers.Serializer):
     start = serializers.DateTimeField(source='begin')
     end = serializers.DateTimeField()
+    # TODO expose resourceId when availability covers multiple resources
+    # resourceId = serializers.CharField(default="45ecc298-ecdf-43c5-aeb8-9fed051568a2")
 
 
 class ReservationCalendarViewSet(ReservationListViewSet):
@@ -120,16 +122,16 @@ class ReservationCalendarViewSet(ReservationListViewSet):
     permission_classes = (IsAdminUser,)
     filter_backends = (ReservationFilterBackend,)
 
-    def get_serializer_class(self):
-        return ReservationCalendarEventSerializer
 
     def list(self, request, *args, **kwargs):
+
         #FIXME DUPLICATE of api.resource @action freebusy
 
         user = request.user
         query_params = self.request.query_params
 
-        resource = Resource.objects.get(uuid=query_params['current_uuid'])
+        #TODO implement for multiple resource / resource array
+        resource = Resource.objects.get(uuid=query_params['resources'])
 
         if 'start' not in query_params or 'end' not in query_params:
             raise exceptions.ParseError("Availability requests require `start` and `end` query parameters.")
@@ -137,10 +139,10 @@ class ReservationCalendarViewSet(ReservationListViewSet):
         available_start = deserialize_datetime(query_params['start'])
         available_end = deserialize_datetime(query_params['end'])
 
-        availability_result = resource.get_availability(available_start, available_end)
+        availability_result = resource.get_availability_from_reservations(available_start, available_end)
         # TODO cacheing result
 
-        serializer = self.get_serializer_class()(availability_result, many=True)
+        serializer = ResourceCalendarAvailabilitySerializer(availability_result, many=True)
         return response.Response(serializer.data)
 
 register_view(ReservationCalendarViewSet, 'calendar/availability', base_name='calendaravailability')

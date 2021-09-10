@@ -51,7 +51,7 @@ var resources_fullcalendar = {
                     url: '/api/calendar/availability/',
                     method: 'GET',
                     extraParams: function () {
-                        return {current_uuid: resources_fullcalendar.parameters.current_uuid}
+                        return {resources: resources_fullcalendar.parameters.resources_uuids.join('.')}
                     },
                     display: 'background',
                     color: 'red',
