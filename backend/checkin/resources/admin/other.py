@@ -68,7 +68,7 @@ class ExtendedGuardedModelAdminMixin():
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         # Check global permission
-        if super().has_change_permission(request): #\
+        if super().has_change_permission(request) or super().has_view_permission(request): #\
             # or (not self.list_editable and self.has_view_permission(request)):
                 return qs
         # No global, filter by row-level permissions. also use view permission if the changelist is not editable
@@ -89,7 +89,8 @@ class ExtendedGuardedModelAdminMixin():
             return request.user.has_perm(get_permission_codename('change', self.opts), obj)
 
     def has_view_permission(self, request, obj=None):
-        return request.user.has_perm(get_permission_codename('view', self.opts), obj)
+        view_perm = request.user.has_perm(get_permission_codename('view', self.opts), obj)
+        return view_perm
 
     def has_delete_permission(self, request, obj=None):
         return super().has_delete_permission(request, obj) \

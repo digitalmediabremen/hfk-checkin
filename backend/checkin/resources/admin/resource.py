@@ -53,7 +53,7 @@ class CheckinLocationInline(admin.StackedInline):
         return False
 
 class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, DynamicArrayMixin, ModifiableModelAdminMixin,
-                       FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin, admin.ModelAdmin):
+                       FixedGuardedModelAdminMixin, admin.ModelAdmin):
     inlines = [
         # PeriodInline,
         # ResourceEquipmentInline,
@@ -108,10 +108,63 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     save_on_top = True
 
     def get_queryset(self, request):
-        # overwriting get_queryset from ExtendedGuardedModelAdminMixin and ModelAdmin
-        if is_general_admin(request.user):
+        """
+        returns QS of all Resources the request.user shall be able to "manage" (lookup, view, change or delete)
+        in the Admin Backend.
+        Uses Resource.get_resources_user_can_manage() to generate object-permission based QS form
+        Unit, Group and Resource.
+
+        Overloading get_queryset() from ExtendedGuardedModelAdminMixin and ModelAdmin.
+        Therefore permission-based queryset for general (django.auth) or object-specific (django-guardian) will not be returned until implemented here.
+
+        :param request:
+        :return: QuerySet of Resource
+        """
+        # return all objects if user has "global" (django.auth) view permission or is "general admin"
+        if is_general_admin(request.user) or super().has_view_permission(request):
             return self.model.objects.all()
-        return self.model.objects.get_resources_reservation_delegated_to_user(request.user)
+        return self.model.objects.get_resources_user_can_manage(request.user)
+
+    def has_change_permission(self, request, obj=None):
+        """
+        Checks has_change_permission similar to ExtendedGuardedModelAdminMixin but using custom row/object-level
+        checker in Resource._has_perm().
+        """
+        if super().has_change_permission(request, obj):
+            return True
+        if obj is None:
+            # Here check global 'view' permission or queryset exists
+            return super().has_view_permission(request) or self.get_queryset(request).exists()
+        else:
+            # Row-level checking
+            return obj._has_perm(request.user, get_permission_codename('change', self.opts), allow_admin=False, allow_global=False)
+
+    def has_view_permission(self, request, obj=None):
+        """
+        Checks has_view_permission similar to ExtendedGuardedModelAdminMixin but using custom row/object-level
+        checker in Resource._has_perm(). Allows to view with following permissions:
+        - 'view' or
+        - 'can_modify_reservations' or
+        - 'can_modify_reservations_without_notification'
+        """
+        if super().has_view_permission(request, obj):
+            return True
+        if obj is None:
+            # Here check global 'view' permission or queryset exists
+            return super().has_view_permission(request) or self.get_queryset(request).exists()
+        else:
+            # Row-level checking
+            return obj._has_perm(request.user, get_permission_codename('view', self.opts), allow_admin=False, allow_global=False) or \
+            obj._has_perm(request.user, perm='can_modify_reservations') or \
+            obj._has_perm(request.user, perm='can_modify_reservations_without_notification')
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Checks has_delete_permission similar to ExtendedGuardedModelAdminMixin but using custom row/object-level
+        checker in Resource._has_perm().
+        """
+        return super().has_delete_permission(request, obj) \
+               or (obj is not None and obj._has_perm(request.user, get_permission_codename('delete', self.opts), allow_admin=False, allow_global=False))
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -152,17 +205,6 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         ]
         # Make sure here you place your added urls first than the admin default urls
         return custom_urls + urls
-
-    # "inherit" permissions from unit (and resourcegrups) via permission checker on Resource instance
-    def has_view_permission(self, request, obj=None):
-        if obj:
-            return (obj._has_perm(request.user, perm=get_permission_codename('view', self.opts))
-                    or
-                    obj._has_perm(request.user, perm='can_modify_reservations')
-                    or
-                    obj._has_perm(request.user, perm='can_modify_reservations_without_notification'))
-
-        return super().has_view_permission(request, obj)
 
     @staticmethod
     def get_resource_calendar_extra_context(object_id=None):

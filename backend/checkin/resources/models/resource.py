@@ -201,8 +201,22 @@ class ResourceManager(models.Manager.from_queryset(ResourceQuerySet)):
             .annotate_capacity_calculation()
 
     def get_resources_reservation_delegated_to_user(self, user):
+        """ returns the QS of Resources `user` is allowed to / assigned to manage Reservations of """
         resources_qs = get_objects_for_user(user, ['resource:can_modify_reservations','resource:can_modify_reservations_without_notifications'], any_perm=True, accept_global_perms=False, klass=self.model)
         units_qs = get_objects_for_user(user, ['unit:can_modify_reservations','unit:can_modify_reservations_without_notifications'], any_perm=True, accept_global_perms=False, klass=Unit)
+        # return all resources with permission 'can_modify_reservations' on Resource or on Resource.unit
+        resources_qs |= self.get_queryset().filter(unit__in=units_qs)
+        return resources_qs
+
+    def get_resources_user_can_manage(self, user):
+        """
+        returns the QS of Resources `user` can manage (access in backend)
+        includes all resources from self.get_resources_reservation_delegated_to_user(), so delegates can
+        use resource list as well.
+        """
+        resources_qs = self.get_resources_reservation_delegated_to_user(user)
+        resources_qs |= get_objects_for_user(user, ['resource:view_resource','resource:change_resource','resource:delete_resource'], any_perm=True, accept_global_perms=False, klass=self.model)
+        units_qs = get_objects_for_user(user, ['unit:view_resource','unit:change_resource','unit:delete_resource'], any_perm=True, accept_global_perms=False, klass=Unit)
         # return all resources with permission 'can_modify_reservations' on Resource or on Resource.unit
         resources_qs |= self.get_queryset().filter(unit__in=units_qs)
         return resources_qs
@@ -697,6 +711,13 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         return self._has_explicit_perm(user, perm, allow_admin, allow_global)
 
     def _has_explicit_perm(self, user, perm, allow_admin=False, allow_global=False):
+        """
+        :param user: User instance
+        :param perm: String permission codename
+        :param allow_admin: Use User.is_admin to always return True if set
+        :param allow_global: Use User.has_perm to evaluate non-object-specific/global permissions form django.auth
+        :return: bool
+        """
         if allow_admin and is_general_admin(user):
             return True
 
