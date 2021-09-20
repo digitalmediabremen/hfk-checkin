@@ -39,6 +39,10 @@ ERROR_ROOM_NOT_FOUND = _("Raum oder Standort nicht gefunden.")
 ERROR_PROFILE_NOT_SAVED = _("Beim Speichern deiner Kontaktdaten ist ein Fehler aufgetreten.")
 ERROR_PROFILE_INCOMPLETE = _("Ihr Profil ist unvollstädnig.")
 SUCCESS_LOGOUT = _("Abmeldung erfolgreich. Danke!")
+KEYCARD_ALREADY_ASSIGED = _("Keycard already assiged. Can not request new card.")
+KEYCARD_ALREADY_REQUESTED = _("Keycard already requested. Please wait.")
+KEYCARD_REQUESTED = _("Keycard requested.")
+KEYCARD_FAILED = _("Can not request card. Please check your profile and contact support.")
 
 
 all_views = []
@@ -77,6 +81,8 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='profile.last_name')
     phone = serializers.CharField(source='profile.phone')
     email = serializers.EmailField(source='profile.email', read_only=True) # can only be writable if we validate emails
+    keycard_number = serializers.CharField(source='profile.keycard_number')
+    keycard_requested_at_at = serializers.DateTimeField(source='profile.keycard_requested_at', read_only=True)
     is_external = serializers.BooleanField(source='profile.is_external', read_only=True)
     preferred_language = serializers.ChoiceField(choices=settings.LANGUAGES, required=False, allow_null=True)
     #reservations = SimpleReservationSerializer(many=True, read_only=True, source='user.reservation_set')
@@ -91,7 +97,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id','profile_id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'preferred_language', 'is_external']
+        fields = ['id','profile_id','first_name', 'last_name', 'display_name', 'phone', 'email', 'keycard_number', 'keycard_requested_at_at', 'verified', 'complete', 'preferred_language', 'is_external']
 
     def validate_phone(self, value):
         return value.strip()
@@ -200,7 +206,7 @@ class UserProfileSerializer(BaseUserProfileSerializer):
         return serializer.data
 
     class Meta(BaseUserProfileSerializer.Meta):
-        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'verified', 'complete', 'preferred_language', 'last_checkins']
+        fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'keycard_number', 'keycard_requested_at_at', 'verified', 'complete', 'preferred_language', 'last_checkins']
         # if 'checkin.tracking' in settings.INSTALLED_APPS:
         #     fields += ['last_checkins']
         # if 'checkin.resources' in settings.INSTALLED_APPS:
@@ -307,6 +313,21 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
             return self.partial_update(request)
         return self.create(request)
 
+    @action(url_path="me/requestkeycard", detail=False, methods=['get','post','put'], permission_classes=[IsAuthenticated])
+    def request_keycard(self, request, pk=None):
+        if request.user and request.user.profile:
+            profile = request.user.profile
+            if profile.keycard_number is not None:
+                return Response({'detail': KEYCARD_ALREADY_ASSIGED}, status=status.HTTP_403_FORBIDDEN)
+            elif profile.keycard_requested_at is not None:
+                return Response({'detail': KEYCARD_ALREADY_REQUESTED}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                profile.keycard_requested_at = timezone.now()
+                profile.save()
+                return Response({'detail': KEYCARD_REQUESTED}, status=status.HTTP_200_OK)
+        return Response({'detail': KEYCARD_FAILED}, status=status.HTTP_400_BAD_REQUEST)
+
+
             # try:
             #     profile = request.user.profile
             #     profile_serializer = self.get_serializer(profile, data=request.data)
@@ -355,9 +376,15 @@ register_view(UserProfileViewSet, 'profile')
 class AdminProfileSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField()
     display_name = serializers.ReadOnlyField(source='get_display_name')
+
     class Meta:
         model = Profile
         fields = ['id','first_name', 'last_name', 'display_name', 'phone', 'email', 'student_number', 'verified', 'complete']
+
+    def get_keycard_requested_at(self, obj):
+        if obj and obj.keycard_requested_at is not None:
+            return True
+        return False
 
 class AdminProfileViewset(
     #mixins.CreateModelMixin,

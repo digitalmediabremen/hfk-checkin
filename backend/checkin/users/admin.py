@@ -28,6 +28,7 @@ class UserProfileAdminInline(admin.StackedInline):
     extra = 0
     min = 0
     max = 1
+    readonly_fields = ('keycard_requested_at',)
 
 
 class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
@@ -124,8 +125,8 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     list_editable = ('verified','is_external')
     list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
     search_fields = ['first_name', 'last_name','phone','email']
-    readonly_fields = ('id','created_at','updated_at','user')
-    fields = ('id','first_name', 'last_name','phone','email','student_number','verified','is_external','created_at','updated_at')
+    readonly_fields = ('id','created_at','updated_at','user','keycard_requested_at')
+    fields = ('id','first_name', 'last_name','phone','email','student_number','keycard_number','keycard_requested_at','verified','is_external','created_at','updated_at')
     form = ProfileForm
 
     def get_queryset(self, request):

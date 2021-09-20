@@ -282,6 +282,8 @@ class Profile(DirtyFieldsMixin, models.Model):
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"), blank=True, null=True, default=True)
     student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
+    keycard_number = models.CharField(_("Keycard number"), max_length=20, blank=True, null=True)
+    keycard_requested_at = models.DateTimeField(null=True, blank=True, editable=False, verbose_name=_("Keycard requested date"))
     is_external = models.BooleanField(_("External"), blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
