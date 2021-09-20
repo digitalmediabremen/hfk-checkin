@@ -396,6 +396,7 @@ from guardian.models import UserObjectPermissionAbstract, GroupObjectPermissionA
 class TimeEnabledAbstract(models.Model):
     created_at = models.DateTimeField(verbose_name=_('Time of creation'), auto_now_add=True, editable=False)
     modified_at = models.DateTimeField(verbose_name=_('Time of modification'), auto_now=True, editable=False)
+    synced_at = models.DateTimeField(verbose_name=_('Time of sync'), editable=False, null=True, blank=True)
 
     class Meta:
         abstract = True
