@@ -34,8 +34,9 @@ const CompleteReservationComponent: React.FunctionComponent<CompleteReservationP
         const { t, locale } = useTranslation("request");
         const purposeValue = purposeFormValuePresenter(reservation, locale);
         const disabled = state === "cancelled" || state === "denied";
+        console.log(attendees)
         const allAttendeesAccepted =
-            attendees?.every((a) => a.state === "confirmed") || false;
+            attendees?.every((a) => a.state === "confirmed" || a.is_organizer) || false;
 
         const formElementProps: Partial<FormElementProps> = {
             noPadding: true,
