@@ -25,7 +25,7 @@ import { insertIf } from "../../src/util/ReservationUtil";
 interface ResourceListItemProps {
     resource: Resource;
     selected?: boolean;
-    onSelect?: (selected: boolean) => void;
+    onClick?: () => void;
     last?: boolean;
     showMeta?: boolean;
     includeAlternativeNames?: boolean;
@@ -36,16 +36,13 @@ export const RESOURCE_LIST_ITEM_DENSITY = "wide";
 const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
     resource,
     selected,
-    onSelect,
+    onClick,
     last,
     showMeta,
     includeAlternativeNames,
 }) => {
     const theme = useTheme();
     const { t } = useTranslation("request-resource-list");
-    const handleSelect = () => {
-        onSelect?.(!selected);
-    };
 
     const PermissionIcon = resourcePermissionIcon(resource);
     const alternativeNames = resource.alternative_names?.join(", ");
@@ -99,7 +96,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
             <FormElementBase
                 noOutline
                 noBottomSpacing
-                onClick={handleSelect}
+                onClick={onClick}
                 componentType="li"
                 density={RESOURCE_LIST_ITEM_DENSITY}
             >

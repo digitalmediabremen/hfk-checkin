@@ -18,8 +18,9 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> =
         const height = (use100vh() || 500) - theme.topBarHeight();
 
         const handleResourceSelect = useCallback((resource: Resource) => {
-            const handle = (selected?: boolean) => {
-                if (selected) {
+            const handle = () => {
+                const selected = resource.uuid === selectedResource?.uuid;
+                if (!selected) {
                     setSelectedResource(resource);
                 } else {
                     setSelectedResource(undefined);
@@ -39,7 +40,7 @@ const ResourceListSubPage: React.FunctionComponent<ResourceListSubPageProps> =
                     <ResourceListItem
                         selected={isSelected(resource.uuid)}
                         resource={resource}
-                        onSelect={handleResourceSelect(resource)}
+                        onClick={handleResourceSelect(resource)}
                         last={last}
                         showMeta
                         includeAlternativeNames
