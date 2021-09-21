@@ -1,17 +1,15 @@
 import React, { useEffect } from "react";
 import { appUrls, buildSubPageUrl } from "../../../config";
 import { useTranslation } from "../../../localization";
-import Page404 from "../../../pages/404";
 import useResource from "../../../src/hooks/useResource";
 import { useResourceFormValuePresenter } from "../../../src/util/ReservationPresenterUtil";
-import useSubPage, { UseSubpageProps } from "../../api/useSubPage";
+import useSubPage from "../../api/useSubPage";
 import AlignContent from "../../common/AlignContent";
 import FormElement from "../../common/FormElement";
 import Loading from "../../common/Loading";
 import NewButton from "../../common/NewButton";
 import SectionTitle from "../../common/SectionTitle";
 import SubPage from "../../common/SubPage";
-import Text from "../../common/Text";
 
 interface ResourceDetailSubpageProps {}
 

@@ -6,6 +6,7 @@ import React, {
     useCallback,
     useRef,
 } from "react";
+import { CreditCard } from "react-feather";
 import { ReferenceEntry } from "ts-morph";
 import { isNullishCoalesce } from "typescript";
 import useTheme from "../../src/hooks/useTheme";

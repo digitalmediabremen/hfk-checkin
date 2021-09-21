@@ -273,6 +273,13 @@ export const updateReservationRequest = async (
         validateReservation
     );
 
+export const requestKeycardRequest = async (
+    options?: RequestOptions
+) => await apiRequest<MyProfile>(
+    `profile/me/requestkeycard`,
+    { ...options }
+)
+
 export const getResourceRequest = async (
     resourceId: string,
     options?: RequestOptions

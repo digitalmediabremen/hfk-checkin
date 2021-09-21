@@ -14,7 +14,9 @@ interface PrivateProfile extends BaseProfile {
     /**
      * @TJS-format email
      */
-    email: string | null;
+    readonly email: string | null;
+    keycard_number: string | null;
+    readonly keycard_requested_at_at: Date | null;
 }
 
 export interface BaseProfile {
@@ -37,5 +39,5 @@ export interface Attendance extends Omit<BaseProfile, "id"> {
 export type ProfileUpdate = Writable<MyProfile>;
 
 export type AttendanceUpdate = Writable<
-    Attendance & Omit<PrivateProfile, "email">
+    Attendance & Pick<PrivateProfile, "phone">
 >;

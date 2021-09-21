@@ -25,11 +25,12 @@ const NewButton = forwardRef<FormElementBaseRefType, NewButtonProps>(({
     noOutline,
     density,
     href,
+    componentType,
     ...formElementBaseProps
 }, ref) => {
     const theme = useTheme();
     const hasIcon = !!iconLeft || !!iconRight;
-    const componentType = !!href ? "a" : "button";
+    const newComponentType = componentType || !!href ? "a" : "button";
     return (
         <>
             <style jsx>{`
@@ -81,13 +82,13 @@ const NewButton = forwardRef<FormElementBaseRefType, NewButtonProps>(({
                 }
             `}</style>
             <FormElementBase
-                density="narrow"
+                density={density || "narrow"}
                 noPadding={noOutline}
                 noOutline={noOutline}
                 {...formElementBaseProps}
                 onClick={onClick}
                 href={href}
-                componentType={componentType}
+                componentType={newComponentType}
                 ref={ref}
             >
                 {iconLeft && <span className="icon left">{iconLeft}</span>}

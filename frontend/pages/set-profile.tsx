@@ -2,10 +2,14 @@ import { isValidNumber } from "libphonenumber-js";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect } from "react";
+import { CreditCard } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
+import SmoothCollapse from "react-smooth-collapse";
+import { isNonNullExpression } from "typescript";
 import { useUpdateProfile } from "../components/api/ApiHooks";
 import AlignContent from "../components/common/AlignContent";
 import { useAppState } from "../components/common/AppStateProvider";
+import Divider from "../components/common/Divider";
 import FormElement from "../components/common/FormElement";
 import FormPhoneInput from "../components/common/FormPhoneInput";
 import FormTextInput from "../components/common/FormTextInput";
@@ -21,8 +25,10 @@ import { useTranslation } from "../localization";
 import useColorSchemeSetting, {
     ColorSchemeSetting,
 } from "../src/hooks/useColorSchemeSetting";
+import useRequestKeycard from "../src/hooks/useRequestKeycard";
 import Locale from "../src/model/api/Locale";
 import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
+import { getFormattedDate } from "../src/util/DateTimeUtil";
 import { getLocaleLabelMap } from "../src/util/LocaleUtil";
 import { Entries } from "../src/util/ReservationUtil";
 
@@ -75,21 +81,25 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         router.push(appUrls.home);
     }, [success]);
 
-    const { errors, handleSubmit, control, setValue } = useForm<ProfileUpdate>({
-        mode: "onTouched",
-        defaultValues: {
-            first_name: initialProfile?.first_name || "",
-            last_name: initialProfile?.last_name || "",
-            phone: initialProfile?.phone || "",
-            preferred_language:
-                initialProfile?.preferred_language || appState.currentLocale,
-        },
-    });
+    const { errors, handleSubmit, control, setValue, watch } =
+        useForm<ProfileUpdate>({
+            mode: "onTouched",
+            defaultValues: {
+                first_name: initialProfile?.first_name || "",
+                last_name: initialProfile?.last_name || "",
+                phone: initialProfile?.phone || "",
+                keycard_number: initialProfile?.keycard_number || "",
+                preferred_language:
+                    initialProfile?.preferred_language ||
+                    appState.currentLocale,
+            },
+        });
 
     useEffect(() => {
         setValue("first_name", initialProfile?.first_name || "");
         setValue("last_name", initialProfile?.last_name || "");
         setValue("phone", initialProfile?.phone || "");
+        setValue("keycard_number", initialProfile?.keycard_number);
         setValue(
             "preferred_language",
             initialProfile?.preferred_language || appState.currentLocale
@@ -118,12 +128,41 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
         updateProfile(value);
     };
 
+    const currentKeycardNumber = watch("keycard_number");
+
     const handleLogout = () => {
         const confirm = window.confirm(t("Wirklich ausloggen?"));
         if (confirm) router.push(appUrls.logout);
     };
 
     const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
+
+    const keycardState = (() => {
+        // return "empty";
+        if (initialProfile?.keycard_number) return "added";
+        else if (!initialProfile?.keycard_number) return "empty";
+        else if (initialProfile?.keycard_requested_at_at) return "requested";
+        throw new Error("invalid keycard state");
+    })();
+
+    const requestKeycardApi = useRequestKeycard();
+
+    const handleRequestKeycard = () => {
+        const confirm = window.confirm(
+            t("Willst du wirklich eine neue Schlüsselkarte beantragen?")
+        );
+        if (!confirm) return;
+        requestKeycardApi.request();
+    };
+
+    // update profile state if keycard was requested successfully
+    useEffect(() => {
+        if (requestKeycardApi.state != "success") return;
+        dispatch({
+            type: "profile",
+            profile: requestKeycardApi.result,
+        });
+    }, [requestKeycardApi.state]);
 
     if (!appState.initialized) return null;
     return (
@@ -215,6 +254,114 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         )}
                     </Notice>
                 )}
+                <Divider />
+                {keycardState === "empty" && (
+                    <>
+                        <SectionTitle>{t("Schliesskarte")}</SectionTitle>
+                        <Notice bottomSpacing={2}>
+                            {t(
+                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet."
+                            )}
+                            <br />
+                            <br />
+                            {t(
+                                "Wenn du bereits eine Karte besitzt, dann trage die Nummer jetzt hier ein."
+                            )}
+                        </Notice>
+                        <Controller
+                            as={<FormTextInput type="tel" bottomSpacing={3} />}
+                            {...controllerProps(
+                                "keycard_number",
+                                t("Schliesskartennummer"),
+                                { required: undefined }
+                            )}
+                        />
+
+                        <SmoothCollapse expanded={!currentKeycardNumber}>
+                            <Notice bottomSpacing={2}>
+                                {t(
+                                    "Noch keine Schließkarte bzw. -chip? Nach der Beantragung via Getin kann dein neuer Chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung (Dezernat 4, Raum XX.XX.XXX) abgeholt werden. Fragen zu Schließkarten bitte an mailto:schluessel@hfk-bremen.de."
+                                )}
+                            </Notice>
+                            <NewButton
+                                bottomSpacing={3}
+                                density="narrow"
+                                componentType="div"
+                                onClick={handleRequestKeycard}
+                            >
+                                {t("Karte beantragen")}
+                            </NewButton>
+                        </SmoothCollapse>
+                    </>
+                )}
+                {keycardState === "added" && (
+                    <>
+                        <SectionTitle bottomSpacing={1}>
+                            {t("Schliesskarte")}
+                        </SectionTitle>
+                        <Notice bottomSpacing={2}>
+                            {t(
+                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet."
+                            )}
+                        </Notice>
+
+                        <FormElement
+                            labelIcon={<CreditCard />}
+                            value={initialProfile?.keycard_number}
+                            density="super-narrow"
+                            noOutline
+                            noPadding
+                            bottomSpacing={1}
+                        />
+
+                        <Notice bottomSpacing={2}>
+                            {t(
+                                "Deine Schliesskartennummer kann nachträglich nicht mehr geändert werden."
+                            )}
+                        </Notice>
+                    </>
+                )}
+
+                {keycardState === "requested" && (
+                    <>
+                        <SectionTitle bottomSpacing={1}>
+                            {t("Schliesskarte")}
+                        </SectionTitle>
+
+                        <FormElement
+                            labelIcon={<CreditCard strokeWidth={1} />}
+                            value={[
+                                <b>{t("Angefragt")}</b>,
+                                t("am {requested}", {
+                                    requested: `${getFormattedDate(
+                                        initialProfile?.keycard_requested_at_at ||
+                                            undefined,
+                                        currentLocale
+                                    )}`,
+                                }),
+                            ]}
+                            density="super-narrow"
+                            noOutline
+                            noPadding
+                            bottomSpacing={2}
+                        />
+                        <Notice bottomSpacing={2}>
+                            {t(
+                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet."
+                            )}
+                        </Notice>
+                        <Notice bottomSpacing={3}>
+                            {t(
+                                "Deine Karte kann nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung (Dezernat 4, Raum XX.XX.XXX) abgeholt werden. Fragen zu Schließkarten bitte an {email}.",
+                                {
+                                    email: "schluessel@hfk-bremen.de",
+                                }
+                            )}
+                        </Notice>
+                    </>
+                )}
+
+                <Divider />
                 <SectionTitle>{t("Sprache")}</SectionTitle>
                 <Controller
                     control={control}

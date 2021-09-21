@@ -97,7 +97,7 @@ function _validateReservation(
                       'Der Raum "{resource}" kann maximal {days} Tage im Voraus gebucht werden.',
                       {
                           resource: resource.name,
-                          days: bookableRange,
+                          days: `${bookableRange}`,
                       }
                   )
                 : _t(
@@ -105,7 +105,7 @@ function _validateReservation(
                       "request-time",
                       "Räume können maximal {days} Tage im Vorraus gebucht werden.",
                       {
-                          days: bookableRange,
+                          days: `${bookableRange}`,
                       }
                   ),
         });
