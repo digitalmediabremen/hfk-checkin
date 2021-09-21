@@ -319,7 +319,7 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
             profile = request.user.profile
             if profile.keycard_number is not None:
                 return Response({'detail': KEYCARD_ALREADY_ASSIGED}, status=status.HTTP_400_BAD_REQUEST)
-            elif profile.keycard_requested_at is not None:
+            if profile.keycard_requested_at is not None:
                 return Response({'detail': KEYCARD_ALREADY_REQUESTED}, status=status.HTTP_409_CONFLICT)
             else:
                 profile.keycard_requested_at = timezone.now()

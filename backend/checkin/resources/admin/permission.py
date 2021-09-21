@@ -49,6 +49,7 @@ class KeycardListFilter(admin.SimpleListFilter):
         return (
             ('assigned', _('assigned')),
             ('unassigned', _('not assigned')),
+            ('requested', _('requested')),
         )
 
     def queryset(self, request, queryset):
@@ -63,6 +64,8 @@ class KeycardListFilter(admin.SimpleListFilter):
             return queryset.filter(user__profile__keycard_number__isnull=False)
         if self.value() == 'unassigned':
             return queryset.filter(user__profile__keycard_number__isnull=True)
+        if self.value() == 'requested':
+            return queryset.filter(user__profile__keycard_requested_at__isnull=False)
 
 
 class SyncedListFilter(admin.SimpleListFilter):

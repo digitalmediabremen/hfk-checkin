@@ -133,7 +133,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     # list_editable is overwritten by get_list_editable
-    list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
+    list_filter = ('keycard_requested_at','verified','is_external','user__disable_notifications', 'user__preferred_language','updated_at','created_at',)
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('id','created_at','updated_at','user','keycard_requested_at')
     fields = ('id','first_name', 'last_name','phone','email','student_number','keycard_number','keycard_requested_at','verified','is_external','created_at','updated_at')
