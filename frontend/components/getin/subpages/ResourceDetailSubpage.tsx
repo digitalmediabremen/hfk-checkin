@@ -21,7 +21,7 @@ const ResourceDetailSubpage: React.FunctionComponent<ResourceDetailSubpageProps>
             urlProvider: (name, param) =>
                 buildSubPageUrl(appUrls.room, name, param),
         });
-        const { t } = useTranslation();
+        const { t } = useTranslation("room");
         const api = useResource();
         const resourceFormValuePresenter = useResourceFormValuePresenter();
 

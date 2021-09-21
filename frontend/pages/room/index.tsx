@@ -15,7 +15,7 @@ interface indexProps {}
 
 
 const RoomPage: React.FunctionComponent<indexProps> = ({}) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation("room");
     const theme = useTheme();
     const height = (use100vh() || 500) - theme.topBarHeight();
     const router = useRouter();

@@ -138,10 +138,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
 
     const keycardState = (() => {
-        // return "empty";
         if (initialProfile?.keycard_number) return "added";
-        else if (!initialProfile?.keycard_number) return "empty";
         else if (initialProfile?.keycard_requested_at_at) return "requested";
+        else if (!initialProfile?.keycard_number) return "empty";
         throw new Error("invalid keycard state");
     })();
 
@@ -257,10 +256,13 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 <Divider />
                 {keycardState === "empty" && (
                     <>
-                        <SectionTitle>{t("Schliesskarte")}</SectionTitle>
+                        <SectionTitle>{t("Schließkarte")}</SectionTitle>
                         <Notice bottomSpacing={2}>
                             {t(
-                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet."
+                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet. Fragen zu Schließkarten bitte an {keymail}.",
+                                {
+                                    keymail: "schluessel@hfk-bremen.de",
+                                }
                             )}
                             <br />
                             <br />
@@ -272,7 +274,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                             as={<FormTextInput type="tel" bottomSpacing={3} />}
                             {...controllerProps(
                                 "keycard_number",
-                                t("Schliesskartennummer"),
+                                t("Schließkartennummer"),
                                 { required: undefined }
                             )}
                         />
@@ -280,7 +282,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         <SmoothCollapse expanded={!currentKeycardNumber}>
                             <Notice bottomSpacing={2}>
                                 {t(
-                                    "Noch keine Schließkarte bzw. -chip? Nach der Beantragung via Getin kann dein neuer Chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung (Dezernat 4, Raum XX.XX.XXX) abgeholt werden. Fragen zu Schließkarten bitte an mailto:schluessel@hfk-bremen.de."
+                                    "Noch keine Schließkarte bzw. -chip? Nach der Beantragung kannst du deinen neuen Chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.",
+                                    { location: "2.08.030 (Speicher XI)" }
                                 )}
                             </Notice>
                             <NewButton
@@ -297,11 +300,14 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 {keycardState === "added" && (
                     <>
                         <SectionTitle bottomSpacing={1}>
-                            {t("Schliesskarte")}
+                            {t("Schließkarte")}
                         </SectionTitle>
                         <Notice bottomSpacing={2}>
                             {t(
-                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet."
+                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet. Fragen zu Schließkarten bitte an {keymail}.",
+                                {
+                                    keymail: "schluessel@hfk-bremen.de",
+                                }
                             )}
                         </Notice>
 
@@ -316,7 +322,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
 
                         <Notice bottomSpacing={2}>
                             {t(
-                                "Deine Schliesskartennummer kann nachträglich nicht mehr geändert werden."
+                                "Deine Schließkartennummer kann nachträglich nicht mehr geändert werden."
                             )}
                         </Notice>
                     </>
@@ -325,7 +331,7 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                 {keycardState === "requested" && (
                     <>
                         <SectionTitle bottomSpacing={1}>
-                            {t("Schliesskarte")}
+                            {t("Schließkarte")}
                         </SectionTitle>
 
                         <FormElement
@@ -347,14 +353,17 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         />
                         <Notice bottomSpacing={2}>
                             {t(
-                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet."
+                                "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet. Fragen zu Schließkarten bitte an {keymail}.",
+                                {
+                                    keymail: "schluessel@hfk-bremen.de",
+                                }
                             )}
                         </Notice>
                         <Notice bottomSpacing={3}>
                             {t(
-                                "Deine Karte kann nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung (Dezernat 4, Raum XX.XX.XXX) abgeholt werden. Fragen zu Schließkarten bitte an {email}.",
+                                "Du kannst deine Schließkarte bzw. -chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im {location} abholen.",
                                 {
-                                    email: "schluessel@hfk-bremen.de",
+                                    location: "Raum 2.08.030 (Speicher XI)",
                                 }
                             )}
                         </Notice>
