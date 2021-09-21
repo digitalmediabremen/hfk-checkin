@@ -135,7 +135,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     # list_editable is overwritten by get_list_editable
     list_filter = ('keycard_requested_at','verified','is_external','user__disable_notifications', 'user__preferred_language','updated_at','created_at',)
     search_fields = ['first_name', 'last_name','phone','email']
-    readonly_fields = ('id','created_at','updated_at','user','keycard_requested_at')
+    readonly_fields = ('id','created_at','updated_at','user')
     fields = ('id','first_name', 'last_name','phone','email','student_number','keycard_number','keycard_requested_at','verified','is_external','created_at','updated_at')
     form = ProfileForm
 
@@ -203,6 +203,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
 
         if request.user.has_perm('users.can_change_keycard'):
             fields.remove('keycard_number')
+            fields.remove('keycard_requested_at')
         if request.user.has_perm('users.can_change_user_status'):
             fields.remove('verified')
             fields.remove('is_external')
