@@ -108,7 +108,7 @@ class ProfileForm(forms.ModelForm):
         except KeyError:
             # email not in form so it was not changed anyway
             return
-        
+
         # validate email in advance to prevent IntegrityError later (via pre_save / post_save signal)
         obj = Profile.objects.filter(email=email).exclude(pk=self.instance.pk)
         if obj:
@@ -132,8 +132,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     list_display = ('id','first_name', 'last_name','phone','email','verified','is_external','created_at')
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
-    # list_editable will be overwritten by get_list_editable
-    _list_editable = ('verified','is_external')
+    # list_editable is overwritten by get_list_editable
     list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('id','created_at','updated_at','user','keycard_requested_at')
@@ -181,26 +180,45 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
         return fields, new_field_names
 
     def get_readonly_fields(self, request, obj=None):
+        """
+        Makes all fields read-only expect the fields made available by the following permissions:
+        - can_change_personal_data
+        - can_change_user_status
+        - can_change_keycard
+
+        Superusers can edit all field and see the associated User object additionally.
+
+        :param request:
+        :param obj:
+        :return: list of field names
+        """
+
         obfuscated_fields, replaced_obfuscated_fields = self.get_obfuscated_fields(request)
-        fields = list(set(self.readonly_fields) | set(replaced_obfuscated_fields))
+        default_ro_fields = list(set(self.readonly_fields) | set(replaced_obfuscated_fields))
         if request.user.is_superuser:
-            fields.append('user')
-        if request.user.has_perm('users.can_change_keycard_only') or request.user.has_perm('users.can_change_user_status_only'):
-            fields = list(set(self.fields) | set(replaced_obfuscated_fields))
-            if request.user.has_perm('users.can_change_keycard_only'):
-                fields.remove('keycard_number')
-            if request.user.has_perm('users.can_change_user_status_only'):
-                fields.remove('verified')
-                fields.remove('is_external')
+            default_ro_fields.append('users')
+            return default_ro_fields
+
+        fields = list(set(self.fields) | set(replaced_obfuscated_fields))
+
+        if request.user.has_perm('users.can_change_keycard'):
+            fields.remove('keycard_number')
+        if request.user.has_perm('users.can_change_user_status'):
+            fields.remove('verified')
+            fields.remove('is_external')
+        if request.user.has_perm('users.can_change_personal_data'):
+            fields.remove('first_name')
+            fields.remove('last_name')
+            fields.remove('email')
+            fields.remove('phone')
+            fields.remove('student number')
         return fields
 
     def get_list_editable(self, request):
-        """ return which fields are list editible depending on user """
-        if request.user.has_perm('users.can_change_keycard_only'):
-            # currently only "can_change_keycard_only" is restricting access to fields for users that have the "change"
-            # permission.
-            return None
-        return self._list_editable
+        """ return which fields are list editable depending on user """
+        if request.user.has_perm('users.can_change_user_status'):
+            return ('verified','is_external')
+        return list()
 
     def get_changelist_instance(self, request):
         """
