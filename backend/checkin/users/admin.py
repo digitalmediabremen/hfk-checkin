@@ -103,7 +103,12 @@ class ProfileForm(forms.ModelForm):
 
     def validate_unique(self):
         super().validate_unique()
-        email = self.cleaned_data['email']
+        try:
+            email = self.cleaned_data['email']
+        except KeyError:
+            # email not in form so it was not changed anyway
+            return
+        
         # validate email in advance to prevent IntegrityError later (via pre_save / post_save signal)
         obj = Profile.objects.filter(email=email).exclude(pk=self.instance.pk)
         if obj:
@@ -114,6 +119,11 @@ class ProfileForm(forms.ModelForm):
         if obj:
             self._update_errors(
                 forms.ValidationError(_('User with this email is already exists. Try an another email.')))
+
+    def clean_keycard_number(self):
+        if self.cleaned_data['keycard_number'] == "":
+            return None
+        return self.cleaned_data['keycard_number']
 
 
 @admin.register(Profile)

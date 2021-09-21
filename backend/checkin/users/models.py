@@ -11,6 +11,7 @@ from django.core.validators import RegexValidator
 from simple_history.models import HistoricalRecords
 from django.contrib.postgres.search import SearchVector
 from dirtyfields import DirtyFieldsMixin
+from django.core.exceptions import ValidationError
 
 # set to anonyoumous user
 # def get_sentinel_user():
@@ -260,6 +261,11 @@ class ProfileQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
         return qs.filter(filter)
 
 
+def validate_min_length_or_None(value, length=1):
+    if not (len(str(value)) >= length or value is None):
+        raise ValidationError(u'%s is not the correct length' % value)
+
+
 class ProfileManager(models.Manager.from_queryset(ProfileQuerySet)):
     pass
 
@@ -282,7 +288,7 @@ class Profile(DirtyFieldsMixin, models.Model):
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"), blank=True, null=True, default=True)
     student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
-    keycard_number = models.CharField(_("Keycard number"), max_length=20, blank=True, null=True)
+    keycard_number = models.CharField(_("Keycard number"), max_length=20, blank=True, null=True, validators=[validate_min_length_or_None])
     keycard_requested_at = models.DateTimeField(null=True, blank=True, editable=False, verbose_name=_("Keycard requested date"))
     is_external = models.BooleanField(_("External"), blank=True, null=True, default=False)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
