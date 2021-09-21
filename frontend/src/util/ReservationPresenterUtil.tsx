@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Lock, Unlock } from "react-feather";
-import { _t } from "../../localization";
+import { useTranslation, _t } from "../../localization";
 import useTheme from "../hooks/useTheme";
 import MyProfile, {
     Attendance,
@@ -124,9 +124,9 @@ export const attendeesFormValuePresenter = (
 
 export const useResourceFormValuePresenter = () => {
     const theme = useTheme();
+    const { locale } = useTranslation();
     return function resourceFormValuePresenter(
         resource: Resource,
-        locale: string,
         includeResourceNumber: boolean = true,
         includeAlternativeTitle: boolean = true
     ) {

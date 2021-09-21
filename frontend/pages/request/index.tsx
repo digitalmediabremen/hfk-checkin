@@ -80,7 +80,6 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                     reservation?.resource
                         ? resourceFormValuePresenter(
                               reservation.resource,
-                              locale
                           )
                         : undefined
                 }

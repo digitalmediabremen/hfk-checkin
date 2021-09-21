@@ -170,7 +170,6 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             bottomSpacing={2}
                             value={resourceFormValuePresenter(
                                 selectedResource,
-                                locale,
                                 true,
                                 true
                             )}

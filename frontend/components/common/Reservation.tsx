@@ -38,7 +38,7 @@ const ReservationComponent: React.FunctionComponent<ReservationProps> = ({
     const dotted = state !== "confirmed";
     const disabled = state === "cancelled" || state === "denied";
     const value = [
-        ...resourceFormValuePresenter(resource, locale, includeResourceNumber),
+        ...resourceFormValuePresenter(resource, includeResourceNumber),
         ...insertIf([format.date(begin, locale)], includeDate),
         ...insertIf([format.timeSpan(begin, end)], includeTime),
         ...insertIf(
