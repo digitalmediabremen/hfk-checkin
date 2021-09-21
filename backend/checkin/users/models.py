@@ -334,6 +334,8 @@ class Profile(DirtyFieldsMixin, models.Model):
             ("can_view_full_email", _("Can display full e-mail addresses")),
             ("can_view_full_phone_number", _("Can display full phone numbers")),
             ("can_view_student_number", _("Can display student numbers")),
+            ("can_change_user_status_only", _("Can change status flags only (!)")),
+            ("can_change_keycard_only", _("Can change keycard only (!)")),
         ]
 
     @property

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 18:47+0200\n"
+"POT-Creation-Date: 2021-09-21 13:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -394,49 +394,83 @@ msgstr "Anzahl zugeordneter Resourcen"
 msgid "HH:mm"
 msgstr "hh:mm"
 
-#: checkin/resources/admin/permission.py:16
-#: checkin/resources/admin/permission.py:104
+#: checkin/resources/admin/permission.py:18
+#: checkin/resources/admin/permission.py:197
 #: checkin/resources/models/accessibility.py:79
 #: checkin/resources/models/accessibility.py:105
 #: checkin/resources/models/availability.py:110 checkin/tracking/models.py:120
 msgid "Resource"
 msgstr "Ressource"
 
-#: checkin/resources/admin/permission.py:35
+#: checkin/resources/admin/permission.py:36
+#: checkin/resources/admin/permission.py:181 checkin/users/models.py:285
+msgid "Keycard number"
+msgstr "Schließkartennummer"
+
+#: checkin/resources/admin/permission.py:50
+msgid "assigned"
+msgstr "zugewiesen"
+
+#: checkin/resources/admin/permission.py:51
+msgid "not assigned"
+msgstr "nicht zugewiesen"
+
+#: checkin/resources/admin/permission.py:71
+msgid "Synced state"
+msgstr "Übertragungsstatus"
+
+#: checkin/resources/admin/permission.py:85
+msgid "already synced"
+msgstr "bereits übertragen"
+
+#: checkin/resources/admin/permission.py:86
+msgid "not synced"
+msgstr "nicht übertragen"
+
+#: checkin/resources/admin/permission.py:107
 msgid "Resource access permission"
 msgstr "Zugangsberechtigung"
 
-#: checkin/resources/admin/permission.py:36
+#: checkin/resources/admin/permission.py:108
 msgid "Resource access permissions"
 msgstr "Zugangsberechtigungen"
 
-#: checkin/resources/admin/permission.py:46
+#: checkin/resources/admin/permission.py:118
 msgid "Mark selected permissions as synced to the locking system"
 msgstr "Markiere ausgewählte Berechtigungen als zur Schließanlage übertragen"
 
-#: checkin/resources/admin/permission.py:77
+#: checkin/resources/admin/permission.py:159
+#: checkin/tracking/admin_list_filters.py:10
+msgid "Profile"
+msgstr "Benutzerprofil"
+
+#: checkin/resources/admin/permission.py:164
+msgid "Open new email to user"
+msgstr "Neue E-Mail an Nutzer öffnen"
+
+#: checkin/resources/admin/permission.py:166
+msgid "Send email"
+msgstr "E-Mail senden"
+
+#: checkin/resources/admin/permission.py:170
 #: checkin/resources/admin/reception.py:110
 msgid "First name"
 msgstr "Vorname"
 
-#: checkin/resources/admin/permission.py:82
+#: checkin/resources/admin/permission.py:175
 #: checkin/resources/admin/reception.py:115
 msgid "Last name"
 msgstr "Nachname"
 
-#: checkin/resources/admin/permission.py:88 checkin/users/models.py:285
-msgid "Keycard number"
-msgstr "Schließkartennummer"
-
-#: checkin/resources/admin/permission.py:94
+#: checkin/resources/admin/permission.py:187
 msgid "Student number"
 msgstr "Matrikelnummer"
 
-#: checkin/resources/admin/permission.py:99
+#: checkin/resources/admin/permission.py:192
 msgid "Email"
 msgstr ""
 
-#: checkin/resources/admin/permission.py:109
+#: checkin/resources/admin/permission.py:202
 msgid "Permission"
 msgstr "Berechtigung"
 
@@ -832,7 +866,7 @@ msgstr "Bestellung"
 #: checkin/resources/models/accessibility.py:57
 #: checkin/resources/models/accessibility.py:84
 #: checkin/resources/models/accessibility.py:110
-#: checkin/resources/models/base.py:77 checkin/users/models.py:397
+#: checkin/resources/models/base.py:77 checkin/users/models.py:399
 msgid "Time of creation"
 msgstr "Zeitpunkt der Erstellung"
 
@@ -840,7 +874,7 @@ msgstr "Zeitpunkt der Erstellung"
 #: checkin/resources/models/accessibility.py:58
 #: checkin/resources/models/accessibility.py:85
 #: checkin/resources/models/accessibility.py:111
-#: checkin/resources/models/base.py:81 checkin/users/models.py:398
+#: checkin/resources/models/base.py:81 checkin/users/models.py:400
 msgid "Time of modification"
 msgstr "Zeitpunkt der letzten Änderung"
 
@@ -1838,10 +1872,6 @@ msgstr ""
 msgid "Anazhl der Aufenthalte"
 msgstr ""
 
-#: checkin/tracking/admin_list_filters.py:10
-msgid "Profile"
-msgstr "Benutzerprofil"
-
 #: checkin/tracking/admin_list_filters.py:14
 msgid "Location"
 msgstr "Standort"
@@ -2184,7 +2214,7 @@ msgstr ""
 msgid "Nachname"
 msgstr ""
 
-#: checkin/tracking/models.py:446 checkin/users/admin.py:217
+#: checkin/tracking/models.py:446 checkin/users/admin.py:241
 #: checkin/users/models.py:280
 msgid "Telefonnummer"
 msgstr ""
@@ -2458,19 +2488,19 @@ msgstr ""
 msgid "User with this email is already exists. Try an another email."
 msgstr ""
 
-#: checkin/users/admin.py:163
+#: checkin/users/admin.py:164
 msgid "Hidden value"
 msgstr "Versteckter Wert"
 
-#: checkin/users/admin.py:225 checkin/users/models.py:282
+#: checkin/users/admin.py:249 checkin/users/models.py:282
 msgid "E-Mail Adresse"
 msgstr "E-Mail-Adresse"
 
-#: checkin/users/admin.py:234
+#: checkin/users/admin.py:258
 msgid "Group membership"
 msgstr "Gruppenmitgliedschaft"
 
-#: checkin/users/admin.py:235
+#: checkin/users/admin.py:259
 msgid "Group memberships"
 msgstr "Gruppenmitgliedschaften"
 
@@ -2604,7 +2634,15 @@ msgstr "Kann vollständige Telefonnummern anzeigen"
 msgid "Can display student numbers"
 msgstr "Kann vollständige Matrikelnummern anzeigen"
 
-#: checkin/users/models.py:399
+#: checkin/users/models.py:337
+msgid "Can change status flags only (!)"
+msgstr ""
+
+#: checkin/users/models.py:338
+msgid "Can change keycard only (!)"
+msgstr ""
+
+#: checkin/users/models.py:401
 msgid "Time of sync"
 msgstr "Zeitpunkt der Übertragung"
 

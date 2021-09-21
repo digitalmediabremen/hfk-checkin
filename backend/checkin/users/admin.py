@@ -122,7 +122,8 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     list_display = ('id','first_name', 'last_name','phone','email','verified','is_external','created_at')
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
-    list_editable = ('verified','is_external')
+    # list_editable will be overwritten by get_list_editable
+    _list_editable = ('verified','is_external')
     list_filter = ('updated_at','created_at','verified','is_external','user__disable_notifications', 'user__preferred_language',)
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('id','created_at','updated_at','user','keycard_requested_at')
@@ -174,7 +175,30 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
         fields = list(set(self.readonly_fields) | set(replaced_obfuscated_fields))
         if request.user.is_superuser:
             fields.append('user')
+        if request.user.has_perm('users.can_change_keycard_only') or request.user.has_perm('users.can_change_user_status_only'):
+            fields = list(set(self.fields) | set(replaced_obfuscated_fields))
+            if request.user.has_perm('users.can_change_keycard_only'):
+                fields.remove('keycard_number')
+            if request.user.has_perm('users.can_change_user_status_only'):
+                fields.remove('verified')
+                fields.remove('is_external')
         return fields
+
+    def get_list_editable(self, request):
+        """ return which fields are list editible depending on user """
+        if request.user.has_perm('users.can_change_keycard_only'):
+            # currently only "can_change_keycard_only" is restricting access to fields for users that have the "change"
+            # permission.
+            return None
+        return self._list_editable
+
+    def get_changelist_instance(self, request):
+        """
+        override admin method and list_editable property value
+        with values returned by our custom method implementation.
+        """
+        self.list_editable = self.get_list_editable(request)
+        return super().get_changelist_instance(request)
 
     def get_list_display(self, request):
         org_fields = super().get_list_display(request)
