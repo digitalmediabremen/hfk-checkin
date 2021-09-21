@@ -338,8 +338,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                             labelIcon={<CreditCard strokeWidth={1} />}
                             value={[
                                 <b>{t("Angefragt")}</b>,
-                                t("am {requested}", {
-                                    requested: `${getFormattedDate(
+                                t("am {date-requested}", {
+                                    "date-requested": `${getFormattedDate(
                                         initialProfile?.keycard_requested_at_at ||
                                             undefined,
                                         currentLocale
@@ -361,9 +361,9 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
                         </Notice>
                         <Notice bottomSpacing={3}>
                             {t(
-                                "Du kannst deine Schließkarte bzw. -chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im {location} abholen.",
+                                "Du kannst deine Schließkarte bzw. -chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.",
                                 {
-                                    location: "Raum 2.08.030 (Speicher XI)",
+                                    location: "2.08.030 (Speicher XI)",
                                 }
                             )}
                         </Notice>

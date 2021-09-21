@@ -21,12 +21,11 @@ const translation: Translation = {
             "Noch keine Checkins vorhanden": "No checkins so far",
             "Profil ändern": "change profile",
             "sowie {fields}": "and also {fields}",
+            Deutsch: "Deutsch",
+            English: "English",
             Heute: "Today",
             Morgen: "Tomorrow",
             Datenschutz: "Privacy",
-            Ausloggen: "Logout",
-            Deutsch: "Deutsch",
-            English: "English"
         },
         reservation: {
             "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
@@ -51,14 +50,21 @@ const translation: Translation = {
         },
         request: {
             "Teilnehmerinnen||Teilnehmer": "Attendees",
+            "Deine Teilnehmer||Teilnehmerinnen sind noch nicht bestätigt":
+                "Your attendees are not approved yet.",
+            "Bedenke, dass alle externen Teilnehmer||Teilnehmerinnen der Buchung seperat durch das Dekanat bestätigt werden müssen. Den Buchungstatus der Teilnehmer||Teilnehmerinnen erkennst du am Symbol vor dem Namen.":
+                "Every external attendee has to be approved by the Dekanat. The current state is displayed in front of the attendees name.",
             Buchungsgrund: "Purpose",
             Nachricht: "Message",
             "Datum und Uhrzeit": "Date and time",
             Raum: "Room",
+            "Teilnehmer||Teilnehmerinnen": "Attendees",
+            "Teilnehmer||Teilnehmerin hinzufügen": "Add attendee",
             Raumliste: "Rooms",
             "Neue Anfrage": "New booking request",
             Zeit: "time",
             "optionale angaben": "optional information",
+            "Teiln.": "Atts.",
             Grund: "Purpose",
             "Nach.": "Msg.",
             "Meine Telefonnummer ({phone}) darf für Rückfragen verwendet werden.":
@@ -66,37 +72,29 @@ const translation: Translation = {
             Anfragen: "request",
             Telefonkontakt: "Phone contact",
             Alleinnutzung: "Exclusive use",
+            "Externe Teilnehmer||Teilnehmerinnen": "External attendees",
             Anfang: "Begin",
             Ende: "End",
+            "Weitere Teilnehmer||Teilnehmerinnen": "Additional attendees",
             'Du hast keine Berechtigung den Raum "{resource}" zu buchen.':
                 'You don\'t have permission to book this room "{resource}".',
             "Ein Ausnahmegrund muss angegeben werden.":
                 "Please specify an exception.",
             "Du musst noch den Raum auswählen.": "Please select a room.",
             "Du musst noch eine Zeit angeben.": "Please select date and time.",
-            "Teilnehmer||Teilnehmerinnen": "Attendees",
-            "Teilnehmer||Teilnehmerin hinzufügen": "Add attendee",
-            "Teiln.": "Atts.",
-            "Externe Teilnehmer||Teilnehmerinnen": "External attendees",
-            "Weitere Teilnehmer||Teilnehmerinnen": "Additional attendees",
-            "Deine Teilnehmer||Teilnehmerinnen sind noch nicht bestätigt": "Your attendees are not approved yet.",
-            "Bedenke, dass alle externen Teilnehmer||Teilnehmerinnen der Buchung seperat durch das Dekanat bestätigt werden müssen. Den Buchungstatus der Teilnehmer||Teilnehmerinnen erkennst du am Symbol vor dem Namen.": "Every external attendee has to be approved by the Dekanat. The current state is displayed in front of the attendees name."
         },
         "request-attendees": {
-            "Organisator": "Organizer",
+            "Externe Teilnehmer anmelden": "Register externals",
             "Möchtest du {name} aus der Liste entfernen?":
                 "Do you want to delete {name} from the list?",
-            "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en.":
-                "Please state the purpose of the person's stay.",
-            "Aufenthaltsgrund angeben": "State purpose now",
-            "HfK-Mitglieder anmelden": "Register students",
-            "Gib die Anzahl der HfK-Mitglieder an, die an dieser Buchung teilnehmen.":
-                "State the amount of HfK-members attending your booking.",
-            "Externe Teilnehmer anmelden": "Register externals",
             "Teilnehmer||Teilnehmerin hinzufügen": "Add attendee",
             "Weitere hinzufügen": "Add another",
             "HfK externe Teilnehmer||Teilnehmerinnen müssen vorab angemeldet werden. Deine Anfrage wird an das Dekanat Kunst und Design geschickt und geprüft. Dieser Vorgang kann deine Raumanfrage verzögern.":
                 "Visits of external persons - non-HfK-members - must be coordinated in advance. Your request will be sent to the Dekanat Kunst und Design for review. This process may delay your room request.",
+            "Bitte nenne den Grund des Aufenthaltes der o.g. Person/en.":
+                "Please state the purpose of the person's stay.",
+            "Aufenthaltsgrund angeben": "State purpose now",
+            Organisator: "Organizer",
         },
         "request-attendee-set": {
             "{fieldName} darf nicht leer sein.": "{fieldName} cannot be empty",
@@ -111,21 +109,25 @@ const translation: Translation = {
         "request-resource": {
             "Gebäude auswählen": "select building",
             "Raum suchen": "search room",
-            "Suche nach Name, Nummer oder Austattungsmerkmalen ...": "Search by name, number or features...",
+            "Suche nach Name, Nummer oder Austattungsmerkmalen ...":
+                "Search by name, number or features...",
             "Keine Ergebnisse": "no results",
             "Aus Liste wählen": "select from list",
             "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern.":
                 "If you think this is a mistake, please describe your situation in the message box.",
             "Kommentar hinzufügen": "add message",
+            "Keine anderen Buchungen im Zeitraum zulassen.":
+                "I want no further booking in my timeslot",
             'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Anfrage kopieren"':
                 'Rooms can’t be booked over continuous dates. If you want to request the same booking over a number of days, you may transfer the information from your previous booking under "Copy request".',
-            "Keine anderen Buchungen im Zeitraum zulassen.": "I want no further booking in my timeslot",
         },
         "request-message": {
             "message-placeholder":
                 "Please explain you request if needed. \n\nFor example you can add relevant information for workshop leaders or the room-booking-team.",
         },
         "request-purpose": {
+            "Dieser Buchungsgrund soll zur Anmeldung einer Lehrveranstaltung durch Lehrende verwendet werden.":
+                "This booking purpose should only be used for pre-registering of classes by teaching staff.",
             "Bitte ergänze deine Anfrage mit folgender Information.":
                 "Please complete your request with the following information.",
             Begründung: "Please explain what you are planning to do.",
@@ -134,13 +136,11 @@ const translation: Translation = {
             Prüfungsvorbereitung: "Exam preparation",
             Abholung: "Pick-up",
             Gremiensitzung: "Board meeting",
-            "Anderer Grund": "Other",
-            Extern: "External",
-            "Organisator": "Organizer",
-            "Dieser Buchungsgrund soll zur Anmeldung einer Lehrveranstaltung durch Lehrende verwendet werden.":
-                "This booking purpose should only be used for pre-registering of classes by teaching staff.",
             Lehrveranstaltung: "Teaching",
             Terminbuchung: "Time appointment",
+            "Anderer Grund": "Other",
+            Extern: "External",
+            Organisator: "Organizer",
             "HfK-Mitglieder": "HfK-Members",
             "HfK-Mitglied": "HfK-Member",
         },
@@ -193,9 +193,16 @@ const translation: Translation = {
             Gastzugang: "guest access",
         },
         setprofile: {
+            Automatisch: "Automatic",
+            Hell: "Light",
+            Dunkel: "Dark",
             "{fieldName} darf nicht leer sein.": "{fieldName} can't be empty.",
+            "Wirklich ausloggen?": "Are you sure?",
             "Profil erstellen": "Create profile",
             "Profil ändern": "Change profile",
+            "Willst du wirklich eine neue Schlüsselkarte beantragen?": "Please confirm your keycard request",
+            "Eingeloggt als": "Logged in as",
+            Ausloggen: "Log out",
             Vorname: "First name",
             Nachname: "Surname",
             Telefonnummer: "Phone number",
@@ -204,16 +211,25 @@ const translation: Translation = {
                 "Your data will only be used, if an infection occurs. With your registration you agree to the prevailing privacy policy that your data is being collected for tracing purposes in the event of an infection. You confirm to have read and understood the HfK rules of hygiene and to follow these rules during the stay at the HfK Bremen. Please find our prevailing privacy policy and the HfK hygiene rules on faq.hfk-bremen.de or on https://www.hfk-bremen.de/corona-downloads and on display at the front desk.",
             "Die Telefonnummer wird im Falle einer Infektionsnachverfolgung verwendet.":
                 "Your phone number is only used in case of an infection.",
+            Schließkarte: "Keycard",
+            "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet. Fragen zu Schließkarten bitte an {keymail}.":
+                "Keycards / chips are issued by the facility management (Dezernat 4) and set up according to your current room permissions. Questions regarding room permissions to {keymail}",
+            "Wenn du bereits eine Karte besitzt, dann trage die Nummer jetzt hier ein.":
+                "If you own a keycard enter your number here.",
+            Schließkartennummer: "Keycard number",
+            "Noch keine Schließkarte bzw. -chip? Nach der Beantragung kannst du deinen neuen Chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.":
+                "No keycard yet? After you have requested a new card, you can collect your card in person and with a signature at the facility management in room {location} a week later.",
+            "Karte beantragen": "Request keycard",
+            "Deine Schließkartennummer kann nachträglich nicht mehr geändert werden.":
+                "Once added your keycard number can't be changed.",
+            Angefragt: "Requested",
+            "am {date-requested}": "on {date-requested}",
+            "Du kannst deine Schließkarte bzw. -chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.":
+                "In about a week you can collect your keycard in person and with a signature at the facility management in room {location}.",
+            Sprache: "Language",
+            Farben: "Colors",
             Erstellen: "Create",
             Speichern: "Save",
-            "Eingeloggt als": "Logged in as",
-            "Ausloggen": "Log out",
-            "Sprache": "Language",
-            "Farben": "Colors",
-            "Automatisch": "Automatic",
-            "Hell": "Light",
-            "Dunkel": "Dark",
-            "Wirklich ausloggen?": "Are you sure?"
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
@@ -250,7 +266,14 @@ const translation: Translation = {
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
         },
+        room: {
+            Raum: "Room",
+            Verantwortlicher: "Room delegate",
+            Ausstattung: "Features",
+            "Raum anfragen": "Request room",
+            "Schliessberechtigung anfragen": "Request keycard access",
+            Raumliste: "Roomlist",
+        },
     },
 };
-
 export default translation;
