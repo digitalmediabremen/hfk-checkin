@@ -119,7 +119,7 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                                     <i> {alternativeNames}</i>
                                 )}
                         </span>,
-                        ...insertIf([<i> {featureList}</i>], !!featureList),
+                        ...insertIf([<i> {featureList}</i>], !!featureList && !!showMeta),
                     ]}
                 />
 

@@ -5,7 +5,6 @@ import { notEmpty } from "../../src/util/TypeUtil";
 import { useAppState } from "../common/AppStateProvider";
 
 export type UseSubPageConfig = {
-    readonly subpages: Record<string, {}>;
     urlProvider: (subpageName?: string, param?: string) => string;
 };
 
@@ -15,6 +14,8 @@ const useSubPage = <SubPagesMap extends Record<string, {}>>({
     type SubPagesType = keyof SubPagesMap;
     const router = useRouter();
     const activeSubPage = Object.keys(router.query)[0];
+    const activeSubPageParam = Object.values(router.query)[0] as string;
+
     const { appState, dispatch } = useAppState();
     const direction = appState.subPageTransitionDirection;
 
@@ -74,6 +75,7 @@ const useSubPage = <SubPagesMap extends Record<string, {}>>({
 
     return {
         activeSubPage,
+        activeSubPageParam,
         direction,
         subPageProps,
         handlerProps,

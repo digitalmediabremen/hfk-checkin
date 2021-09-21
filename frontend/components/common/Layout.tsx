@@ -132,6 +132,7 @@ export interface LayoutProps {
     children: ReactNode;
     noContentMargin?: boolean;
     overrideHeader?: ReactNode;
+    overrideActionButton?: () => ReactNode
 }
 
 const getActionButton = () => {
@@ -147,6 +148,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
     direction,
     noContentMargin,
     overrideHeader,
+    overrideActionButton,
     title,
 }) => {
     const theme = useTheme();
@@ -175,7 +177,7 @@ const Layout: FunctionComponent<LayoutProps> = ({
                 topBar={
                     <TopBar
                         key="global-top-bar"
-                        actionProvider={getActionButton}
+                        actionProvider={overrideActionButton || getActionButton}
                     >
                         {overrideHeader || <ProfileBar />}
                     </TopBar>

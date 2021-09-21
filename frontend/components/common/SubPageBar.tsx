@@ -1,10 +1,10 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { ArrowLeft } from "react-feather";
 import useTheme from "../../src/hooks/useTheme";
 import Bar from "./Bar";
 
 interface SubPageBarProps {
-    title: string;
+    title: ReactNode;
     onBack?: (subPage?: string) => void;
 }
 

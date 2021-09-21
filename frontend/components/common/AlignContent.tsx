@@ -6,12 +6,14 @@ type AlignOptions = "center" | "bottom";
 interface IPushToBottomProps {
     offsetBottomPadding?: true;
     align?: AlignOptions;
+    noFooter?: true;
 }
 
 const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     children,
     offsetBottomPadding,
     align: _align,
+    noFooter,
 }) => {
     const theme = useTheme();
     const [containerHeight, setContainerHeight] = React.useState<string>();
@@ -23,8 +25,9 @@ const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     };
 
     function updateContainerHeight(offsetTop: number) {
+        const footerHeight = noFooter ? 0 : theme.footerHeight();
         const heightString = `calc(100vh - ${
-            offsetTop + theme.footerHeight() + theme.spacing(2)
+            offsetTop + footerHeight + theme.spacing(2)
         }px)`;
         setContainerHeight(heightString);
     }
@@ -32,7 +35,7 @@ const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     React.useLayoutEffect(() => {
         if (measuredRef.current === null) return;
         updateContainerHeight(measuredRef.current.getBoundingClientRect().top);
-    },);
+    });
 
     return (
         <div ref={measuredRef}>

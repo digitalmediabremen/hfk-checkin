@@ -56,12 +56,14 @@ export const appUrls = {
         "/reservation/[reservationId]",
         `/reservation/${reservationId}`,
     ],
+    resource: (resource: string): string => "test",
     reservations: "/reservation",
     request: "/request",
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
-    cookieError: "/cookie-error"
+    cookieError: "/cookie-error",
+    room: "/room"
 } as const;
 
 export const requestSubpages = {

@@ -4,9 +4,9 @@ import SubPageBar from "./SubPageBar";
 import TopBar from "./TopBar";
 
 export interface SubPageProps {
-    title: string;
+    title: React.ReactNode;
     onBack: (subPage?: string) => void;
-    children: () => React.ReactNode;
+    children: (() => React.ReactNode) | React.ReactNode;
     active: boolean;
     noContentMargin?: boolean;
 }
@@ -27,7 +27,7 @@ const SubPage: React.FunctionComponent<SubPageProps> = (props) => {
                     </TopBar>
                 }
             >
-                {children()}
+                {children instanceof Function ? children() : children}
             </Page>
         </>
     );

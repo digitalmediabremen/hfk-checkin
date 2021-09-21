@@ -56,9 +56,6 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
         {
             urlProvider: (name, param) =>
                 buildSubPageUrl(appUrls.reservation(id || "")[1], name, param),
-            subpages: {
-                new: {},
-            } as const,
         }
     );
 
