@@ -38,7 +38,8 @@ class ReservationCalendarEventSerializer(ReservationSerializer):
             gettext('exclusive resource usage'): obj.exclusive_resource_usage,
         }
         flags_str_list = [key for (key, value) in flags.items() if value]
-        return "%(user)s (%(flags)s%(attendees)s) #%(id)s (%(state)s)" % {
+        return "%(title)s%(user)s (%(flags)s%(attendees)s) #%(id)s (%(state)s)" % {
+            'title': "\"%s\" " % obj.title if obj.title else "",
             'user':obj.organizer.get_full_name(),
             'attendees': str(obj.number_of_attendees),
             'flags': ', '.join(flags_str_list) + ": " if flags_str_list else "",
