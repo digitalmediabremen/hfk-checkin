@@ -126,10 +126,10 @@ class ResourceQuerySet(models.QuerySet):
     def visible_for(self, user):
         # Resource.public is currently not available
         # TODO restrict visibility?!
-        # return self.filter(reservable=True)
+        return self.filter(reservable=True)
         #is_public = Q(public=True, unit__is_public=True)
-        is_public = Q(unit__public=True)
-        return self.filter(is_public)
+        # is_public = Q(unit__public=True)
+        # return self.filter(is_public)
         # if not user.is_authenticated:
         #     return self.filter(is_public)
         # if is_general_admin(user):
