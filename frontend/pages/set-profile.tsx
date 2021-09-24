@@ -1,12 +1,12 @@
 import { isValidNumber } from "libphonenumber-js";
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect } from "react";
+import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { CreditCard } from "react-feather";
 import { Controller, useForm } from "react-hook-form";
 import SmoothCollapse from "react-smooth-collapse";
-import { isNonNullExpression } from "typescript";
 import { useUpdateProfile } from "../components/api/ApiHooks";
+import ifElse from "../components/api/ifElse";
+import needsProfile from "../components/api/needsProfile";
 import AlignContent from "../components/common/AlignContent";
 import { useAppState } from "../components/common/AppStateProvider";
 import Divider from "../components/common/Divider";
@@ -21,6 +21,7 @@ import Notice from "../components/common/Notice";
 import SectionTitle from "../components/common/SectionTitle";
 import SubPageBar from "../components/common/SubPageBar";
 import { appUrls } from "../config";
+import features from "../features";
 import { useTranslation } from "../localization";
 import useColorSchemeSetting, {
     ColorSchemeSetting,
@@ -33,10 +34,11 @@ import { getLocaleLabelMap } from "../src/util/LocaleUtil";
 import { Entries } from "../src/util/ReservationUtil";
 
 interface EditProfileProps {
-    profile?: MyProfile;
+    profile: MyProfile;
+    profileUpdating: boolean;
 }
 
-const EditProfilePage: NextPage<EditProfileProps> = (props) => {
+const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
     const { appState, dispatch } = useAppState();
     const { myProfile: initialProfile } = appState;
 
@@ -437,4 +439,8 @@ const EditProfilePage: NextPage<EditProfileProps> = (props) => {
     );
 };
 
-export default EditProfilePage;
+export default ifElse(
+    () => features.getin,
+    needsProfile(EditProfilePage),
+    EditProfilePage
+);
