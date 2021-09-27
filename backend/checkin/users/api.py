@@ -81,7 +81,7 @@ class BaseUserProfileSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='profile.last_name')
     phone = serializers.CharField(source='profile.phone')
     email = serializers.EmailField(source='profile.email', read_only=True) # can only be writable if we validate emails
-    keycard_number = serializers.CharField(source='profile.keycard_number')
+    keycard_number = serializers.CharField(source='profile.keycard_number', required=False)
     keycard_requested_at_at = serializers.DateTimeField(source='profile.keycard_requested_at', read_only=True)
     is_external = serializers.BooleanField(source='profile.is_external', read_only=True)
     preferred_language = serializers.ChoiceField(choices=settings.LANGUAGES, required=False, allow_null=True)
