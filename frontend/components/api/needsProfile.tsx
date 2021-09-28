@@ -64,7 +64,7 @@ const needsProfile = <
 
     if (
         !loading &&
-        (additionalData?.notAuthorized || (profile && !profile.phone))
+        (additionalData?.notAuthorized || (profile && !profile.phone && router.pathname !== appUrls.setprofile))
     ) {
         return null;
     }
