@@ -10,6 +10,7 @@ from admin_auto_filters.filters import AutocompleteFilter
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.urls import reverse
+from django.db.models import Q
 
 UserPermission = get_user_obj_perms_model()
 PERMISSION_CODENAMES = ('resource:has_permanent_access', 'resource:can_modify_access')
@@ -47,9 +48,11 @@ class KeycardListFilter(admin.SimpleListFilter):
         in the right sidebar.
         """
         return (
+            ('pending', _('pending')),
             ('assigned', _('assigned')),
             ('unassigned', _('not assigned')),
-            ('requested', _('requested')),
+            ('requested', _('requested and not yet assigned')),
+            ('requestedandassigned', _('requested and assigned')),
         )
 
     def queryset(self, request, queryset):
@@ -65,7 +68,11 @@ class KeycardListFilter(admin.SimpleListFilter):
         if self.value() == 'unassigned':
             return queryset.filter(user__profile__keycard_number__isnull=True)
         if self.value() == 'requested':
-            return queryset.filter(user__profile__keycard_requested_at__isnull=False)
+            return queryset.filter(user__profile__keycard_requested_at__isnull=False,user__profile__keycard_number__isnull=True)
+        if self.value() == 'requestedandassigned':
+            return queryset.filter(user__profile__keycard_requested_at__isnull=False,user__profile__keycard_number__isnull=False)
+        if self.value() == 'pending':
+            return queryset.filter(Q(user__profile__keycard_number__isnull=False) | Q(user__profile__keycard_requested_at__isnull=False,user__profile__keycard_number__isnull=True))
 
 
 class SyncedListFilter(admin.SimpleListFilter):
@@ -123,11 +130,12 @@ mark_as_synced_to_locking_system.short_description = _("Mark selected permission
 
 class AccessPermissionAdmin(ModelAdmin):
     # list_editable = ('synced_at',)
-    list_display = ('get_first_name', 'get_last_name', 'get_keycard_number', 'get_resource', 'get_permission_name', 'modified_at', 'synced_at')
+    list_display = ('get_first_name', 'get_last_name', 'get_keycard_number', 'get_resource', 'get_permission_name', 'synced_at')
     # readonly_fields = (
     # 'user', 'content_object', 'modified_at')
     readonly_fields = ('userprofile_link', 'email_link', 'get_first_name', 'get_last_name', 'get_keycard_number', 'get_student_number', 'get_email', 'get_resource','get_permission_name', 'modified_at', 'synced_at')
     fields = readonly_fields
+    ordering = ('user__profile__keycard_number', 'user__last_name')
     list_display_links = ('get_first_name', 'get_last_name', 'get_resource')
     list_filter = (KeycardListFilter, SyncedListFilter, UserFilter, ResourceFilter)
     search_fields = ('user__first_name', 'user__last_name',)
