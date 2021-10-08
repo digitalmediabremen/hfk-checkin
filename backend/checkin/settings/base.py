@@ -5,7 +5,7 @@ Base settings to build other settings files upon.
 import dj_database_url
 from pathlib import Path
 from os import environ
-import logging
+import logging, datetime
 getenv = environ.get
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -281,6 +281,7 @@ POST_OFFICE = {
     'MESSAGE_ID_ENABLED': True,
     'MESSAGE_ID_FQDN': MESSAGE_FQDN,
     'PRIORITY': 'now',
+    'RETRY_INTERVAL': datetime.timedelta(minutes=45), # mailgun limits to 100 m / h
     'BACKEND': 'django.core.mail.backends.smtp.EmailBackend',
 }
 

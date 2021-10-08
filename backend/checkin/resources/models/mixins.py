@@ -13,7 +13,8 @@ logger = logging.getLogger(__name__)
 def get_users_with_resource_or_unit_perms_for_resource(resource, resource_perms=[], unit_perms=[]):
     users = []
     users += get_users_with_perms(resource, only_with_perms_in=resource_perms)
-    if hasattr(resource, 'unit'):
+    if len(users) < 1 and hasattr(resource, 'unit'):
+        # only use "unit" permission if object has no explicit permission
         users += get_users_with_perms(resource.unit, only_with_perms_in=unit_perms)
     return users
 
