@@ -950,9 +950,10 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
+        sent = []
         for user in notify_users:
-            return self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user, reply_to_users=self.user, **kwargs)
-        return []
+            sent.append(self.send_reservation_mail(NotificationType.RESERVATION_REQUESTED_OFFICIAL, user=user, reply_to_users=self.user, **kwargs))
+        return sent
 
     def send_access_requested_mail_to_officials(self, **kwargs):
         # notify_users = self.resource.get_users_with_perm('can_approve_reservation')
@@ -960,9 +961,10 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         logger.debug('notify_users for %s: %s' % (self, notify_users))
         if len(notify_users) > 100:
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
+        sent = []
         for user in notify_users:
-            return self.send_reservation_mail(NotificationType.RESERVATION_ACCESS_REQUESTED_OFFICIAL, user=user, **kwargs)
-        return []
+            sent.append(self.send_reservation_mail(NotificationType.RESERVATION_ACCESS_REQUESTED_OFFICIAL, user=user, **kwargs))
+        return sent
 
     def send_external_user_requested_mail_to_officials(self, external_attendee, **kwargs):
         notify_users = self.resource.get_user_confirmation_delegates_to_notify()
@@ -972,12 +974,13 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             raise Exception("Refusing to notify more than 100 users (%s)" % self)
         elif len(notify_users) < 1:
             raise ValueError("Can not notify user confirmation delegate because no delegate was set.")
+        sent = []
         for user in notify_users:
-            return self.send_reservation_mail(NotificationType.RESERVATION_EXTERNAL_USER_REQUESTED_OFFICIAL, user=user, reply_to_users=self.user, extra_context={
+            sent.append(self.send_reservation_mail(NotificationType.RESERVATION_EXTERNAL_USER_REQUESTED_OFFICIAL, user=user, reply_to_users=self.user, extra_context={
                 'external_attendee': external_attendee,
                 **extra_context
-            }, **kwargs)
-        return []
+            }, **kwargs))
+        return sent
 
     def send_reservation_denied_mail(self, **kwargs):
         return self.send_reservation_mail(NotificationType.RESERVATION_DENIED, **kwargs)

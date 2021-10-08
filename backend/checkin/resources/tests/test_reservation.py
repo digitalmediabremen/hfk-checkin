@@ -5,8 +5,12 @@ import arrow
 from django.core.exceptions import ValidationError
 from django.utils.translation import activate
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils import timezone
 from freezegun import freeze_time
+from django.core import mail
+from post_office.mail import (create, get_queued,
+                    send, send_many, send_queued, _send_bulk)
 
 #from checkin.resources.enums import UnitAuthorizationLevel
 from checkin.resources.models import (
@@ -32,12 +36,15 @@ class SetupUnit1WithUnitPermissions():
     def setUp(self):
         self.unit1 = Unit.objects.create(name='Unit 1', pk='00000000-00000000-00000000-10000001',
                                          time_zone='Europe/Helsinki', slug='U1', public=True)
-        self.user1 = User.objects.create_user(email='accessmanager@example.com')
-        assign_perm('resource.unit:can_modify_access', self.user1, self.unit1)
-        self.user2 = User.objects.create_user(email='reservationmanager@example.com')
-        assign_perm('resource.unit:can_modify_reservations', self.user2, self.unit1)
-        self.user3 = User.objects.create_user(email='usermanager@example.com')
-        assign_perm('resource.unit:can_modify_access', self.user3, self.unit1)
+        self.accessmanager_1 = User.objects.create_user(email='accessmanager-1@example.com')
+        self.accessmanager_2 = User.objects.create_user(email='accessmanager-2@example.com')
+        assign_perm('resource.unit:can_modify_access', self.accessmanager_1, self.unit1)
+        assign_perm('resource.unit:can_modify_access', self.accessmanager_2, self.unit1)
+        self.reservationmanager_1 = User.objects.create_user(email='reservationmanager-1@example.com')
+        self.reservationmanager_2 = User.objects.create_user(email='reservationmanager-2@example.com')
+        assign_perm('resource.unit:can_modify_reservations', self.reservationmanager_1, self.unit1)
+        self.usermanager_1 = User.objects.create_user(email='usermanager-1@example.com')
+        assign_perm('resource.unit:can_modify_access', self.usermanager_1, self.unit1)
 
 
 class ReservationTestCase(SetupUnit1WithUnitPermissions,TestCase):
@@ -108,6 +115,24 @@ class ReservationTestCase(SetupUnit1WithUnitPermissions,TestCase):
                                     type=self.resourcetype1)
         self.do_reservation_on_resource(r)
 
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    def test_reservation_with_multiple_access_managers(self):
+        print("test_reservation_with_multiple_access_managers")
+        NUM_OF_TOTAL_MAILS_TO_SEND = 3
+        r = Resource.objects.create(name='resource', people_capacity_default=None, unit=self.unit2,
+                                    type=self.resourcetype1, need_manual_confirmation=True, reservable=True)
+        assign_perm('resource.resource:can_modify_reservations', self.reservationmanager_1, r)
+        assign_perm('resource.resource:can_modify_reservations', self.reservationmanager_2, r)
+
+        self.do_reservation_on_resource(r)
+        queue = get_queued()
+        self.assertEqual(len(queue), NUM_OF_TOTAL_MAILS_TO_SEND)
+        # self.assertEqual(queue[0].to, self.user.get_email_notation())
+        # self.assertEqual(queue[1].to, self.reservationmanager_1.get_email_notation())
+        # self.assertEqual(queue[2].to, self.reservationmanager_2.get_email_notation())
+        send_queued()
+
+
     def do_reservation_on_resource(self, resource):
         tz = timezone.get_current_timezone()
         begin = tz.localize(datetime.datetime(2116, 6, 1, 8, 0, 0))
@@ -117,6 +142,7 @@ class ReservationTestCase(SetupUnit1WithUnitPermissions,TestCase):
         reservation.clean()
         reservation.process_state_change(Reservation.CREATED, Reservation.REQUESTED, self.user)
         #reservation.save()
+        return reservation
 
     # def test_reservation_warnings(self):
 

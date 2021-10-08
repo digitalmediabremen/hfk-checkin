@@ -115,7 +115,7 @@ def user_list_to_email_formatted_addresses(user_list):
     return ", ".join([formataddr((u.get_display_name(), u.email)) for u in user_list])
 
 
-def send_template_mail(recipients, template, context, attachments=None, from_address=None, reply_to_address=None, in_reply_to=None, language=settings.LANGUAGES[0][0], priority=mail.PRIORITY.now):
+def send_template_mail(recipients, template, context, attachments=None, from_address=None, reply_to_address=None, in_reply_to=None, language=settings.LANGUAGES[0][0], priority=mail.PRIORITY.high):
     if not getattr(settings, 'NOTIFICATION_MAILS_ENABLED', True):
         notification_logger.debug('Notifications are disabled by NOTIFICATION_MAILS_ENABLED.')
         return
