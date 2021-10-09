@@ -1,7 +1,7 @@
 import logging
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import gettext
+from django.utils.translation import gettext, ngettext
 from modeltranslation.admin import TranslationAdmin, TranslationStackedInline
 from .mixins import ExtraReadonlyFieldsOnUpdateMixin, CommonExcludeMixin, PopulateCreatedAndModifiedMixin
 from rangefilter.filter import DateRangeFilter, DateTimeRangeFilter
@@ -157,6 +157,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     list_per_page = 30
     save_on_top = True
     ordering = ['-created_at']
+    actions = ['action_confirm', 'action_deny', 'action_request', 'action_email_organizers']
 
     fieldsets = (
         (None, {
@@ -179,6 +180,65 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     # def get_list_filter(self, request):
     #     return map(lambda x: x if x != ResourceFilter else 'resource', self.list_filter)
+
+    def action_email_organizers(self, request, queryset):
+        emails = []
+        for reservation in queryset:
+            emails.append(reservation.user.get_email_notation())
+        emails = set(emails)
+        self.message_user(request, mark_safe(_("%d organizers in %d reservations selected: <a href='mailto:%s'>Open new email</a>") % (len(emails), len(queryset), ", ".join(emails))), messages.WARNING)
+    action_email_organizers.short_description = _('Email organizers of selected reservations')
+
+    # @admin.action(description='Mark selected stories as published')
+    def action_confirm(self, request, queryset):
+        self._action_change_state(request, queryset, Reservation.CONFIRMED)
+    action_confirm.short_description = _('Confirm selected reservations')
+
+    def action_deny(self, request, queryset):
+        self._action_change_state(request, queryset, Reservation.DENIED)
+    action_deny.short_description = _('Deny selected reservations')
+
+    # def action_cancel(self, request, queryset):
+    #     self._action_change_state(request, queryset, Reservation.CANCELLED)
+    # action_cancel.short_description = _('Cancel selected reservations')
+
+    def action_request(self, request, queryset):
+        self._action_change_state(request, queryset, Reservation.REQUESTED)
+    action_request.short_description = _('Change state of selected reservations to requested')
+
+    def _action_change_state(self, request, queryset, state):
+        success = []
+        skipped = []
+        failed = []
+        for reservation in queryset.all():
+            try:
+                original_state = reservation.state
+                reservation.state = state
+                self.process_state_change_and_warn(request, reservation, original_state=original_state)
+                reservation.save()
+                success.append(reservation)
+            except Exception as e:
+                self.message_user(request, _('Could not process reservation %s. An error occurred: %s' % (reservation.id, str(e))))
+                logger.error(e)
+                failed.append(reservation)
+        self.message_user(request, ngettext(
+            '%d reservation was successfully changed to %s.',
+            '%d reservations were successfully changed to %s.',
+            len(success),
+        ) % (len(success), state), messages.SUCCESS)
+        if skipped:
+            self.message_user(request, ngettext(
+                '%d reservation was skipped during update.',
+                '%d reservations were skipped during update.',
+                len(skipped),
+            ) % len(skipped), messages.WARNING)
+        if failed:
+            self.message_user(request, ngettext(
+                'Failed to update %d reservation.',
+                'Failed to update %d reservations.',
+                len(failed),
+            ) % len(failed), messages.ERROR)
+
 
     def has_change_permission(self, request, obj=None):
         if obj:
@@ -365,16 +425,19 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # form.base_fields['user'].queryset = form.base_fields['user'].queryset.filter(**USERS_IN_RESERVATIONS_QS_FILTER)
         return form
 
-    def process_state_change_and_warn(self, request, obj, form, change):
+    def process_state_change_and_warn(self, request, obj, form=None, change=None, original_state=None):
         # FIXME what if no _original_state. New object?
-        if not self._original_state:
-            self._original_state = Reservation.CREATED
+        if not original_state:
+            original_state = self._original_state or Reservation.CREATED
 
         # process state change and catch all warnings as messages
         # FIXME improve warnings and notifications in general. Make DRY.
         with warnings.catch_warnings(record=True) as warns:
-            message_state_update = form.cleaned_data.get('message_state_update', None)
-            obj.process_state_change(self._original_state, obj.state, request.user, update_message=message_state_update)
+            if form:
+                message_state_update = form.cleaned_data.get('message_state_update', None)
+            else:
+                message_state_update = None
+            obj.process_state_change(original_state, obj.state, request.user, update_message=message_state_update)
             for w in warns:
                 messages.add_message(request, messages.INFO, str(w.message))
         # show resulted (new state verbose) state as message

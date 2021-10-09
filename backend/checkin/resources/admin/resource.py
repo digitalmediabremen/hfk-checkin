@@ -96,8 +96,8 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     #readonly_fields = ('uuid',)
     #autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
-    list_display = ('display_numbers','name','alternative_names','get_unit_slug','get_people_capacity','area','reservable','access_restricted','modified_at') # ,'need_manual_confirmation'
     list_filter = ('unit','reservable','people_capacity_default','access_restricted','features','type','groups','floor_number','need_manual_confirmation') #,'need_manual_confirmation') # 'public',
+    list_display = ('display_numbers','name','alternative_names','get_unit_slug','area','floor_number','get_people_capacity','get_reservation_tools','get_access_tools') # ,'need_manual_confirmation'
     list_select_related = ('unit',)
     ordering = ('unit', 'name')
     search_fields = ('name','alternative_names','numbers','unit__name')
@@ -176,7 +176,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
 
     def get_people_capacity(self, obj):
         return obj.people_capacity
-    get_people_capacity.short_description = _("Active Capacity")
+    get_people_capacity.short_description = _("Cap.")
 
     def get_people_capacity_policy(self, obj):
         return ", ".join(["%s (%s: %d)" % (p.name, p.type, p.value) for p in obj.capacity_policies.all()])
@@ -187,6 +187,51 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
             return obj.unit.slug
     get_unit_slug.short_description = _('Unit')
     get_unit_slug.admin_order_field = 'unit__slug'
+
+    def get_reservation_tools(self, obj):
+        html_out = ""
+        if obj.reservable:
+            html_out += format_html('<span title="{}" class="flag flag-green">{}</span>', _("Reservable"), _("R"))
+        else:
+            html_out += format_html('<span title="{}" class="flag flag-grey">{}</span>', _("Not Reservable"), _("disabled"))
+        # if obj.access_restricted:
+        #     html_out += format_html('<span title="{}" class="flag flag-yellow">{}</span>', _("Access restricted"), _("ZB"))
+        if obj.reservable and obj.need_manual_confirmation:
+            html_out += format_html('<span title="{}" class="flag flag-yellow">{}</span>', _("Manual confirmation"), _("M"))
+        if not obj.is_public:
+            html_out += format_html('<span title="{}" class="flag flag-red">{}</span>', _("not public"), _("not public"))
+        # if obj.people_capacity:
+        #     html_out += format_html('<span title="{}" class="flag">{}: {}</span>', _("People capacity default"), _("Cap."), obj.people_capacity)
+        if obj.reservable:
+            cal_link = format_html('<span class="datetimeshortcuts"><a href="{}"><span class="date-icon" title="{}"></span></a></span>',
+                               reverse('admin:resources_resource_calendar', args=[obj.pk]),
+                               _('Open calendar'))
+            html_out += cal_link
+            list_link = format_html('<span class=""><a href="{}"><span class="view-icon" title="{}"></span></a></span>',
+                               reverse('admin:resources_reservation_changelist') + '?resource__pk__exact=%s' % obj.pk,
+                               _('Open reservation list'))
+            html_out += list_link
+        return mark_safe('<div class="reservation-tools">%s</div>' % html_out)
+    get_reservation_tools.short_description = _("Reservation")
+
+    def get_access_tools(self, obj):
+        html_out = ""
+        if obj.access_restricted:
+            html_out += format_html('<span title="{}" class="flag flag-yellow">{}</span>', _("Access restricted"), _("ZB"))
+        if obj.people_capacity:
+            html_out += format_html('<span title="{}" class="flag">{}: {}</span>', _("People capacity default"), _("Cap."), obj.people_capacity)
+        accesslist_link = format_html('<span class=""><a href="{}"><span class="view-icon" title="{}"></span></a></span>',
+                                reverse('admin:resources_resourceaccess_change', args=[obj.pk]),
+                                _('Open access list'))
+        html_out += accesslist_link
+        return mark_safe('<div class="reservation-tools">%s</div>' % html_out)
+    get_access_tools.short_description = _("Access")
+
+    # def get_delegates(self, obj):
+    #     # if obj:
+    #     #     return obj.get_reservation_delegates()
+    #     return self.get_empty_value_display()
+    # get_delegates.short_description = _("Delegates")
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)

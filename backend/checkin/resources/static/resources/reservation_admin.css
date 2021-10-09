@@ -1,0 +1,38 @@
+.reservation-tools .flag, .reservation-tools > span{
+        margin-right: .5em;
+}
+.reservation-tools .flag {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    border-radius: 2px;
+    padding: 0.2em .5em;
+}
+.reservation-tools .flag-green {
+    background-color: #58AD69;
+}
+.reservation-tools .flag-yellow {
+    background-color: #FFBC49;
+}
+.reservation-tools .flag-red {
+    background-color: #E2574C;
+}
+.reservation-tools .flag-grey {
+    background-color: #aaa;
+}
+.reservation-tools .date-icon, .reservation-tools .view-icon {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    height: 16px;
+    width: 16px;
+    overflow: hidden;
+}
+.reservation-tools .date-icon {
+    background: url(../admin/img/icon-calendar.svg) 0 0 no-repeat;
+    top: -1px;
+}
+.reservation-tools .view-icon {
+    background: url(../admin/img/icon-viewlink.svg) 0 0 no-repeat;
+    top: -1px;
+}

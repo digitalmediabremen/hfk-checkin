@@ -202,12 +202,22 @@ class ResourceManager(models.Manager.from_queryset(ResourceQuerySet)):
         return super(ResourceManager, self).get_queryset() \
             .annotate_capacity_calculation()
 
-    def get_resources_reservation_delegated_to_user(self, user):
+    def get_resources_reservation_delegated_to_user(self, user, with_unit=True):
         """ returns the QS of Resources `user` is allowed to / assigned to manage Reservations of """
-        resources_qs = get_objects_for_user(user, ['resource:can_modify_reservations','resource:can_modify_reservations_without_notifications'], any_perm=True, accept_global_perms=False, klass=self.model)
-        units_qs = get_objects_for_user(user, ['unit:can_modify_reservations','unit:can_modify_reservations_without_notifications'], any_perm=True, accept_global_perms=False, klass=Unit)
-        # return all resources with permission 'can_modify_reservations' on Resource or on Resource.unit
-        resources_qs |= self.get_queryset().filter(unit__in=units_qs)
+        resources_qs = get_objects_for_user(user, ['resource:can_modify_reservations','resource:can_modify_reservations_without_notifications'], any_perm=True, accept_global_perms=False, with_superuser=False, klass=self.model)
+        if with_unit:
+            units_qs = get_objects_for_user(user, ['unit:can_modify_reservations','unit:can_modify_reservations_without_notifications'], any_perm=True, accept_global_perms=False, with_superuser=False, klass=Unit)
+            # return all resources with permission 'can_modify_reservations' on Resource or on Resource.unit
+            resources_qs |= self.get_queryset().filter(unit__in=units_qs)
+        return resources_qs
+
+    def get_resources_access_delegated_to_user(self, user, with_unit=True):
+        """ returns the QS of Resources `user` is allowed to / assigned to manage Reservations of """
+        resources_qs = get_objects_for_user(user, ['resource:can_modify_access','resource:can_modify_access_without_notifications'], any_perm=True, accept_global_perms=False, with_superuser=False, klass=self.model)
+        if with_unit:
+            units_qs = get_objects_for_user(user, ['unit:can_modify_access','unit:can_modify_access_without_notifications'], any_perm=True, accept_global_perms=False, with_superuser=False, klass=Unit)
+            # return all resources with permission 'can_modify_access' on Resource or on Resource.unit
+            resources_qs |= self.get_queryset().filter(unit__in=units_qs)
         return resources_qs
 
     def get_resources_user_can_manage(self, user):
