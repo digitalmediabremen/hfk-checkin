@@ -188,7 +188,15 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         for reservation in queryset:
             emails.append(reservation.user.get_email_notation())
         emails = set(emails)
-        self.message_user(request, mark_safe(_("%d organizers in %d reservations selected: <a href='mailto:%s'>Open new email</a>") % (len(emails), len(queryset), ", ".join(emails))), messages.WARNING)
+        self.message_user(request,
+                          mark_safe(format_html("{} <a href='mailto:{}'>{}</a>",
+                                                _("%(num_recipients)d organizers in %(num_reservations)d reservations selected:") % {
+                                                    'num_recipients':  len(emails),
+                                                    'num_reservations': len(queryset)
+                                                },
+                                                ", ".join(emails),
+                                                _("Open new email")
+                          )), messages.WARNING)
     action_email_organizers.short_description = _('Email organizers of selected reservations')
 
     # @admin.action(description='Mark selected stories as published')
@@ -224,10 +232,10 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                 logger.error(e)
                 failed.append(reservation)
         self.message_user(request, ngettext(
-            '%d reservation was successfully changed to %s.',
-            '%d reservations were successfully changed to %s.',
+            '%(num)d reservation was successfully changed to %(state)s.',
+            '%(num)d reservations were successfully changed to %(state)s.',
             len(success),
-        ) % (len(success), state), messages.SUCCESS)
+        ) % {'num': len(success), 'state': state}, messages.SUCCESS)
         if skipped:
             self.message_user(request, ngettext(
                 '%d reservation was skipped during update.',
