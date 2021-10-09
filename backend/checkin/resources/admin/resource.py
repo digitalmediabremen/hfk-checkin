@@ -13,6 +13,9 @@ from django.contrib.admin.options import get_permission_codename
 from checkin.tracking.models import Location as CheckinLocation
 from django.contrib.messages import add_message, WARNING
 from django.http import Http404
+from django.utils.safestring import mark_safe
+from django.utils.html import format_html
+from django.templatetags.static import static
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +27,7 @@ from .permission_inlines import (
     AccessDelegatesForResourceUserPermissionInline,
     ReservationDelegatesForResourceUserPermissionInline,
 )
+from .list_filters import MyResourceRelationFilter
 
 from .autocomplete_views import *
 
@@ -71,14 +75,14 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         }),
         (_('Details'), {
             # 'classes': ('collapse',),
-            'fields': ('type','description','people_capacity_default','people_capacity_calculation_type','get_people_capacity','get_people_capacity_policy','area','floor_number','floor_name'),#'purposes'
+            'fields': ('type','description','people_capacity_default','people_capacity_calculation_type','get_people_capacity','get_people_capacity_policy','area','floor_number','floor_name','phone_number','email'),#'purposes'
         }),
         (_('Features'), {
             'fields': ('features',),
         }),
         (_('Reservation'), {
             #'classes': ('collapse',),
-            'fields': ('reservable', 'need_manual_confirmation', 'reservation_info',# 'reservation_delegates',
+            'fields': ('reservable', 'is_public', 'need_manual_confirmation', 'reservation_info',# 'reservation_delegates',
                        'min_period','max_period','slot_size','max_reservations_per_user',
                        'reservable_max_days_in_advance','reservable_min_days_in_advance',
                        'reservation_requested_notification_extra','reservation_confirmed_notification_extra',
@@ -96,8 +100,8 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     #readonly_fields = ('uuid',)
     #autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
-    list_filter = ('unit','reservable','people_capacity_default','access_restricted','features','type','groups','floor_number','need_manual_confirmation') #,'need_manual_confirmation') # 'public',
     list_display = ('display_numbers','name','alternative_names','get_unit_slug','area','floor_number','get_people_capacity','get_reservation_tools','get_access_tools') # ,'need_manual_confirmation'
+    list_filter = (MyResourceRelationFilter, 'unit', 'reservable', 'people_capacity_default', 'access_restricted', 'features', 'type', 'groups', 'floor_number', 'need_manual_confirmation') #,'need_manual_confirmation') # 'public',
     list_select_related = ('unit',)
     ordering = ('unit', 'name')
     search_fields = ('name','alternative_names','numbers','unit__name')
@@ -187,6 +191,19 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
             return obj.unit.slug
     get_unit_slug.short_description = _('Unit')
     get_unit_slug.admin_order_field = 'unit__slug'
+
+    def get_cal_link(self, obj):
+        if not obj.reservable:
+            return ""
+        return format_html('<span class="datetimeshortcuts"><a href="{}"><span class="date-icon" title="{}"></span></a></span>',
+                           reverse('admin:resources_resource_calendar', args=[obj.pk]),
+                           _('Open Calendar'))
+    get_cal_link.short_description = "" # empty on purpose
+
+    class Media:
+        css = {
+            'all': ('admin/css/widgets.css', 'resources/reservation_admin.css'), # for .date-icon class in get_reservation_tools / get_cal_link
+        }
 
     def get_reservation_tools(self, obj):
         html_out = ""

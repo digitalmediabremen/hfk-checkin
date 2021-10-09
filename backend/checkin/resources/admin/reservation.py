@@ -15,7 +15,7 @@ from post_office.models import Email
 from django.urls import reverse
 from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from .resource import ResourceAdmin
-from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, PurposeFilter
+from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, PurposeFilter, MyReservationRelationFilter
 from django.contrib.admin.utils import format_html
 from ..models.reservation import StaticReservationPurpose
 from ..models.resource import Resource
@@ -29,6 +29,8 @@ from django.utils.timezone import now
 from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import AutocompleteSelect
 from django.db.models import BLANK_CHOICE_DASH
+from django.utils.safestring import mark_safe
+
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -133,7 +135,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     list_display = (
     'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'title', 'get_collisions',
     'get_exclusive', 'get_created_at_display') #'get_priority',
-    list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', PurposeFilter,
+    list_filter = (MyReservationRelationFilter, ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', PurposeFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('begin', DateTimeRangeFilter),
                    ('end', DateTimeRangeFilter),

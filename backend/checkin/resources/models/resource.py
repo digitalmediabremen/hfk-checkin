@@ -127,9 +127,9 @@ class ResourceQuerySet(models.QuerySet):
         # Resource.public is currently not available
         # TODO restrict visibility?!
         return self.filter(reservable=True)
-        #is_public = Q(public=True, unit__is_public=True)
+        is_public = Q(is_public=True, unit__is_public=True)
         # is_public = Q(unit__public=True)
-        # return self.filter(is_public)
+        return self.filter(is_public)
         # if not user.is_authenticated:
         #     return self.filter(is_public)
         # if is_general_admin(user):
@@ -278,8 +278,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     )
 
     #id = models.CharField(primary_key=True, max_length=100)
-    #public = models.BooleanField(default=True, verbose_name=_('Public'))
-    #public = True
+    is_public = models.BooleanField(default=True, verbose_name=_('Public'))
     numbers = ArrayField(models.CharField(max_length=24), verbose_name=_("Room number(s)"), blank=True, null=True,
                          help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: X.XX(x)"))
     name = models.CharField(_("Name"), max_length=200)
@@ -304,6 +303,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     floor_number = models.IntegerField(verbose_name=_('Floor number'), help_text=_("-1: Basement, 0: Ground Floor, 1: First Floor"), null=True, blank=True)
     floor_name = models.CharField(verbose_name=_('Floor name'), max_length=200, null=True, blank=True)
     #history = HistoricalRecords()
+    phone_number = models.CharField(verbose_name=_('Phone extension'), max_length=20, null=True, blank=True)
+    email = models.EmailField(verbose_name=_('Email'), max_length=200, null=True, blank=True)
 
     objects = ResourceManager()
     objects_without_annotations = ResourceQuerySet.as_manager()
@@ -330,10 +331,6 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
         if self.reservable and self.external_reservation_url:
             raise ValidationError(_("Resources can not be reservable in this system and use a external reservation service url at the same time."))
         super().clean(*args, **kwargs)
-
-    @property
-    def public(self):
-        return self.unit.public
 
     @property
     def access_code_type(self):
