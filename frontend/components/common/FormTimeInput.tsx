@@ -103,7 +103,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                 <div className="date-wrapper">
                     {hasOverlap && (
                         <span className="plus-one-day">
-                            {t("+{days} Tag", { days: 1 })}
+                            {t("+{days}T", { days: 1 })}
                         </span>
                     )}
                     {Modernizr.inputtypes.time ? (

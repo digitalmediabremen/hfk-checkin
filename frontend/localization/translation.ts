@@ -8,7 +8,7 @@ const translation: Translation = {
             "Melde dich bei": "Report to",
             "wenn dieser Fehler häufiger auftritt.": "if this error repeats.",
             "Seite nicht gefunden": "Page not found",
-            "+{days} Tag": "+{days} day",
+            "+{days}T": "+{days}D",
             jetzt: "now",
             "Raum übernehmen": "Reuse room",
             "Zeit übernehmen": "Reuse time",

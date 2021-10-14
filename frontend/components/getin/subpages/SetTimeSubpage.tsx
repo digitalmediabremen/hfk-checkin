@@ -34,8 +34,12 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const [end, setEnd] = useReservationState("end");
     const [date, setDate] = useState<Date | undefined>(begin);
     // const default
-    const defaultBegin = createTimeFromDate(addDateTime(createDefaultTime(), duration.hours(0)));
-    const defaultEnd = createTimeFromDate(addDateTime(defaultBegin, duration.hours(2)));
+    const defaultBegin = createTimeFromDate(
+        addDateTime(createDefaultTime(), duration.hours(0))
+    );
+    const defaultEnd = createTimeFromDate(
+        addDateTime(defaultBegin, duration.hours(2))
+    );
     const [timeFrom, setTimeFrom] = useState<Time | undefined>(
         begin ? createTimeFromDate(begin) : defaultBegin
     );
@@ -77,21 +81,26 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                 minValue={createDateNow()}
                 extendedWidth
             />
-            <FormTimeInput
-                label={t("Von")}
-                value={timeFrom}
-                onChange={setTimeFrom}
-                bottomSpacing={1}
-                extendedWidth
-            />
-            <FormTimeInput
-                label={t("Bis")}
-                value={timeTo}
-                onChange={setTimeTo}
-                bottomSpacing={4}
-                hasOverlap={hasOverlap}
-                extendedWidth
-            />
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <FormTimeInput
+                    width="half"
+                    label={t("Von")}
+                    value={timeFrom}
+                    onChange={setTimeFrom}
+                    bottomSpacing={1}
+                    extendedWidth
+                />
+                <FormTimeInput
+                    width="half"
+                    label={t("Bis")}
+                    value={timeTo}
+                    onChange={setTimeTo}
+                    bottomSpacing={4}
+                    hasOverlap={hasOverlap}
+                    extendedWidth
+                />
+            </div>
 
             <Fade in={exceedsBookableRange}>
                 <Notice

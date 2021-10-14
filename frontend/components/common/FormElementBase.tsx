@@ -19,7 +19,7 @@ export interface FormElementBaseProps {
     zIndex?: number;
     maxHeight?: string;
     dotted?: boolean;
-    adaptiveWidth?: boolean;
+    width?: "adaptive" | "full" | "half" | "third";
     above?: boolean;
     onClick?: () => void;
     href?: string;
@@ -60,7 +60,7 @@ const FormElementBase = forwardRef<
         maxHeight,
         zIndex,
         dotted,
-        adaptiveWidth,
+        width,
         above,
         href,
     },
@@ -76,6 +76,25 @@ const FormElementBase = forwardRef<
         return 0;
     };
 
+    const calculateWidth = () => {
+        const DIVISOR_MAPPING = {
+            full: 1,
+            half: 2,
+            third: 3,
+        };
+
+        if (width === "adaptive") return "fit-content";
+        const divisor = DIVISOR_MAPPING[width || "full"];
+        const spaceBetween = extendedWidth
+            ? theme.spacing(3) + 2
+            : theme.spacing(0) + 4;
+        const gutter = (-(divisor - 1) * spaceBetween) / divisor;
+        const percentage = 100 / divisor;
+        const extendedPixelWidth = theme.spacing(3) - 2;
+        const addPixels = extendedWidth ? extendedPixelWidth + gutter : gutter;
+        return `calc(${percentage}% + ${addPixels}px)`;
+    };
+
     const minHeightSpacing = calculateMinHeightSpacing(density);
     return (
         <>
@@ -86,10 +105,7 @@ const FormElementBase = forwardRef<
                     overflow: hidden;
                     border: none;
                     display: flex;
-                    width: ${extendedWidth
-                        ? `calc(100% + ${theme.spacing(3) - 2}px)`
-                        : "100%"};
-
+                    width: ${calculateWidth()};
                     align-items: center;
 
                     margin-bottom: ${noBottomSpacing
@@ -106,10 +122,6 @@ const FormElementBase = forwardRef<
                     background-color: inherit;
 
                     line-height: 1.25rem;
-                }
-
-                .form-element-base.adaptive-width {
-                    width: fit-content;
                 }
 
                 .form-element-base.disabled {
@@ -202,7 +214,6 @@ const FormElementBase = forwardRef<
                     disabled,
                     padding: !noPadding,
                     scroll: !!maxHeight,
-                    "adaptive-width": adaptiveWidth,
                     above,
                 })}
             >

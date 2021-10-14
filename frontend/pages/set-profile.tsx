@@ -385,7 +385,7 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
                                         primary={field.value === locale}
                                         density="super-narrow"
                                         value={label}
-                                        adaptiveWidth
+                                        width="adaptive"
                                         key={locale}
                                         noBottomSpacing
                                         onClick={() =>
@@ -412,7 +412,7 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
                             primary={colorSchemeSetting === colorScheme}
                             density="super-narrow"
                             value={label}
-                            adaptiveWidth
+                            width="adaptive"
                             key={colorScheme}
                             noBottomSpacing
                             onClick={() =>

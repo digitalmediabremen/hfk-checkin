@@ -152,7 +152,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                             onClick={() => handleSetUnit(unit.slug)}
                             density="super-narrow"
                             value={unit.name}
-                            adaptiveWidth
+                            width="adaptive"
                             key={unit.uuid}
                             bottomSpacing={index === units.length - 1 ? 4 : 1}
                         />
