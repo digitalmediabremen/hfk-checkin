@@ -86,8 +86,8 @@ const FormElementBase = forwardRef<
         if (width === "adaptive") return "fit-content";
         const divisor = DIVISOR_MAPPING[width || "full"];
         const spaceBetween = extendedWidth
-            ? theme.spacing(3) + 2
-            : theme.spacing(0) + 4;
+            ? theme.spacing(4) - 2
+            : theme.spacing(1);
         const gutter = (-(divisor - 1) * spaceBetween) / divisor;
         const percentage = 100 / divisor;
         const extendedPixelWidth = theme.spacing(3) - 2;
