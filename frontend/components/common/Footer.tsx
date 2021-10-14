@@ -49,6 +49,9 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                 `}
             </style>
             <div className="footer">
+                <Link href={appUrls.setprofile}>
+                    <a>{t("Einstellungen")}</a>
+                </Link>
                 <Link href={appUrls.help}>
                     <a>
                         <span>
@@ -60,6 +63,7 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                 <Link href={appUrls.privacy}>
                     <a>{t("Datenschutz")}</a>
                 </Link>
+                
             </div>
         </>
     );

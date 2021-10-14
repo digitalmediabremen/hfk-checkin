@@ -26,6 +26,7 @@ const translation: Translation = {
             Heute: "Today",
             Morgen: "Tomorrow",
             Datenschutz: "Privacy",
+            Einstellungen: "Settings"
         },
         reservation: {
             "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
