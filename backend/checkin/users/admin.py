@@ -12,6 +12,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.views.generic.base import RedirectView
+from .admin_keycard import KeycardAdmin, KeycardListFilter
 
 from .models import Profile
 User = get_user_model()
@@ -133,7 +134,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     # list_editable is overwritten by get_list_editable
-    list_filter = ('keycard_requested_at','verified','is_external','user__disable_notifications', 'user__preferred_language','updated_at','created_at',)
+    list_filter = (KeycardListFilter, 'keycard_requested_at','verified','is_external','user__disable_notifications', 'user__preferred_language','updated_at','created_at',)
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('id','created_at','updated_at','user')
     fields = ('id','first_name', 'last_name','phone','email','student_number','keycard_number','keycard_requested_at','verified','is_external','created_at','updated_at')

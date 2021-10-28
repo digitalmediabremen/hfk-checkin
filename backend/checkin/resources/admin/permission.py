@@ -5,15 +5,16 @@ from django.contrib.admin import ModelAdmin
 from django.utils.translation import ngettext, gettext_lazy as _
 from django.utils.html import format_html
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 from guardian.shortcuts import get_user_obj_perms_model
 from .list_filters import UserFilter
 from ..models.resource import Resource
 from admin_auto_filters.filters import AutocompleteFilter
 from django.utils import timezone
-from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.db.models import Q
 from ..models.utils import join_email_list
+from checkin.users.models import Profile
 
 UserPermission = get_user_obj_perms_model()
 PERMISSION_CODENAMES = ('resource:has_permanent_access', 'resource:can_modify_access')
@@ -139,6 +140,19 @@ class AccessPermissionAdmin(ModelAdmin):
     search_fields = ('user__first_name', 'user__last_name',)
     actions = ['mark_as_synced_to_locking_system','mark_as_not_synced_to_locking_system','action_email_users']
 
+    def changelist_view(self, request, extra_context=None):
+        open_keycard_requests = Profile.objects.filter(keycard_requested_at__isnull=False,keycard_number__isnull=True)
+        num_open_keycard_requests = open_keycard_requests.count()
+        if(num_open_keycard_requests > 0):
+            self.message_user(request,
+                              mark_safe(format_html("<a href='{}'>{}</a>",
+                                                    reverse("admin:users_keycard_changelist") + '?keycard_number=requested',
+                                                    _("%(num_keycards)d keycards to assign") % {
+                                                        'num_keycards':  num_open_keycard_requests,
+                                                    },
+                              )), messages.WARNING)
+        return super().changelist_view(request, extra_context)
+
     def mark_as_synced_to_locking_system(self, request, queryset):
         queryset.update(synced_at=timezone.now())
         self.message_user(request, ngettext(
@@ -209,18 +223,20 @@ class AccessPermissionAdmin(ModelAdmin):
     email_link.short_description = _('Send email')
 
     def get_first_name(self, obj):
-        return obj.user.first_name
+        return obj.user.profile.first_name
     get_first_name.short_description = _("First name")
     get_first_name.admin_order_field = ('user__first_name')
 
     def get_last_name(self, obj):
-        return obj.user.last_name
+        return obj.user.profile.last_name
     get_last_name.short_description = _("Last name")
     get_last_name.admin_order_field = ('user__last_name')
 
     def get_keycard_number(self, obj):
         if hasattr(obj.user, "profile"):
-            return obj.user.profile.keycard_number
+            if obj.user.profile.keycard_number:
+                change_url = reverse('admin:users_keycard_change', args=(obj.user.profile.pk,))
+                return mark_safe('<a href="%s">%s</a>' % (change_url, obj.user.profile.keycard_number))
     get_keycard_number.short_description = _("Keycard number")
     get_keycard_number.admin_order_field = ('user__profile__keycard_number')
 

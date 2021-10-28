@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-09 19:11+0200\n"
+"POT-Creation-Date: 2021-10-28 12:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -436,130 +436,136 @@ msgstr "Anzahl zugeordneter Resourcen"
 msgid "HH:mm"
 msgstr "hh:mm"
 
-#: checkin/resources/admin/permission.py:22
-#: checkin/resources/admin/permission.py:240
+#: checkin/resources/admin/permission.py:23
+#: checkin/resources/admin/permission.py:256
 #: checkin/resources/models/accessibility.py:79
 #: checkin/resources/models/accessibility.py:105
 #: checkin/resources/models/availability.py:110 checkin/tracking/models.py:120
 msgid "Resource"
 msgstr "Ressource"
 
-#: checkin/resources/admin/permission.py:40
-#: checkin/resources/admin/permission.py:224 checkin/users/models.py:291
+#: checkin/resources/admin/permission.py:41
+#: checkin/resources/admin/permission.py:240 checkin/users/admin_keycard.py:30
+#: checkin/users/models.py:291
 msgid "Keycard number"
 msgstr "Schließkartennummer"
 
-#: checkin/resources/admin/permission.py:54
+#: checkin/resources/admin/permission.py:55
 msgid "pending"
 msgstr "zu bearbeiten"
 
-#: checkin/resources/admin/permission.py:55
+#: checkin/resources/admin/permission.py:56 checkin/users/admin_keycard.py:44
 msgid "assigned"
 msgstr "zugewiesen"
 
-#: checkin/resources/admin/permission.py:56
+#: checkin/resources/admin/permission.py:57 checkin/users/admin_keycard.py:45
 msgid "not assigned"
 msgstr "nicht zugewiesen"
 
-#: checkin/resources/admin/permission.py:57
+#: checkin/resources/admin/permission.py:58 checkin/users/admin_keycard.py:46
 msgid "requested and not yet assigned"
 msgstr "angefragt, noch nicht zugewiesen"
 
-#: checkin/resources/admin/permission.py:58
+#: checkin/resources/admin/permission.py:59 checkin/users/admin_keycard.py:47
 msgid "requested and assigned"
 msgstr "angefragt, bereits zugewiesen"
 
-#: checkin/resources/admin/permission.py:84
+#: checkin/resources/admin/permission.py:85
 msgid "Synced state"
 msgstr "Übertragungsstatus"
 
-#: checkin/resources/admin/permission.py:98
+#: checkin/resources/admin/permission.py:99
 msgid "already synced"
 msgstr "bereits übertragen"
 
-#: checkin/resources/admin/permission.py:99
+#: checkin/resources/admin/permission.py:100
 msgid "not synced"
 msgstr "nicht übertragen"
 
-#: checkin/resources/admin/permission.py:120
+#: checkin/resources/admin/permission.py:121
 msgid "Resource access permission"
 msgstr "Zugangsberechtigung"
 
-#: checkin/resources/admin/permission.py:121
+#: checkin/resources/admin/permission.py:122
 msgid "Resource access permissions"
 msgstr "Zugangsberechtigungen"
 
-#: checkin/resources/admin/permission.py:145
+#: checkin/resources/admin/permission.py:150
+#, python-format
+msgid "%(num_keycards)d keycards to assign"
+msgstr "%(num_keycards)d offene Schließkartenanfragen"
+
+#: checkin/resources/admin/permission.py:159
 #, python-format
 msgid "%d permission was marked as synced."
 msgid_plural "%d permissions were marked as synced."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Berechtigung wurde übertragen."
+msgstr[1] "%d Berechtigungen wurde übertragen."
 
-#: checkin/resources/admin/permission.py:149
+#: checkin/resources/admin/permission.py:163
 msgid "Mark selected permissions as synced to the locking system"
 msgstr "Markiere ausgewählte Berechtigungen als zur Schließanlage übertragen"
 
-#: checkin/resources/admin/permission.py:154
+#: checkin/resources/admin/permission.py:168
 #, python-format
 msgid "Removed mark of %d permission as synced."
 msgid_plural "Removed mark of %d permissions as synced."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Markierung als Übertragen von %d Berechtigung entfernt."
+msgstr[1] "Markierung als Übertragen von %d Berechtigungen entfernt."
 
-#: checkin/resources/admin/permission.py:158
+#: checkin/resources/admin/permission.py:172
 msgid "Remove mark of selected permissions as synced to the locking system"
 msgstr ""
 "Entferne Markierung der ausgewählte Berechtigungen als zur Schließanlage "
 "übertragen"
 
-#: checkin/resources/admin/permission.py:167
+#: checkin/resources/admin/permission.py:181
 #, python-format
 msgid "%(num_recipients)d users in %(num_reservations)d permissions selected:"
 msgstr ""
 "%(num_recipients)d Nutzer in %(num_reservations)d Berechtigungen(en) "
 "ausgewählt:"
 
-#: checkin/resources/admin/permission.py:172
+#: checkin/resources/admin/permission.py:186
 #: checkin/resources/admin/reservation.py:198
 #: checkin/resources/admin/resource.py:260
-#: checkin/resources/admin/resource.py:276
+#: checkin/resources/admin/resource.py:276 checkin/users/admin_keycard.py:95
 msgid "Open new email"
 msgstr "Neue E-Mail an Nutzer öffnen"
 
-#: checkin/resources/admin/permission.py:174
+#: checkin/resources/admin/permission.py:188
 msgid "Email users of selected permissions"
 msgstr "E-Mail an Nutzer der ausgewählten Berechtigungen senden"
 
-#: checkin/resources/admin/permission.py:202
+#: checkin/resources/admin/permission.py:216
 #: checkin/tracking/admin_list_filters.py:10
 msgid "Profile"
 msgstr "Benutzerprofil"
 
-#: checkin/resources/admin/permission.py:209
+#: checkin/resources/admin/permission.py:223
 msgid "Send email"
 msgstr "E-Mail senden"
 
-#: checkin/resources/admin/permission.py:213
+#: checkin/resources/admin/permission.py:227
 #: checkin/resources/admin/reception.py:110
 msgid "First name"
 msgstr "Vorname"
 
-#: checkin/resources/admin/permission.py:218
+#: checkin/resources/admin/permission.py:232
 #: checkin/resources/admin/reception.py:115
 msgid "Last name"
 msgstr "Nachname"
 
-#: checkin/resources/admin/permission.py:230
+#: checkin/resources/admin/permission.py:246
 msgid "Student number"
 msgstr "Matrikelnummer"
 
-#: checkin/resources/admin/permission.py:235
+#: checkin/resources/admin/permission.py:251
 #: checkin/resources/models/resource.py:307
 msgid "Email"
 msgstr "E-Mail"
 
-#: checkin/resources/admin/permission.py:245
+#: checkin/resources/admin/permission.py:261
 msgid "Permission"
 msgstr "Berechtigung"
 
@@ -2435,7 +2441,7 @@ msgstr ""
 msgid "Nachname"
 msgstr ""
 
-#: checkin/tracking/models.py:440 checkin/users/admin.py:270
+#: checkin/tracking/models.py:440 checkin/users/admin.py:271
 #: checkin/users/models.py:286
 msgid "Telefonnummer"
 msgstr ""
@@ -2685,45 +2691,106 @@ msgid ""
 "vorhandenes."
 msgstr ""
 
-#: checkin/users/admin.py:38
+#: checkin/users/admin.py:39
 msgid "Personal info"
 msgstr "Informationen zur Person"
 
-#: checkin/users/admin.py:39
+#: checkin/users/admin.py:40
 msgid "Additional info"
 msgstr "Weitere Informationen"
 
-#: checkin/users/admin.py:40
+#: checkin/users/admin.py:41 checkin/users/admin_keycard.py:144
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: checkin/users/admin.py:43
+#: checkin/users/admin.py:44
 msgid "Important dates"
 msgstr "Daten"
 
-#: checkin/users/admin.py:115
+#: checkin/users/admin.py:116
 msgid "Profile with this email is already exists. Try an another email."
 msgstr ""
 
-#: checkin/users/admin.py:121
+#: checkin/users/admin.py:122
 msgid "User with this email is already exists. Try an another email."
 msgstr ""
 
-#: checkin/users/admin.py:173
+#: checkin/users/admin.py:174
 msgid "Hidden value"
 msgstr "Versteckter Wert"
 
-#: checkin/users/admin.py:278 checkin/users/models.py:288
+#: checkin/users/admin.py:279 checkin/users/models.py:288
 msgid "E-Mail Adresse"
 msgstr "E-Mail-Adresse"
 
-#: checkin/users/admin.py:287
+#: checkin/users/admin.py:288
 msgid "Group membership"
 msgstr "Gruppenmitgliedschaft"
 
-#: checkin/users/admin.py:288
+#: checkin/users/admin.py:289
 msgid "Group memberships"
 msgstr "Gruppenmitgliedschaften"
+
+#: checkin/users/admin_keycard.py:22
+msgid "Keycard"
+msgstr "Schließkarte"
+
+#: checkin/users/admin_keycard.py:23
+msgid "Keycards"
+msgstr "Schließkarten"
+
+#: checkin/users/admin_keycard.py:91
+#, python-format
+msgid "%(num_recipients)d users selected:"
+msgstr "%(num_recipients)d Nutzer ausgewählt:"
+
+#: checkin/users/admin_keycard.py:97
+msgid "Email selected users"
+msgstr "E-Mail an ausgewählte Nutzer senden"
+
+#: checkin/users/admin_keycard.py:115
+msgid "Keycard requested"
+msgstr "Schließkarte angefragt"
+
+#: checkin/users/admin_keycard.py:117
+msgid "Keycard assigned"
+msgstr "Schließkarte zugewiesen"
+
+#: checkin/users/admin_keycard.py:118
+msgid "Keycard status"
+msgstr "Status Schließkarte"
+
+#: checkin/users/admin_keycard.py:123
+msgid "No permissions assigned"
+msgstr "Keine Berechtigungen vergeben"
+
+#: checkin/users/admin_keycard.py:133
+#, python-format
+#| msgid "Show %d permissions"
+msgid "%d permission to sync"
+msgid_plural "%d permissions to sync"
+msgstr[0] "%d zu übertragen"
+msgstr[1] "%d zu übertragen"
+
+#: checkin/users/admin_keycard.py:135
+#, python-format
+#| msgid "%d synced permissions"
+msgid "%d synced permission"
+msgid_plural "%d synced permissions"
+msgstr[0] "%d bereits übertragen"
+msgstr[1] "%d bereits übertragen"
+
+#: checkin/users/admin_keycard.py:137
+msgid "Permission sync status"
+msgstr "Status Berechtigungen"
+
+#: checkin/users/admin_keycard.py:143
+#, python-format
+#| msgid "Show %d permissions"
+msgid "Show %d permission"
+msgid_plural "Show %d permissions"
+msgstr[0] "%d Berechtigung anzeigen"
+msgstr[1] "%d Berechtigungen anzeigen"
 
 #: checkin/users/api.py:32
 msgid "Bitte melden Sie sich an."
@@ -2870,6 +2937,11 @@ msgstr "Kann persönliche Daten ändern"
 #: checkin/users/models.py:409
 msgid "Time of sync"
 msgstr "Zeitpunkt der Übertragung"
+
+#, python-format
+#~| msgid "Open permissions %d, Synced permissions %d"
+#~ msgid "%d permissions to sync, %d synced permissions"
+#~ msgstr "%d zu übertragen, %d bereits übertragen"
 
 #~ msgid "Open Calendar"
 #~ msgstr "Kalender öffnen"
