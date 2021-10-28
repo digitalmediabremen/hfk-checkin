@@ -235,8 +235,11 @@ class AccessPermissionAdmin(ModelAdmin):
     def get_keycard_number(self, obj):
         if hasattr(obj.user, "profile"):
             if obj.user.profile.keycard_number:
-                change_url = reverse('admin:users_keycard_change', args=(obj.user.profile.pk,))
-                return mark_safe('<a href="%s">%s</a>' % (change_url, obj.user.profile.keycard_number))
+                label = obj.user.profile.keycard_number
+            else:
+                label = _("(no number)")
+            change_url = reverse('admin:users_keycard_change', args=(obj.user.profile.pk,))
+            return mark_safe('<a href="%s">%s</a>' % (change_url, label))
     get_keycard_number.short_description = _("Keycard number")
     get_keycard_number.admin_order_field = ('user__profile__keycard_number')
 
