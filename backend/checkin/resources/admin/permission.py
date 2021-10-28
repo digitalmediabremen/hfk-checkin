@@ -2,7 +2,9 @@ from __future__ import unicode_literals
 from django.contrib import admin
 from django.db import models
 from django.contrib.admin import ModelAdmin
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext, gettext_lazy as _
+from django.utils.html import format_html
+from django.contrib import messages
 from guardian.shortcuts import get_user_obj_perms_model
 from .list_filters import UserFilter
 from ..models.resource import Resource
@@ -11,6 +13,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.db.models import Q
+from ..models.utils import join_email_list
 
 UserPermission = get_user_obj_perms_model()
 PERMISSION_CODENAMES = ('resource:has_permanent_access', 'resource:can_modify_access')
@@ -123,11 +126,6 @@ class ResourcePermission(UserPermission):
     #            {'profile': self.user, 'date': self.reservation.display_duration, 'reservation': self.reservation}
 
 
-def mark_as_synced_to_locking_system(modeladmin, request, queryset):
-    queryset.update(synced_at=timezone.now())
-mark_as_synced_to_locking_system.short_description = _("Mark selected permissions as synced to the locking system")
-
-
 class AccessPermissionAdmin(ModelAdmin):
     # list_editable = ('synced_at',)
     list_display = ('get_first_name', 'get_last_name', 'get_keycard_number', 'get_resource', 'get_permission_name', 'synced_at')
@@ -139,7 +137,41 @@ class AccessPermissionAdmin(ModelAdmin):
     list_display_links = ('get_first_name', 'get_last_name', 'get_resource')
     list_filter = (KeycardListFilter, SyncedListFilter, UserFilter, ResourceFilter)
     search_fields = ('user__first_name', 'user__last_name',)
-    actions = [mark_as_synced_to_locking_system]
+    actions = ['mark_as_synced_to_locking_system','mark_as_not_synced_to_locking_system','action_email_users']
+
+    def mark_as_synced_to_locking_system(self, request, queryset):
+        queryset.update(synced_at=timezone.now())
+        self.message_user(request, ngettext(
+            '%d permission was marked as synced.',
+            '%d permissions were marked as synced.',
+            len(queryset),
+        ) % len(queryset), messages.SUCCESS)
+    mark_as_synced_to_locking_system.short_description = _("Mark selected permissions as synced to the locking system")
+
+    def mark_as_not_synced_to_locking_system(self, request, queryset):
+        queryset.update(synced_at=None)
+        self.message_user(request, ngettext(
+            'Removed mark of %d permission as synced.',
+            'Removed mark of %d permissions as synced.',
+            len(queryset),
+        ) % len(queryset), messages.SUCCESS)
+    mark_as_not_synced_to_locking_system.short_description = _("Remove mark of selected permissions as synced to the locking system")
+
+    def action_email_users(self, request, queryset):
+        emails = []
+        for permission in queryset:
+            emails.append(permission.user.get_email_notation())
+        emails = set(emails)
+        self.message_user(request,
+                          mark_safe(format_html("{} <a href='mailto:{}'>{}</a>",
+                                                _("%(num_recipients)d users in %(num_reservations)d permissions selected:") % {
+                                                    'num_recipients':  len(emails),
+                                                    'num_reservations': len(queryset)
+                                                },
+                                                join_email_list(emails),
+                                                _("Open new email")
+                          )), messages.WARNING)
+    action_email_users.short_description = _('Email users of selected permissions')
 
     def has_delete_permission(self, request, obj=None):
         return False

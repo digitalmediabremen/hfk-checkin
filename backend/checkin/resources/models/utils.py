@@ -111,8 +111,15 @@ class EmailInformation(UserWarning):
 
 from django.core.mail.message import formataddr
 
+
+def join_email_list(email_list):
+    """ Takes a list of strings (shall be valid email recipients) and returns a joined string. """
+    return ", ".join(email_list)
+
+
 def user_list_to_email_formatted_addresses(user_list):
-    return ", ".join([formataddr((u.get_display_name(), u.email)) for u in user_list])
+    """ Takes a list users.User objects and returns a joined string of email recipients. """
+    return join_email_list([formataddr((u.get_display_name(), u.email)) for u in user_list])
 
 
 def send_template_mail(recipients, template, context, attachments=None, from_address=None, reply_to_address=None, in_reply_to=None, language=settings.LANGUAGES[0][0], priority=mail.PRIORITY.high):
@@ -158,7 +165,7 @@ def send_template_mail(recipients, template, context, attachments=None, from_add
 
     translation.deactivate()
 
-    to_display = ", ".join(email.to)
+    to_display = join_email_list(email.to)
     if priority == mail.PRIORITY.now:
         warnings.warn(_("Send email to %s with subject '%s' (%s).") % (to_display, email.subject, language), EmailInformation)
     else:

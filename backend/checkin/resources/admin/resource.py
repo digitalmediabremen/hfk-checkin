@@ -7,12 +7,17 @@ from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from django.urls import reverse, path
 from django.template.response import TemplateResponse
 from django import forms
+from django.contrib import messages
 from django.contrib.admin.widgets import AutocompleteSelect
 from django.contrib.admin.options import get_content_type_for_model, unquote, capfirst, PermissionDenied, IS_POPUP_VAR
 from django.contrib.admin.options import get_permission_codename
 from checkin.tracking.models import Location as CheckinLocation
 from django.contrib.messages import add_message, WARNING
 from django.http import Http404
+from django.utils.safestring import mark_safe
+from django.utils.html import format_html
+from django.templatetags.static import static
+from ..models.utils import user_list_to_email_formatted_addresses, join_email_list
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +111,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     list_max_show_all = 1000
     filter_horizontal = ('features',)
     save_on_top = True
+    actions = ['action_email_reservation_delegates', 'action_email_access_delegates']
 
     def get_queryset(self, request):
         """
@@ -187,6 +193,38 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
             return obj.unit.slug
     get_unit_slug.short_description = _('Unit')
     get_unit_slug.admin_order_field = 'unit__slug'
+
+    def action_email_reservation_delegates(self, request, queryset):
+        emails = []
+        for resource in queryset:
+            emails.append(user_list_to_email_formatted_addresses(resource.get_reservation_delegates()))
+        emails = set(emails)
+        self.message_user(request,
+                          mark_safe(format_html("{} <a href='mailto:{}'>{}</a>",
+                                                _("%(num_recipients)d reservation delegates in %(num_reservations)d resources selected:") % {
+                                                    'num_recipients':  len(emails),
+                                                    'num_reservations': len(queryset)
+                                                },
+                                                join_email_list(emails),
+                                                _("Open new email")
+                          )), messages.WARNING)
+    action_email_reservation_delegates.short_description = _('Email reservation delegates of selected resources')
+
+    def action_email_access_delegates(self, request, queryset):
+        emails = []
+        for resource in queryset:
+            emails.append(user_list_to_email_formatted_addresses(resource.get_access_delegates()))
+        emails = set(emails)
+        self.message_user(request,
+                          mark_safe(format_html("{} <a href='mailto:{}'>{}</a>",
+                                                _("%(num_recipients)d access delegates in %(num_reservations)d resources selected:") % {
+                                                    'num_recipients':  len(emails),
+                                                    'num_reservations': len(queryset)
+                                                },
+                                                join_email_list(emails),
+                                                _("Open new email")
+                          )), messages.WARNING)
+    action_email_access_delegates.short_description = _('Email access delegates of selected resources')
 
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
