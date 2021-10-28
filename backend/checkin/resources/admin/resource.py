@@ -101,7 +101,7 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     #autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
     list_display = ('display_numbers','name','alternative_names','get_unit_slug','area','floor_number','get_people_capacity','get_reservation_tools','get_access_tools') # ,'need_manual_confirmation'
-    list_filter = (MyResourceRelationFilter, 'unit', 'reservable', 'people_capacity_default', 'access_restricted', 'features', 'type', 'groups', 'floor_number', 'need_manual_confirmation') #,'need_manual_confirmation') # 'public',
+    list_filter = ('unit', MyResourceRelationFilter, 'reservable', 'people_capacity_default', 'access_restricted', 'features', 'type', 'groups', 'floor_number', 'need_manual_confirmation') #,'need_manual_confirmation') # 'public',
     list_select_related = ('unit',)
     ordering = ('unit', 'name')
     search_fields = ('name','alternative_names','numbers','unit__name')
@@ -235,8 +235,8 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         html_out = ""
         if obj.access_restricted:
             html_out += format_html('<span title="{}" class="flag flag-yellow">{}</span>', _("Access restricted"), _("ZB"))
-        if obj.people_capacity:
-            html_out += format_html('<span title="{}" class="flag">{}: {}</span>', _("People capacity default"), _("Cap."), obj.people_capacity)
+        # if obj.people_capacity:
+        #     html_out += format_html('<span title="{}" class="flag">{}: {}</span>', _("People capacity default"), _("Cap."), obj.people_capacity)
         accesslist_link = format_html('<span class=""><a href="{}"><span class="view-icon" title="{}"></span></a></span>',
                                 reverse('admin:resources_resourceaccess_change', args=[obj.pk]),
                                 _('Open access list'))
