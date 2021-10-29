@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "../localization";
 import Title from "../components/common/Title";
-import Text from "../components/common/Text";
+import FormText from "../components/common/FormText";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import AlignContent from "../components/common/AlignContent";
@@ -23,24 +23,24 @@ const VerifyProfilePage: React.FunctionComponent<VerifyProfilePageProps> = (
         <Layout title={t("Identitätsprüfung")}>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
             <FormGroup>
-                <Text paragraph>
+                <FormText paragraph>
                     {t(
                         "Per Verordnung ist die HfK verpflichtet, den Zugang zu den Gebäuden zu kontrollieren, um das Infektionsrisiko zu minimieren."
                     )}
-                </Text>
-                <Text paragraph>
+                </FormText>
+                <FormText paragraph>
                     <b>
                         {t(
                             "Bitte zeigen Sie jetzt einen Identitätsnachweis (Lichtbildausweis) am Empfang vor"
                         )}
                         .
                     </b>
-                </Text>
-                <Text paragraph>
+                </FormText>
+                <FormText paragraph>
                     {t(
                         "Bevor ihre Identität nicht verifiziert ist, ist die Protokollierung und ein Eintritt nicht möglich."
                     )}
-                </Text>
+                </FormText>
             </FormGroup>
             <br />
             <Link href={appUrls.home} passHref>

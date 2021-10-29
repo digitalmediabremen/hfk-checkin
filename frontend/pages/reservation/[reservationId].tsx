@@ -14,7 +14,7 @@ import Reservation from "../../components/common/Reservation";
 import SubPage from "../../components/common/SubPage";
 import SubPageBar from "../../components/common/SubPageBar";
 import Subtitle from "../../components/common/Subtitle";
-import Text from "../../components/common/Text";
+import FormText from "../../components/common/FormText";
 import Title from "../../components/common/Title";
 import { AdditionalRequestSubPageProps } from "../../components/getin/subpages/AdditionalRequestSubPage";
 import { createDynamicPage } from "../../components/getin/subpages/SubpageCollection";
@@ -131,9 +131,9 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                         {t("Deine Anfrage ist eingegangen.")}
                                     </Subtitle>
                                 </>
-                                <Text paragraph>
+                                <FormText paragraph>
                                     {reservation?.state_verbose}
-                                </Text>
+                                </FormText>
                             </>
                         )}
 

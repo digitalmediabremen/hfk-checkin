@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Subtitle from "../components/common/Subtitle";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
-import Text from "../components/common/Text";
+import FormText from "../components/common/FormText";
 import { useTranslation } from "../localization";
 import Notice from "../components/common/Notice";
 import { useAppState } from "../components/common/AppStateProvider";
@@ -38,27 +38,27 @@ const NewProfilePage: NextPage = () => {
         <Layout title={t("Anmelden")}>
             <Title>{t("Anmelden")}</Title>
             <FormGroup>
-                <Text paragraph>
+                <FormText paragraph>
                     {t(
                         "Die konsequente Einhaltung des HfK-Hygienekonzepts ist die Voraussetzung für künftige Öffnungsschritte der HfK."
                     )}
-                </Text>
+                </FormText>
                 {featureMap.checkin && (
-                    <Text paragraph>
+                    <FormText paragraph>
                         {t(
                             "Bitte verwende Checkin zur Selbst-Dokumentation, denn nur die digitale  Dokumentation ermöglicht, dass die Corona-Beauftragte dich schnell informieren kann, wenn in deinem Umfeld  ein konkretes Infektionsrisiko besteht.",
                             {},
                             "please-use-checkin"
                         )}
-                    </Text>
+                    </FormText>
                 )}
                 {featureMap.getin && (
                     <>
-                        <Text paragraph>
+                        <FormText paragraph>
                             {t(
                                 "Aktuell ist die Nutzung von Getin nur mit einem HfK-Account möglich."
                             )}
-                        </Text>
+                        </FormText>
                         <Notice
                             bottomSpacing={4}
                             error

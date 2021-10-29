@@ -24,7 +24,7 @@ import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 import ResourceListItem from "../../common/ResourceListItem";
 import SectionTitle from "../../common/SectionTitle";
-import Text from "../../common/Text";
+import FormText from "../../common/FormText";
 
 interface SetRoomSubpageProps {}
 

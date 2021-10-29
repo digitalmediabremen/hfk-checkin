@@ -1,6 +1,6 @@
 import * as React from "react";
 import Title from "../components/common/Title";
-import Text from "../components/common/Text";
+import FormText from "../components/common/FormText";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import { useRouter } from "next/router";
@@ -15,9 +15,9 @@ const IntroPage: React.FunctionComponent<IntroPageProps> = (props) => {
         <Layout>
             <FormGroup>
                 <Title>Hellow</Title>
-                <Text paragraph>
+                <FormText paragraph>
                     Hier wird dir die App vorgestellt.
-                </Text>
+                </FormText>
             </FormGroup>
             <Button outline onClick={() => router.push(appUrls.createProfile)}>
                 Los gehts
