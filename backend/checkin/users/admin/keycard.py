@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile
+from ..models import Profile
 from django.utils import timezone
 from django.utils.translation import gettext, ngettext, gettext_lazy as _
 from guardian.shortcuts import get_user_obj_perms_model
@@ -18,7 +18,7 @@ UserPermission = get_user_obj_perms_model()
 class Keycard(Profile):
 
     class Meta:
-        proxy = True
+        proxy = True # if not proxy anymore: move to separate app!
         verbose_name = _("Keycard")
         verbose_name_plural = _("Keycards")
         default_permissions = ('view','change')
