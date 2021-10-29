@@ -6,6 +6,7 @@ from django.utils.translation import ngettext, gettext_lazy as _
 from django.utils.html import format_html
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+from ..models.utils import join_email_list
 from guardian.shortcuts import get_user_obj_perms_model
 from .list_filters import UserFilter
 from ..models.resource import Resource
@@ -13,7 +14,6 @@ from admin_auto_filters.filters import AutocompleteFilter
 from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Q
-from ..models.utils import join_email_list
 from checkin.users.models import Profile
 
 UserPermission = get_user_obj_perms_model()

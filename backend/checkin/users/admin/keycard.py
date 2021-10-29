@@ -74,8 +74,8 @@ class KeycardAdmin(admin.ModelAdmin):
 
     def action_email_users(self, request, queryset):
         emails = []
-        for permission in queryset:
-            emails.append(permission.user.get_email_notation())
+        for profile in queryset:
+            emails.append(profile.user.get_email_notation())
         emails = set(emails)
         self.message_user(request,
                           mark_safe(format_html("{} <a href='mailto:{}'>{}</a>",

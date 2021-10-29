@@ -4,7 +4,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-django-extensions = "*"
 django-debug-toolbar = "*"
 pytest = "==6.2.2"
 
@@ -56,7 +55,6 @@ bleach = "==3.3.0"
 django-admin-rangefilter = "==0.6.4"
 django-autocomplete-light = "==3.8.1"
 django-dirtyfields = "==1.4.1"
-django-extensions = "==3.0.9"
 django-filter = "==2.4.0"
 django-guardian = "==2.3.0"
 django-modeltranslation = "==0.16.2"
