@@ -3,3 +3,4 @@
 
 from checkin.users.api.user import *
 from checkin.users.api.base import all_views
+from checkin.users.api.keycard import KeycardViewSet
