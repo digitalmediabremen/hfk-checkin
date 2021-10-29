@@ -10,6 +10,7 @@ export default interface Resource {
     readonly unit: Unit;
     readonly access_restricted: boolean;
     readonly access_allowed_to_current_user: boolean;
+    readonly access_delegates: string[] | null; 
     readonly capacity: number | null;
     readonly reservable_max_days_in_advance: number | null;
     readonly reservable_min_days_in_advance: number | null;

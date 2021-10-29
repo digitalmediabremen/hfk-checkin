@@ -13,7 +13,7 @@ import "../styles/globals.css";
 
 init();
 
-const MyApp = ({ Component }: AppProps) => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
     return (
         <>
             <Head>
@@ -28,7 +28,7 @@ const MyApp = ({ Component }: AppProps) => {
                     {({ appState }) => (
                         <LocaleProvider locale={appState.currentLocale}>
                             <AppWrapper>
-                                <Component />
+                                <Component {...pageProps} />
                             </AppWrapper>
                         </LocaleProvider>
                     )}

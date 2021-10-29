@@ -8,7 +8,7 @@ interface TextProps {
     bottomSpacing?: number
 }
 
-const Text: React.FunctionComponent<TextProps> = ({children, paragraph, secondary, bottomSpacing}) => {
+const FormText: React.FunctionComponent<TextProps> = ({children, paragraph, secondary, bottomSpacing}) => {
     const theme = useTheme();
     const Element = paragraph ? "p" : "span";
     
@@ -32,4 +32,4 @@ const Text: React.FunctionComponent<TextProps> = ({children, paragraph, secondar
     </>;
 };
 
-export default Text;
+export default FormText;

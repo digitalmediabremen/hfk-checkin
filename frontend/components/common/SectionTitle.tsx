@@ -25,6 +25,7 @@ const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
                     font-size: 0.75rem;
                     line-height: 1.25rem;
                     font-weight: normal;
+                    // display: inline;
                 }
 
                 h3.margin-bottom {

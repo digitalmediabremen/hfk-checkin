@@ -4,6 +4,7 @@ import InfiniteLoader from "react-window-infinite-loader";
 import css from "styled-jsx/css";
 import { empty, notEmpty } from "../../src/util/TypeUtil";
 import useTheme from "../../src/hooks/useTheme";
+import DynamicList from "./DynamicList";
 interface LazyListProps<T> {
     // Are we currently loading a page of items?
     // (This may be an in-flight flag in your Redux store for example.)
@@ -63,25 +64,6 @@ const LazyList = <T extends {}>({
     // Every row is loaded except for our loading indicator row.
     const isItemLoaded = (index: number) => notEmpty(items[index]);
 
-    // Render an item or a loading indicator.
-    const Item = ({
-        index,
-        style,
-    }: {
-        index: number;
-        style: React.CSSProperties;
-    }) => {
-        let content;
-        const item = items[index];
-        if (empty(item)) {
-            content = React.cloneElement(loadingComponent, { index });
-        } else {
-            content = children(item, index === itemCount - 1);
-        }
-
-        return <div style={style}>{content}</div>;
-    };
-
     return (
         <>
             <InfiniteLoader
@@ -91,18 +73,17 @@ const LazyList = <T extends {}>({
                 minimumBatchSize={10}
             >
                 {({ onItemsRendered, ref }) => (
-                    <List
-                        innerElementType="ul"
-                        className={className}
+                    <DynamicList
+                        items={items}
                         height={height}
                         itemCount={itemCount}
                         itemSize={itemHeight}
                         onItemsRendered={onItemsRendered}
+                        loadingComponent={loadingComponent}
                         ref={ref}
-                        width="100%"
                     >
-                        {Item}
-                    </List>
+                        {children}
+                    </DynamicList>
                 )}
             </InfiniteLoader>
             {styles}

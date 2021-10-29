@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
+import useResourceListItemHeight from "../../src/hooks/useResourceListItemHeight";
 import useResources from "../../src/hooks/useResources";
 import useTheme from "../../src/hooks/useTheme";
 import Resource from "../../src/model/api/Resource";
@@ -48,9 +49,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
         return null;
     };
 
-    const listItemHeight =
-        theme.spacing(calculateMinHeightSpacing(RESOURCE_LIST_ITEM_DENSITY)) +
-        1;
+    const listItemHeight = useResourceListItemHeight();
 
     if (!unitSlug) return null;
     return (
