@@ -20,6 +20,7 @@ import NewFormGroup from "../components/common/NewFormGroup";
 import Notice from "../components/common/Notice";
 import SectionTitle from "../components/common/SectionTitle";
 import SubPageBar from "../components/common/SubPageBar";
+import Key from "../components/icons/Key";
 import { appUrls } from "../config";
 import features from "../features";
 import { useTranslation } from "../localization";
@@ -140,6 +141,7 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
     const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
 
     const keycardState = (() => {
+        // return "requested"
         if (initialProfile?.keycard_number) return "added";
         else if (initialProfile?.keycard_requested_at_at) return "requested";
         else if (!initialProfile?.keycard_number) return "empty";
@@ -315,12 +317,26 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
 
                         <FormElement
                             labelIcon={<CreditCard />}
-                            value={initialProfile?.keycard_number}
+                            value={[initialProfile?.keycard_number]}
                             density="super-narrow"
                             noOutline
                             noPadding
-                            bottomSpacing={1}
+                            bottomSpacing={2}
+                            maxRows={3}
                         />
+                        <Notice
+                            error
+                            bottomSpacing={2}
+                            title={t("Berechtigungen hinzugefügt")}
+                        >
+                            {t(
+                                "Am {date-synced} wurden zuletzt Schliessberechtigungen auf deine Karte übertragen. Falls noch nicht geschehen, kannst du deine Karte jetzt im Raum {location} abholen.",
+                                {
+                                    "date-synced": "24.12.1993",
+                                    location: "2.08.030 (Speicher XI)",
+                                }
+                            )}
+                        </Notice>
 
                         <Notice bottomSpacing={2}>
                             {t(

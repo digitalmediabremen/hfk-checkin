@@ -5,16 +5,20 @@ import {
     getResourceRequest,
     getResourcesRequest,
 } from "../../../../../components/api/ApiService";
+import Divider from "../../../../../components/common/Divider";
 import FormElement from "../../../../../components/common/FormElement";
+import FormGroup from "../../../../../components/common/FormGroup";
+import FormText from "../../../../../components/common/FormText";
 import Layout from "../../../../../components/common/Layout";
+import ResourceAccessSection from "../../../../../components/common/ResourceAccessSection";
 import SectionTitle from "../../../../../components/common/SectionTitle";
 import SubPageBar from "../../../../../components/common/SubPageBar";
-import Title from "../../../../../components/common/Title";
 import { appUrls } from "../../../../../config";
 import { useTranslation } from "../../../../../localization";
 import useTheme from "../../../../../src/hooks/useTheme";
 import Resource from "../../../../../src/model/api/Resource";
 import { useResourceFormValuePresenter } from "../../../../../src/util/ReservationPresenterUtil";
+import { notEmpty } from "../../../../../src/util/TypeUtil";
 
 type ResourcePageProps = {
     resource: Resource;
@@ -34,6 +38,8 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
         router.push(url, as);
     };
 
+    const sectionSpacing = 0.5;
+
     return (
         <>
             <style jsx>{``}</style>
@@ -52,42 +58,65 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
                     noOutline
                     noPadding
                 />
-                {delegatesList && (
-                    <>
-                        <SectionTitle noMarginBottom>
-                            {t("Verantwortliche")}
-                        </SectionTitle>
-                        <FormText
-                            bottomSpacing={2}
-                        >{delegatesList</FormText>
-                    </>
-                )}
 
+                <FormGroup sameLine>
+                    {resource.capacity && (
+                        <>
+                            <SectionTitle bottomSpacing={sectionSpacing}>
+                                {t("Kapazität")}
+                            </SectionTitle>
+                            <FormText bottomSpacing={2}>
+                                {t("{capacity} Personen", {
+                                    capacity: `${resource.capacity}`,
+                                })}
+                            </FormText>
+                        </>
+                    )}
+
+                    {resource.area && (
+                        <>
+                            <SectionTitle bottomSpacing={sectionSpacing}>
+                                {t("Fläche")}
+                            </SectionTitle>
+                            <FormText bottomSpacing={2}>
+                                {t("{area}m²", {
+                                    area: `${resource.area}`,
+                                })}
+                            </FormText>
+                        </>
+                    )}
+
+                    {notEmpty(resource.floor_number) && (
+                        <>
+                            <SectionTitle bottomSpacing={sectionSpacing}>
+                                {t("Etage")}
+                            </SectionTitle>
+                            <FormText bottomSpacing={2}>
+                                {resource.floor_number + 1}
+                            </FormText>
+                        </>
+                    )}
+                </FormGroup>
                 {featureList && (
                     <>
-                        <SectionTitle bottomSpacing={0.5}>
+                        <SectionTitle bottomSpacing={sectionSpacing}>
                             {t("Ausstattung")}
                         </SectionTitle>
-                        <FormElement
-                            density="super-narrow"
-                            noOutline
-                            noPadding
-                            maxRows={2}
-                            value={[featureList]}
-                            bottomSpacing={2}
-                        />
+                        <FormText bottomSpacing={2}>{featureList}</FormText>
                     </>
                 )}
-
-                <SectionTitle noMarginBottom>
-                    {t("Zugang")}
-                </SectionTitle>
-                <FormElement
-                    density="super-narrow"
-                    noOutline
-                    noPadding
-                    value={[delegatesList]}
-                    bottomSpacing={2}
+                {delegatesList && (
+                    <>
+                        <SectionTitle bottomSpacing={sectionSpacing}>
+                            {t("Verantwortliche")}
+                        </SectionTitle>
+                        <FormText bottomSpacing={2}>{delegatesList}</FormText>
+                    </>
+                )}
+                <Divider />
+                <ResourceAccessSection
+                    resource={resource}
+                    sectionSpacing={sectionSpacing}
                 />
             </Layout>
         </>

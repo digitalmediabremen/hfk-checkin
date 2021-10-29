@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 import useTheme from "../../src/hooks/useTheme";
+import { empty } from "../../src/util/TypeUtil";
 interface SectionTitleProps {
     center?: boolean;
     noMarginBottom?: boolean;
@@ -11,7 +12,7 @@ const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
     children,
     center,
     noMarginBottom,
-    bottomSpacing
+    bottomSpacing,
 }) => {
     const theme = useTheme();
     return (
@@ -29,7 +30,9 @@ const SectionTitle: React.FunctionComponent<SectionTitleProps> = ({
                 }
 
                 h3.margin-bottom {
-                    margin-bottom: ${theme.spacing(bottomSpacing || 2)}px;
+                    margin-bottom: ${theme.spacing(
+                        empty(bottomSpacing) ? 2 : bottomSpacing
+                    )}px;
                 }
 
                 h3.center {

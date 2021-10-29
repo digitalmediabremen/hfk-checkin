@@ -5,7 +5,7 @@ import { empty } from "../../src/util/TypeUtil";
 interface TextProps {
     paragraph?: true;
     secondary?: boolean;
-    bottomSpacing?: number
+    bottomSpacing?: number;
 }
 
 const FormText: React.FunctionComponent<TextProps> = ({children, paragraph, secondary, bottomSpacing}) => {
