@@ -217,8 +217,11 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
 
 
     def get_access_delegates(self, obj):
-        return None
-        users_names = [u.get_full_name() for u in obj.get_reservation_delegates()]
+        users_names = []
+        for u in obj.get_reservation_delegates(include_unit=False):
+            n = u.get_full_name()
+            if n:
+                users_names.append(n)
         return users_names
 
 
@@ -801,7 +804,10 @@ class ResourceCacheMixin:
 class ResourceListViewSet(mixins.ListModelMixin,
                           viewsets.GenericViewSet, ResourceCacheMixin):
     #queryset = Resource.objects.select_related('generic_terms', 'payment_terms', 'unit', 'type', 'reservation_metadata_set')
-    queryset = Resource.objects.filter(unit__public=True).select_related('unit', 'type')
+    queryset = Resource.objects.filter(unit__public=True)\
+        .select_related('unit', 'type')\
+        .prefetch_permissions_with_users()\
+        .prefetch_features()
     # queryset = queryset.prefetch_related('favorited_by', 'resource_equipment', 'resource_equipment__equipment',
     #                                      'purposes', 'images', 'purposes', 'groups')
     queryset = queryset.prefetch_related('groups')

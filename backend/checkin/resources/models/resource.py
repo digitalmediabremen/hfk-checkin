@@ -45,6 +45,8 @@ from .permissions import RESOURCE_GROUP_PERMISSIONS, RESOURCE_PERMISSIONS
 #from ..enums import UnitAuthorizationLevel, UnitGroupAuthorizationLevel
 from .mixins import AbstractReservableModel, AbstractAccessRestrictedModel
 from .permissions import NoSuperuserObjectPermissionChecker
+from .objectpermissions import *
+from django.db.models import Prefetch
 
 
 # TODO remove UNIT_ROLE_PERMISSIONS
@@ -181,6 +183,20 @@ class ResourceQuerySet(models.QuerySet):
         ))
         return q
 
+    def prefetch_permissions_with_users(self, include_group=False):
+        q = self.prefetch_related(
+            Prefetch('timeenabledresourceuserobjectpermission_set',
+                     queryset=TimeEnabledResourceUserObjectPermission.objects.select_related('user','permission')
+                     ))
+        if include_group:
+            q = q.prefetch_related(
+                Prefetch('timeenabledresourcegroupobjectpermission_set',
+                         queryset=TimeEnabledResourceGroupObjectPermission.objects.select_related('group','permission')
+                         ))
+        return q
+
+    def prefetch_features(self):
+        return self.prefetch_related('features')
 
 # FIXME not in use
 class Attachment(ModifiableModel, UUIDModelMixin):

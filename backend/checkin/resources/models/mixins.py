@@ -6,16 +6,21 @@ from .base import AUTH_USER_MODEL
 import logging
 from guardian.shortcuts import get_users_with_perms
 from .permissions import prefix_resource_perm_codenames, prefix_unit_perm_codenames
+from checkin.users.models import User, Group
 
 logger = logging.getLogger(__name__)
 
 
-def get_users_with_resource_or_unit_perms_for_resource(resource, resource_perms=[], unit_perms=[]):
+def get_users_with_resource_or_unit_perms_for_resource(resource, resource_perms=[], unit_perms=[], include_unit=True):
     users = []
-    users += get_users_with_perms(resource, only_with_perms_in=resource_perms)
-    if len(users) < 1 and hasattr(resource, 'unit'):
-        # only use "unit" permission if object has no explicit permission
-        users += get_users_with_perms(resource.unit, only_with_perms_in=unit_perms)
+    #users += get_users_with_perms(resource, only_with_perms_in=resource_perms)
+    resource_users_perms = resource.timeenabledresourceuserobjectpermission_set.all()#.filter(permission__codename__in=resource_perms).select_related('user').only('user')
+    users += [p.user for p in filter(lambda x: x.permission.codename in resource_perms, resource_users_perms)]
+    if include_unit and len(users) < 1 and hasattr(resource, 'unit'):
+    #     # only use "unit" permission if object has no explicit permission
+    #     #users += get_users_with_perms(resource.unit, only_with_perms_in=unit_perms)
+        unit_user_perms = resource.unit.timeenabledunituserobjectpermission_set.all()#.filter(permission__codename__in=unit_perms).select_related('user').only('user')
+        users += [p.user for p in filter(lambda x: x.permission.codename in unit_perms, unit_user_perms)]
     return users
 
 
@@ -85,7 +90,7 @@ class AbstractReservableModel(models.Model):
     def get_reservation_delegates_display(self):
         return ", ".join([d.get_display_name() for d in self.get_reservation_delegates()])
 
-    def get_reservation_delegates(self):
+    def get_reservation_delegates(self, include_unit=True):
         """
         Returns list of Users delegated to manage reservations on this resource.
         If resource has none, it will use reservation_delegates of Unit.
@@ -95,7 +100,8 @@ class AbstractReservableModel(models.Model):
         base_perms = ['can_modify_reservations', 'can_modify_reservations_without_notifications']
         return get_users_with_resource_or_unit_perms_for_resource(self,
             resource_perms=prefix_resource_perm_codenames(base_perms),
-            unit_perms=prefix_unit_perm_codenames(base_perms)
+            unit_perms=prefix_unit_perm_codenames(base_perms),
+            include_unit=include_unit
         )
 
     def get_reservation_delegates_to_notify(self):
@@ -143,7 +149,7 @@ class AbstractAccessRestrictedModel(models.Model):
     def get_access_delegates_display(self):
         return ", ".join([d.get_display_name() for d in self.get_access_delegates()])
 
-    def get_access_delegates(self):
+    def get_access_delegates(self, include_unit=True):
         """
         Returns list of Users delegated to manage reservations on this resource.
         If resource has none, it will use reservation_delegates of Unit.
@@ -154,7 +160,8 @@ class AbstractAccessRestrictedModel(models.Model):
         return get_users_with_resource_or_unit_perms_for_resource(
             self,
             resource_perms=prefix_resource_perm_codenames(base_perms),
-            unit_perms=prefix_unit_perm_codenames(base_perms)
+            unit_perms=prefix_unit_perm_codenames(base_perms),
+            include_unit=include_unit
         )
 
     def get_access_delegates_to_notify(self):
