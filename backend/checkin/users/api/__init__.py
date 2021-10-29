@@ -2,3 +2,4 @@
 # otherwise tests will not work
 
 from checkin.users.api.user import *
+from checkin.users.api.base import all_views
