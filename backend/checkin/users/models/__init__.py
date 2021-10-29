@@ -6,3 +6,4 @@ from checkin.users.models.userprofile import (
 )
 
 from checkin.users.models.keycard import Keycard
+from checkin.users.models.permissions import *

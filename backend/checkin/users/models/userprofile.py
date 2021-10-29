@@ -412,22 +412,3 @@ def create_profile_from_user(sender, instance, created, **kwargs):
         # this is used when signing up trough an auth-provider
         Profile.objects.create(user=instance, email=instance.email, first_name=instance.first_name, last_name=instance.last_name)
 
-
-from guardian.models import UserObjectPermissionAbstract, GroupObjectPermissionAbstract
-
-
-class TimeEnabledAbstract(models.Model):
-    created_at = models.DateTimeField(verbose_name=_('Time of creation'), auto_now_add=True, editable=False)
-    modified_at = models.DateTimeField(verbose_name=_('Time of modification'), auto_now=True, editable=False)
-    synced_at = models.DateTimeField(verbose_name=_('Time of sync'), editable=False, null=True, blank=True)
-
-    class Meta:
-        abstract = True
-
-
-class TimeEnabledUserObjectPermission(TimeEnabledAbstract, UserObjectPermissionAbstract):
-    pass
-
-
-class TimeEnabledGroupObjectPermission(TimeEnabledAbstract, GroupObjectPermissionAbstract):
-    pass

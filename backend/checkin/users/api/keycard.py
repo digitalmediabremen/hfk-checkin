@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAu
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from rest_framework.utils import html, model_meta, representation
-from ..models import *
+from ..models import Keycard
 from rest_framework.exceptions import PermissionDenied, NotFound, ValidationError
 from django.db.utils import IntegrityError
 from django.utils.translation import gettext_lazy as _

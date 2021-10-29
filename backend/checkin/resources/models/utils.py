@@ -328,3 +328,5 @@ def build_ical_feed_url(ical_token, request):
 
     url = reverse('ical-feed', kwargs={'ical_token': ical_token}, request=request)
     return url[:url.find('?')]
+
+

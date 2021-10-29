@@ -20,6 +20,7 @@ from checkin.resources.models.unit import Unit
 #from checkin.resources.models.unit_group import UnitGroup, UnitGroupAuthorization
 
 from checkin.resources.models.attendance import Attendance
+from checkin.resources.models.objectpermissions import TimeEnabledResourceUserObjectPermission
 
 # __all__ = [
 #     'AccessibilityValue',
