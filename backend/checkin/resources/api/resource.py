@@ -217,6 +217,7 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
 
 
     def get_access_delegates(self, obj):
+        return None
         users_names = [u.get_full_name() for u in obj.get_reservation_delegates()]
         return users_names
 
