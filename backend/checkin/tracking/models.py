@@ -359,6 +359,25 @@ class LimitedCheckinManager(models.Manager):
         return qs
 
 
+class LimitedPaperLogManager(models.Manager):
+
+    def get_queryset(self):
+        now = timezone.now()
+        lookback_start = now - CHECKIN_RETENTION_TIME - CHECKIN_LIFETIME
+        qs = CheckinQuerySet(self.model, using=self._db)
+        qs = qs.filter(date__gte=lookback_start)
+        return qs
+
+
+class PaperLogQuerySet(models.QuerySet):
+
+    def not_older_then(self, oldest=LOAD_LOOKBACK_TIME):
+        return self.filter(date__gte=timezone.now()-oldest)
+
+    def older_then(self, timedelta=LOAD_LOOKBACK_TIME):
+        return self.filter(date__lt=timezone.now()-timedelta)
+
+
 class Origin(models.TextChoices):
     QR_SCAN = 'QR_SCAN', _("Scan eines QR-Codes")
     USER_MANUAL = 'USER_MANUAL', _("Manuelle Eingabe durch Nutzer")
@@ -447,6 +466,11 @@ class PaperLog(models.Model):
     class Meta:
         verbose_name = _("Papierprotokoll")
         verbose_name_plural = _("Papierprotokolle")
+
+    # NOTICE: the order of managers is important
+    all = PaperLogQuerySet.as_manager()  # this needs to come first, so the manger uses is not LimitedPaperLogManager.
+    objects = LimitedPaperLogManager().from_queryset(PaperLogQuerySet)()
+    default_manager = objects
 
     def __str__(self):
         return ugettext("Besuchsdokumentation von %s am %s" % (self.profile.get_full_name(), self.date))

@@ -1,7 +1,7 @@
 # TODO: command to remove old (3 weeks old) checkins for data protection
 from datetime import timedelta
 from django.core.management.base import BaseCommand, CommandError
-from checkin.tracking.models import Checkin, CHECKIN_RETENTION_TIME, Profile
+from checkin.tracking.models import Checkin, CHECKIN_RETENTION_TIME, Profile, PaperLog
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
@@ -24,7 +24,7 @@ def get_anonymous_user():
     try:
         return USER_MODEL.objects.get(pk=ANONYMOUS_USER_PK)
     except USER_MODEL.DoesNotExist:
-        return USER_MODEL.objects.create(**anonymous_user)
+        return USER_MODEL.objects.get_or_create(**anonymous_user)
 
 
 def get_anonymous_profile():
@@ -54,13 +54,20 @@ def get_anonymous_profile():
 
 
 class Command(BaseCommand):
-    help = 'Clean up recorded checkins from DB older then CHECKIN_RETENTION_TIME %s' % CHECKIN_RETENTION_TIME
+    help = 'Clean up recorded checkins and paper logs from DB older then CHECKIN_RETENTION_TIME %s' % CHECKIN_RETENTION_TIME
 
     def add_arguments(self, parser):
         parser.add_argument('--no-input', action="store_true", help='Skip confirmation.')
 
     def handle(self, *args, **options):
         self.stdout.write(self.help)
+
+        self.anonymize_checkin_objects(*args, **options)
+        self.delete_paperlog_objects(*args, **options)
+
+    def anonymize_checkin_objects(self, *args, **options):
+        # anonymize Checkin objects
+
         # self.stdout.write('CHECKIN_RETENTION_TIME: %s' % CHECKIN_RETENTION_TIME)
         qs = Checkin.all.older_then(CHECKIN_RETENTION_TIME)
         update_kwargs = {
@@ -90,3 +97,32 @@ class Command(BaseCommand):
 
         row_num = qs.update(**update_kwargs)
         self.stdout.write('Successfully anonymized %i objects.' % row_num)
+
+    def delete_paperlog_objects(self, *args, **options):
+        # delete PaperLog objects (!)
+
+        qs = PaperLog.all.older_then(CHECKIN_RETENTION_TIME)
+
+        if qs.exists():
+            count = qs.count()
+        else:
+            self.stdout.write('No objects found.')
+            return
+
+        if options['no_input']:
+            pass
+        else:
+            confirm = input('You are about to permanently delete %i paperlog records from your database. Proceed? (Y/n) ' % count)
+            while 1:
+                if confirm not in ('Y', 'n', 'yes', 'no'):
+                    confirm = input('Please enter either "yes" or "no": ')
+                    continue
+                if confirm in ('Y', 'yes'):
+                    break
+                else:
+                    self.stdout.write('Aborted.')
+                    return
+
+        row_num, deleted_dict = qs.delete()
+        self.stdout.write('Successfully deleted %i objects.' % row_num)
+
