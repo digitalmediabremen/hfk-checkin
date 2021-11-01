@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-09 18:26+0200\n"
+"POT-Creation-Date: 2021-11-01 15:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -675,7 +675,9 @@ msgstr "Erstellung und Änderungen"
 #, python-format
 msgid ""
 "%(num_recipients)d organizers in %(num_reservations)d reservations selected:"
-msgstr "%(num_recipients)d Nutzer in %(num_reservations)d Reservierung(en) ausgewählt:"
+msgstr ""
+"%(num_recipients)d Nutzer in %(num_reservations)d Reservierung(en) "
+"ausgewählt:"
 
 #: checkin/resources/admin/reservation.py:198
 msgid "Open new email"
@@ -841,7 +843,6 @@ msgid "Changes"
 msgstr "Änderungen"
 
 #: checkin/resources/admin/resource.py:183
-#: checkin/resources/admin/resource.py:239
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:30
 #: checkin/resources/templates/admin/resources/resource_calendar.html:22
 msgid "Cap."
@@ -876,7 +877,7 @@ msgstr "Nicht Reservierbar"
 
 #: checkin/resources/admin/resource.py:213
 msgid "disabled"
-msgstr ""
+msgstr "versteckt"
 
 #: checkin/resources/admin/resource.py:217
 msgid "Manual confirmation"
@@ -906,10 +907,6 @@ msgstr "Eingeschränkter Zugang"
 #: checkin/resources/admin/resource.py:237
 msgid "ZB"
 msgstr "ZB"
-
-#: checkin/resources/admin/resource.py:239
-msgid "People capacity default"
-msgstr "Standardpersonenkapazizät"
 
 #: checkin/resources/admin/resource.py:242
 msgid "Open access list"
@@ -2812,6 +2809,9 @@ msgstr "Kann persönliche Daten ändern"
 #: checkin/users/models.py:409
 msgid "Time of sync"
 msgstr "Zeitpunkt der Übertragung"
+
+#~ msgid "People capacity default"
+#~ msgstr "Standardpersonenkapazizät"
 
 #~ msgid "Active Capacity"
 #~ msgstr "Gültige Kapazität"
