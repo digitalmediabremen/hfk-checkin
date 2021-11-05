@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-05 17:23+0100\n"
+"POT-Creation-Date: 2021-11-05 18:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -301,7 +301,7 @@ msgstr "Zugangsberechtigung bei zuständigen Personen angefragt"
 
 #: checkin/resources/admin/list_filters.py:10
 #: checkin/resources/admin/reception.py:33
-#: checkin/resources/admin/reception.py:49
+#: checkin/resources/admin/reception.py:50
 #: checkin/resources/models/resource.py:108
 #: checkin/resources/models/resource.py:313
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:28
@@ -311,7 +311,7 @@ msgstr "Raum"
 
 #: checkin/resources/admin/list_filters.py:15
 #: checkin/resources/admin/reception.py:29
-#: checkin/resources/admin/reception.py:45
+#: checkin/resources/admin/reception.py:46
 #: checkin/resources/admin/reservation.py:104
 #: checkin/resources/admin/reservation.py:290
 #: checkin/resources/models/reservation.py:206
@@ -369,7 +369,7 @@ msgid "cancelled"
 msgstr "storniert"
 
 #: checkin/resources/admin/list_filters.py:82
-#: checkin/resources/admin/reception.py:142
+#: checkin/resources/admin/reception.py:143
 #: checkin/resources/admin/reservation.py:106
 #: checkin/resources/admin/reservation.py:318
 #: checkin/resources/models/reservation.py:205
@@ -446,7 +446,7 @@ msgstr "Ressource"
 
 #: checkin/resources/admin/permission.py:41
 #: checkin/resources/admin/permission.py:243 checkin/users/admin/keycard.py:21
-#: checkin/users/models/userprofile.py:301
+#: checkin/users/models/userprofile.py:302
 msgid "Keycard number"
 msgstr "Schließkartennummer"
 
@@ -530,8 +530,8 @@ msgstr ""
 #: checkin/resources/admin/reservation.py:198
 #: checkin/resources/admin/resource.py:210
 #: checkin/resources/admin/resource.py:226 checkin/users/admin/keycard.py:86
-#: checkin/users/admin/userprofile.py:113
-#: checkin/users/admin/userprofile.py:351
+#: checkin/users/admin/userprofile.py:114
+#: checkin/users/admin/userprofile.py:357
 msgid "Open new email"
 msgstr "Neue E-Mail an Nutzer öffnen"
 
@@ -549,12 +549,12 @@ msgid "Send email"
 msgstr "E-Mail senden"
 
 #: checkin/resources/admin/permission.py:227
-#: checkin/resources/admin/reception.py:110
+#: checkin/resources/admin/reception.py:111
 msgid "First name"
 msgstr "Vorname"
 
 #: checkin/resources/admin/permission.py:232
-#: checkin/resources/admin/reception.py:115
+#: checkin/resources/admin/reception.py:116
 msgid "Last name"
 msgstr "Nachname"
 
@@ -623,47 +623,47 @@ msgstr "Zuständigkeit für Anmeldung (externer) Teilnehmer"
 msgid "(External) user confirmation delegates"
 msgstr "Zuständigkeiten für Anmeldung (externer) Teilnehmer"
 
-#: checkin/resources/admin/reception.py:53
+#: checkin/resources/admin/reception.py:54
 #: checkin/resources/models/attendance.py:50
-#: checkin/users/models/userprofile.py:303
+#: checkin/users/models/userprofile.py:304
 msgid "External"
 msgstr "Extern"
 
-#: checkin/resources/admin/reception.py:66
+#: checkin/resources/admin/reception.py:67
 msgid "Attendance record"
 msgstr "Anwesenheitsdokuemtation"
 
-#: checkin/resources/admin/reception.py:67
+#: checkin/resources/admin/reception.py:68
 msgid "Attendance records"
 msgstr "Anwesenheitsdokuemtationen"
 
-#: checkin/resources/admin/reception.py:100
+#: checkin/resources/admin/reception.py:101
 #: checkin/resources/admin/reservation.py:323
 msgid "Timespan"
 msgstr "Zeitraum"
 
-#: checkin/resources/admin/reception.py:105
+#: checkin/resources/admin/reception.py:106
 #: checkin/tracking/admin_list_filters.py:6
-#: checkin/users/models/userprofile.py:289
+#: checkin/users/models/userprofile.py:290
 msgid "User"
 msgstr "Nutzer"
 
-#: checkin/resources/admin/reception.py:120
+#: checkin/resources/admin/reception.py:121
 msgid "Begin"
 msgstr "Anfang"
 
-#: checkin/resources/admin/reception.py:126
+#: checkin/resources/admin/reception.py:127
 msgid "End"
 msgstr "Ende"
 
-#: checkin/resources/admin/reception.py:137
-#: checkin/resources/admin/reception.py:146
+#: checkin/resources/admin/reception.py:138
+#: checkin/resources/admin/reception.py:147
 #: checkin/resources/models/attendance.py:27
 #: checkin/resources/models/reservation.py:211
 msgid "Comment"
 msgstr "Bemerkung"
 
-#: checkin/resources/admin/reception.py:161
+#: checkin/resources/admin/reception.py:162
 #: checkin/resources/admin/resource.py:85
 #: checkin/resources/admin/resource.py:267
 #: checkin/resources/models/attendance.py:24
@@ -671,19 +671,19 @@ msgstr "Bemerkung"
 msgid "Reservation"
 msgstr "Reservierung"
 
-#: checkin/resources/admin/reception.py:211
+#: checkin/resources/admin/reception.py:212
 msgid "Record enter"
 msgstr "Eingang erfassen"
 
-#: checkin/resources/admin/reception.py:212
+#: checkin/resources/admin/reception.py:213
 msgid "Enter"
 msgstr "Eingang"
 
-#: checkin/resources/admin/reception.py:216
+#: checkin/resources/admin/reception.py:217
 msgid "Record leave"
 msgstr "Ausgang erfassen"
 
-#: checkin/resources/admin/reception.py:217
+#: checkin/resources/admin/reception.py:218
 msgid "Leave"
 msgstr "Ausgang"
 
@@ -1109,7 +1109,7 @@ msgstr "Bestellung"
 #: checkin/resources/models/accessibility.py:57
 #: checkin/resources/models/accessibility.py:84
 #: checkin/resources/models/accessibility.py:110
-#: checkin/resources/models/base.py:77 checkin/users/models/userprofile.py:419
+#: checkin/resources/models/base.py:77 checkin/users/models/userprofile.py:420
 msgid "Time of creation"
 msgstr "Zeitpunkt der Erstellung"
 
@@ -1117,7 +1117,7 @@ msgstr "Zeitpunkt der Erstellung"
 #: checkin/resources/models/accessibility.py:58
 #: checkin/resources/models/accessibility.py:85
 #: checkin/resources/models/accessibility.py:111
-#: checkin/resources/models/base.py:81 checkin/users/models/userprofile.py:420
+#: checkin/resources/models/base.py:81 checkin/users/models/userprofile.py:421
 msgid "Time of modification"
 msgstr "Zeitpunkt der letzten Änderung"
 
@@ -1187,7 +1187,7 @@ msgid "approved"
 msgstr "bestätigt"
 
 #: checkin/resources/models/attendance.py:25 checkin/tracking/models.py:393
-#: checkin/tracking/models.py:454 checkin/users/models/userprofile.py:343
+#: checkin/tracking/models.py:454 checkin/users/models/userprofile.py:344
 msgid "Userprofile"
 msgstr "Benutzerprofil"
 
@@ -2225,7 +2225,7 @@ msgid "Buchung via"
 msgstr ""
 
 #: checkin/tracking/legacy.py:25 checkin/tracking/models.py:133
-#: checkin/users/models/userprofile.py:306
+#: checkin/users/models/userprofile.py:307
 msgid "Letzte Änderung"
 msgstr ""
 
@@ -2451,20 +2451,20 @@ msgstr ""
 msgid "Kann Nachverfolgung durchführen"
 msgstr ""
 
-#: checkin/tracking/models.py:455 checkin/users/models/userprofile.py:291
+#: checkin/tracking/models.py:455 checkin/users/models/userprofile.py:292
 msgid "Vorname"
 msgstr ""
 
-#: checkin/tracking/models.py:456 checkin/users/models/userprofile.py:292
+#: checkin/tracking/models.py:456 checkin/users/models/userprofile.py:293
 msgid "Nachname"
 msgstr ""
 
-#: checkin/tracking/models.py:459 checkin/users/admin/userprofile.py:326
-#: checkin/users/models/userprofile.py:295
+#: checkin/tracking/models.py:459 checkin/users/admin/userprofile.py:332
+#: checkin/users/models/userprofile.py:296
 msgid "Telefonnummer"
 msgstr ""
 
-#: checkin/tracking/models.py:460 checkin/users/models/userprofile.py:300
+#: checkin/tracking/models.py:460 checkin/users/models/userprofile.py:301
 msgid "Matrikelnummer"
 msgstr ""
 
@@ -2709,14 +2709,14 @@ msgid ""
 "vorhandenes."
 msgstr ""
 
-#: checkin/users/admin/keycard.py:82 checkin/users/admin/userprofile.py:109
-#: checkin/users/admin/userprofile.py:347
+#: checkin/users/admin/keycard.py:82 checkin/users/admin/userprofile.py:110
+#: checkin/users/admin/userprofile.py:353
 #, python-format
 msgid "%(num_recipients)d users selected:"
 msgstr "%(num_recipients)d Nutzer ausgewählt:"
 
-#: checkin/users/admin/keycard.py:88 checkin/users/admin/userprofile.py:115
-#: checkin/users/admin/userprofile.py:353
+#: checkin/users/admin/keycard.py:88 checkin/users/admin/userprofile.py:116
+#: checkin/users/admin/userprofile.py:359
 msgid "Email selected users"
 msgstr "E-Mail an ausgewählte Nutzer senden"
 
@@ -2761,61 +2761,85 @@ msgid_plural "Show %d permissions"
 msgstr[0] "%d Berechtigung anzeigen"
 msgstr[1] "%d Berechtigungen anzeigen"
 
-#: checkin/users/admin/keycard.py:138 checkin/users/admin/userprofile.py:47
+#: checkin/users/admin/keycard.py:138 checkin/users/admin/userprofile.py:48
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: checkin/users/admin/userprofile.py:45
+#: checkin/users/admin/userprofile.py:46
 msgid "Personal info"
 msgstr "Informationen zur Person"
 
-#: checkin/users/admin/userprofile.py:46
+#: checkin/users/admin/userprofile.py:47
 msgid "Additional info"
 msgstr "Weitere Informationen"
 
-#: checkin/users/admin/userprofile.py:50
+#: checkin/users/admin/userprofile.py:51
 msgid "Important dates"
 msgstr "Daten"
 
-#: checkin/users/admin/userprofile.py:133
+#: checkin/users/admin/userprofile.py:134
 msgid "No users selected. Can not merge."
 msgstr ""
 
-#: checkin/users/admin/userprofile.py:136
+#: checkin/users/admin/userprofile.py:137
 msgid "Only one single user selected. Can not merge."
 msgstr ""
 
-#: checkin/users/admin/userprofile.py:146
+#: checkin/users/admin/userprofile.py:149
 #, python-format
 msgid "Users merged into %s. %d objects were deleted."
 msgstr ""
 
-#: checkin/users/admin/userprofile.py:147
-msgid "Merge selected user into the FIRST selected user (DESTRUCTIVE ACTION!)"
+#: checkin/users/admin/userprofile.py:151
+#: checkin/users/admin/userprofile.py:395
+#, python-format
+msgid "A database error occurred: %s"
 msgstr ""
 
-#: checkin/users/admin/userprofile.py:170
-msgid "Profile with this email is already exists. Try an another email."
+#: checkin/users/admin/userprofile.py:153
+msgid "Merge selected user into the LAST selected user (DESTRUCTIVE ACTION!)"
 msgstr ""
 
 #: checkin/users/admin/userprofile.py:176
+msgid "Profile with this email is already exists. Try an another email."
+msgstr ""
+
+#: checkin/users/admin/userprofile.py:182
 msgid "User with this email is already exists. Try an another email."
 msgstr ""
 
-#: checkin/users/admin/userprofile.py:229
+#: checkin/users/admin/userprofile.py:235
 msgid "Hidden value"
 msgstr "Versteckter Wert"
 
-#: checkin/users/admin/userprofile.py:334
-#: checkin/users/models/userprofile.py:297
+#: checkin/users/admin/userprofile.py:340
+#: checkin/users/models/userprofile.py:298
 msgid "E-Mail Adresse"
 msgstr "E-Mail-Adresse"
 
-#: checkin/users/admin/userprofile.py:358
+#: checkin/users/admin/userprofile.py:377
+msgid "No profile selected. Can not merge."
+msgstr ""
+
+#: checkin/users/admin/userprofile.py:380
+msgid "Only one single profile selected. Can not merge."
+msgstr ""
+
+#: checkin/users/admin/userprofile.py:393
+#, python-format
+msgid "Profiles merged into %s. %d objects were deleted."
+msgstr ""
+
+#: checkin/users/admin/userprofile.py:396
+msgid ""
+"Merge selected profiles into the LAST selected profile (DESTRUCTIVE ACTION!)"
+msgstr ""
+
+#: checkin/users/admin/userprofile.py:402
 msgid "Group membership"
 msgstr "Gruppenmitgliedschaft"
 
-#: checkin/users/admin/userprofile.py:359
+#: checkin/users/admin/userprofile.py:403
 msgid "Group memberships"
 msgstr "Gruppenmitgliedschaften"
 
@@ -2855,23 +2879,23 @@ msgstr "Schließkarte"
 msgid "Keycards"
 msgstr "Schließkarten"
 
-#: checkin/users/models/userprofile.py:127
+#: checkin/users/models/userprofile.py:128
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: checkin/users/models/userprofile.py:147
+#: checkin/users/models/userprofile.py:148
 msgid "Preferred UI language"
 msgstr "Bevorzugte Sprache"
 
-#: checkin/users/models/userprofile.py:149
+#: checkin/users/models/userprofile.py:150
 msgid "Do not send email notifciations to this user"
 msgstr "Sende keine Benachrichtigungen für Reservierungen"
 
-#: checkin/users/models/userprofile.py:165
+#: checkin/users/models/userprofile.py:166
 msgid "Administrator status (for resources and booking application)"
 msgstr "Verwalter-Status (für Raumverwaltung und Buchungen)"
 
-#: checkin/users/models/userprofile.py:167
+#: checkin/users/models/userprofile.py:168
 msgid ""
 "Designates whether the user is a administrator with special permissions to "
 "many objects within resources application. This is almost as powerful as "
@@ -2881,103 +2905,103 @@ msgstr ""
 "innerhalb der Raumverwaltungsanwendung hat. Die Berechtigungen sind in "
 "einigen Bereichen mit Administrator-Status gleichgestellt."
 
-#: checkin/users/models/userprofile.py:170
+#: checkin/users/models/userprofile.py:171
 msgid "Temporary User"
 msgstr "Temporärer Nutzer"
 
-#: checkin/users/models/userprofile.py:294
+#: checkin/users/models/userprofile.py:295
 msgid "Die Telefonnummer benötigt das Format +(XX) XXXXXXXXXXX."
 msgstr ""
 
-#: checkin/users/models/userprofile.py:298
+#: checkin/users/models/userprofile.py:299
 msgid "Identität geprüft"
 msgstr ""
 
-#: checkin/users/models/userprofile.py:302
+#: checkin/users/models/userprofile.py:303
 msgid "Keycard requested date"
 msgstr "Schließkartenanfrage"
 
-#: checkin/users/models/userprofile.py:307
+#: checkin/users/models/userprofile.py:308
 msgid "Registrierung"
 msgstr ""
 
-#: checkin/users/models/userprofile.py:320
+#: checkin/users/models/userprofile.py:321
 #, python-format
 msgid "%s (External)"
 msgstr "%s (Extern)"
 
-#: checkin/users/models/userprofile.py:322
+#: checkin/users/models/userprofile.py:323
 #, python-format
 msgid "%s (Unverified)"
 msgstr "%s (Ungeprüft)"
 
-#: checkin/users/models/userprofile.py:333
+#: checkin/users/models/userprofile.py:334
 #, python-format
 msgid "%s %s"
 msgstr ""
 
-#: checkin/users/models/userprofile.py:336
+#: checkin/users/models/userprofile.py:337
 #, python-format
 msgid "%s %s (P: %s / E: %s)"
 msgstr ""
 
-#: checkin/users/models/userprofile.py:344
+#: checkin/users/models/userprofile.py:345
 msgid "Userprofiles"
 msgstr "Benutzerprofile"
 
-#: checkin/users/models/userprofile.py:346
+#: checkin/users/models/userprofile.py:347
 msgid "Can view any user or userprofile"
 msgstr "Kann alle Benutzer oder Benutzerprofile anzeigen"
 
-#: checkin/users/models/userprofile.py:347
+#: checkin/users/models/userprofile.py:348
 msgid "Can lookup any user"
 msgstr "Kann alle Benutzer nachschlagen"
 
-#: checkin/users/models/userprofile.py:348
+#: checkin/users/models/userprofile.py:349
 msgid "Can view external users"
 msgstr "Kann externe Benutzer anzeigen"
 
-#: checkin/users/models/userprofile.py:349
+#: checkin/users/models/userprofile.py:350
 msgid "Can view non-external users"
 msgstr "Kann nicht-externe Benutzer anzeigen"
 
-#: checkin/users/models/userprofile.py:350
+#: checkin/users/models/userprofile.py:351
 msgid "Can view unverified users"
 msgstr "Kann nicht-verifizierte Benutzer anezigen"
 
-#: checkin/users/models/userprofile.py:351
+#: checkin/users/models/userprofile.py:352
 msgid "Can display full names"
 msgstr "Kann vollständige Namen anzeigen"
 
-#: checkin/users/models/userprofile.py:352
+#: checkin/users/models/userprofile.py:353
 msgid "Can display full e-mail addresses"
 msgstr "Kann vollständige E-Mail-Adressen anzeigen"
 
-#: checkin/users/models/userprofile.py:353
+#: checkin/users/models/userprofile.py:354
 msgid "Can display full phone numbers"
 msgstr "Kann vollständige Telefonnummern anzeigen"
 
-#: checkin/users/models/userprofile.py:354
+#: checkin/users/models/userprofile.py:355
 msgid "Can display student numbers"
 msgstr "Kann vollständige Matrikelnummern anzeigen"
 
-#: checkin/users/models/userprofile.py:355
+#: checkin/users/models/userprofile.py:356
 msgid "Can change status"
 msgstr "Kann status ändern"
 
-#: checkin/users/models/userprofile.py:356
+#: checkin/users/models/userprofile.py:357
 msgid "Can change keycard"
 msgstr "Kann Schließkarte ändern"
 
-#: checkin/users/models/userprofile.py:357
+#: checkin/users/models/userprofile.py:358
 msgid "Can change personal data"
 msgstr "Kann persönliche Daten ändern"
 
-#: checkin/users/models/userprofile.py:421
+#: checkin/users/models/userprofile.py:422
 msgid "Time of sync"
 msgstr "Zeitpunkt der Übertragung"
 
-#: checkin/users/utils.py:93 checkin/users/utils.py:108
+#: checkin/users/utils.py:95 checkin/users/utils.py:110
 msgid "Deleted '{}' of type {} with id {}\n"
 msgstr ""
 

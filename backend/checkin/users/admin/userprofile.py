@@ -62,7 +62,7 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     ordering = ('email',)
     add_form = UserCreationForm
     inlines = [UserProfileAdminInline]
-    actions = ['action_email_users','action_merge_users']
+    actions = ['action_email_users']#,'action_merge_users']
 
     def has_view_permission(self, request, obj=None):
         info = self.model._meta.app_label, self.model._meta.model_name
