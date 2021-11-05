@@ -39,6 +39,7 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         list_editable = ('state','comment')
         readonly_fields = ('user', 'reservation', 'get_reservation_organizer','get_reservation_resource',)
         fields = (*readonly_fields, 'state', 'comment',)
+        search_fields = ('user__first_name', 'user__last_name', 'user__email', 'user__pk', 'reservation__resource__name', 'reservation__resource__numbers', 'reservation__uuid')
 
         def get_reservation_organizer(self, obj):
             return obj.reservation.organizer

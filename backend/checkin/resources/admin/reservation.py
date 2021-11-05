@@ -143,7 +143,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                    ('modified_at', DateTimeRangeFilter),
                    )
     search_fields = (
-    'uuid', 'resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email')
+    'uuid', 'resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email', 'user__pk', 'user__profile__pk')
     autocomplete_fields = ('user', 'resource')
     readonly_fields = (
     'uuid', 'approver', 'agreed_to_phone_contact', 'number_of_attendees', 'get_reservation_info', 'get_reservation_delegates',
