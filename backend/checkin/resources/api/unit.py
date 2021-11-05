@@ -1,4 +1,5 @@
 from rest_framework import serializers, viewsets
+from rest_framework.permissions import AllowAny
 
 import django_filters
 #from munigeo import api as munigeo_api
@@ -78,6 +79,7 @@ class UnitViewSet(viewsets.ReadOnlyModelViewSet): #munigeo_api.GeoModelAPIView
     serializer_class = UnitSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filterset_class = UnitFilterSet
+    permission_classes = (AllowAny,)
 
 
 register_view(UnitViewSet, 'building')

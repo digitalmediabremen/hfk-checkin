@@ -12,9 +12,9 @@ from simple_history.admin import SimpleHistoryAdmin
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.views.generic.base import RedirectView
-from .admin_keycard import KeycardAdmin, KeycardListFilter
+from .keycard import KeycardAdmin, KeycardListFilter
 
-from .models import Profile
+from ..models import Profile
 User = get_user_model()
 
 

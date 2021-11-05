@@ -22,6 +22,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, serializers, viewsets, response, status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from guardian.core import ObjectPermissionChecker
 
 # from munigeo import api as munigeo_api
@@ -201,7 +202,7 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
 
     def get_access_allowed_to_current_user(self, obj):
         request = self.context.get('request', None)
-        if not request or not request.user:
+        if not request or not request.user.is_authenticated:
             return False
         return obj.has_access(request.user)
 
@@ -803,6 +804,7 @@ class ResourceListViewSet(mixins.ListModelMixin,
         queryset = queryset.prefetch_related('products')
     filter_backends = (filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend) #LocationFilterBackend)
     filterset_class = ResourceFilterSet
+    permission_classes = (AllowAny,)
 
     search_fields = append_translated(Resource, ('name', 'alternative_names', 'numbers', 'description', 'unit__name', 'features__name'))
     serializer_class = ResourceSerializer
@@ -850,6 +852,7 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
         list(drf_settings.DEFAULT_AUTHENTICATION_CLASSES) +
         [SessionAuthentication] +
         ([TokenAuthentication] if settings.ENABLE_RESOURCE_TOKEN_AUTH else []))
+    permission_classes = (AllowAny,)
 
     def get_serializer_class(self):
         if settings.RESPA_PAYMENTS_ENABLED:

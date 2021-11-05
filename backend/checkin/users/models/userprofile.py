@@ -230,6 +230,14 @@ class User(AbstractUser):
             return settings.LANGUAGES[0][0]
         return self.preferred_language
 
+    def get_keycard(self):
+        from .keycard import Keycard
+        # KeyCard is proxy of user.profile
+        try:
+            return Keycard.objects.get(pk=self.profile.pk)
+        except Keycard.DoesNotExist:
+            return None
+
 
 class ProfileQuerySet(NonAnonyoumusUserQuerySetMixin, models.QuerySet):
 

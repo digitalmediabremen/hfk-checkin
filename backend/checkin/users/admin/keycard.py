@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile
+from ..models import Profile
 from django.utils import timezone
 from django.utils.translation import gettext, ngettext, gettext_lazy as _
 from guardian.shortcuts import get_user_obj_perms_model
@@ -9,19 +9,10 @@ from django.utils.safestring import mark_safe
 from checkin.resources.models.utils import join_email_list
 from django.db.models import Q
 from django.urls import reverse
+from ..models.keycard import Keycard, KEYCARD_PERMISSION_CODENAMES
 
-#from checkin.resources.admin.permission import PERMISSION_CODENAMES as KEYCARD_PERMISSION_CODENAMES
-KEYCARD_PERMISSION_CODENAMES = ('resource:has_permanent_access', 'resource:can_modify_access')
 
 UserPermission = get_user_obj_perms_model()
-
-class Keycard(Profile):
-
-    class Meta:
-        proxy = True
-        verbose_name = _("Keycard")
-        verbose_name_plural = _("Keycards")
-        default_permissions = ('view','change')
 
 
 class KeycardListFilter(admin.SimpleListFilter):

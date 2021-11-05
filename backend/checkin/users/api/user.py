@@ -1,15 +1,14 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, serializers, generics, mixins, viewsets
-from .models import Profile
 from rest_framework import serializers
 from rest_framework import viewsets, views, status, permissions
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated, IsAdminUser,\
     DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly
-from rest_framework.authentication import SessionAuthentication
+from .base import CSRFExemptSessionAuthentication, register_view
 from rest_framework.response import Response
 from rest_framework.utils import html, model_meta, representation
-from .models import *
+from ..models import *
 from rest_framework.exceptions import PermissionDenied, NotFound, ValidationError
 from django.db.utils import IntegrityError
 from django.utils.translation import gettext_lazy as _
@@ -44,22 +43,7 @@ KEYCARD_ALREADY_REQUESTED = _("Keycard already requested. Please wait.")
 KEYCARD_REQUESTED = _("Keycard requested.")
 KEYCARD_FAILED = _("Can not request card. Please check your profile and contact support.")
 
-
-all_views = []
 User = get_user_model()
-
-def register_view(klass, name, base_name=None):
-    entry = {'class': klass, 'name': name}
-    if base_name is not None:
-        entry['base_name'] = base_name
-    all_views.append(entry)
-
-
-class CSRFExemptSessionAuthentication(SessionAuthentication):
-
-    def enforce_csrf(self, request):
-        return  # To not perform the csrf check previously happening
-
 
 # class ProfileSerializer(serializers.ModelSerializer):
 #     id = serializers.ReadOnlyField()
@@ -313,6 +297,7 @@ class UserProfileViewSet(viewsets.ViewSet, generics.GenericAPIView, mixins.Retri
             return self.partial_update(request)
         return self.create(request)
 
+    # TODO move to keycard api
     @action(url_path="me/requestkeycard", detail=False, methods=['get','post','put'], permission_classes=[IsAuthenticated])
     def request_keycard(self, request, pk=None):
         if request.user and request.user.profile:
