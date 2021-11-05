@@ -58,7 +58,8 @@ class UserQuerySet(models.QuerySet):
         return self.filter(id__gte=0)
 
     def filter_internal_and_verifed_users(self):
-        q = Q(Q(is_external=False) | Q(is_external__isnull=True), Q(verified=True) | Q(verified__isnull=True)).prefix('profile')
+        #q = Q(Q(is_external=False) | Q(is_external__isnull=True), Q(verified=True) | Q(verified__isnull=True)).prefix('profile')
+        q = Q(is_tempuser=False) # should be more effective. former query is redundant and false looking at the real data
         return self.filter(q)
 
     def filter_for_user(self, user, force_any=False):
