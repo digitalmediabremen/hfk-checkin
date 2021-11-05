@@ -617,11 +617,6 @@
             ],
             "version": "==1.14"
         },
-        "microsoft-auth": {
-            "editable": true,
-            "git": "https://github.com/AngellusMortis/django_microsoft_auth.git",
-            "ref": "caf419afba2d523395bf4ecfa4539429ef991503"
-        },
         "netaddr": {
             "hashes": [
                 "sha256:9666d0232c32d2656e5e5f8d735f58fd6c7457ce52fc21c98d45f2af78f990ac",
