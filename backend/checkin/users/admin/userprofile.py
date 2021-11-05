@@ -19,6 +19,7 @@ from checkin.resources.models.utils import join_email_list
 from django.utils.html import format_html
 from django.core.exceptions import PermissionDenied
 from ..utils import merge_model_instances
+from django.db.utils import DatabaseError
 
 from ..models import Profile
 User = get_user_model()
@@ -61,7 +62,7 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
     ordering = ('email',)
     add_form = UserCreationForm
     inlines = [UserProfileAdminInline]
-    actions = ['action_email_users']#,'action_merge_users']
+    actions = ['action_email_users','action_merge_users']
 
     def has_view_permission(self, request, obj=None):
         info = self.model._meta.app_label, self.model._meta.model_name
@@ -136,15 +137,20 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
             messages.error(request, _("Only one single user selected. Can not merge."))
             return
 
-        primary = queryset[0]
-        aliases = queryset[1:]
+        objects = list(q)
+        primary = objects[-1] # last element
+        aliases = objects[:-1] # all but last
 
         def out(str):
             messages.warning(request, str)
 
-        primary_object, deleted_objects, deleted_objects_count = merge_model_instances(primary, aliases, out_method=out)
-        messages.success(request, _("Users merged into %s. %d objects were deleted.") % (primary, deleted_objects_count))
-    action_merge_users.short_description = _('Merge selected user into the FIRST selected user (DESTRUCTIVE ACTION!)')
+        try:
+            primary_object, deleted_objects, deleted_objects_count = merge_model_instances(primary, aliases, out_method=out)
+            messages.success(request, _("Users merged into %s. %d objects were deleted.") % (primary, deleted_objects_count))
+        except DatabaseError as e:
+            messages.error(request, _("A database error occurred: %s") % str(e))
+            
+    action_merge_users.short_description = _('Merge selected user into the LAST selected user (DESTRUCTIVE ACTION!)')
 
 
 if not admin.site.is_registered(User):
@@ -193,7 +199,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     readonly_fields = ('id','created_at','updated_at','user')
     fields = ('id','first_name', 'last_name','phone','email','student_number','keycard_number','keycard_requested_at','verified','is_external','created_at','updated_at')
     form = ProfileForm
-    actions = ['action_email_users']
+    actions = ['action_email_users', 'action_merge_profiles']
 
     def get_queryset(self, request):
         qs = super(ProfileAdmin, self).get_queryset(request).exclude_anonymous_users().filter_for_user(request.user)
@@ -351,6 +357,44 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
                                                 _("Open new email")
                                                 )), messages.WARNING)
     action_email_users.short_description = _('Email selected users')
+
+    def action_merge_profiles(self, request, queryset):
+        '''
+        Merges all select users into the FIRST object of queryset.
+        DANGER!
+
+        :param request:
+        :param queryset:
+        :return:
+        '''
+
+        if not request.user.is_superuser:
+            raise PermissionDenied()
+
+        # queryset is provided "in order" of display in admin UI
+        q = queryset
+        if len(q) < 1:
+            messages.error(request, _("No profile selected. Can not merge."))
+            return
+        elif len(q) == 1:
+            messages.error(request, _("Only one single profile selected. Can not merge."))
+            return
+
+        objects = list(q)
+        primary = objects[-1]  # last element
+        aliases = objects[:-1]  # all but last
+
+        def out(str):
+            messages.warning(request, str)
+
+        try:
+            primary_object, deleted_objects, deleted_objects_count = merge_model_instances(primary, aliases, out_method=out)
+            messages.success(request,
+                             _("Profiles merged into %s. %d objects were deleted.") % (primary, deleted_objects_count))
+        except DatabaseError as e:
+            messages.error(request, _("A database error occurred: %s") % str(e))
+    action_merge_profiles.short_description = _('Merge selected profiles into the LAST selected profile (DESTRUCTIVE ACTION!)')
+
 
 class UserGroupInline(admin.StackedInline):
     model = get_user_model().groups.through

@@ -15,6 +15,8 @@ def get_generic_fields():
                 generic_fields.append(field)
     return generic_fields
 
+# usermerge
+# based on https://github.com/django-extensions/django-extensions/blob/main/django_extensions/management/commands/merge_model_instances.py
 
 @transaction.atomic()
 def merge_model_instances(primary_object, alias_objects, out_method=stdout.write):
