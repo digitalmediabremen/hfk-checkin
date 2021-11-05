@@ -951,7 +951,7 @@ msgstr "Nicht Reservierbar"
 
 #: checkin/resources/admin/resource.py:248
 msgid "disabled"
-msgstr ""
+msgstr "deaktiviert"
 
 #: checkin/resources/admin/resource.py:252
 msgid "Manual confirmation"
@@ -1099,7 +1099,7 @@ msgstr "Raumverwaltung und Buchungen"
 #: checkin/resources/models/resource.py:1043
 #: checkin/resources/models/unit.py:52
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
 #: checkin/resources/models/accessibility.py:39
 msgid "Order"
@@ -1460,22 +1460,22 @@ msgstr "Kann Zugang erteilen"
 
 #: checkin/resources/models/permissions.py:29
 msgid "Can modify reservations, but do not notify or use as Reply-To"
-msgstr ""
+msgstr "Kann Reservierungen bearbeiten, aber nicht als Kontakt für Benachrichtigungen oder Antwort-E-Mails verwenden"
 
 #: checkin/resources/models/permissions.py:30
 msgid "Can modify access, but do not notify or use as Reply-To"
-msgstr ""
+msgstr "Kann Zugang bearbeiten, aber nicht als Kontakt für Benachrichtigungen oder Antwort-E-Mails verwenden"
 
 #: checkin/resources/models/permissions.py:31
 msgid ""
 "Receive notifications for reservation requests, but do not allow access to "
 "backend"
-msgstr ""
+msgstr "Bei Reservierungen als Kontakt für Benachrichtigungen oder Antwort-E-Mails verwenden, aber kein Zugang zum Backend erlauben"
 
 #: checkin/resources/models/permissions.py:32
 msgid ""
 "Receive notifications for access requests, but do not allow access to backend"
-msgstr ""
+msgstr "Bei Zugangsberechtigungen als Kontakt für Benachrichtigungen oder Antwort-E-Mails verwenden, aber kein Zugang zum Backend erlauben"
 
 #: checkin/resources/models/permissions.py:37
 msgid "Can make reservations"
@@ -1620,7 +1620,7 @@ msgstr ""
 
 #: checkin/resources/models/reservation.py:235
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: checkin/resources/models/reservation.py:235
 msgid ""
@@ -1649,8 +1649,8 @@ msgstr "Inaktiv"
 #, python-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Tag"
+msgstr[1] "%d Tage"
 
 #: checkin/resources/models/reservation.py:501
 msgid "Reservation was confirmed."
@@ -1680,7 +1680,7 @@ msgstr "%s ist nicht verifiziert. Bitte vor Buchungsbestätigung verifizieren."
 #: checkin/resources/models/reservation.py:667
 #, python-format
 msgid "%s is an external user. External users can not make reservations."
-msgstr ""
+msgstr "%s ist externer Nutzer. Externe Nutzer können keine Reservierungen tätigen."
 
 #: checkin/resources/models/reservation.py:670
 msgid "This resource is not reservable. Sorry."
@@ -1871,7 +1871,7 @@ msgstr "Etagenbezeichung"
 
 #: checkin/resources/models/resource.py:306
 msgid "Phone extension"
-msgstr ""
+msgstr "Telefondurchwahl"
 
 #: checkin/resources/models/resource.py:314
 msgid "Spaces"
@@ -1881,7 +1881,7 @@ msgstr "Räume"
 msgid ""
 "Resources can not be reservable in this system and use a external "
 "reservation service url at the same time."
-msgstr ""
+msgstr "Ressourcen können nicht zur selben Zeit über dieses System und ein externens System reservierbar sein."
 
 #: checkin/resources/models/resource.py:376
 #: checkin/resources/templates/admin/resources/reservation/change_form.html:29
