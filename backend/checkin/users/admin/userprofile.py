@@ -94,9 +94,9 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
-        # filter to only non external users if requested for autocomplete field (e.g. in ReservationAdmin or PermissionInline)
+        # filter to only non-external users if requested for autocomplete field (e.g. in ReservationAdmin or PermissionInline)
         if '/autocomplete/' in request.path:
-            queryset = queryset.filter(profile__is_external=False)
+            queryset = queryset.filter_internal_and_verifed_users()
         return queryset, use_distinct
 
     def action_email_users(self, request, queryset):
