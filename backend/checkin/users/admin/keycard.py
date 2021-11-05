@@ -98,7 +98,10 @@ class KeycardAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request).prefetch_related('user__timeenableduserobjectpermission_set')
-        qs = qs.filter(Q(keycard_number__isnull=False) | Q(keycard_requested_at__isnull=False))
+        # do not filter! otherwise you will not be able to "create" keycards using this view
+        # qs = qs.filter(Q(keycard_number__isnull=False) | Q(keycard_requested_at__isnull=False))
+        # but we need a valid user account to assign permissions, thus keycards
+        qs = qs.filter(user__isnull=False)
         return qs
 
     def get_keycard_status(self, obj):
