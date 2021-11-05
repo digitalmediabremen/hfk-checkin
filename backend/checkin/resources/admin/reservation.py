@@ -15,7 +15,7 @@ from post_office.models import Email
 from django.urls import reverse
 from .other import FixedGuardedModelAdminMixin, ExtendedGuardedModelAdminMixin
 from .resource import ResourceAdmin
-from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, PurposeFilter
+from .list_filters import ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, PurposeFilter, MyReservationRelationFilter
 from django.contrib.admin.utils import format_html
 from ..models.reservation import StaticReservationPurpose
 from ..models.resource import Resource

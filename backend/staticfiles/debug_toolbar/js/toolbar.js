@@ -20,8 +20,7 @@ const djdt = {
                 if (!this.className) {
                     return;
                 }
-                const panelId = this.className;
-                const current = document.getElementById(panelId);
+                const current = document.getElementById(this.className);
                 if ($$.visible(current)) {
                     djdt.hide_panels();
                 } else {
@@ -40,24 +39,13 @@ const djdt = {
                             window.location
                         );
                         url.searchParams.append("store_id", store_id);
-                        url.searchParams.append("panel_id", panelId);
+                        url.searchParams.append("panel_id", this.className);
                         ajax(url).then(function (data) {
                             inner.previousElementSibling.remove(); // Remove AJAX loader
                             inner.innerHTML = data.content;
                             $$.executeScripts(data.scripts);
                             $$.applyStyles(inner);
-                            djDebug.dispatchEvent(
-                                new CustomEvent("djdt.panel.render", {
-                                    detail: { panelId: panelId },
-                                })
-                            );
                         });
-                    } else {
-                        djDebug.dispatchEvent(
-                            new CustomEvent("djdt.panel.render", {
-                                detail: { panelId: panelId },
-                            })
-                        );
                     }
                 }
             }
@@ -190,7 +178,6 @@ const djdt = {
                 requestAnimationFrame(function () {
                     djdt.handleDragged = false;
                 });
-                djdt.ensure_handle_visibility();
             }
         });
         const show =
@@ -211,15 +198,6 @@ const djdt = {
             e.classList.remove("djdt-active");
         });
     },
-    ensure_handle_visibility() {
-        const handle = document.getElementById("djDebugToolbarHandle");
-        // set handle position
-        const handleTop = Math.min(
-            localStorage.getItem("djdt.top") || 0,
-            window.innerHeight - handle.offsetWidth
-        );
-        handle.style.top = handleTop + "px";
-    },
     hide_toolbar() {
         djdt.hide_panels();
 
@@ -227,8 +205,16 @@ const djdt = {
 
         const handle = document.getElementById("djDebugToolbarHandle");
         $$.show(handle);
-        djdt.ensure_handle_visibility();
-        window.addEventListener("resize", djdt.ensure_handle_visibility);
+        // set handle position
+        let handleTop = localStorage.getItem("djdt.top");
+        if (handleTop) {
+            handleTop = Math.min(
+                handleTop,
+                window.innerHeight - handle.offsetHeight
+            );
+            handle.style.top = handleTop + "px";
+        }
+
         document.removeEventListener("keydown", onKeyDown);
 
         localStorage.setItem("djdt.show", "false");
@@ -251,7 +237,6 @@ const djdt = {
         $$.hide(document.getElementById("djDebugToolbarHandle"));
         $$.show(document.getElementById("djDebugToolbar"));
         localStorage.setItem("djdt.show", "true");
-        window.removeEventListener("resize", djdt.ensure_handle_visibility);
     },
     cookie: {
         get(key) {
