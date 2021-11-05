@@ -129,8 +129,14 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         """
         # return all objects if user has "global" (django.auth) view permission or is "general admin"
         if is_general_admin(request.user) or super().has_view_permission(request):
-            return self.model.objects.all()
-        return self.model.objects.get_resources_user_can_manage(request.user)
+            qs = self.model.objects
+        else:
+            qs = self.model.objects.get_resources_user_can_manage(request.user)
+        qs.select_related('unit', 'type')\
+        .prefetch_permissions_with_users()\
+        .prefetch_features()
+        return qs
+
 
     def has_change_permission(self, request, obj=None):
         """
