@@ -56,7 +56,7 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'disable_notifications', 'preferred_language', 'profile__is_external', 'profile__verified')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'is_tempuser', 'groups', 'disable_notifications', 'preferred_language', 'profile', 'profile__is_external', 'profile__verified', 'last_login', 'date_joined')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
     add_form = UserCreationForm
@@ -188,7 +188,7 @@ class ProfileAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
     # ! overwritten by get_list_display to upgrade permission
     # readonly_fields = ('last_checkin',)
     # list_editable is overwritten by get_list_editable
-    list_filter = (KeycardListFilter, 'keycard_requested_at','verified','is_external','user__disable_notifications', 'user__preferred_language','updated_at','created_at',)
+    list_filter = (KeycardListFilter, 'keycard_requested_at','verified','is_external','user','user__disable_notifications', 'user__preferred_language','user__is_tempuser','updated_at','created_at',)
     search_fields = ['first_name', 'last_name','phone','email']
     readonly_fields = ('id','created_at','updated_at','user')
     fields = ('id','first_name', 'last_name','phone','email','student_number','keycard_number','keycard_requested_at','verified','is_external','created_at','updated_at')

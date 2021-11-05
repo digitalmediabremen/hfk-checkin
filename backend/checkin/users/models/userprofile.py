@@ -167,6 +167,7 @@ class User(AbstractUser):
             "Designates whether the user is a administrator "
             "with special permissions to many objects within resources application. "
             "This is almost as powerful as superuser."))
+    is_tempuser = models.BooleanField(_("Temporary User"), blank=False, null=False, default=False, editable=False)
 
     class Meta(AbstractUser.Meta):
         ordering = ('id',)
@@ -295,10 +296,13 @@ class Profile(DirtyFieldsMixin, models.Model):
                              null=True)  # validators should be a list
     email = models.EmailField(_("E-Mail Adresse"), blank=True, null=True)
     verified = models.BooleanField(_("Identität geprüft"), blank=True, null=True, default=True)
+    # verified bedeutet: Die korrekten Profilangaben (Name, Telefonnummer oder E-Mail) wurden automatisch oder manuell geprüft.
     student_number = models.CharField(_("Matrikelnummer"), max_length=20, blank=True, null=True)
     keycard_number = models.CharField(_("Keycard number"), max_length=20, blank=True, null=True, validators=[validate_min_length_or_None])
     keycard_requested_at = models.DateTimeField(null=True, blank=True, editable=True, verbose_name=_("Keycard requested date"))
     is_external = models.BooleanField(_("External"), blank=True, null=True, default=False)
+    # external bedeutet: Gehört nicht der Institution an (könnte auch als Statusgruppe abgebildet werden)
+    # is_tempuser on User (!)
     updated_at = models.DateTimeField(auto_now=True, editable=False, verbose_name=_("Letzte Änderung"))
     created_at = models.DateTimeField(auto_now_add=True, editable=False, verbose_name=_("Registrierung"))
     # last_checkin = models.DateTimeField(_("Zuletzt Eingecheckt"), blank=True, null=True)
