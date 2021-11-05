@@ -135,7 +135,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     list_display = (
     'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'title', 'get_collisions',
     'get_exclusive', 'get_created_at_display') #'get_priority',
-    list_filter = (ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', PurposeFilter,
+    list_filter = (MyReservationRelationFilter, ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', PurposeFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('begin', DateTimeRangeFilter),
                    ('end', DateTimeRangeFilter),
