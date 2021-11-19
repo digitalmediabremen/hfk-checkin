@@ -22,7 +22,6 @@ import { LoadingInline } from "./Loading";
 import classNames from "classnames";
 import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
 import { insertIf } from "../../src/util/ReservationUtil";
-import slash from "../../node_modules.nosync/slash";
 
 interface ResourceListItemProps {
     resource: Resource;
