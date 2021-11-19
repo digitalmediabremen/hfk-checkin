@@ -5,6 +5,7 @@ from ..models.reservation import Reservation
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from .other import ExtendedGuardedModelAdminMixin
+from django.shortcuts import redirect
 
 
 class ResourceAccess(Resource):
@@ -26,6 +27,9 @@ class ResourceAccessAdmin(ResourceAdmin):
 
     # hide model admin from admin list
     get_model_perms = lambda self, req: {}
+
+    def changelist_view(self, request, extra_context=None):
+        return redirect('admin:resources_resource_changelist')
 
     def has_change_permission(self, request, obj=None):
         if request.user and obj:
