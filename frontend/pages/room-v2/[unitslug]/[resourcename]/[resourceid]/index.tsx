@@ -55,6 +55,10 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
 
     const sectionSpacing = 0.5;
 
+    const actionIcon = !theme.isDesktop ? (
+        <Calendar onClick={handleCalendarSubpageClick} />
+    ) : null;
+
     return (
         <>
             <style jsx>{``}</style>
@@ -76,7 +80,7 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
                     <SubPageBar
                         onBack={handleBack}
                         title={title}
-                        actionIcon={<Calendar onClick={handleCalendarSubpageClick} />}
+                        actionIcon={actionIcon}
                     />
                 }
                 overrideActionButton={() => isNonNullExpression}

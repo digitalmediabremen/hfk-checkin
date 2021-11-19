@@ -9,6 +9,7 @@ import Resource from "../../src/model/api/Resource";
 import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
 import useSubPage from "../api/useSubPage";
 import AlignContent, { AvailableHeight } from "./AlignContent";
+import Divider from "./Divider";
 import FormGroup from "./FormGroup";
 import FormText from "./FormText";
 import NewButton from "./NewButton";
@@ -80,6 +81,7 @@ const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps>
                 )}
                 {resource.reservable && (
                     <>
+                        <Divider />
                         <SectionTitle bottomSpacing={sectionSpacing}>
                             {t("Verfügbarkeit")}
                         </SectionTitle>

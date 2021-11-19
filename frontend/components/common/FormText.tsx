@@ -15,6 +15,7 @@ const FormText: React.FunctionComponent<TextProps> = ({children, paragraph, seco
     return <>
         <style jsx>{`
             color: ${secondary ? theme.disabledColor : theme.primaryColor};
+            font-weight: normal;
             display: block;
             line-height: ${theme.unit > 8 ? 1.5 : 1.25}em;
             margin-bottom: ${theme.spacing(empty(bottomSpacing) ? 1 : bottomSpacing)}px;
