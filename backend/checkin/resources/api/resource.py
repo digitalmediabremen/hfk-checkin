@@ -42,7 +42,7 @@ from .base import ExtraDataMixin, TranslatedModelSerializer, register_view, DRFF
 from .unit import UnitSerializer
 #from .equipment import EquipmentSerializer
 from rest_framework.settings import api_settings as drf_settings
-from .availability import ResourceAvailabilitySerializer
+from .availability import FullcalendarResourceAvailabilityTimeframeSerializer
 
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,8 @@ def parse_query_time_range(params):
 
 def get_resource_reservations_queryset(begin, end):
     qs = Reservation.objects.filter(begin__lte=end, end__gte=begin).current()
-    qs = qs.order_by('begin').prefetch_related('catering_orders').select_related('user', 'order')
+    qs = qs.order_by('begin').prefetch_related('attendance_set','user','resource').select_related()
+    # .prefetch_related('catering_orders') .select_related('user', 'order')
     return qs
 
 
@@ -918,14 +919,17 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
     #     Reser
 
     @action(detail=True, methods=['get'])
-    def freebusy(self, request, pk=None):
+    def availability(self, request, pk=None):
         """
         Returns a list of availability timeframes of selected resource.
         """
+        from .fullcalendar import FullcalendarResourceAvailabilityReservationSerializer
 
-        #FIXME DUPLICATES with calender.py API / different format
+        # similar request is implemented in FullcalendarResourceAvailabilityTimeframeViewSet
+        # TODO check if duplication can be removed
 
-        resource = self.get_object()
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        resource_id = self.kwargs[lookup_url_kwarg]
         user = request.user
         query_params = self.request.query_params
 
@@ -940,10 +944,10 @@ class ResourceViewSet(mixins.RetrieveModelMixin,
         available_start = deserialize_datetime(query_params['start'])
         available_end = deserialize_datetime(query_params['end'])
 
-        availability_result = resource.get_availability_from_reservations(available_start, available_end)
-        # TODO cacheing result
+        reservations = get_resource_reservations_queryset(available_start, available_end).filter(resource_id=resource_id)
+        # TODO cache db result for a given timeframe
 
-        serializer = ResourceAvailabilitySerializer(availability_result, many=True)
+        serializer = FullcalendarResourceAvailabilityReservationSerializer(reservations, context={'request': request}, many=True)
         return response.Response(serializer.data)
 
 

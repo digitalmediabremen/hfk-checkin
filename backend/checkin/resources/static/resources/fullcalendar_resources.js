@@ -47,15 +47,7 @@ var resources_fullcalendar = {
                         display: 'background',
                         color: 'lightgrey'
                     }
-                ], {
-                    url: '/api/calendar/availability/',
-                    method: 'GET',
-                    extraParams: function () {
-                        return {resources: resources_fullcalendar.parameters.resources_uuids.join('.')}
-                    },
-                    display: 'background',
-                    color: 'red',
-                }],
+                ]],
                 eventContent: function(args) {
                     var description = args.event.extendedProps.description;
                     var title = args.event.title;

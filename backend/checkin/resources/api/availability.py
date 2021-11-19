@@ -8,14 +8,22 @@ class AvailabilityStatus(TextChoices):
     free = 'FREE', _('free')
     busy = 'BUSY', _('busy')
 
-class ResourceAvailabilitySerializer(serializers.Serializer):
+class FullcalendarResourceAvailabilityTimeframeSerializer(serializers.Serializer):
 
-    begin = serializers.DateTimeField()
+    """
+    Serializes fictitious "availability timeframes", which determine availability times from reservations.
+    Outputs into fullcalendar.io-compatible format.
+    """
+
+    start = serializers.DateTimeField(source='begin')
     end = serializers.DateTimeField()
     reservation_count = serializers.IntegerField()
     number_of_attendances = serializers.IntegerField()
     total_number_of_attendees = serializers.IntegerField()
     status = serializers.ChoiceField(AvailabilityStatus.choices)
+    resourceId = serializers.CharField(source='resource_uuid')
+    id = serializers.CharField(source='uuid')
+    title = serializers.CharField(source='status')
 
 # class ResourceFilterSet(django_filters.rest_framework.FilterSet):
 #     begin = django_filters.CharFilter(field_name='begin', lookup_expr='lt')

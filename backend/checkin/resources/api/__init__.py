@@ -7,7 +7,7 @@ from checkin.resources.api.resource import ResourceListViewSet, ResourceViewSet#
 from checkin.resources.api.reservation import ReservationListViewSet
 from checkin.resources.api.unit import UnitViewSet
 from checkin.resources.api.search import TypeaheadViewSet
-from checkin.resources.api.calendar import ReservationCalendarViewSet, ResourceCalendarViewSet
+from checkin.resources.api.fullcalendar import FullcalendarReservationEventViewSet, FullcalendarResourceViewSet
 #from checkin.resources.api.equipment import EquipmentViewSet
 #from checkin.resources.api.availability import ResourceAvailabilityView
 
