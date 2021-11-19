@@ -1,17 +1,22 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { FunctionComponent } from "react";
 import {
     getResourceRequest,
     getResourcesRequest,
 } from "../../../../../components/api/ApiService";
+import useSubPage, {
+    useSubPageWithState,
+} from "../../../../../components/api/useSubPage";
 import Divider from "../../../../../components/common/Divider";
 import FormElement from "../../../../../components/common/FormElement";
 import FormGroup from "../../../../../components/common/FormGroup";
 import FormText from "../../../../../components/common/FormText";
 import Layout from "../../../../../components/common/Layout";
 import ResourceAccessSection from "../../../../../components/common/ResourceAccessSection";
+import ResourceCalendar from "../../../../../components/common/ResourceCalendar";
 import SectionTitle from "../../../../../components/common/SectionTitle";
+import SubPage from "../../../../../components/common/SubPage";
 import SubPageBar from "../../../../../components/common/SubPageBar";
 import { appUrls } from "../../../../../config";
 import { useTranslation } from "../../../../../localization";
@@ -26,16 +31,23 @@ type ResourcePageProps = {
 
 const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
     const { t } = useTranslation("room");
-    const theme = useTheme();
     const router = useRouter();
     const featureList = resource.features?.join(", ");
     const delegatesList = resource.access_delegates?.join(", ");
     const title = resource.unit.name;
     const resourceFormValuePresenter = useResourceFormValuePresenter();
+    const theme = useTheme();
+
+    const { handlerProps, activeSubPage, subPageProps, direction } =
+        useSubPageWithState(theme.isDesktop ? () => undefined : undefined);
 
     const handleBack = () => {
         const [url, as] = appUrls.resourceList(resource.unit.slug);
         router.push(url, as);
+    };
+
+    const handleCalendarSubpageClick = () => {
+        handlerProps("calendar").onClick();
     };
 
     const sectionSpacing = 0.5;
@@ -44,6 +56,16 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
         <>
             <style jsx>{``}</style>
             <Layout
+                direction={direction}
+                subPages={
+                    <SubPage
+                        title="KalendarAnsicht"
+                        {...subPageProps("calendar")}
+                    >
+                        <ResourceCalendar />
+                    </SubPage>
+                }
+                activeSubPage={activeSubPage}
                 title={resource.display_name}
                 // noContentMargin
                 overrideHeader={
@@ -117,6 +139,7 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
                 <ResourceAccessSection
                     resource={resource}
                     sectionSpacing={sectionSpacing}
+                    onShowCalendar={handleCalendarSubpageClick}
                 />
             </Layout>
         </>

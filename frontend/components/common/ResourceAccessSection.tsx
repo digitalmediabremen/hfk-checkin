@@ -1,34 +1,41 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { ArrowRight } from "react-feather";
-import { appUrls } from "../../config";
+import { appUrls, buildSubPageUrl } from "../../config";
 import { useTranslation } from "../../localization";
 import useReservationState from "../../src/hooks/useReservationState";
+import useTheme from "../../src/hooks/useTheme";
 import Resource from "../../src/model/api/Resource";
 import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
+import useSubPage from "../api/useSubPage";
+import AlignContent, { AvailableHeight } from "./AlignContent";
 import FormGroup from "./FormGroup";
 import FormText from "./FormText";
 import NewButton from "./NewButton";
 import Notice from "./Notice";
+import ResourceCalendar from "./ResourceCalendar";
 import SectionTitle from "./SectionTitle";
+import SubPage from "./SubPage";
 
 interface ResourceAccessSectionProps {
     resource: Resource;
     sectionSpacing: number;
+    onShowCalendar: () => void;
 }
 
 const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps> =
-    ({ resource, sectionSpacing }) => {
+    ({ resource, sectionSpacing, onShowCalendar }) => {
         const { t } = useTranslation("resource");
         const showReservationButton = resource.reservable;
         const PermissionIcon = resourcePermissionIcon(resource);
         const [, setResource] = useReservationState("resource");
         const router = useRouter();
+        const theme = useTheme();
 
         const handleClickRequestResource = () => {
             setResource(resource);
             router.push(appUrls.request);
-        }
+        };
 
         return (
             <>
@@ -77,18 +84,24 @@ const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps>
                             {t("Verfügbarkeit")}
                         </SectionTitle>
 
-                        <NewButton
-
-                            noOutline
-                            density="super-narrow"
-                            bottomSpacing={2}
-                            iconRight={<ArrowRight />}
-                        >
-                            {t("Kalender öffnen")}
-                        </NewButton>
-                        <Notice>
-                            Füge den Ical Link zu deinem Kalender hinzu
-                        </Notice>
+                        {!theme.isDesktop ? (
+                            <>
+                                <NewButton
+                                    noOutline
+                                    density="super-narrow"
+                                    bottomSpacing={2}
+                                    iconRight={<ArrowRight />}
+                                    onClick={onShowCalendar}
+                                >
+                                    {t("Kalender öffnen")}
+                                </NewButton>
+                                <Notice>
+                                    Füge den Ical Link zu deinem Kalender hinzu
+                                </Notice>
+                            </>
+                        ) : (
+                            <ResourceCalendar />
+                        )}
                     </>
                 )}
             </>
