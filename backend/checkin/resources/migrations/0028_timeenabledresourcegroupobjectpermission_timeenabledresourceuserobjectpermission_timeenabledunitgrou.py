@@ -8,7 +8,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0012_auto_20211029_1826'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('resources', '0027_auto_20210807_2202'),
     ]
