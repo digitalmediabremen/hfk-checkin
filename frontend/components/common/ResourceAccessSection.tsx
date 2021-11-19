@@ -1,6 +1,9 @@
+import { useRouter } from "next/router";
 import React from "react";
 import { ArrowRight } from "react-feather";
+import { appUrls } from "../../config";
 import { useTranslation } from "../../localization";
+import useReservationState from "../../src/hooks/useReservationState";
 import Resource from "../../src/model/api/Resource";
 import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
 import FormGroup from "./FormGroup";
@@ -19,6 +22,13 @@ const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps>
         const { t } = useTranslation("resource");
         const showReservationButton = resource.reservable;
         const PermissionIcon = resourcePermissionIcon(resource);
+        const [, setResource] = useReservationState("resource");
+        const router = useRouter();
+
+        const handleClickRequestResource = () => {
+            setResource(resource);
+            router.push(appUrls.request);
+        }
 
         return (
             <>
@@ -56,6 +66,7 @@ const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps>
                         density="super-narrow"
                         bottomSpacing={2}
                         iconRight={<ArrowRight />}
+                        onClick={handleClickRequestResource}
                     >
                         {t("Raum anfragen")}
                     </NewButton>
@@ -67,6 +78,7 @@ const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps>
                         </SectionTitle>
 
                         <NewButton
+
                             noOutline
                             density="super-narrow"
                             bottomSpacing={2}

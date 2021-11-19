@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import useMedia from "use-media";
+import useMedia, { useMediaLayout } from "use-media";
 import { useAppState } from "../../components/common/AppStateProvider";
-import { isClient } from "../../config";
+import { isClient, isServer } from "../../config";
 import { ColorScheme, validateColorScheme } from "../model/Theme";
 import { useReadLocalStorage } from "./useLocalStorage";
 
@@ -12,30 +12,34 @@ export default function useTheme() {
     return theme;
 }
 
-function useDefaultColorScheme(): ColorScheme {
-    const prefersDarkMode = useMedia({ prefersColorScheme: "dark" });
-    return prefersDarkMode ? "dark" : "light";
+function useDefaultColorScheme(): ColorScheme | undefined {
+    // hack here
+    const [clientMatched, setClientMatched] = useState<ColorScheme | undefined>(undefined);
+
+    useEffect(() => {
+        if (isServer) return;
+        const match = Boolean(window.matchMedia("(prefers-color-scheme: dark)").matches)
+        setClientMatched(match ? "dark" : "light");
+    }, [])
+
+    return clientMatched;
 }
 
-function useActiveColorScheme(): ColorScheme {
+function useActiveColorScheme(): ColorScheme | undefined {
     const { appState } = useAppState();
     const overwrittenColorScheme = appState.overwriteColorScheme;
 
     const defaultColorScheme = useDefaultColorScheme();
-    const colorScheme: ColorScheme =
+    const colorScheme: ColorScheme | undefined =
         overwrittenColorScheme === undefined
             ? defaultColorScheme
             : overwrittenColorScheme;
-    const [activeColorScheme, setActiveColorScheme] = useState(colorScheme);
 
-    useEffect(() => {
-        setActiveColorScheme(colorScheme);
-    }, [colorScheme]);
-
-    return activeColorScheme;
+    return colorScheme;
 }
 
 export function useInitTheme() {
+    const [themeInitialized, setThemeInitialized] = useState(false);
     const { dispatch } = useAppState();
     const isDesktop = useMedia({ minWidth: 600 });
     const isPWA =
@@ -44,14 +48,19 @@ export function useInitTheme() {
         (isClient && window.navigator.standalone === true);
     const colorScheme = useActiveColorScheme();
 
-    useLayoutEffect(() => {
-        dispatch({
-            type: "updateTheme",
-            isDesktop,
-            isPWA,
-            colorScheme,
-        });
+    useEffect(() => {
+        if (colorScheme) {
+            dispatch({
+                type: "updateTheme",
+                isDesktop,
+                isPWA,
+                colorScheme,
+            });
+            setThemeInitialized(true);
+        }
     }, [isDesktop, isPWA, colorScheme]);
+
+    return themeInitialized;
 }
 
 export function useChangeColorScheme() {

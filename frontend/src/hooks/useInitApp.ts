@@ -14,7 +14,7 @@ export default function useInitApp() {
 
     useUpdateProfileFromAppStateAndUpdate();
 
-    useInitTheme();
+    const themeInitialized = useInitTheme();
 
     useLocalStorage("rr", appState.reservationRequest, validateRequest, (r) =>
         dispatch({
@@ -47,4 +47,6 @@ export default function useInitApp() {
     );
 
     useSWRefreshToUpdate();
+
+    return themeInitialized;
 }

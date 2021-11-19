@@ -4,6 +4,7 @@ import {
     Circle,
     Key,
     Lock,
+    Slash,
     Unlock,
     User,
     UserPlus,
@@ -21,6 +22,7 @@ import { LoadingInline } from "./Loading";
 import classNames from "classnames";
 import { resourcePermissionIcon } from "../../src/util/ReservationPresenterUtil";
 import { insertIf } from "../../src/util/ReservationUtil";
+import slash from "../../node_modules.nosync/slash";
 
 interface ResourceListItemProps {
     resource: Resource;
@@ -119,7 +121,10 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                                     <i> {alternativeNames}</i>
                                 )}
                         </span>,
-                        ...insertIf([<i> {featureList}</i>], !!featureList && !!showMeta),
+                        ...insertIf(
+                            [<i> {featureList}</i>],
+                            !!featureList && !!showMeta
+                        ),
                     ]}
                 />
 
@@ -138,6 +143,12 @@ const ResourceListItem: React.FunctionComponent<ResourceListItemProps> = ({
                         <span className="meta-element">
                             {resource.capacity}{" "}
                             <Users strokeWidth={1} size={20} />
+                        </span>
+                    )}
+
+                    {!resource.reservable && showMeta && (
+                        <span className="meta-element">
+                            <Slash strokeWidth={1} size={20} />
                         </span>
                     )}
                 </span>
