@@ -1,6 +1,9 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
+import { Calendar } from "react-feather";
+import { isNonNullExpression } from "typescript";
 import {
     getResourceRequest,
     getResourcesRequest,
@@ -59,19 +62,24 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
                 direction={direction}
                 subPages={
                     <SubPage
-                        title="KalendarAnsicht"
+                        title={resource.name}
+                        // noContentMargin
                         {...subPageProps("calendar")}
                     >
-                        <ResourceCalendar />
+                        <ResourceCalendar noFooter />
                     </SubPage>
                 }
                 activeSubPage={activeSubPage}
                 title={resource.display_name}
                 // noContentMargin
                 overrideHeader={
-                    <SubPageBar onBack={handleBack} title={title} />
+                    <SubPageBar
+                        onBack={handleBack}
+                        title={title}
+                        actionIcon={<Calendar onClick={handleCalendarSubpageClick} />}
+                    />
                 }
-                overrideActionButton={() => null}
+                overrideActionButton={() => isNonNullExpression}
             >
                 <FormElement
                     value={resourceFormValuePresenter(resource)}

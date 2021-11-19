@@ -23,6 +23,9 @@
     ],
     "dependencies": {
         "@babel/core": "^7.14.6",
+        "@fullcalendar/core": "^5.10.1",
+        "@fullcalendar/react": "^5.10.1",
+        "@fullcalendar/timegrid": "^5.10.1",
         "@react-hook/resize-observer": "^1.2.2",
         "@sentry/browser": "^6.8.0",
         "@sentry/integrations": "^6.8.0",
@@ -38,6 +41,7 @@
         "next": "^10.2.3",
         "next-plugin-modernizr": "0.0.3",
         "next-pwa": "^5.2.23",
+        "next-transpile-modules": "^7.0.0",
         "normalize.css": "^8.0.1",
         "npm": "^8.1.2",
         "react": "16.13.1",

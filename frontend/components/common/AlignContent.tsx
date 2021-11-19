@@ -10,12 +10,12 @@ interface IPushToBottomProps {
     noFooter?: true;
 }
 
-interface FillHeightProps {
+export interface AvailableHeightProps {
     noFooter?: true;
     children: (heightCssValue: string) => React.ReactNode;
 }
 
-export const AvailableHeight: React.FunctionComponent<FillHeightProps> = ({
+export const AvailableHeight: React.FunctionComponent<AvailableHeightProps> = ({
     children,
     noFooter,
 }) => {
