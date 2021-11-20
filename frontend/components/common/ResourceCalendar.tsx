@@ -1,8 +1,8 @@
-import FullCalendar from "@fullcalendar/react";
+import FullCalendar, { VerboseFormattingArg } from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid"; // a plugin!
 
 import React, { useEffect, useRef, useState } from "react";
-import { useTranslation } from "../../localization";
+import { useTranslation, _t } from "../../localization";
 import { AvailableHeight, AvailableHeightProps } from "./AlignContent";
 import deLocale from "@fullcalendar/core/locales/de";
 import useTheme from "../../src/hooks/useTheme";
@@ -19,6 +19,27 @@ import { appUrls } from "../../config";
 import FormText from "./FormText";
 import FormElement from "./FormElement";
 
+const calendarDayFormatter = (date: Date, locale: string) => {
+
+    const weekday = date.toLocaleString(locale, { weekday: "short" });
+    const dateString = date.toLocaleDateString(locale, {
+        day: "2-digit",
+        month: "2-digit",
+    });
+
+    if (isToday(date)) return _t(locale, "common", "Heute");
+
+    return `${weekday}, ${dateString}`;
+};
+
+const fcDayFormatter = (arg: VerboseFormattingArg) => {
+    const locale = arg.localeCodes[0];
+    const date = new Date();
+    date.setMonth(arg.date.month)
+    date.setDate(arg.date.day)
+    date.setFullYear(arg.date.year)
+    return calendarDayFormatter(date, locale)
+}
 interface ResourceCalendarProps
     extends Pick<AvailableHeightProps, "noFooter"> {}
 
@@ -43,9 +64,11 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
         // api?.next();
     };
 
-    const currentDateString = isToday(selectedDate)
-        ? t("Heute")
-        : getFormattedDate(selectedDate, locale)!;
+    
+
+    const currentDateString = calendarDayFormatter(selectedDate, locale)!;
+
+    const daySpan = theme.isDesktop ? 4 : 1;
 
     return (
         <>
@@ -81,7 +104,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                     noBottomSpacing
                     noOutline
                     density="super-narrow"
-                    onClick={() => gotoDate(-1)}
+                    onClick={() => gotoDate(-daySpan)}
                 >
                     {t("zurück")}
                 </NewButton>
@@ -89,19 +112,19 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                     noBottomSpacing
                     noOutline
                     density="super-narrow"
-                    onClick={() => gotoDate(1)}
+                    onClick={() => gotoDate(daySpan)}
                 >
                     {t("vor")}
                 </NewButton>
             </FormGroup>
             <AvailableHeight noFooter={noFooter}>
-                {(cssAvailableHeight) => (
+                {(height) => (
                     <div>
                         <FullCalendar
                             views={{
                                 timeGridFourDay: {
                                     type: "timeGrid",
-                                    duration: { days: theme.isDesktop ? 4 : 1 },
+                                    duration: { days: daySpan },
                                     buttonText: "2 day",
                                 },
                             }}
@@ -109,6 +132,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             allDaySlot={false}
                             locale={locale === "de" ? deLocale : undefined}
                             // dayHeaders={false}
+                            dayHeaderFormat={fcDayFormatter}
                             dayHeaderContent={(content) =>
                                 mobile ? null : (
                                     <FormText>{content.text}</FormText>
@@ -118,18 +142,19 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             headerToolbar={false}
                             plugins={[timeGridPlugin]}
                             initialView="timeGridFourDay"
-                            height={cssAvailableHeight}
+                            height={Math.max(height, 300)}
                             slotLabelInterval="02:00"
                             slotDuration="01:00:00"
                             slotLabelContent={(content) => (
-                                <Label>{content.text}</Label>
+                                <span style={{ transform: "translateY(-62%)", display: "inline-block" }}>
+                                    <Label>{content.text}</Label>
+                                </span>
                             )}
                             // eventContent={() => null}
                             nowIndicator
                             scrollTime="08:00:00"
-                            eventSources={[
-                                "https://app.staging.getin.uiuiui.digital/api/space/2c0cd119-7699-407b-8cd0-dcc153ffb57e/availability/",
-                            ]}
+                            events="https://app.staging.getin.uiuiui.digital/api/space/2c0cd119-7699-407b-8cd0-dcc153ffb57e/availability/"
+
                             // events={[
                             //     {
                             //         title: "Test",
