@@ -186,6 +186,7 @@ export const getStaticProps: GetStaticProps<
         props: {
             resource,
         },
+        revalidate: 60 * 30
     };
 };
 
