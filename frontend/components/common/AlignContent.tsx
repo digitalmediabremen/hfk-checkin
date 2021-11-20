@@ -12,7 +12,7 @@ interface IPushToBottomProps {
 
 export interface AvailableHeightProps {
     noFooter?: true;
-    children: (heightCssValue: string) => React.ReactNode;
+    children: (height: number) => React.ReactNode;
 }
 
 export const AvailableHeight: React.FunctionComponent<AvailableHeightProps> = ({
@@ -20,16 +20,16 @@ export const AvailableHeight: React.FunctionComponent<AvailableHeightProps> = ({
     noFooter,
 }) => {
     const theme = useTheme();
-    const [containerHeight, setContainerHeight] = React.useState<string>();
+    const [containerHeight, setContainerHeight] = React.useState<number>();
     const measuredRef = React.useRef<HTMLDivElement>(null);
     const appHeight = use100vh();
 
     function updateContainerHeight(offsetTop: number) {
         const footerHeight = noFooter ? 0 : theme.footerHeight();
-        const heightString = `calc(${
-            appHeight ? `${appHeight}px` : "100vh"
-        } - ${offsetTop + footerHeight + theme.spacing(2)}px)`;
-        setContainerHeight(heightString);
+        if (!appHeight) return;
+        const height = appHeight - (offsetTop + footerHeight + theme.spacing(2));
+        setContainerHeight(height);
+        console.log(height)
     }
 
     React.useEffect(() => {
