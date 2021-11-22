@@ -97,25 +97,24 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
         if (!date) return;
         const api = calendarRef.current?.getApi();
         if (!api) return;
-        focusDate(api, date);
+        setSelectedDate(date);
     }, [date, calendarRef.current]);
+
+    useEffect(() => {
+        if (!selectedDate) return;
+        const api = calendarRef.current?.getApi();
+        if (!api) return;
+        api.gotoDate(selectedDate);
+    }, [selectedDate, calendarRef.current]);
 
     const localEventSource: EventSourceFunc = useCallback(
         (info, succ, fail) => succ(events || []),
         [events]
     );
 
-    const focusDate = (api: CalendarApi, _date: Date) => {
-        setSelectedDate(_date);
-        api.gotoDate(_date);
-    };
-
-    const gotoDate = (amountDays: number) => {
-        const api = calendarRef.current?.getApi();
-        if (!api) return;
-
+    const incrementDate = (amountDays: number) => {
         const newDate = addDates(selectedDate, duration.days(amountDays));
-        focusDate(api, newDate);
+        setSelectedDate(newDate);
         // api?.next();
     };
 
@@ -159,7 +158,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                     noBottomSpacing
                     noOutline
                     density="super-narrow"
-                    onClick={() => gotoDate(-daySpan)}
+                    onClick={() => incrementDate(-daySpan)}
                 >
                     {t("zurück")}
                 </NewButton>
@@ -167,7 +166,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                     noBottomSpacing
                     noOutline
                     density="super-narrow"
-                    onClick={() => gotoDate(daySpan)}
+                    onClick={() => incrementDate(daySpan)}
                 >
                     {t("vor")}
                 </NewButton>
