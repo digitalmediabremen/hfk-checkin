@@ -48,7 +48,8 @@ const {
     className: stripedEventBackground,
     styles: stripedBackgroundStyles,
 } = css.resolve`
-    :global(.fc-bg-event) {
+    :global(.fc .fc-bg-event) {
+        // background: none !important;
         background: linear-gradient(
             135deg,
             var(--fc-bg-event-color) 6.25%,
