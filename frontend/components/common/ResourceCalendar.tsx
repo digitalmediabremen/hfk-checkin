@@ -44,35 +44,6 @@ interface ResourceCalendarProps extends Pick<AvailableHeightProps, "noFooter"> {
     date?: Date;
 }
 
-const {
-    className: stripedEventBackground,
-    styles: stripedBackgroundStyles,
-} = css.resolve`
-    :global(.fc .fc-bg-event) {
-        // background: none !important;
-        background: linear-gradient(
-            135deg,
-            var(--fc-bg-event-color) 6.25%,
-            transparent 6.25%,
-            transparent 50%,
-            var(--fc-bg-event-color) 50%,
-            var(--fc-bg-event-color) 56.25%,
-            transparent 56.25%,
-            transparent 100%
-        );
-        background-size: 11.31px 11.31px;
-        border: 1px solid var(--fc-bg-event-color);
-    }
-
-    :global(.fc-v-event .fc-event-title) {
-        overflow: visible;
-    }
-
-    :global(td.fc-timegrid-slot.fc-timegrid-slot-lane) {
-        border-bottom: 1px solid var(--slot-lane-border-color);
-    }
-`;
-
 const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
     noFooter,
     resource,
@@ -140,8 +111,31 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                 .fc-timegrid-slot-label-cushion {
                     background: red;
                 }
+
+                :global(.fc .fc-bg-event) {
+                    // background: none !important;
+                    background: linear-gradient(
+                        135deg,
+                        var(--fc-bg-event-color) 6.25%,
+                        transparent 6.25%,
+                        transparent 50%,
+                        var(--fc-bg-event-color) 50%,
+                        var(--fc-bg-event-color) 56.25%,
+                        transparent 56.25%,
+                        transparent 100%
+                    );
+                    background-size: 11.31px 11.31px;
+                    border: 1px solid var(--fc-bg-event-color);
+                }
+
+                :global(.fc-v-event .fc-event-title) {
+                    overflow: visible;
+                }
+
+                :global(td.fc-timegrid-slot.fc-timegrid-slot-lane) {
+                    border-bottom: 1px solid var(--slot-lane-border-color);
+                }
             `}</style>
-            {stripedBackgroundStyles}
 
             <FormGroup sameLine pushRightAfter={1} bottomSpacing={2}>
                 <FormElement
@@ -204,7 +198,6 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             height={Math.max(height, 300)}
                             slotLabelInterval="02:00"
                             slotDuration="01:00:00"
-                            viewClassNames={stripedEventBackground}
                             slotLabelContent={(content) => (
                                 <span
                                     style={{
