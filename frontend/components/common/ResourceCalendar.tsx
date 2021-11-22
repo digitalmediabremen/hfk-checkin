@@ -48,7 +48,7 @@ const {
     className: stripedEventBackground,
     styles: stripedBackgroundStyles,
 } = css.resolve`
-    .fc-bg-event {
+    :global(.fc-bg-event) {
         background: linear-gradient(
             135deg,
             var(--fc-bg-event-color) 6.25%,
@@ -61,6 +61,14 @@ const {
         );
         background-size: 11.31px 11.31px;
         border: 1px solid var(--fc-bg-event-color);
+    }
+
+    :global(.fc-v-event .fc-event-title) {
+        overflow: visible;
+    }
+
+    :global(td.fc-timegrid-slot.fc-timegrid-slot-lane) {
+        border-bottom: 1px solid var(--slot-lane-border-color);
     }
 `;
 
@@ -124,6 +132,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                 --fc-event-border-color: transparent;
                 --fc-bg-event-color: ${theme.primaryColor};
                 --fc-bg-event-opacity: 1;
+                --slot-lane-border-color: ${theme.shadePrimaryColor(0.2)};
                 div {
                     margin: ${inset.map((i) => `${i}px`).join(" ")};
                 }
@@ -177,7 +186,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             ref={calendarRef}
                             allDaySlot={false}
                             locale={locale === "de" ? deLocale : undefined}
-                            // dayHeaders={false}
+                            dayHeaders={!mobile}
                             dayHeaderContent={(content) =>
                                 mobile ? null : (
                                     <FormText>
@@ -195,7 +204,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             height={Math.max(height, 300)}
                             slotLabelInterval="02:00"
                             slotDuration="01:00:00"
-                            eventClassNames={stripedEventBackground}
+                            viewClassNames={stripedEventBackground}
                             slotLabelContent={(content) => (
                                 <span
                                     style={{
