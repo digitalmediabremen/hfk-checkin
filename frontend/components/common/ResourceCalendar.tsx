@@ -112,7 +112,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                     background: red;
                 }
 
-                :global(.fc .fc-bg-event) {
+                :global(.fc) :global(.fc-bg-event) {
                     // background: none !important;
                     background: linear-gradient(
                         135deg,
@@ -128,7 +128,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                     border: 1px solid var(--fc-bg-event-color);
                 }
 
-                :global(.fc-v-event .fc-event-title) {
+                :global(.fc-v-event) :global(.fc-event-title) {
                     overflow: visible;
                 }
 
