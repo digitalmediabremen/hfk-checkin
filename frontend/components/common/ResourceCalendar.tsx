@@ -1,74 +1,115 @@
-import FullCalendar, { VerboseFormattingArg } from "@fullcalendar/react";
-import timeGridPlugin from "@fullcalendar/timegrid"; // a plugin!
-
-import React, { useEffect, useRef, useState } from "react";
-import { useTranslation, _t } from "../../localization";
-import { AvailableHeight, AvailableHeightProps } from "./AlignContent";
 import deLocale from "@fullcalendar/core/locales/de";
+import FullCalendar, {
+    CalendarApi,
+    EventSourceFunc,
+} from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid"; // a plugin!
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import css from "styled-jsx/css";
+import { useTranslation, _t } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
+import FullCalendarEventOnResource from "../../src/model/api/FullCalendarEventOnResource";
+import Resource from "../../src/model/api/Resource";
+import { addDates, duration, isToday } from "../../src/util/DateTimeUtil";
+import { insertIf } from "../../src/util/ReservationUtil";
+import { getResourceAvailabilityRequestUrl } from "../api/ApiService";
+import { AvailableHeight, AvailableHeightProps } from "./AlignContent";
+import FormElement from "./FormElement";
+import FormGroup from "./FormGroup";
+import FormText from "./FormText";
 import Label from "./Label";
 import NewButton from "./NewButton";
-import FormGroup from "./FormGroup";
-import {
-    addDates,
-    duration,
-    getFormattedDate,
-    isToday,
-} from "../../src/util/DateTimeUtil";
-import { appUrls } from "../../config";
-import FormText from "./FormText";
-import FormElement from "./FormElement";
 
 const calendarDayFormatter = (date: Date, locale: string) => {
-
     const weekday = date.toLocaleString(locale, { weekday: "short" });
     const dateString = date.toLocaleDateString(locale, {
         day: "2-digit",
         month: "2-digit",
     });
 
-    if (isToday(date)) return _t(locale, "common", "Heute");
+    if (isToday(date))
+        return (
+            <b>
+                {_t(locale, "common", "Heute")}, {dateString}
+            </b>
+        );
 
     return `${weekday}, ${dateString}`;
 };
 
-const fcDayFormatter = (arg: VerboseFormattingArg) => {
-    const locale = arg.localeCodes[0];
-    const date = new Date();
-    date.setMonth(arg.date.month)
-    date.setDate(arg.date.day)
-    date.setFullYear(arg.date.year)
-    return calendarDayFormatter(date, locale)
+interface ResourceCalendarProps extends Pick<AvailableHeightProps, "noFooter"> {
+    resource: Resource;
+    events?: Array<FullCalendarEventOnResource>;
+    getTitle?: () => string;
+    date?: Date;
 }
-interface ResourceCalendarProps
-    extends Pick<AvailableHeightProps, "noFooter"> {}
+
+const {
+    className: stripedEventBackground,
+    styles: stripedBackgroundStyles,
+} = css.resolve`
+    .fc-bg-event {
+        background: linear-gradient(
+            135deg,
+            var(--fc-bg-event-color) 6.25%,
+            transparent 6.25%,
+            transparent 50%,
+            var(--fc-bg-event-color) 50%,
+            var(--fc-bg-event-color) 56.25%,
+            transparent 56.25%,
+            transparent 100%
+        );
+        background-size: 11.31px 11.31px;
+        border: 1px solid var(--fc-bg-event-color);
+    }
+`;
 
 const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
     noFooter,
+    resource,
+    events,
+    getTitle,
+    date,
 }) => {
     const { locale, t } = useTranslation();
     const theme = useTheme();
-    const mobile = !useTheme().isDesktop;
-    const inset = theme.isDesktop
-        ? [0, 0, 0, -5]
-        : [0, -theme.spacing(1.5), 0, -theme.spacing(1.5)];
     const calendarRef = useRef<FullCalendar>(null);
+    const [selectedDate, setSelectedDate] = useState<Date>(date || new Date());
 
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const inset =
+        theme.isDesktop && false
+            ? [0, 0, 0, -5]
+            : [0, -theme.spacing(1.5), 0, -theme.spacing(1.5)];
+    const mobile = !useTheme().isDesktop;
+    const daySpan = mobile ? 1 : 4;
+    const eventUrl = getResourceAvailabilityRequestUrl(resource.uuid);
+    const currentDateString = calendarDayFormatter(selectedDate, locale)!;
+
+    useEffect(() => {
+        if (!date) return;
+        const api = calendarRef.current?.getApi();
+        if (!api) return;
+        focusDate(api, date);
+    }, [date, calendarRef.current]);
+
+    const localEventSource: EventSourceFunc = useCallback(
+        (info, succ, fail) => succ(events || []),
+        [events]
+    );
+
+    const focusDate = (api: CalendarApi, _date: Date) => {
+        setSelectedDate(_date);
+        api.gotoDate(_date);
+    };
 
     const gotoDate = (amountDays: number) => {
         const api = calendarRef.current?.getApi();
+        if (!api) return;
+
         const newDate = addDates(selectedDate, duration.days(amountDays));
-        setSelectedDate(newDate);
-        api?.gotoDate(newDate);
+        focusDate(api, newDate);
         // api?.next();
     };
-
-    
-
-    const currentDateString = calendarDayFormatter(selectedDate, locale)!;
-
-    const daySpan = theme.isDesktop ? 4 : 1;
 
     return (
         <>
@@ -78,9 +119,10 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                 --fc-today-bg-color: ${theme.secondaryColor};
                 --fc-page-bg-color: ${theme.primaryColor};
                 --fc-now-indicator-color: ${theme.primaryColor};
-                --fc-event-bg-color: transparent;
+                --fc-event-text-color: ${theme.secondaryColor};
+                --fc-event-bg-color: ${theme.primaryColor};
                 --fc-event-border-color: transparent;
-                --fc-bg-event-color: ${theme.shadePrimaryColor(1)};
+                --fc-bg-event-color: ${theme.primaryColor};
                 --fc-bg-event-opacity: 1;
                 div {
                     margin: ${inset.map((i) => `${i}px`).join(" ")};
@@ -90,16 +132,20 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                     background: red;
                 }
             `}</style>
+            {stripedBackgroundStyles}
+
             <FormGroup sameLine pushRightAfter={1} bottomSpacing={2}>
-                {mobile && (
-                    <FormElement
-                        noPadding
-                        noBottomSpacing
-                        noOutline
-                        density="super-narrow"
-                        value={currentDateString}
-                    />
-                )}
+                <FormElement
+                    noPadding
+                    noBottomSpacing
+                    noOutline
+                    density="super-narrow"
+                    value={[
+                        ...insertIf([currentDateString], mobile),
+                        ...insertIf([getTitle?.()], !!getTitle),
+                    ]}
+                />
+
                 <NewButton
                     noBottomSpacing
                     noOutline
@@ -132,10 +178,14 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             allDaySlot={false}
                             locale={locale === "de" ? deLocale : undefined}
                             // dayHeaders={false}
-                            dayHeaderFormat={fcDayFormatter}
                             dayHeaderContent={(content) =>
                                 mobile ? null : (
-                                    <FormText>{content.text}</FormText>
+                                    <FormText>
+                                        {calendarDayFormatter(
+                                            content.date,
+                                            locale
+                                        )}
+                                    </FormText>
                                 )
                             }
                             initialDate={selectedDate}
@@ -145,27 +195,23 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             height={Math.max(height, 300)}
                             slotLabelInterval="02:00"
                             slotDuration="01:00:00"
+                            eventClassNames={stripedEventBackground}
                             slotLabelContent={(content) => (
-                                <span style={{ transform: "translateY(-62%)", display: "inline-block" }}>
+                                <span
+                                    style={{
+                                        transform: "translateY(-62%)",
+                                        display: "inline-block",
+                                    }}
+                                >
                                     <Label>{content.text}</Label>
                                 </span>
                             )}
                             // eventContent={() => null}
                             nowIndicator
+                            // eventColor={theme.primaryColor}
+                            // eventTextColor={theme.secondaryColor}
                             scrollTime="08:00:00"
-                            events="https://app.staging.getin.uiuiui.digital/api/space/2c0cd119-7699-407b-8cd0-dcc153ffb57e/availability/"
-
-                            // events={[
-                            //     {
-                            //         title: "Test",
-                            //         start: new Date(
-                            //             new Date().getTime() - 1000000
-                            //         ),
-                            //         end: new Date(
-                            //             new Date().getTime() + 10000000
-                            //         ),
-                            //     },
-                            // ]}
+                            eventSources={[eventUrl, localEventSource]}
                         />
                     </div>
                 )}

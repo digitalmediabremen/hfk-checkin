@@ -70,7 +70,7 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
                         // noContentMargin
                         {...subPageProps("calendar")}
                     >
-                        <ResourceCalendar noFooter />
+                        <ResourceCalendar noFooter resource={resource} />
                     </SubPage>
                 }
                 activeSubPage={activeSubPage}
@@ -186,7 +186,7 @@ export const getStaticProps: GetStaticProps<
         props: {
             resource,
         },
-        revalidate: 60 * 30
+        revalidate: 60 * 30,
     };
 };
 

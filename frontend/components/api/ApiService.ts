@@ -17,7 +17,9 @@ import Unit from "../../src/model/api/Unit";
 import { notEmpty } from "../../src/util/TypeUtil";
 import validateCheckin from "../../src/model/api/Checkin.validator";
 import validateLocation from "../../src/model/api/Location.validator";
+import validateEventOnResource from "../../src/model/api/FullCalendarEventOnResource.validator";
 import * as Sentry from "@sentry/node";
+import FullCalendarEventOnResource from "../../src/model/api/FullCalendarEventOnResource";
 
 export type ApiResponse<T> =
     | {
@@ -91,7 +93,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         ...otherRequestData,
     })
         .then(async (response) => ({
-            result: (parseJsonWithDate(await response.text()) as unknown) as
+            result: parseJsonWithDate(await response.text()) as unknown as
                 | ApiResponse<ResultType>
                 | undefined,
             status: response.status,
@@ -106,8 +108,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                 if (!result.detail)
                     throw {
                         status: status,
-                        error:
-                            "API responded with wrong format.\n Http Error Codes should contain a detail field",
+                        error: "API responded with wrong format.\n Http Error Codes should contain a detail field",
                     };
                 throw {
                     status: status,
@@ -136,8 +137,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                     console.error(e);
                     throw {
                         status: status,
-                        error:
-                            "API responded with wrong format.\nReturn object is of wrong type.",
+                        error: "API responded with wrong format.\nReturn object is of wrong type.",
                     };
                 }
             }
@@ -273,12 +273,23 @@ export const updateReservationRequest = async (
         validateReservation
     );
 
-export const requestKeycardRequest = async (
+export const requestKeycardRequest = async (options?: RequestOptions) =>
+    await apiRequest<MyProfile>(`profile/me/requestkeycard`, { ...options });
+
+export const getResourceAvailabilityRequestUrl = (resourceId: string) =>
+    `${config.apiUrl}/space/${resourceId}/availability/`;
+
+export const getResourceAvailabilityRequest = async (
+    resourceId: string,
     options?: RequestOptions
-) => await apiRequest<MyProfile>(
-    `profile/me/requestkeycard`,
-    { ...options }
-)
+) =>
+    await apiRequest<FullCalendarEventOnResource>(
+        `space/${resourceId}/availability/`,
+        {
+            ...options,
+        },
+        validateEventOnResource
+    );
 
 export const getResourceRequest = async (
     resourceId: string,

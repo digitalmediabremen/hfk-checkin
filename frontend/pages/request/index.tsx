@@ -33,9 +33,8 @@ const Subpages = <SubpageCollection />;
 
 const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const { t, locale } = useTranslation("request");
-    const { handlerProps, direction, activeSubPage } = useSubPage(
-        requestSubpages
-    );
+    const { handlerProps, direction, activeSubPage } =
+        useSubPage(requestSubpages);
     const { hasError } = useValidation();
 
     const ValidationIcon = <AlertCircle />;
@@ -66,21 +65,10 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
         >
             <Subtitle>{title}</Subtitle>
             <FormElement
-                {...handlerProps("time")}
-                label={t("Datum und Uhrzeit")}
-                value={timeFormValuePresenter(reservation, locale)}
-                shortLabel={t("Zeit")}
-                arrow
-                actionIcon={hasError("exceedsBookableRange") && ValidationIcon}
-                extendedWidth
-            />
-            <FormElement
                 {...handlerProps("resource")}
                 value={
                     reservation?.resource
-                        ? resourceFormValuePresenter(
-                              reservation.resource,
-                          )
+                        ? resourceFormValuePresenter(reservation.resource)
                         : undefined
                 }
                 label={t("Raum")}
@@ -91,6 +79,15 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 }
                 extendedWidth
                 bottomSpacing={2}
+            />
+            <FormElement
+                {...handlerProps("time")}
+                label={t("Datum und Uhrzeit")}
+                value={timeFormValuePresenter(reservation, locale)}
+                shortLabel={t("Zeit")}
+                arrow
+                actionIcon={hasError("exceedsBookableRange") && ValidationIcon}
+                extendedWidth
             />
             <SectionTitle center>{t("optionale angaben")}</SectionTitle>
             <FormElement

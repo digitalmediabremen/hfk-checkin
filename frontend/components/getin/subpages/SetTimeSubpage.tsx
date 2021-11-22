@@ -3,7 +3,9 @@ import { ArrowRight } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useReservationState from "../../../src/hooks/useReservationState";
+import useTheme from "../../../src/hooks/useTheme";
 import useValidation from "../../../src/hooks/useValidation";
+import FullCalendarEventOnResource from "../../../src/model/api/FullCalendarEventOnResource";
 import {
     addDateTime,
     createDateNow,
@@ -12,7 +14,7 @@ import {
     duration,
     mergeDateAndTime,
     smallerThan,
-    Time,
+    Time
 } from "../../../src/util/DateTimeUtil";
 import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
@@ -21,6 +23,7 @@ import FormDateInput from "../../common/FormDateInput";
 import FormTimeInput from "../../common/FormTimeInput";
 import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
+import ResourceCalendar from "../../common/ResourceCalendar";
 
 interface SetTimeSubpageProps {}
 
@@ -29,9 +32,11 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const { t } = useTranslation("request-time");
     const { goForward } = useSubPage(requestSubpages);
     const firstRender = useRef(true);
+    const theme = useTheme();
 
     const [begin, setBegin] = useReservationState("begin");
     const [end, setEnd] = useReservationState("end");
+    const [resource] = useReservationState("resource");
     const [date, setDate] = useState<Date | undefined>(begin);
     // const default
     const defaultBegin = createTimeFromDate(
@@ -69,6 +74,18 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         firstRender.current = false;
     }, []);
 
+    const currentRequestEventArray:
+        | Array<FullCalendarEventOnResource>
+        | undefined = begin &&
+        end && [
+            {
+                title: t("Deine Buchung"),
+                id: "currentRequest",
+                start: begin,
+                end: end,
+            },
+        ];
+
     return (
         <>
             <style jsx>{``}</style>
@@ -102,6 +119,8 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                 />
             </div>
 
+            {/* show notices after booking request */}
+
             <Fade in={exceedsBookableRange}>
                 <Notice
                     error
@@ -122,7 +141,8 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     </NewButton>
                 </Notice>
             </Fade>
-            <Fade in={!exceedsBookableRange}>
+
+            {/* <Fade in={!exceedsBookableRange}>
                 <Notice bottomSpacing={2}>
                     {t(
                         "Bitte rechne mit einer Bearbeitungszeit von mind. 48 Stunden."
@@ -133,7 +153,18 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                         "Wichtig: Am Wochenende werden in der Regel keine Anfragen bearbeitet. Willst du also eine Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage bis spätestens Donnerstag 10 Uhr."
                     )}
                 </Notice>
-            </Fade>
+            </Fade> */}
+
+            {resource && (
+                <ResourceCalendar
+                    getTitle={() => `${resource.display_numbers} ${resource.name}`}
+                    noFooter
+                    resource={resource}
+                    events={currentRequestEventArray}
+                    date={begin}
+                />
+            )}
+
             {/* <FormElementBase>
                 <FormElementLabel name="Von" />
                 <input type="time" value="10:20"></input>

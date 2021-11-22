@@ -29,7 +29,6 @@ export const AvailableHeight: React.FunctionComponent<AvailableHeightProps> = ({
         if (!appHeight) return;
         const height = appHeight - (offsetTop + footerHeight + theme.spacing(2));
         setContainerHeight(height);
-        console.log(height)
     }
 
     React.useEffect(() => {

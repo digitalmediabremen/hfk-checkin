@@ -102,7 +102,7 @@ const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps>
                                 </Notice>
                             </>
                         ) : (
-                            <ResourceCalendar />
+                            <ResourceCalendar resource={resource} />
                         )}
                     </>
                 )}
