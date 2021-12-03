@@ -25,7 +25,8 @@ class Keycard(Profile):
 
     def __init__(self, *args, **kwargs):
         super(Keycard, self).__init__(*args, **kwargs)
-        self.assigned_permissions = self.user.timeenableduserobjectpermission_set.filter(
+        # FIXME use reverse_table_name from instance of permission.Resourcepermission instead of hard coding
+        self.assigned_permissions = self.user.timeenabledresourceuserobjectpermission_set.filter(
             permission__codename__in=KEYCARD_PERMISSION_CODENAMES)
 
     def __repr__(self):

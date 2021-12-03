@@ -19,6 +19,10 @@ from checkin.users.models import Profile
 UserPermission = get_user_obj_perms_model()
 PERMISSION_CODENAMES = ('resource:has_permanent_access', 'resource:can_modify_access')
 
+from guardian.utils import get_user_obj_perms_model as get_guardian_user_obj_perms_model, get_obj_perms_model
+from guardian.models import UserObjectPermissionBase, UserObjectPermission
+
+
 class ResourceFilter(admin.SimpleListFilter):
     title = _("Resource")
     field_name = 'content_object'
@@ -114,7 +118,9 @@ class SyncedListFilter(admin.SimpleListFilter):
             return queryset.filter(synced_at__isnull=True)
 
 
-class ResourcePermission(UserPermission):
+UserResourcePermission = get_obj_perms_model(Resource(), UserObjectPermissionBase, UserObjectPermission)
+
+class ResourcePermission(UserResourcePermission):
 
     class Meta:
         proxy = True
