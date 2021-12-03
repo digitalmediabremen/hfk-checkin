@@ -191,6 +191,23 @@ registerRoute(
     })
 )
 
+registerRoute(
+    ({ request }) => request.url.match(/api\/space\/.+?\/availability\//i) !== null,
+    new NetworkFirst({
+        cacheName: "api-cached",
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxAgeSeconds: 60,
+                maxEntries: 200,
+                purgeOnQuotaError: true,
+            }),
+        ],
+    })
+)
+
 // cache resource requests
 registerRoute(
     ({ request }) => request.url.match(/api\/space\//i) !== null,
