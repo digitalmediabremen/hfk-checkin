@@ -10,6 +10,7 @@ const translation: Translation = {
             "Seite nicht gefunden": "Page not found",
             "+{days}T": "+{days}D",
             jetzt: "now",
+            Heute: "Today",
             "Raum übernehmen": "Reuse room",
             "Zeit übernehmen": "Reuse time",
             "Wähle die Angaben aus, die du aus der Buchung #{identifier} übernehmen möchtest.":
@@ -23,10 +24,12 @@ const translation: Translation = {
             "sowie {fields}": "and also {fields}",
             Deutsch: "Deutsch",
             English: "English",
-            Heute: "Today",
             Morgen: "Tomorrow",
+            Einstellungen: "Settings",
             Datenschutz: "Privacy",
-            Einstellungen: "Settings"
+            heute: "today",
+            zurück: "prev",
+            vor: "next",
         },
         reservation: {
             "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
@@ -107,6 +110,14 @@ const translation: Translation = {
                 "Your phone number is only used in case of infection.",
             Hinzufügen: "Add",
         },
+        room: {
+            Raum: "Room",
+            Verantwortlicher: "Room delegate",
+            Ausstattung: "Features",
+            "Raum anfragen": "Request room",
+            "Schliessberechtigung anfragen": "Request keycard access",
+            Raumliste: "Roomlist",
+        },
         "request-resource": {
             "Gebäude auswählen": "select building",
             "Raum suchen": "search room",
@@ -152,14 +163,11 @@ const translation: Translation = {
             "Bitte wähle ein frühreres Datum aus oder gib einen Buchungsgrund an.":
                 "Please select an earlier date or specify the purpose of your booking request.",
             "Buchungsgrund angeben": "State booking purpose",
-            "Bitte rechne mit einer Bearbeitungszeit von mind. 48 Stunden.":
-                "Please allow at least 48 hours for processing.",
-            "Wichtig: Am Wochenende werden in der Regel keine Anfragen bearbeitet. Willst du also eine Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage bis spätestens Donnerstag 10 Uhr.":
-                "Important: Requests are not processed on weekends. If you want to book a workshop on Monday at 10 a.m., you should submit your request by Thursday at 10 a.m. at the latest.",
             'Der Raum "{resource}" kann maximal {days} Tage im Voraus gebucht werden.':
                 'Room "{resource}" can only be booked {days} days in advance.',
             "Räume können maximal {days} Tage im Vorraus gebucht werden.":
                 "Rooms can only be booked {days} days in advance.",
+            "Deine Buchung": "Your request",
         },
         cookieError: {
             "Es gibt ein Cookie Problem.":
@@ -201,7 +209,8 @@ const translation: Translation = {
             "Wirklich ausloggen?": "Are you sure?",
             "Profil erstellen": "Create profile",
             "Profil ändern": "Change profile",
-            "Willst du wirklich eine neue Schlüsselkarte beantragen?": "Please confirm your keycard request",
+            "Willst du wirklich eine neue Schlüsselkarte beantragen?":
+                "Please confirm your keycard request",
             "Eingeloggt als": "Logged in as",
             Ausloggen: "Log out",
             Vorname: "First name",
@@ -266,15 +275,7 @@ const translation: Translation = {
             "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.":
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
-        },
-        room: {
-            Raum: "Room",
-            Verantwortlicher: "Room delegate",
-            Ausstattung: "Features",
-            "Raum anfragen": "Request room",
-            "Schliessberechtigung anfragen": "Request keycard access",
-            Raumliste: "Roomlist",
-        },
+        }
     },
 };
 export default translation;
