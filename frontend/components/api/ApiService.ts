@@ -145,6 +145,9 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         })
         .catch((error) => {
             if (error.error !== undefined) {
+                // dont log 400 errors
+                if (error.status < 500) return;
+
                 Sentry.withScope(function (scope) {
                     scope.setLevel(
                         error.status >= 500
