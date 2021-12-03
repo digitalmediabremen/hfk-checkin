@@ -34,6 +34,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const { goForward } = useSubPage(requestSubpages);
     const firstRender = useRef(true);
     const theme = useTheme();
+    const mobile = !theme.isDesktop;
 
     const [begin, setBegin] = useReservationState("begin");
     const [end, setEnd] = useReservationState("end");
@@ -166,6 +167,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
 
             {resource && (
                 <ResourceCalendar
+                    hideHeader={mobile}
                     getTitle={() =>
                         `${resource.display_numbers} ${resource.name}`
                     }

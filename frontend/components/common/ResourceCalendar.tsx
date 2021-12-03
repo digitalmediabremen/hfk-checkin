@@ -42,6 +42,7 @@ interface ResourceCalendarProps extends Pick<AvailableHeightProps, "noFooter"> {
     events?: Array<FullCalendarEventOnResource>;
     getTitle?: () => string;
     date?: Date;
+    hideHeader?: boolean;
 }
 
 const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
@@ -50,6 +51,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
     events,
     getTitle,
     date,
+    hideHeader,
 }) => {
     const { locale, t } = useTranslation();
     const theme = useTheme();
@@ -109,7 +111,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                 --fc-bg-event-color: ${theme.primaryColor};
                 --fc-bg-event-opacity: 1;
                 --slot-lane-border-color: ${theme.shadePrimaryColor(0.2)};
-                --fc-small-font-size: .9rem;
+                --fc-small-font-size: 0.9rem;
                 div {
                     margin: ${inset.map((i) => `${i}px`).join(" ")};
                 }
@@ -152,44 +154,46 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                 }
             `}</style>
 
-            <FormGroup sameLine pushRightAfter={1} bottomSpacing={2}>
-                <FormElement
-                    noPadding
-                    noBottomSpacing
-                    noOutline
-                    density="super-narrow"
-                    value={[
-                        ...insertIf([currentDateString], mobile),
-                        ...insertIf([getTitle?.()], !!getTitle),
-                    ]}
-                />
-                {!mobile && (
+            {(hideHeader === false || hideHeader === undefined) && (
+                <FormGroup sameLine pushRightAfter={1} bottomSpacing={2}>
+                    <FormElement
+                        noPadding
+                        noBottomSpacing
+                        noOutline
+                        density="super-narrow"
+                        value={[
+                            ...insertIf([currentDateString], mobile),
+                            ...insertIf([getTitle?.()], !!getTitle),
+                        ]}
+                    />
+                    {!mobile && (
+                        <NewButton
+                            noBottomSpacing
+                            noOutline
+                            density="super-narrow"
+                            onClick={() => setDateToday()}
+                        >
+                            {t("heute")}
+                        </NewButton>
+                    )}
                     <NewButton
                         noBottomSpacing
                         noOutline
                         density="super-narrow"
-                        onClick={() => setDateToday()}
+                        onClick={() => incrementDate(-daySpan)}
                     >
-                        {t("heute")}
+                        {t("zurück")}
                     </NewButton>
-                )}
-                <NewButton
-                    noBottomSpacing
-                    noOutline
-                    density="super-narrow"
-                    onClick={() => incrementDate(-daySpan)}
-                >
-                    {t("zurück")}
-                </NewButton>
-                <NewButton
-                    noBottomSpacing
-                    noOutline
-                    density="super-narrow"
-                    onClick={() => incrementDate(daySpan)}
-                >
-                    {t("vor")}
-                </NewButton>
-            </FormGroup>
+                    <NewButton
+                        noBottomSpacing
+                        noOutline
+                        density="super-narrow"
+                        onClick={() => incrementDate(daySpan)}
+                    >
+                        {t("vor")}
+                    </NewButton>
+                </FormGroup>
+            )}
             <AvailableHeight noFooter={noFooter}>
                 {(height) => (
                     <div>
