@@ -48,7 +48,9 @@ const Page: React.FunctionComponent<PageProps> = ({
         <>
             <style jsx>{`
                 .page {
-                    min-height: ${height! - theme.topBarHeight()}px;
+                    min-height: ${height! -
+                    theme.topBarHeight() -
+                    theme.spacing(2)}px;
                     position: relative;
                     // height: 100%;
                     margin: 0 auto;
@@ -70,9 +72,7 @@ const Page: React.FunctionComponent<PageProps> = ({
                     overflow-x: hidden;
                     // bouncy scroll behaviour
                     -webkit-overflow-scrolling: touch;
-                    height: ${height! -
-                    theme.topBarHeight() +
-                    (!!footer ? 0 : theme.spacing(2))}px;
+                    height: ${height! - theme.topBarHeight()}px;
                 }
 
                 .scroll-container::-webkit-scrollbar {
