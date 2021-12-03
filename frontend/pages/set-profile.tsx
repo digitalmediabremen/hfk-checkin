@@ -13,6 +13,7 @@ import Divider from "../components/common/Divider";
 import FormElement from "../components/common/FormElement";
 import FormPhoneInput from "../components/common/FormPhoneInput";
 import FormTextInput from "../components/common/FormTextInput";
+import KeycardFormElement from "../components/common/KeycardFormElement";
 import Layout from "../components/common/Layout";
 import { LoadingInline } from "../components/common/Loading";
 import NewButton from "../components/common/NewButton";
@@ -27,6 +28,7 @@ import { useTranslation } from "../localization";
 import useColorSchemeSetting, {
     ColorSchemeSetting,
 } from "../src/hooks/useColorSchemeSetting";
+import useKeycardInfo from "../src/hooks/useKeycardInfo";
 import useRequestKeycard from "../src/hooks/useRequestKeycard";
 import Locale from "../src/model/api/Locale";
 import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
@@ -58,6 +60,7 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
         light: t("Hell"),
         dark: t("Dunkel"),
     };
+
     const { colorSchemeSetting, handleColorSchemeSettingChange } =
         useColorSchemeSetting();
 
@@ -315,29 +318,13 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
                             )}
                         </Notice>
 
-                        <FormElement
-                            labelIcon={<CreditCard />}
-                            value={[initialProfile?.keycard_number]}
+                        <KeycardFormElement
                             density="super-narrow"
                             noOutline
                             noPadding
                             bottomSpacing={2}
                             maxRows={3}
                         />
-                        <Notice
-                            error
-                            bottomSpacing={2}
-                            title={t("Berechtigungen hinzugefügt")}
-                        >
-                            {t(
-                                "Am {date-synced} wurden zuletzt Schliessberechtigungen auf deine Karte übertragen. Falls noch nicht geschehen, kannst du deine Karte jetzt im Raum {location} abholen.",
-                                {
-                                    "date-synced": "24.12.1993",
-                                    location: "2.08.030 (Speicher XI)",
-                                }
-                            )}
-                        </Notice>
-
                         <Notice bottomSpacing={2}>
                             {t(
                                 "Deine Schließkartennummer kann nachträglich nicht mehr geändert werden."

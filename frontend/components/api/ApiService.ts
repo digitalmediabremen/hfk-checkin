@@ -17,6 +17,7 @@ import Unit from "../../src/model/api/Unit";
 import { notEmpty } from "../../src/util/TypeUtil";
 import validateCheckin from "../../src/model/api/Checkin.validator";
 import validateLocation from "../../src/model/api/Location.validator";
+import validateKeycardInfo from "../../src/model/api/KeycardInfo.validator";
 import validateEventOnResource from "../../src/model/api/FullCalendarEventOnResource.validator";
 import * as Sentry from "@sentry/node";
 import FullCalendarEventOnResource from "../../src/model/api/FullCalendarEventOnResource";
@@ -236,7 +237,7 @@ export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<MyProfile>("profile/me/", { headers }, validateProfile);
 
 export const getKeycardInfoRequest = async (headers?: HeadersInit) =>
-    await apiRequest<KeycardInfo>("profile/me/", { headers }, validateKeycardInfo);
+    await apiRequest<KeycardInfo>("keycard/me/", { headers }, validateKeycardInfo);
 
 export const getCheckinRequest = async (
     checkinId: string,
