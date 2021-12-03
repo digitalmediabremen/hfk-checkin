@@ -20,6 +20,7 @@ import validateLocation from "../../src/model/api/Location.validator";
 import validateEventOnResource from "../../src/model/api/FullCalendarEventOnResource.validator";
 import * as Sentry from "@sentry/node";
 import FullCalendarEventOnResource from "../../src/model/api/FullCalendarEventOnResource";
+import KeycardInfo from "../../src/model/api/KeycardInfo";
 
 export type ApiResponse<T> =
     | {
@@ -126,7 +127,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             return { data: result, status };
         })
         .then((result) => {
-            if (!!responseTypeGuard) {
+            if (!!responseTypeGuard && config.environment !== "production") {
                 console.debug(`Check Model for endpoint "${endpoint}"`);
                 const dateWithDateStrings = JSON.parse(
                     JSON.stringify(result.data)
@@ -233,6 +234,9 @@ export const getLocationRequest = async (
 
 export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<MyProfile>("profile/me/", { headers }, validateProfile);
+
+export const getKeycardInfoRequest = async (headers?: HeadersInit) =>
+    await apiRequest<KeycardInfo>("profile/me/", { headers }, validateKeycardInfo);
 
 export const getCheckinRequest = async (
     checkinId: string,
