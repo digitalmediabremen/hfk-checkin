@@ -32,7 +32,7 @@ const KeycardFormElement: React.FunctionComponent<KeycardFormElementProps> = ({
             result.synced_permission_count < result.total_permission_count
         ) {
             return t(
-                "{synced} von {total} deiner Berichtigungen sind synchronisiert",
+                "{synced} von {total} deiner Berechtigungen sind synchronisiert",
                 {
                     synced: result.synced_permission_count,
                     total: result.total_permission_count,

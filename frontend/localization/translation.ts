@@ -243,8 +243,8 @@ const translation: Translation = {
             "Noch keine Zugangsberechtigungen": "No access permissions",
             "Alle {total} Berechtigungen sind aktiv":
                 "All access permissions active",
-            "{synced}/{total} deiner Berichtigungen sind synchronisiert":
-                "{synced}/{total} of permissions syncronized",
+            "{synced} von {total} deiner Berechtigungen sind synchronisiert":
+                "{synced} of {total} of permissions synchronized",
             "Vor {distance} zuletzt synchronisiert":
                 "Permissions synced {distance} ago",
         },
