@@ -124,12 +124,21 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                         transparent 56.25%,
                         transparent 100%
                     );
-                    background-size: 11.31px 11.31px;
+                    background-size: 12px 12px;
                     border: 1px solid var(--fc-bg-event-color);
                 }
 
                 :global(.fc-v-event) :global(.fc-event-title) {
                     overflow: visible;
+                }
+
+                :global(.fc) :global(.fc-timegrid-now-indicator-line) {
+                    mix-blend-mode: difference;
+                    border-width: 3px 0 0;
+                }
+
+                :global(.fc-v-event) :global(.fc-event-title) {
+                    font-weight: bold;
                 }
 
                 :global(td.fc-timegrid-slot.fc-timegrid-slot-lane) {

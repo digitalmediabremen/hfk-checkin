@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
+import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
 import useReservationState from "../../../src/hooks/useReservationState";
 import useTheme from "../../../src/hooks/useTheme";
 import useValidation from "../../../src/hooks/useValidation";
@@ -14,7 +15,7 @@ import {
     duration,
     mergeDateAndTime,
     smallerThan,
-    Time
+    Time,
 } from "../../../src/util/DateTimeUtil";
 import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
@@ -55,7 +56,8 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         notEmpty(timeFrom) && notEmpty(timeTo) && smallerThan(timeTo, timeFrom);
     const exceedsBookableRange =
         hasError("exceedsBookableRange") && hasError("needsExceptionReason");
-
+    const [currentRequestEventArray, setCurrentRequestEventArray] =
+        useState<Array<FullCalendarEventOnResource> | undefined>();
     // update date values
     useEffect(() => {
         if (firstRender.current) return;
@@ -74,17 +76,24 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         firstRender.current = false;
     }, []);
 
-    const currentRequestEventArray:
-        | Array<FullCalendarEventOnResource>
-        | undefined = begin &&
-        end && [
+    const updateCurrentRequestArray = useDelayedCallback(
+        (events: Array<FullCalendarEventOnResource> | undefined) => {
+            setCurrentRequestEventArray(events);
+        },
+        500
+    );
+
+    useEffect(() => {
+        if (!begin || !end) return;
+        updateCurrentRequestArray([
             {
                 title: t("Deine Buchung"),
                 id: "currentRequest",
                 start: begin,
                 end: end,
             },
-        ];
+        ]);
+    }, [begin, end]);
 
     return (
         <>
@@ -157,7 +166,9 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
 
             {resource && (
                 <ResourceCalendar
-                    getTitle={() => `${resource.display_numbers} ${resource.name}`}
+                    getTitle={() =>
+                        `${resource.display_numbers} ${resource.name}`
+                    }
                     noFooter
                     resource={resource}
                     events={currentRequestEventArray}
