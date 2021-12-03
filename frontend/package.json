@@ -33,6 +33,7 @@
         "@sentry/webpack-plugin": "^1.18.0",
         "babel-plugin-superjson-next": "^0.4.2",
         "classnames": "^2.3.1",
+        "date-fns": "^2.27.0",
         "date-input-polyfill": "^2.14.0",
         "get-user-locale": "^1.4.0",
         "install": "^0.13.0",
@@ -60,9 +61,9 @@
         "scrollparent": "^2.0.1",
         "smoothscroll-polyfill": "^0.4.4",
         "superjson": "^1.8.0",
+        "typescript": "^4.3.5",
         "use-media": "^1.4.0",
-        "workbox-window": "^6.1.5",
-        "typescript": "^4.3.5"
+        "workbox-window": "^6.1.5"
     },
     "devDependencies": {
         "@types/classnames": "^2.3.1",
