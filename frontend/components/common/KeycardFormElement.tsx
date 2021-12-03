@@ -6,7 +6,7 @@ import { useTranslation } from "../../localization";
 import useKeycardInfo from "../../src/hooks/useKeycardInfo";
 import FormElement, { FormElementProps } from "./FormElement";
 import FormText from "./FormText";
-import Loading from "./Loading";
+import Loading, { LoadingInline } from "./Loading";
 
 interface KeycardFormElementProps
     extends Omit<FormElementProps, "value" | "labelIcon"> {}
@@ -55,7 +55,15 @@ const KeycardFormElement: React.FunctionComponent<KeycardFormElementProps> = ({
     })();
 
     return (
-        <Loading loading={keycardApi.state !== "success"}>
+        <>
+            {keycardApi.state === "loading" && (
+                <FormElement
+                    {...formElementProps}
+                    labelIcon={<CreditCard />}
+                    value={[<LoadingInline loading />]}
+                    bottomSpacing={2}
+                />
+            )}
             {keycardApi.state === "success" && (
                 <>
                     <style jsx>{``}</style>
@@ -74,7 +82,7 @@ const KeycardFormElement: React.FunctionComponent<KeycardFormElementProps> = ({
                     )}
                 </>
             )}
-        </Loading>
+        </>
     );
 };
 
