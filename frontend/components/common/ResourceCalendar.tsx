@@ -207,16 +207,18 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                             height={Math.max(height, 300)}
                             slotLabelInterval="02:00"
                             slotDuration="01:00:00"
-                            slotLabelContent={(content) => (
-                                <span
-                                    style={{
-                                        transform: "translateY(-62%)",
-                                        display: "inline-block",
-                                    }}
-                                >
-                                    <Label>{content.text}</Label>
-                                </span>
-                            )}
+                            slotLabelContent={(content) =>
+                                content.date.getHours() !== 0 && (
+                                    <span
+                                        style={{
+                                            transform: "translateY(-62%)",
+                                            display: "inline-block",
+                                        }}
+                                    >
+                                        <Label>{content.text}</Label>
+                                    </span>
+                                )
+                            }
                             // eventContent={() => null}
                             nowIndicator
                             // eventColor={theme.primaryColor}

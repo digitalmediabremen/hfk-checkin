@@ -80,7 +80,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         (events: Array<FullCalendarEventOnResource> | undefined) => {
             setCurrentRequestEventArray(events);
         },
-        500
+        300
     );
 
     useEffect(() => {
