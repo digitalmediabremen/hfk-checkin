@@ -109,6 +109,7 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                 --fc-bg-event-color: ${theme.primaryColor};
                 --fc-bg-event-opacity: 1;
                 --slot-lane-border-color: ${theme.shadePrimaryColor(0.2)};
+                --fc-small-font-size: .9rem;
                 div {
                     margin: ${inset.map((i) => `${i}px`).join(" ")};
                 }
