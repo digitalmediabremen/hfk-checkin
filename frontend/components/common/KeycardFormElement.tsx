@@ -32,7 +32,7 @@ const KeycardFormElement: React.FunctionComponent<KeycardFormElementProps> = ({
             result.synced_permission_count < result.total_permission_count
         ) {
             return t(
-                "{synced}/{total} deiner Berichtigungen sind synchronisiert",
+                "{synced} von {total} deiner Berichtigungen sind synchronisiert",
                 {
                     synced: result.synced_permission_count,
                     total: result.total_permission_count,
@@ -46,9 +46,8 @@ const KeycardFormElement: React.FunctionComponent<KeycardFormElementProps> = ({
         const { result } = keycardApi;
         if (!result.permissions_last_synced_at) return;
 
-        return t("Zuletzt synchronisiert {distance}", {
+        return t("Vor {distance} zuletzt synchronisiert", {
             distance: formatDistanceToNow(result.permissions_last_synced_at, {
-                addSuffix: true,
                 locale: locale === "de" ? deLocale : enLocale,
             }),
         });
@@ -75,6 +74,7 @@ const KeycardFormElement: React.FunctionComponent<KeycardFormElementProps> = ({
                     />
                     {lastSyncedText && (
                         <FormText
+                            secondary
                             bottomSpacing={formElementProps.bottomSpacing}
                         >
                             {lastSyncedText}

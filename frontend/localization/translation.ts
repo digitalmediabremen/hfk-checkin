@@ -245,8 +245,8 @@ const translation: Translation = {
                 "All access permissions active",
             "{synced}/{total} deiner Berichtigungen sind synchronisiert":
                 "{synced}/{total} of permissions syncronized",
-            "Zuletzt synchronisiert {distance}":
-                "Permissions synced {distance}",
+            "Vor {distance} zuletzt synchronisiert":
+                "Permissions synced {distance} ago",
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",

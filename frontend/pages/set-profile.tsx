@@ -325,11 +325,11 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
                             bottomSpacing={2}
                             maxRows={3}
                         />
-                        <Notice bottomSpacing={2}>
+                        {/* <Notice bottomSpacing={2}>
                             {t(
                                 "Deine Schließkartennummer kann nachträglich nicht mehr geändert werden."
                             )}
-                        </Notice>
+                        </Notice> */}
                     </>
                 )}
 
