@@ -1,5 +1,12 @@
 {
-    "presets": ["next/babel"],
+    "presets": [
+        [
+            "next/babel",
+            {
+                "styled-jsx": { "optimizeForSpeed": false }
+            }
+        ]
+    ],
     "plugins": [
         "superjson-next" // 👈
     ]
