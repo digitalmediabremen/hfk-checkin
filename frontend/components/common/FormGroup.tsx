@@ -17,6 +17,7 @@ const FormGroup: FunctionComponent<FormGroupProps> = ({
     bottomSpacing,
 }) => {
     const theme = useTheme();
+    const _children = React.Children.toArray(children).filter(Boolean);
     return (
         <>
             <style jsx>{`
@@ -25,12 +26,17 @@ const FormGroup: FunctionComponent<FormGroupProps> = ({
                     padding-right: ${theme.spacing(4)}px;
                 }
 
+                div.same-line > div:first-child {
+                    min-width: 0;
+                }
+
                 div.same-line > div:last-child {
                     padding-right: 0;
                 }
 
                 div.same-line {
                     display: flex;
+                    // flex-wrap: wrap;
                     margin-bottom: ${theme.spacing(
                         empty(bottomSpacing) ? 2 : bottomSpacing
                     )}px;
@@ -47,7 +53,7 @@ const FormGroup: FunctionComponent<FormGroupProps> = ({
                     "same-line": sameLine,
                 })}
             >
-                {React.Children.map(children, (child, index) => {
+                {_children.map((child, index) => {
                     return (
                         <div
                             className={classNames({

@@ -90,6 +90,11 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
         // api?.next();
     };
 
+    const setDateToday = () => {
+        const newDate = new Date();
+        setSelectedDate(newDate);
+    };
+
     return (
         <>
             <style jsx>{`
@@ -157,7 +162,16 @@ const ResourceCalendar: React.FunctionComponent<ResourceCalendarProps> = ({
                         ...insertIf([getTitle?.()], !!getTitle),
                     ]}
                 />
-
+                {!mobile && (
+                    <NewButton
+                        noBottomSpacing
+                        noOutline
+                        density="super-narrow"
+                        onClick={() => setDateToday()}
+                    >
+                        {t("heute")}
+                    </NewButton>
+                )}
                 <NewButton
                     noBottomSpacing
                     noOutline
