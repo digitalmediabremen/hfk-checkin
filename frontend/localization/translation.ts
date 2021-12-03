@@ -240,6 +240,13 @@ const translation: Translation = {
             Farben: "Colors",
             Erstellen: "Create",
             Speichern: "Save",
+            "Noch keine Zugangsberechtigungen": "No access permissions",
+            "Alle {total} Berechtigungen sind aktiv":
+                "All access permissions active",
+            "{synced}/{total} deiner Berichtigungen sind synchronisiert":
+                "{synced}/{total} of permissions syncronized",
+            "Zuletzt synchronisiert {distance}":
+                "Permissions synced {distance}",
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
@@ -275,7 +282,7 @@ const translation: Translation = {
             "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.":
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
-        }
+        },
     },
 };
 export default translation;

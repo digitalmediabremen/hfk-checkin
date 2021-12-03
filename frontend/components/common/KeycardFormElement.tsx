@@ -46,7 +46,7 @@ const KeycardFormElement: React.FunctionComponent<KeycardFormElementProps> = ({
         const { result } = keycardApi;
         if (!result.permissions_last_synced_at) return;
 
-        return t("Zuletzt aktualisiert {distance}", {
+        return t("Zuletzt synchronisiert {distance}", {
             distance: formatDistanceToNow(result.permissions_last_synced_at, {
                 addSuffix: true,
                 locale: locale === "de" ? deLocale : enLocale,
