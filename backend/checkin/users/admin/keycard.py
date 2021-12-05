@@ -97,7 +97,7 @@ class KeycardAdmin(admin.ModelAdmin):
         return False
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request).prefetch_related('user__timeenableduserobjectpermission_set')
+        qs = super().get_queryset(request).prefetch_related('user__timeenabledresourceuserobjectpermission_set')
         # do not filter! otherwise you will not be able to "create" keycards using this view
         # qs = qs.filter(Q(keycard_number__isnull=False) | Q(keycard_requested_at__isnull=False))
         # but we need a valid user account to assign permissions, thus keycards
@@ -112,7 +112,7 @@ class KeycardAdmin(admin.ModelAdmin):
     get_keycard_status.short_description = _("Keycard status")
 
     def get_sync_status(self, obj):
-        obj.assigned_permissions = obj.user.timeenableduserobjectpermission_set.filter(permission__codename__in=KEYCARD_PERMISSION_CODENAMES)
+        obj.assigned_permissions = obj.user.timeenabledresourceuserobjectpermission_set.filter(permission__codename__in=KEYCARD_PERMISSION_CODENAMES)
         if len(obj.assigned_permissions) < 1:
             return _("No permissions assigned")
         synced_permissions = 0
@@ -131,7 +131,7 @@ class KeycardAdmin(admin.ModelAdmin):
     get_sync_status.short_description = _("Permission sync status")
 
     def get_permissions_link(self, obj):
-        obj.assigned_permissions = obj.user.timeenableduserobjectpermission_set.filter(permission__codename__in=KEYCARD_PERMISSION_CODENAMES)
+        obj.assigned_permissions = obj.user.timeenabledresourceuserobjectpermission_set.filter(permission__codename__in=KEYCARD_PERMISSION_CODENAMES)
         change_url = reverse('admin:resources_resourcepermission_changelist') + '?user__pk__exact=%s' % obj.user.id
         perm_count = len(obj.assigned_permissions)
         return mark_safe('<a href="%s">%s</a>' % (change_url, ngettext("Show %d permission", "Show %d permissions", perm_count) % perm_count))

@@ -10,7 +10,7 @@ class KeyCardManager(models.Manager):
     def get_queryet(self):
         qs = super().get_queryset()
         # add permissions relation
-        qs.prefetch_related('user__timeenableduserobjectpermission_set')
+        qs.prefetch_related('user__timeenabledresourceuserobjectpermission_set')
         return qs
 
 class Keycard(Profile):
