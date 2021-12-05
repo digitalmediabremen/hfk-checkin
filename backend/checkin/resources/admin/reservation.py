@@ -342,7 +342,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # FIXME this causes an extra query for each reservation displayed. optimize!
         all_attendees_count = obj.resource.get_total_number_of_attendees_for_period(obj.begin, obj.end)
         if not obj.resource.people_capacity:
-            return "%d / ?" % (all_attendees_count,)
+            return format_html("{} / &infin;", all_attendees_count)
         if all_attendees_count > obj.resource.people_capacity:
             return format_html(
                 '<b style="color:red;">{} / {}</b>',
