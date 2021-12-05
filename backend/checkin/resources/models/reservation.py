@@ -643,35 +643,40 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         Raises ReservationWarning (or similar) exceptions on non critical failures.
         Data integrity failures shall raise ValidationErrors instead.
+
+        self.user = organizer of the reservation / reserving user
+        request_user = currently acting user / request.user
         """
 
         # Model.clean() is run even if clean_fields() has raised exceptions.
         # Skip further validation if required fields are missing.
-        if not hasattr(self, 'user') or not hasattr(self, 'resource'):
-            return
+        if not hasattr(self, 'resource') or not self.resource:
+            ValidationError("Can not validate_reservation() without given reservation.resource.")
+        if not hasattr(self, 'user') or not self.user:
+            ValidationError("Can not validate_reservation() without reservation.user.")
 
         if 'user' in kwargs:
-            user = kwargs['user']
+            request_user = kwargs['user']
         else:
-            user = self.user
+            request_user = self.user
 
         # we need a users?!
-        # if not self.user:
+        # if not self.use:
         #     raise ValidationError("You must specify a organizer.")
 
-        if not user.is_verified:
-            raise ValidationError(gettext("%s is not verified. Please verify before making reservations." % user))
+        if not self.user.is_verified:
+            raise ValidationError(gettext("%s is not verified. Please verify before making reservations." % self.user))
 
-        if user.is_external:
+        if self.user.is_external:
             # external users currently can not make reservations because we do not have e-mail addresses for them :/
-            raise ValidationError(gettext("%s is an external user. External users can not make reservations." % user))
+            raise ValidationError(gettext("%s is an external user. External users can not make reservations." % self.user))
 
         if not self.resource.reservable:
             raise ValidationError(gettext("This resource is not reservable. Sorry."))
 
         original_reservation = self if self.pk else kwargs.get('original_reservation', None)
 
-        if not (self.resource.can_modify_reservations(user) or is_general_admin(user)):
+        if not (self.resource.can_modify_reservations(request_user) or is_general_admin(request_user)):
             # allow do make collision bookings for resource "manager"
             collisions_type_blocked = self.resource.reservations.current().overlaps(self.begin, self.end).filter(type=Reservation.TYPE_BLOCKED)
             # if original_reservation:
@@ -680,9 +685,9 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
 
         if not self.resource.can_make_reservations(self.user):
-            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource." % user), ReservationPermissionWarning)
+            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource." % self.user), ReservationPermissionWarning)
 
-        user_is_admin = user and self.resource.is_admin(user)
+        request_user_is_admin = request_user and self.resource.is_admin(request_user)
 
         if not isinstance(self.end, datetime.datetime) or not isinstance(self.begin, datetime.datetime):
             raise ValidationError(gettext("Begin or end are not valid dates."))
@@ -719,7 +724,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
 
         if (
             self.resource.disallow_overlapping_reservations and not
-            self.resource.can_create_overlapping_reservations(user)
+            self.resource.can_create_overlapping_reservations(request_user)
         ):
             # collisions = self.resource.get_reservation_collisions_qs(self.begin, self.end, original_reservation)
             # if collisions:

@@ -29,7 +29,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.urls import reverse
 from django.utils.functional import cached_property
+from rest_framework.decorators import action
 from django.utils.timezone import localtime
+import warnings
 
 #from munigeo import api as munigeo_api
 from .resource import ResourceSerializer, ResourceListViewSet
@@ -205,6 +207,33 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             AttendanceSerializer().create(validated_data=attendance_data)
         return reservation
 
+    def instantiate_and_warn(self, request, **kwargs):
+        assert hasattr(self, '_errors'), (
+            'You must call `.is_valid()` before calling `.validate_and_warn()`.'
+        )
+
+        validated_data = {**self.validated_data, **kwargs}
+        # remove attendance_set_data, see create() and update()
+        attendance_set_data = validated_data.pop('attendance_set', [])
+
+        obj = self.Meta.model(**validated_data)
+        warning_list = list()
+        with warnings.catch_warnings(record=True) as warns:
+            try:
+                obj.validate_reservation()
+            except ValidationError as e:
+                pass
+                # form will validate and show errors anyway
+                # messages.add_message(request, messages.ERROR, str(e.message))
+            for w in warns:
+                warning_serialized = ReservationValidationResultSerializer(data={
+                    'type': str(w.category.__name__),
+                    'detail': str(w.message)
+                })
+                warning_serialized.is_valid()
+                warning_list.append(warning_serialized.data)
+        return warning_list
+
     def get_extra_fields(self, includes, context):
         from .resource import ResourceInlineSerializer
 
@@ -236,6 +265,14 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             return value
 
         raise ValidationError(_('Illegal state change'))
+
+    def extend_data_with_default_values(self, data):
+        request_user = self.context['request'].user
+        override_data = {'created_by': request_user, 'modified_by': request_user}
+        if 'user' not in data:
+            override_data['user'] = request_user
+        override_data['state'] = Reservation.CREATED
+        return {**data, **override_data}
 
     def validate(self, data):
         reservation = self.instance
@@ -303,6 +340,9 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
 
             if access_code_enabled and reservation and data['access_code'] != reservation.access_code:
                 raise ValidationError(dict(access_code=_('This field cannot be changed')))
+
+        # add user, created_by, modified_by and state to data
+        data = self.extend_data_with_default_values(data)
 
         # remove attendances for Reservation validation
         # Reservation.attendees.set() or add() must be called explicitly and can not validate form **data
@@ -788,11 +828,9 @@ class ReservationViewSetMixin(ReservationCacheMixin):
         return self.get_user_filtered_queryset(queryset)
 
     def perform_create(self, serializer):
-        override_data = {'created_by': self.request.user, 'modified_by': self.request.user}
-        if 'user' not in serializer.validated_data:
-            override_data['user'] = self.request.user
-        override_data['state'] = Reservation.CREATED
-        instance = serializer.save(**override_data)
+        data = serializer.validated_data
+        # data = serializer.extend_validated_data_on_create(serializer.validated_data)
+        instance = serializer.save(**data)
         resource = instance.resource
 
         if not resource.reservable:
@@ -854,6 +892,7 @@ class ReservationViewSetMixin(ReservationCacheMixin):
         return obj
 
 
+
 # class ReservationCancelReasonCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 #     queryset = ReservationCancelReasonCategory.objects.all()
 #     filter_backends = (DjangoFilterBackend,)
@@ -861,9 +900,37 @@ class ReservationViewSetMixin(ReservationCacheMixin):
 #     filterset_fields = ['reservation_type']
 #     pagination_class = None
 
+# class ReservationValidationSerializer(serializers.Serializer):
+#     count = IntegerField()
+#
+
+class ReservationValidationResultSerializer(serializers.Serializer):
+    # "type": "ResourceCapacityResourceExceededWarning",
+    # "level": "notice" | "error",
+    # "detail": "Die Kapazität dieser Resource ist erschöpft.",
+    # "context": ["datetime", "resource"],
+    type = serializers.CharField(required=False)
+    level = serializers.CharField(required=False)
+    detail = serializers.CharField()
+    context = serializers.ListField(required=False)
 
 class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    pass
+
+    @action(detail=False, methods=['get','post'])
+    def validate(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        warnings = serializer.instantiate_and_warn(request)
+        print(warnings)
+        # self.perform_create(serializer)
+        # headers = self.get_success_headers(serializer.data)
+        return Response(warnings, status=status.HTTP_200_OK)
+
+    # development helper to use regular view for validation with ?validate=ture as query params
+    def create(self, request, *args, **kwargs):
+        if request.query_params.get('validate'):
+            return self.validate(request, *args, **kwargs)
+        return super(ReservationListViewSet, self).create(request, *args, **kwargs)
 
 
 class ReservationDetailViewSet(ReservationViewSetMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
