@@ -64,27 +64,34 @@ class ReservationCriticalWarning(UserWarning):
     pass
 
 class ReservationCollisionWarning(ReservationWarning):
+    ui_context = ["capacity", "resource"]
     pass
 
 class ReservationCapacityCriticalWarning(ReservationCriticalWarning):
+    ui_context = ["capacity"]
     pass
 
 class ReservationCapacityWarning(ReservationWarning):
+    ui_context = ["capacity"]
     pass
 
 
 class ReservationCapacityNotice(ReservationNotice):
+    ui_context = ["capacity"]
     pass
 
 class ReservationAvailabilityWarning(ReservationWarning):
+    ui_context = ["capacity", "datetime"]
     pass
 
 
 class ReservationTimingWarning(ReservationWarning):
+    ui_context = ["datetime"]
     pass
 
 
 class ReservationPermissionWarning(ReservationWarning):
+    ui_context = ["access"]
     pass
 
 

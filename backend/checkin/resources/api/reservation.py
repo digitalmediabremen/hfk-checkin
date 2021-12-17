@@ -207,7 +207,8 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             AttendanceSerializer().create(validated_data=attendance_data)
         return reservation
 
-    def instantiate_and_warn(self, request, **kwargs):
+    def warn_and_serialize(self, request, **kwargs):
+        # FIXME unify with corresponding methods ReservationAdmin / Reservation. DRY.
         assert hasattr(self, '_errors'), (
             'You must call `.is_valid()` before calling `.validate_and_warn()`.'
         )
@@ -222,16 +223,13 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
             try:
                 obj.validate_reservation()
             except ValidationError as e:
-                pass
-                # form will validate and show errors anyway
-                # messages.add_message(request, messages.ERROR, str(e.message))
-            for w in warns:
-                warning_serialized = ReservationValidationResultSerializer(data={
-                    'type': str(w.category.__name__),
-                    'detail': str(w.message)
-                })
-                warning_serialized.is_valid()
+                warning_serialized = ReservationValidationResultItemSerializer(e)
                 warning_list.append(warning_serialized.data)
+                #warning_list.append(e)
+            for w in warns:
+                warning_serialized = ReservationValidationResultItemSerializer(w)
+                warning_list.append(warning_serialized.data)
+                #warning_list.append(w)
         return warning_list
 
     def get_extra_fields(self, includes, context):
@@ -904,15 +902,48 @@ class ReservationViewSetMixin(ReservationCacheMixin):
 #     count = IntegerField()
 #
 
-class ReservationValidationResultSerializer(serializers.Serializer):
+
+class ReservationValidationResultItemSerializer(serializers.Serializer):
     # "type": "ResourceCapacityResourceExceededWarning",
-    # "level": "notice" | "error",
+    # "level": "warning" | "error",
     # "detail": "Die Kapazität dieser Resource ist erschöpft.",
     # "context": ["datetime", "resource"],
-    type = serializers.CharField(required=False)
-    level = serializers.CharField(required=False)
-    detail = serializers.CharField()
-    context = serializers.ListField(required=False)
+    type = serializers.CharField(required=False, default="UnknownError")
+    level = serializers.CharField(required=False, default="error")
+    detail = serializers.CharField(required=True)
+    context = serializers.ListField(required=True, allow_empty=True)
+
+    def to_representation(self, instance):
+        ''' convert Exception or Warnings to representation '''
+        if isinstance(instance, Exception):
+            return {
+                'type': type(instance),
+                'detail': str(instance),
+                'level': 'error',
+            }
+        elif isinstance(instance, warnings.WarningMessage):
+            return {
+                'type': str(instance.category.__name__),
+                'detail': str(instance.message.args[0]),
+                'level': 'warning',
+                'context': instance.message.ui_context,
+            }
+        elif isinstance(instance, Warning):
+            return {
+                'type': str(instance.category),
+                'detail': str(instance.message),
+                'level': 'warning',
+            }
+        else:
+            return {
+                'detail': str(instance),
+                'level': 'error',
+            }
+
+
+class ReservationValidationResultSerializer(serializers.Serializer):
+    results = serializers.ListField(child=ReservationValidationResultItemSerializer())
+
 
 class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
 
@@ -920,11 +951,16 @@ class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mix
     def validate(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        warnings = serializer.instantiate_and_warn(request)
-        print(warnings)
+        ew_list = serializer.warn_and_serialize(request)
+        serialized_warnings = ew_list
+        #serialized_warnings = ReservationValidationResultItemSerializer(ew_list, many=True)
+        # serialized_warnings = ReservationValidationResultSerializer(data={
+        #     'results': ew_list,
+        # })
+        # serialized_warnings.is_valid()
         # self.perform_create(serializer)
         # headers = self.get_success_headers(serializer.data)
-        return Response(warnings, status=status.HTTP_200_OK)
+        return Response(serialized_warnings, status=status.HTTP_200_OK)
 
     # development helper to use regular view for validation with ?validate=ture as query params
     def create(self, request, *args, **kwargs):
