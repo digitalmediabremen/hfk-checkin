@@ -159,7 +159,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     list_per_page = 30
     save_on_top = True
     ordering = ['-created_at']
-    actions = ['action_confirm', 'action_deny', 'action_request', 'action_email_organizers']
+    actions = ['action_confirm', 'action_confirm_dont_notify', 'action_deny', 'action_deny_dont_notify', 'action_request', 'action_request_dont_notify', 'action_email_organizers']
 
     fieldsets = (
         (None, {
@@ -202,21 +202,37 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     # @admin.action(description='Mark selected stories as published')
     def action_confirm(self, request, queryset):
         self._action_change_state(request, queryset, Reservation.CONFIRMED)
-    action_confirm.short_description = _('Confirm selected reservations')
+    action_confirm.short_description = _('Confirm selected reservations and send notifications')
 
     def action_deny(self, request, queryset):
         self._action_change_state(request, queryset, Reservation.DENIED)
-    action_deny.short_description = _('Deny selected reservations')
+    action_deny.short_description = _('Deny selected reservations and send notifications')
 
     # def action_cancel(self, request, queryset):
     #     self._action_change_state(request, queryset, Reservation.CANCELLED)
-    # action_cancel.short_description = _('Cancel selected reservations')
+    # action_cancel.short_description = _('Cancel selected reservations and send notifications')
 
     def action_request(self, request, queryset):
-        self._action_change_state(request, queryset, Reservation.REQUESTED)
-    action_request.short_description = _('Change state of selected reservations to requested')
+        self._action_change_state(request, queryset, Reservation.REQUESTED, notify=False)
+    action_request.short_description = _('Change state of selected reservations to requested and send notifications')
 
-    def _action_change_state(self, request, queryset, state):
+    def action_confirm_dont_notify(self, request, queryset):
+        self._action_change_state(request, queryset, Reservation.CONFIRMED, notify=False)
+    action_confirm.short_description = _('Confirm selected reservations without notifications')
+
+    def action_deny_dont_notify(self, request, queryset):
+        self._action_change_state(request, queryset, Reservation.DENIED, notify=False)
+    action_deny.short_description = _('Deny selected reservations without notifications')
+
+    # def action_cancel_dont_notify(self, request, queryset):
+    #     self._action_change_state(request, queryset, Reservation.CANCELLED, notify=False)
+    # action_cancel.short_description = _('Cancel selected reservations without notifications')
+
+    def action_request_dont_notify(self, request, queryset):
+        self._action_change_state(request, queryset, Reservation.REQUESTED, notify=False)
+    action_request.short_description = _('Change state of selected reservations to requested without notifications')
+
+    def _action_change_state(self, request, queryset, state, notify=True):
         success = []
         skipped = []
         failed = []
@@ -224,7 +240,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             try:
                 original_state = reservation.state
                 reservation.state = state
-                self.process_state_change_and_warn(request, reservation, original_state=original_state)
+                self.process_state_change_and_warn(request, reservation, original_state=original_state, notify=notify)
                 reservation.save()
                 success.append(reservation)
             except Exception as e:
@@ -400,13 +416,13 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
             if obj.organizer_is_attending and obj.organizer not in obj.attendees.all():
                 messages.add_message(request, messages.WARNING, _("Organizer is missing from attendance list."))
 
-            groups_to_display = ReservationUserGroup.objects.filter(visible_in_reservation=True)
-            assigned_groups = obj.user.groups.filter(pk__in=groups_to_display).all()
-            if len(assigned_groups) > 0:
-                message = gettext("%(user)s has one or more group assignments: %(assigned_groups)s") % {
-                    'assigned_groups': ", ".join([g.name for g in assigned_groups]),
-                    'user': obj.user}
-                messages.add_message(request, messages.INFO, message)
+            # groups_to_display = ReservationUserGroup.objects.filter(visible_in_reservation=True)
+            # assigned_groups = obj.user.groups.filter(pk__in=groups_to_display).all()
+            # if len(assigned_groups) > 0:
+            #     message = gettext("%(user)s has one or more group assignments: %(assigned_groups)s") % {
+            #         'assigned_groups': ", ".join([g.name for g in assigned_groups]),
+            #         'user': obj.user}
+            #     messages.add_message(request, messages.INFO, message)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         # add extra content for resource calendar
@@ -435,7 +451,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
         # form.base_fields['user'].queryset = form.base_fields['user'].queryset.filter(**USERS_IN_RESERVATIONS_QS_FILTER)
         return form
 
-    def process_state_change_and_warn(self, request, obj, form=None, change=None, original_state=None):
+    def process_state_change_and_warn(self, request, obj, form=None, change=None, original_state=None, notify=True):
         # FIXME what if no _original_state. New object?
         if not original_state:
             original_state = self._original_state or Reservation.CREATED
@@ -447,7 +463,7 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
                 message_state_update = form.cleaned_data.get('message_state_update', None)
             else:
                 message_state_update = None
-            obj.process_state_change(original_state, obj.state, request.user, update_message=message_state_update)
+            obj.process_state_change(original_state, obj.state, request.user, update_message=message_state_update, notify=notify)
             for w in warns:
                 messages.add_message(request, messages.INFO, str(w.message))
         # show resulted (new state verbose) state as message

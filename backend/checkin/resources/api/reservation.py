@@ -837,6 +837,7 @@ class ReservationViewSetMixin(ReservationCacheMixin):
         #if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
         # FIXME auto confirmation
         new_state = Reservation.REQUESTED
+        new_state = instance.get_automatic_state(user=self.request.user, default_state=new_state)
         #else:
         #new_state = Reservation.CONFIRMED
         # else:

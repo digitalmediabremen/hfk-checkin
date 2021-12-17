@@ -51,6 +51,8 @@ AUTH_USER_MODEL = settings.AUTH_USER_MODEL
 logging.captureWarnings(True) # capture warnings with logger, e.g. in process_state_change
 logger = logging.getLogger(__name__)
 
+from .utils import log_addition
+
 RESERVATION_EXTRA_FIELDS = ('has_priority','agreed_to_phone_contact','exclusive_resource_usage','organizer_is_attending')
 
 
@@ -483,10 +485,12 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             # TODO use exlusive_resource_usage
             # if okay leave state on CONFIRMED
             # if warnings or errors occur set to REQUESTED
-            new_state = Reservation.REQUESTED
+            # FIXME this is a safty line:
+            # new_state = Reservation.REQUESTED
+            pass
         return self.set_state(new_state, user)
 
-    def process_state_change(self, old_state, new_state, user, update_message=None):
+    def process_state_change(self, old_state, new_state, user, update_message=None, notify=True):
         if old_state == Reservation.CREATED and new_state == Reservation.CREATED:
             # nothing to do?
             return
@@ -514,36 +518,38 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         user_is_staff = self.user is not None and self.user.is_staff
 
         # Notifications
-        if new_state == Reservation.REQUESTED:
+        if new_state == Reservation.REQUESTED and notify:
             # FIXME generate status messages (set_state_verbose) here? or in reservation logic? ... multilang?
             notified_users = self.send_reservation_requested_mail()
             notified_reservation_delegates = self.send_reservation_requested_mail_to_officials()
-            if not self.resource.can_make_reservations(self.user):
+            if not self.resource.can_make_reservations(self.user) and notify:
                 notified_access_delegates = self.send_access_requested_mail_to_officials()
             # notified_external_user_officials = self.send_external_user_requested_mail_to_officials()
             # notify external user confirmation official via Signal m2m_changed attendees_changed
             self.set_state_verbose(_("Reservation was just requested and will be processed shortly" ))
         elif new_state == Reservation.CONFIRMED:
             self.set_state_verbose(_("Reservation was just confirmed."))
-            if self.need_manual_confirmation():
-                self.send_reservation_confirmed_mail(extra_context={'update_message': update_message})
+            if self.need_manual_confirmation() and notify:
+                    self.send_reservation_confirmed_mail(extra_context={'update_message': update_message})
             # elif self.access_code:
             #     self.send_reservation_created_with_access_code_mail()
             else:
                 if not user_is_staff:
                     # notifications are not sent from staff created reservations to avoid spam
-                    self.send_reservation_created_mail(extra_context={'update_message': update_message})
+                    if notify:
+                        self.send_reservation_created_mail(extra_context={'update_message': update_message})
         elif new_state == Reservation.DENIED:
             self.set_state_verbose(_("Reservation was denied."))
-            self.send_reservation_denied_mail(extra_context={'update_message': update_message})
+            if notify:
+                self.send_reservation_denied_mail(extra_context={'update_message': update_message})
         elif new_state == Reservation.CANCELLED:
             self.set_state_verbose(_("Reservation was canceled."))
             order = self.get_order()
             if order:
-                if order.state == order.CANCELLED:
+                if order.state == order.CANCELLED and notify:
                     self.send_reservation_cancelled_mail(extra_context={'update_message': update_message})
             else:
-                if user != self.user:
+                if user != self.user and notify:
                     self.send_reservation_cancelled_mail(extra_context={'update_message': update_message})
             reservation_cancelled.send(sender=self.__class__, instance=self,
                                        user=user)
@@ -640,6 +646,40 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             # non critical warnings will be skipped when saving.
             pass
 
+    def get_automatic_state(self, user, default_state=REQUESTED):
+        """
+        automaticly proccess new state.
+        only for resources which allow automatic proccesign / do not require manual processing.
+
+        uses validate method for checks.
+        """
+        # TODO validate reservation here
+        # TODO compare to ReservationSerializer.validate()
+        # TODO use exlusive_resource_usage
+        if self.resource.need_manual_confirmation:
+            return default_state
+        # if self.resource.can_create_overlapping_reservations(user):
+        #     return True
+        with warnings.catch_warnings(record=True) as w:
+            #warnings.simplefilter("always")
+            try:
+                self.validate_reservation(user=user)
+            except ValidationError as e:
+                # exception occurred. do not confirm.
+                logger.warn(
+                    "Aborting automatic processing for reservation %(id)s due to: %(msg)s" % {'id': self.identifier,
+                                                                                              'msg': e})
+                return default_state
+            for warn in w:
+                if issubclass(warn.category, ReservationCriticalWarning):
+                    # critical warning occurred. do not confirm.
+                    logger.info("Aborting automatic processing for reservation %(id)s due to: %(msg)s" % {'id':self.identifier, 'msg':warn})
+                    return default_state
+        # no or not-critical warnings. confirm
+        log_addition(user, self, "Automatically confirmed.")
+        return Reservation.CONFIRMED
+
+
     def validate_reservation(self, **kwargs):
         """
         Check restrictions that are common to all reservations.
@@ -672,11 +712,11 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
         #     raise ValidationError("You must specify a organizer.")
 
         if not self.user.is_verified:
-            raise ValidationError(gettext("%s is not verified. Please verify before making reservations." % self.user))
+            raise ValidationError(gettext("%s is not verified. Please verify before making reservations.") % self.user)
 
         if self.user.is_external:
             # external users currently can not make reservations because we do not have e-mail addresses for them :/
-            raise ValidationError(gettext("%s is an external user. External users can not make reservations." % self.user))
+            raise ValidationError(gettext("%s is an external user. External users can not make reservations.") % self.user)
 
         if not self.resource.reservable:
             raise ValidationError(gettext("This resource is not reservable. Sorry."))
@@ -692,7 +732,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
 
         if not self.resource.can_make_reservations(self.user):
-            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource." % self.user), ReservationPermissionWarning)
+            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource.") % self.user, ReservationPermissionWarning)
 
         request_user_is_admin = request_user and self.resource.is_admin(request_user)
 
@@ -740,15 +780,23 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             #     }, ReservationCollisionWarning)
 
             total_number_of_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end)
+            total_number_of_other_attendees = self.resource.get_total_number_of_attendees_for_period(self.begin, self.end, reservation=self)
             if self.resource.people_capacity is not None and total_number_of_attendees >= self.resource.people_capacity:
                 warnings.warn(gettext("The resource's capacity (%(resource_capacity)d) is already exhausted for some of the period. " \
-                                      "Total attendance (incl. this one): %(attendance_sum)d." % {
+                                      "Total attendance (incl. this one): %(attendance_sum)d.") % {
                     'resource_capacity': self.resource.people_capacity,
                     'attendance_sum': total_number_of_attendees
-                }), ReservationCapacityCriticalWarning)
+                }, ReservationCapacityCriticalWarning)
             # elif total_number_of_attendees > 0:
             #     warnings.warn(gettext(
             #         "Total attendance (incl. this one): %d." % (total_number_of_attendees)), ReservationCapacityNotice)
+
+            if total_number_of_other_attendees > 0 and self.exclusive_resource_usage:
+                warnings.warn(
+                    gettext("Exclusive usage not possible: Resource is reserved for a total capacity %(other_attendance_sum)d people already.") % {
+                        'resource_capacity': self.resource.people_capacity,
+                        'other_attendance_sum': total_number_of_other_attendees
+                    }, ReservationCapacityCriticalWarning)
 
         #if not user_is_admin:
         if self.resource.min_period and (self.end - self.begin) < self.resource.min_period:
