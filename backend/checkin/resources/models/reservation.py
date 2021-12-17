@@ -97,6 +97,11 @@ class ReservationPermissionWarning(ReservationWarning):
     pass
 
 
+class ReservationPermissionCriticalWarning(ReservationCriticalWarning):
+    ui_context = ["access"]
+    pass
+
+
 class ReservationQuerySet(models.QuerySet):
 
     @staticmethod
@@ -530,7 +535,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             self.set_state_verbose(_("Reservation was just requested and will be processed shortly" ))
         elif new_state == Reservation.CONFIRMED:
             self.set_state_verbose(_("Reservation was just confirmed."))
-            if self.need_manual_confirmation() and notify:
+            if notify:
                     self.send_reservation_confirmed_mail(extra_context={'update_message': update_message})
             # elif self.access_code:
             #     self.send_reservation_created_with_access_code_mail()
@@ -734,7 +739,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                 raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
 
         if not self.resource.can_make_reservations(self.user):
-            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource.") % self.user, ReservationPermissionWarning)
+            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource.") % self.user, ReservationPermissionCriticalWarning)
 
         request_user_is_admin = request_user and self.resource.is_admin(request_user)
 
