@@ -330,3 +330,56 @@ def build_ical_feed_url(ical_token, request):
     return url[:url.find('?')]
 
 
+def get_content_type_for_model(obj):
+    # Since this module gets imported in the application's root package,
+    # it cannot import models from other applications at the module level.
+    from django.contrib.contenttypes.models import ContentType
+    return ContentType.objects.get_for_model(obj, for_concrete_model=False)
+
+
+def log_addition(self, user, obj, message):
+    """
+    Log that an object has been successfully added.
+    The default implementation creates an admin LogEntry object.
+    """
+    from django.contrib.admin.models import ADDITION, LogEntry
+    return LogEntry.objects.log_action(
+        user_id=user.pk,
+        content_type_id=get_content_type_for_model(obj).pk,
+        object_id=obj.pk,
+        object_repr=str(obj),
+        action_flag=ADDITION,
+        change_message=message,
+    )
+
+
+def log_change(self, user, obj, message):
+    """
+    Log that an object has been successfully changed.
+    The default implementation creates an admin LogEntry object.
+    """
+    from django.contrib.admin.models import CHANGE, LogEntry
+    return LogEntry.objects.log_action(
+        user_id=user.pk,
+        content_type_id=get_content_type_for_model(obj).pk,
+        object_id=obj.pk,
+        object_repr=str(obj),
+        action_flag=CHANGE,
+        change_message=message,
+    )
+
+
+def log_deletion(self, user, obj, object_repr):
+    """
+    Log that an object will be deleted. Note that this method must be
+    called before the deletion.
+    The default implementation creates an admin LogEntry object.
+    """
+    from django.contrib.admin.models import DELETION, LogEntry
+    return LogEntry.objects.log_action(
+        user_id=user.pk,
+        content_type_id=get_content_type_for_model(obj).pk,
+        object_id=obj.pk,
+        object_repr=object_repr,
+        action_flag=DELETION,
+    )
