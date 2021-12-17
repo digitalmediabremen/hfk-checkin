@@ -337,7 +337,7 @@ def get_content_type_for_model(obj):
     return ContentType.objects.get_for_model(obj, for_concrete_model=False)
 
 
-def log_addition(self, user, obj, message):
+def log_addition(user, obj, message):
     """
     Log that an object has been successfully added.
     The default implementation creates an admin LogEntry object.
@@ -353,7 +353,7 @@ def log_addition(self, user, obj, message):
     )
 
 
-def log_change(self, user, obj, message):
+def log_change(user, obj, message):
     """
     Log that an object has been successfully changed.
     The default implementation creates an admin LogEntry object.
@@ -369,7 +369,7 @@ def log_change(self, user, obj, message):
     )
 
 
-def log_deletion(self, user, obj, object_repr):
+def log_deletion(user, obj, object_repr):
     """
     Log that an object will be deleted. Note that this method must be
     called before the deletion.

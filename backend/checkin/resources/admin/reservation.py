@@ -134,13 +134,14 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     # extra_readonly_fields_on_update = ('access_code',)
     list_display = (
     'get_state_colored', 'get_organizer_display', 'resource', 'get_date_display', 'get_time_display', 'number_of_attendees', 'title', 'get_collisions',
-    'get_exclusive', 'get_created_at_display') #'get_priority',
+    'get_exclusive', 'get_automatically_processed', 'get_created_at_display') #'get_priority',
     list_filter = (MyReservationRelationFilter, ResourceFilter, UserFilter, PastReservationFilter, ReservationStateFilter, 'resource__unit', 'resource__groups', 'resource__features', 'has_priority', 'exclusive_resource_usage', PurposeFilter,
                    # 'resources', 'start', 'end', 'status', 'is_important',
                    ('begin', DateTimeRangeFilter),
                    ('end', DateTimeRangeFilter),
                    'type',
                    ('modified_at', DateTimeRangeFilter),
+                   'automatically_processed',
                    )
     search_fields = (
     'uuid', 'resource__name', 'resource__numbers', 'user__first_name', 'user__last_name', 'user__email', 'user__pk', 'user__profile__pk')
@@ -218,19 +219,19 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
 
     def action_confirm_dont_notify(self, request, queryset):
         self._action_change_state(request, queryset, Reservation.CONFIRMED, notify=False)
-    action_confirm.short_description = _('Confirm selected reservations without notifications')
+    action_confirm_dont_notify.short_description = _('Confirm selected reservations without notifications')
 
     def action_deny_dont_notify(self, request, queryset):
         self._action_change_state(request, queryset, Reservation.DENIED, notify=False)
-    action_deny.short_description = _('Deny selected reservations without notifications')
+    action_deny_dont_notify.short_description = _('Deny selected reservations without notifications')
 
     # def action_cancel_dont_notify(self, request, queryset):
     #     self._action_change_state(request, queryset, Reservation.CANCELLED, notify=False)
-    # action_cancel.short_description = _('Cancel selected reservations without notifications')
+    # action_cancel_dont_notify.short_description = _('Cancel selected reservations without notifications')
 
     def action_request_dont_notify(self, request, queryset):
         self._action_change_state(request, queryset, Reservation.REQUESTED, notify=False)
-    action_request.short_description = _('Change state of selected reservations to requested without notifications')
+    action_request_dont_notify.short_description = _('Change state of selected reservations to requested without notifications')
 
     def _action_change_state(self, request, queryset, state, notify=True):
         success = []
@@ -324,6 +325,12 @@ class ReservationAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Extr
     get_exclusive.short_description = _("Excl.")
     get_exclusive.admin_order_field = 'exclusive_resource_usage'
     get_exclusive.boolean = True
+
+    def get_automatically_processed(self, obj):
+        return obj.automatically_processed
+    get_automatically_processed.short_description = _("Auto.")
+    get_automatically_processed.admin_order_field = 'automatically_processed'
+    get_automatically_processed.boolean = True
 
     def get_purpose_display(self, obj):
         if obj and obj.purpose is not None:

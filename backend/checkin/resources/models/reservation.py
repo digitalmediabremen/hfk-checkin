@@ -242,6 +242,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
     organizer_is_attending = models.BooleanField(_("Organizer is attending"), blank=True, default=True)
     title = models.CharField(null=True, blank=True, max_length=255, verbose_name=_('Title'), help_text=_("Optional title or reference for events, courses, classes etc. (For internal use only.)"))
     link = models.URLField(null=True, blank=True, verbose_name=_('Link'), help_text=_("Optional link or web reference for this reservation. e.g. ARTIST page, event annoucement, etc. (For internal use only.)"))
+    automatically_processed = models.BooleanField(_("Initially processed automatically"), default=False)
 
     objects = ReservationManager()
     #objects = ReservationQuerySet.as_manager()
@@ -677,6 +678,7 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
                     return default_state
         # no or not-critical warnings. confirm
         log_addition(user, self, "Automatically confirmed.")
+        self.automatically_processed = True
         return Reservation.CONFIRMED
 
 
