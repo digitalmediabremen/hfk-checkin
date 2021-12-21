@@ -148,16 +148,16 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         .catch((error) => {
             if (error.error !== undefined) {
                 // dont log 400 errors
-                if (error.status < 500) return;
-
-                Sentry.withScope(function (scope) {
-                    scope.setLevel(
-                        error.status >= 500
-                            ? Sentry.Severity.Error
-                            : Sentry.Severity.Warning
-                    );
-                    Sentry.captureException(error.error);
-                });
+                if (error.status >= 500) {
+                    Sentry.withScope(function (scope) {
+                        scope.setLevel(
+                            error.status >= 500
+                                ? Sentry.Severity.Error
+                                : Sentry.Severity.Warning
+                        );
+                        Sentry.captureException(error.error);
+                    });
+                }
                 return error;
             } else {
                 Sentry.captureException(error);
@@ -237,7 +237,11 @@ export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<MyProfile>("profile/me/", { headers }, validateProfile);
 
 export const getKeycardInfoRequest = async (headers?: HeadersInit) =>
-    await apiRequest<KeycardInfo>("keycard/me/", { headers }, validateKeycardInfo);
+    await apiRequest<KeycardInfo>(
+        "keycard/me/",
+        { headers },
+        validateKeycardInfo
+    );
 
 export const getCheckinRequest = async (
     checkinId: string,
