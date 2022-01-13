@@ -891,6 +891,27 @@ class ReservationViewSetMixin(ReservationCacheMixin):
         return obj
 
 
+    @action(detail=False, methods=['post'])
+    def validate(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        ew_list = serializer.warn_and_serialize(request)
+        serialized_warnings = ew_list
+        #serialized_warnings = ReservationValidationResultItemSerializer(ew_list, many=True)
+        # serialized_warnings = ReservationValidationResultSerializer(data={
+        #     'results': ew_list,
+        # })
+        # serialized_warnings.is_valid()
+        # self.perform_create(serializer)
+        # headers = self.get_success_headers(serializer.data)
+        return Response(serialized_warnings, status=status.HTTP_200_OK)
+
+    # development helper to use regular view for validation with ?validate=ture as query params
+    def create(self, request, *args, **kwargs):
+        if request.query_params.get('validate'):
+            return self.validate(request, *args, **kwargs)
+        return super(ReservationListViewSet, self).create(request, *args, **kwargs)
+
 
 # class ReservationCancelReasonCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 #     queryset = ReservationCancelReasonCategory.objects.all()
@@ -947,27 +968,7 @@ class ReservationValidationResultSerializer(serializers.Serializer):
 
 
 class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-
-    @action(detail=False, methods=['get','post'])
-    def validate(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        ew_list = serializer.warn_and_serialize(request)
-        serialized_warnings = ew_list
-        #serialized_warnings = ReservationValidationResultItemSerializer(ew_list, many=True)
-        # serialized_warnings = ReservationValidationResultSerializer(data={
-        #     'results': ew_list,
-        # })
-        # serialized_warnings.is_valid()
-        # self.perform_create(serializer)
-        # headers = self.get_success_headers(serializer.data)
-        return Response(serialized_warnings, status=status.HTTP_200_OK)
-
-    # development helper to use regular view for validation with ?validate=ture as query params
-    def create(self, request, *args, **kwargs):
-        if request.query_params.get('validate'):
-            return self.validate(request, *args, **kwargs)
-        return super(ReservationListViewSet, self).create(request, *args, **kwargs)
+    pass
 
 
 class ReservationDetailViewSet(ReservationViewSetMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
