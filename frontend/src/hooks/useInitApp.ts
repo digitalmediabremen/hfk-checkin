@@ -7,6 +7,9 @@ import useSWRefreshToUpdate from "./useSWRefreshToUpdate";
 import { useInitTheme } from "./useTheme";
 import { useUpdateProfileFromAppStateAndUpdate } from "../../components/api/ApiHooks";
 import { validateColorScheme } from "../model/Theme";
+import useValidateReservationOnChange from "./useValidateReservationOnChange";
+import useReservationState from "./useReservationState";
+import { empty } from "../util/TypeUtil";
 
 // state initialization of the app
 export default function useInitApp() {
@@ -46,7 +49,17 @@ export default function useInitApp() {
         }
     );
 
+    const [agreedToPhoneContact, setAgreedToPhoneContact] = useReservationState(
+        "agreed_to_phone_contact"
+    );
+    useLocalStorage("atpc", agreedToPhoneContact, undefined, (set) => {
+        if (empty(set)) return;
+        setAgreedToPhoneContact(set);
+    });
+
     useSWRefreshToUpdate();
+
+    useValidateReservationOnChange();
 
     return themeInitialized;
 }

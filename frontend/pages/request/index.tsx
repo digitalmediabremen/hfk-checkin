@@ -49,9 +49,6 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const [agreedToPhoneContact, setAgreedToPhoneContact] = useReservationState(
         "agreed_to_phone_contact"
     );
-    useLocalStorage("atpc", agreedToPhoneContact, undefined, (set) => {
-        setAgreedToPhoneContact(set);
-    });
 
     const LoadingIcon = <LoadingInline invertColor loading={loading} />;
     const title = t("Neue Anfrage");

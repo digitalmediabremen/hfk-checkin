@@ -293,7 +293,7 @@ export const validateReservationRequest = async (
     options?: RequestOptions
 ) =>
     await apiRequest<NewReservationValidation>(
-        `reservation/`,
+        `reservation/validate/`,
         { ...options, method: "POST", body: JSON.stringify(reservation) },
         validateReservationValidation
     );
