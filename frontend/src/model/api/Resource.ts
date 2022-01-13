@@ -20,4 +20,5 @@ export default interface Resource {
     readonly reservable_min_days_in_advance: number | null;
     readonly description: string | null;
     readonly features: string[] | null;
+    readonly slot_size: string | null
 }

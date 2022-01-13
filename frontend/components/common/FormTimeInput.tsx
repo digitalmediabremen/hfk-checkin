@@ -53,6 +53,7 @@ interface FormTimeInputProps extends FormElementBaseProps {
     minValue?: Time;
     label: string;
     hasOverlap?: boolean;
+    step?: number
 }
 
 const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
@@ -61,6 +62,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
     onChange,
     label,
     hasOverlap,
+    step,
     ...formElementBaseProps
 }) => {
     const inputTimeString = value ? fromTime(value) : "";
@@ -112,6 +114,7 @@ const FormTimeInput: React.FunctionComponent<FormTimeInputProps> = ({
                                 textAlign: "center",
                             }}
                             type="time"
+                            step={step}
                             value={inputTimeString}
                             onChange={handleChange}
                         ></FormInput>

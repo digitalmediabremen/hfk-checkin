@@ -3,7 +3,7 @@ import { useApi } from "../../components/api/ApiHooks";
 import { validateReservationRequest } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
 import NewReservationBlueprint from "../model/api/NewReservationBlueprint";
-import NewReservationValidation from "../model/api/NewReservationValidationFixLater";
+import { NewReservationValidation } from "../model/api/NewReservationValidationFixLater";
 import useDelayedCallback from "./useDelayedCallback";
 import useStatus from "./useStatus";
 
@@ -33,21 +33,16 @@ export default function useValidateReservationOnChange() {
         if (appState.reservationValidationObservationCount === 0) return;
         const reservationBlueprint = appState.reservationRequest;
         if (!reservationBlueprint) return;
-        console.log(
-            "validate",
-            reservationBlueprint,
-            appState.reservationValidation
-        );
-        api.validate(reservationBlueprint);
+        // api.validate(reservationBlueprint);
     }, 1000);
     useEffect(handleReservationRequestUpdate, [
         appState.reservationRequest,
         appState.reservationValidationObservationCount,
     ]);
 
-    function handleValidationUpdate() {
-        // if (api.state !== "error") return;
-        console.log("validation result", api.result);
-    }
-    useEffect(handleValidationUpdate, [api.state]);
+    // function handleValidationUpdate() {
+    //     // if (api.state !== "error") return;
+    //     console.log("validation result", api.state);
+    // }
+    // useEffect(handleValidationUpdate, [api.state]);
 }

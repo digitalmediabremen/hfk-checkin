@@ -1,5 +1,11 @@
+import {
+    parse,
+    roundToNearestMinutes,
+    differenceInMilliseconds,
+} from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "react-feather";
+import { NewLineKind } from "ts-morph";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
@@ -7,6 +13,7 @@ import useReservationState from "../../../src/hooks/useReservationState";
 import useTheme from "../../../src/hooks/useTheme";
 import useValidation from "../../../src/hooks/useValidation";
 import FullCalendarEventOnResource from "../../../src/model/api/FullCalendarEventOnResource";
+import Resource from "../../../src/model/api/Resource";
 import {
     addDateTime,
     createDateNow,
@@ -28,6 +35,30 @@ import ResourceCalendar from "../../common/ResourceCalendar";
 
 interface SetTimeSubpageProps {}
 
+function getResourceSlotSizeInSeconds(
+    resource: Resource | undefined,
+) {
+    if (!resource) return 60;
+    const { slot_size } = resource;
+    if (!slot_size) return 60;
+    const parsedDate = createTimeFromDate(
+        parse(slot_size, "HH:mm:ss", new Date())
+    );
+    const millis = parsedDate.getTime() - parsedDate.getTimezoneOffset() * 60 * 1000;
+    const seconds = millis / 1000;
+    return seconds
+}
+
+function roundTimeToNearestSlotSize(
+    time: Time | undefined,
+    slotSizeInSeconds: number
+) {
+    if (!time) return undefined;
+    const millis = time.getTime();
+    const newMillis = Math.floor(millis / (slotSizeInSeconds * 1000)) * slotSizeInSeconds * 1000;
+    return createTimeFromDate(new Date(newMillis));
+}
+
 const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const { hasError, getError } = useValidation();
     const { t } = useTranslation("request-time");
@@ -39,6 +70,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const [begin, setBegin] = useReservationState("begin");
     const [end, setEnd] = useReservationState("end");
     const [resource] = useReservationState("resource");
+    const resourceSlotSize = getResourceSlotSizeInSeconds(resource);
     const [date, setDate] = useState<Date | undefined>(begin);
     // const default
     const defaultBegin = createTimeFromDate(
@@ -48,10 +80,10 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         addDateTime(defaultBegin, duration.hours(2))
     );
     const [timeFrom, setTimeFrom] = useState<Time | undefined>(
-        begin ? createTimeFromDate(begin) : defaultBegin
+        roundTimeToNearestSlotSize(begin ? createTimeFromDate(begin) : defaultBegin, resourceSlotSize)
     );
     const [timeTo, setTimeTo] = useState<Time | undefined>(
-        end ? createTimeFromDate(end) : defaultEnd
+        roundTimeToNearestSlotSize(end ? createTimeFromDate(end) : defaultEnd, resourceSlotSize)
     );
     const hasOverlap =
         notEmpty(timeFrom) && notEmpty(timeTo) && smallerThan(timeTo, timeFrom);
@@ -59,6 +91,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         hasError("exceedsBookableRange") && hasError("needsExceptionReason");
     const [currentRequestEventArray, setCurrentRequestEventArray] =
         useState<Array<FullCalendarEventOnResource> | undefined>();
+
     // update date values
     useEffect(() => {
         if (firstRender.current) return;
@@ -114,18 +147,20 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     width="half"
                     label={t("Von")}
                     value={timeFrom}
-                    onChange={setTimeFrom}
+                    onChange={(time) => setTimeFrom(roundTimeToNearestSlotSize(time, resourceSlotSize))}
                     bottomSpacing={1}
                     extendedWidth
+                    step={resourceSlotSize}
                 />
                 <FormTimeInput
                     width="half"
                     label={t("Bis")}
                     value={timeTo}
-                    onChange={setTimeTo}
+                    onChange={(time) => setTimeTo(roundTimeToNearestSlotSize(time, resourceSlotSize))}
                     bottomSpacing={4}
                     hasOverlap={hasOverlap}
                     extendedWidth
+                    step={resourceSlotSize}
                 />
             </div>
 
