@@ -10,6 +10,7 @@ import NewReservation from "../../src/model/api/NewReservation";
 import validateProfile from "../../src/model/api/MyProfile.validator";
 import Reservation from "../../src/model/api/Reservation";
 import validateReservation from "../../src/model/api/Reservation.validator";
+import validateReservationValidation from "../../src/model/api/NewReservationValidation.validator";
 import Resource from "../../src/model/api/Resource";
 import validateResource from "../../src/model/api/Resource.validator";
 import validateUnit from "../../src/model/api/Unit.validator";
@@ -22,6 +23,8 @@ import validateEventOnResource from "../../src/model/api/FullCalendarEventOnReso
 import * as Sentry from "@sentry/node";
 import FullCalendarEventOnResource from "../../src/model/api/FullCalendarEventOnResource";
 import KeycardInfo from "../../src/model/api/KeycardInfo";
+import NewReservationValidation from "../../src/model/api/NewReservationValidation";
+import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
 
 export type ApiResponse<T> =
     | {
@@ -283,6 +286,16 @@ export const updateReservationRequest = async (
         `reservation/`,
         { ...options, method: "POST", body: JSON.stringify(reservation) },
         validateReservation
+    );
+
+export const validateReservationRequest = async (
+    reservation: NewReservationBlueprint,
+    options?: RequestOptions
+) =>
+    await apiRequest<NewReservationValidation>(
+        `reservation/`,
+        { ...options, method: "POST", body: JSON.stringify(reservation) },
+        validateReservationValidation
     );
 
 export const requestKeycardRequest = async (options?: RequestOptions) =>
