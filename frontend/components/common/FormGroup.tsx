@@ -56,6 +56,7 @@ const FormGroup: FunctionComponent<FormGroupProps> = ({
                 {_children.map((child, index) => {
                     return (
                         <div
+                            key={index}
                             className={classNames({
                                 "push-right":
                                     index === (pushRightAfter || 999999),
