@@ -105,7 +105,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                 value={date}
                 onChange={setDate}
                 bottomSpacing={2}
-                minValue={createDateNow()}
+                // minValue={createDateNow()}
                 extendedWidth
             />
 
