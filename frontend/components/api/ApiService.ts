@@ -10,7 +10,7 @@ import NewReservation from "../../src/model/api/NewReservation";
 import validateProfile from "../../src/model/api/MyProfile.validator";
 import Reservation from "../../src/model/api/Reservation";
 import validateReservation from "../../src/model/api/Reservation.validator";
-import validateReservationValidation from "../../src/model/api/NewReservationValidation.validator";
+import validateReservationValidationFixLater from "../../src/model/api/NewReservationValidationFixLater.validator";
 import Resource from "../../src/model/api/Resource";
 import validateResource from "../../src/model/api/Resource.validator";
 import validateUnit from "../../src/model/api/Unit.validator";
@@ -23,8 +23,12 @@ import validateEventOnResource from "../../src/model/api/FullCalendarEventOnReso
 import * as Sentry from "@sentry/node";
 import FullCalendarEventOnResource from "../../src/model/api/FullCalendarEventOnResource";
 import KeycardInfo from "../../src/model/api/KeycardInfo";
-import NewReservationValidation from "../../src/model/api/NewReservationValidation";
+import NewReservationValidationFixLater, {
+    NewReservationValidation,
+    ValidationErrorDict,
+} from "../../src/model/api/NewReservationValidationFixLater";
 import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
+import { Entries } from "../../src/util/ReservationUtil";
 
 export type ApiResponse<T> =
     | {
@@ -291,12 +295,38 @@ export const updateReservationRequest = async (
 export const validateReservationRequest = async (
     reservation: NewReservationBlueprint,
     options?: RequestOptions
-) =>
-    await apiRequest<NewReservationValidation>(
-        `reservation/validate/`,
-        { ...options, method: "POST", body: JSON.stringify(reservation) },
-        validateReservationValidation
-    );
+) => {
+    // this is temporary fix as long the backend does not fullfil the contract described by NewReservationValidation
+    function fixDataStructure(
+        data: NewReservationValidationFixLater
+    ): NewReservationValidation {
+        const mappedErrors = (
+            Object.entries(data || []) as Entries<ValidationErrorDict>
+        ).map(([key, value]) => ({
+            type:
+                key === "non_field_errors"
+                    ? ("ReservationNonFieldError" as const)
+                    : ("ReservationFieldError" as const),
+            context:
+                key !== "non_field_errors" ? [`field.${key}` as const] : [],
+            detail: value.join(", "),
+            level: "error" as const,
+        }));
+        return [...(data.warnings || []), ...mappedErrors];
+    }
+
+    const { data, ...other } =
+        await apiRequest<NewReservationValidationFixLater>(
+            `reservation/validate/`,
+            { ...options, method: "POST", body: JSON.stringify(reservation) },
+            validateReservationValidationFixLater
+        );
+
+    return {
+        data: data ? fixDataStructure(data) : undefined,
+        ...other,
+    };
+};
 
 export const requestKeycardRequest = async (options?: RequestOptions) =>
     await apiRequest<MyProfile>(`profile/me/requestkeycard`, { ...options });
