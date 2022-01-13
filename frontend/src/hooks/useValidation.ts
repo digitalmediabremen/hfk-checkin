@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useAppState } from "../../components/common/AppStateProvider";
 import {
     getValidationObject,
@@ -9,8 +9,20 @@ import {
 import useStatus from "./useStatus";
 
 export default function useValidation() {
-    const { appState } = useAppState();
+    const { appState, dispatch } = useAppState();
     const { setError } = useStatus();
+
+    useEffect(() => {
+        dispatch({
+            type: "observeValidation"
+        })
+
+        return () => {
+            dispatch({
+                type: "unobserveValidation"
+            })
+        }
+    }, []);
 
     const allErrors = appState.reservationValidation
         .filter((r) => r.level === "error")

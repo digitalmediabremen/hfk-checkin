@@ -15,6 +15,7 @@ export const initialAppState: AppState = {
     currentLocale: getTypeSafeLocale(),
     status: undefined,
     theme: createTheme(false, false, "light"),
+    reservationValidationObservationCount: 0
 };
 
 const useReduceAppState = () =>
@@ -149,6 +150,18 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     overwriteColorScheme: action.colorScheme,
+                };
+            case "observeValidation":
+                return {
+                    ...previousState,
+                    reservationValidationObservationCount:
+                        previousState.reservationValidationObservationCount + 1,
+                };
+            case "unobserveValidation":
+                return {
+                    ...previousState,
+                    reservationValidationObservationCount:
+                        previousState.reservationValidationObservationCount - 1,
                 };
             default:
                 assertNever(

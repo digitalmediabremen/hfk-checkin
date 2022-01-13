@@ -21,6 +21,7 @@ export interface AppState {
     // validation object, updated on every
     // change of reserverationRequest object
     reservationValidation: Validation;
+    reservationValidationObservationCount: number;
     // template object from which a new request can be based on
     reservationRequestTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;
@@ -91,4 +92,10 @@ export type AppAction =
     | {
           type: "overwriteColorScheme";
           colorScheme: ColorScheme | undefined;
+      }
+    | {
+          type: "observeValidation";
+      }
+    | {
+          type: "unobserveValidation";
       };
