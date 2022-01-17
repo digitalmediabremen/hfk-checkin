@@ -33,17 +33,17 @@ from rest_framework.decorators import action
 from django.utils.timezone import localtime
 import warnings
 
-#from munigeo import api as munigeo_api
+# from munigeo import api as munigeo_api
 from .resource import ResourceSerializer, ResourceListViewSet
 
 from ..models import (
     Reservation, Resource, RESERVATION_EXTRA_FIELDS,
     # ReservationMetadataSet, ReservationCancelReasonCategory, ReservationCancelReason
-    )
+)
 from ..models.attendance import Attendance
 from ..models.reservation import StaticReservationPurpose
-#from resources.pagination import ReservationPagination
-#from resources.models.utils import generate_reservation_xlsx
+# from resources.pagination import ReservationPagination
+# from resources.models.utils import generate_reservation_xlsx
 from ..models.utils import get_object_or_none
 
 from ..auth import is_general_admin, is_staff
@@ -51,8 +51,9 @@ from .base import (
     NullableDateTimeField, TranslatedModelSerializer, register_view, DRFFilterBooleanWidget,
     ExtraDataMixin, ModifiableModelSerializerMixin, NullableCharField
 )
+
 ResourcesBrowsableAPIRenderer = renderers.BrowsableAPIRenderer
-#from respa.renderers import ResourcesBrowsableAPIRenderer
+# from respa.renderers import ResourcesBrowsableAPIRenderer
 
 User = get_user_model()
 
@@ -91,16 +92,19 @@ except Exception:
 class AttendanceSerializer(serializers.ModelSerializer):
     profile_id = serializers.ReadOnlyField(source='user.id', read_only=True)
     display_name = serializers.ReadOnlyField(source='get_display_name', read_only=True)
-    is_external = serializers.BooleanField(source='is_external_user', allow_null=False, read_only=True, initial=True, default=True)
+    is_external = serializers.BooleanField(source='is_external_user', allow_null=False, read_only=True, initial=True,
+                                           default=True)
     is_organizer = serializers.BooleanField(read_only=True)
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     phone = serializers.CharField(source='user.phone', write_only=True)
-    #email = serializers.EmailField(source='user.email', write_only=True)
+
+    # email = serializers.EmailField(source='user.email', write_only=True)
 
     class Meta:
         model = Attendance
-        fields = ('uuid','profile_id','first_name', 'last_name', 'display_name', 'phone','state', 'is_external', 'is_organizer')
+        fields = ('uuid', 'profile_id', 'first_name', 'last_name', 'display_name', 'phone', 'state', 'is_external',
+                  'is_organizer')
 
     def validate(self, data):
         # profile_data = data.pop('user')
@@ -112,7 +116,8 @@ class AttendanceSerializer(serializers.ModelSerializer):
         from checkin.users.api import UserProfileSerializer
         # create Profile (attr: user) first, pass user instance to super().create(data)
         user_data = validated_data.pop('user')
-        user_instance = UserProfileSerializer().create(validated_data={'profile': user_data}, profile_extra={'is_external': True})
+        user_instance = UserProfileSerializer().create(validated_data={'profile': user_data},
+                                                       profile_extra={'is_external': True})
         # FIXME Attendance.user is currently a Profile object. Either it should be .user = type(User) or .profile = type(Profile)!
         validated_data['user'] = user_instance.profile
         return super().create(validated_data=validated_data)
@@ -120,19 +125,20 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, ModifiableModelSerializerMixin):
     from checkin.users.api import SimpleUserProfileSerializer
-    #uuid = serializers.ReadOnlyField()
+    # uuid = serializers.ReadOnlyField()
     identifier = serializers.ReadOnlyField(source='short_uuid')
     resource = ResourceSerializer(read_only=True)
     resource_uuid = serializers.PrimaryKeyRelatedField(queryset=ResourceListViewSet.queryset, source='resource')
     begin = NullableDateTimeField()
     end = NullableDateTimeField()
-    #organizer = EmailField(source='user.email', read_only=True) # or depending on permission
+    # organizer = EmailField(source='user.email', read_only=True) # or depending on permission
     # TODO do all users have permission to show / see organizers?!
     organizer = SimpleUserProfileSerializer(source='user', read_only=True)
     is_own = serializers.SerializerMethodField()
     state = serializers.ReadOnlyField()
     state_verbose = serializers.ReadOnlyField(source='get_state_verbose')
-    purpose = NullableCharField(allow_null=True, allow_blank=False, required=False) # choices=StaticReservationPurpose.choices) # will limit values!
+    purpose = NullableCharField(allow_null=True, allow_blank=False,
+                                required=False)  # choices=StaticReservationPurpose.choices) # will limit values!
     link = NullableCharField(allow_null=True, allow_blank=False, required=False)
     title = NullableCharField(allow_null=True, allow_blank=False, required=False)
     need_manual_confirmation = serializers.ReadOnlyField()
@@ -140,23 +146,24 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     # comment or reason or usage
     number_of_attendees = serializers.IntegerField(read_only=True)
     number_of_extra_attendees = serializers.IntegerField(initial=0, default=0, required=False)
-    #has_priority = serializers.BooleanField(initial=False)
+    # has_priority = serializers.BooleanField(initial=False)
     agreed_to_phone_contact = serializers.BooleanField(default=False, required=False)
     exclusive_resource_usage = serializers.BooleanField(initial=False, default=False, required=False)
     organizer_is_attending = serializers.BooleanField(initial=True, default=True, write_only=True)
-    #user_permissions = serializers.SerializerMethodField()
-    #cancel_reason = ReservationCancelReasonSerializer(required=False)
+    # user_permissions = serializers.SerializerMethodField()
+    # cancel_reason = ReservationCancelReasonSerializer(required=False)
 
     # TODO Patch?
-    patchable_fields = ['state']#, 'cancel_reason']
+    patchable_fields = ['state']  # , 'cancel_reason']
 
     class Meta:
         model = Reservation
         fields = [
-            'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'message', 'title', 'link', 'purpose',
-            'is_own', 'state', 'state_verbose', 'need_manual_confirmation',
-            'attendees', 'number_of_attendees', 'number_of_extra_attendees', #'cancel_reason'
-        ] + list(RESERVATION_EXTRA_FIELDS) + list(ModifiableModelSerializerMixin.Meta.fields)
+                     'url', 'uuid', 'identifier', 'resource', 'resource_uuid', 'organizer', 'begin', 'end', 'message',
+                     'title', 'link', 'purpose',
+                     'is_own', 'state', 'state_verbose', 'need_manual_confirmation',
+                     'attendees', 'number_of_attendees', 'number_of_extra_attendees',  # 'cancel_reason'
+                 ] + list(RESERVATION_EXTRA_FIELDS) + list(ModifiableModelSerializerMixin.Meta.fields)
         read_only_fields = list(RESERVATION_EXTRA_FIELDS)
 
     def __init__(self, *args, **kwargs):
@@ -209,28 +216,45 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
 
     def warn_and_serialize(self, request, **kwargs):
         # FIXME unify with corresponding methods ReservationAdmin / Reservation. DRY.
+        self.is_valid()
+
+        result = {
+            'errors': list(),  # serializer.errors
+            'warnings': list()  # custom models-specific warnings
+        }
+
         assert hasattr(self, '_errors'), (
             'You must call `.is_valid()` before calling `.validate_and_warn()`.'
         )
+
+        if self.errors:
+            result['errors'] = self.errors
+            # error_list = result['errors']
+            # for key, item in self.errors.items():
+            #     error_list.append({key: item})
+
+            return result
+            # finish here since validation needs validated_data
 
         validated_data = {**self.validated_data, **kwargs}
         # remove attendance_set_data, see create() and update()
         attendance_set_data = validated_data.pop('attendance_set', [])
 
         obj = self.Meta.model(**validated_data)
-        warning_list = list()
+        warning_list = result['warnings']
         with warnings.catch_warnings(record=True) as warns:
             try:
                 obj.validate_reservation()
             except ValidationError as e:
                 warning_serialized = ReservationValidationResultItemSerializer(e)
                 warning_list.append(warning_serialized.data)
-                #warning_list.append(e)
+                # warning_list.append(e)
             for w in warns:
                 warning_serialized = ReservationValidationResultItemSerializer(w)
                 warning_list.append(warning_serialized.data)
-                #warning_list.append(w)
-        return warning_list
+                # warning_list.append(w)
+
+        return result
 
     def get_extra_fields(self, includes, context):
         from .resource import ResourceInlineSerializer
@@ -289,9 +313,10 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         if 'end' in data and data['end'] < timezone.now():
             raise ValidationError(_('You cannot make a reservation in the past'))
 
-        if not (resource.can_modify_reservations(request_user)):# or is_general_admin(request_user)):
+        if not (resource.can_modify_reservations(request_user)):  # or is_general_admin(request_user)):
             # allow do make collision bookings for resource "manager"
-            collisions_type_blocked = resource.reservations.current().overlaps(data['begin'], data['end']).filter(type=Reservation.TYPE_BLOCKED)
+            collisions_type_blocked = resource.reservations.current().overlaps(data['begin'], data['end']).filter(
+                type=Reservation.TYPE_BLOCKED)
             # if original_reservation:
             #     collisions_type_blocked = collisions_type_blocked.exclude(pk=original_reservation)
             if collisions_type_blocked.exists():
@@ -461,7 +486,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         validated_data['modified_by'] = request.user
         reservation = super().update(instance, validated_data)
 
-        if new_state in [Reservation.DENIED, Reservation.CANCELLED]: #and cancel_reason:
+        if new_state in [Reservation.DENIED, Reservation.CANCELLED]:  # and cancel_reason:
             if hasattr(instance, 'cancel_reason'):
                 instance.cancel_reason.delete()
 
@@ -742,21 +767,22 @@ class ReservationCacheMixin:
 
 
 class ReservationViewSetMixin(ReservationCacheMixin):
-    queryset = Reservation.objects.select_related('user', 'user__profile')\
-        .prefetch_related('resource__groups','attendance_set','attendance_set__user')\
+    queryset = Reservation.objects.select_related('user', 'user__profile') \
+        .prefetch_related('resource__groups', 'attendance_set', 'attendance_set__user') \
         .order_by('begin', 'resource__unit__name', 'resource__name')
-        # .prefetch_related('catering_orders')\
+    # .prefetch_related('catering_orders')\
     if getattr(settings, 'RESPA_PAYMENTS_ENABLED', False):
         queryset = queryset.prefetch_related('order', 'order__order_lines', 'order__order_lines__product')
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, UserFilterBackend, ReservationFilterBackend, PastFilterBackend, \
-                       NeedManualConfirmationFilterBackend, StateFilterBackend, CanApproveFilterBackend)
+    filter_backends = (
+    DjangoFilterBackend, filters.OrderingFilter, UserFilterBackend, ReservationFilterBackend, PastFilterBackend, \
+    NeedManualConfirmationFilterBackend, StateFilterBackend, CanApproveFilterBackend)
     filterset_class = ReservationFilterSet
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, ReservationPermission)
-    renderer_classes = (renderers.JSONRenderer, ResourcesBrowsableAPIRenderer)#, ReservationExcelRenderer)
-    #pagination_class = ReservationPagination
+    renderer_classes = (renderers.JSONRenderer, ResourcesBrowsableAPIRenderer)  # , ReservationExcelRenderer)
+    # pagination_class = ReservationPagination
     authentication_classes = (
-        list(drf_settings.DEFAULT_AUTHENTICATION_CLASSES) +
-        [TokenAuthentication, SessionAuthentication])
+            list(drf_settings.DEFAULT_AUTHENTICATION_CLASSES) +
+            [TokenAuthentication, SessionAuthentication])
     ordering_fields = ('begin',)
 
     def get_serializer_class(self):
@@ -791,9 +817,8 @@ class ReservationViewSetMixin(ReservationCacheMixin):
             request_user = self.request.user
 
             if request_user.is_authenticated:
-                prefetched_user = self.request_user_object#.prefetch_related('profile')
-                    #.prefetch_related('unit_authorizations', 'unit_group_authorizations__subject__members')
-
+                prefetched_user = self.request_user_object  # .prefetch_related('profile')
+                # .prefetch_related('unit_authorizations', 'unit_group_authorizations__subject__members')
 
                 context['prefetched_user'] = prefetched_user
 
@@ -834,12 +859,12 @@ class ReservationViewSetMixin(ReservationCacheMixin):
         if not resource.reservable:
             raise ValidationError('Reservations for this resource are disabled.')
 
-        #if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
+        # if resource.need_manual_confirmation and not resource.can_bypass_manual_confirmation(self.request.user):
         # FIXME auto confirmation
         new_state = Reservation.REQUESTED
         new_state = instance.get_automatic_state(user=self.request.user, default_state=new_state)
-        #else:
-        #new_state = Reservation.CONFIRMED
+        # else:
+        # new_state = Reservation.CONFIRMED
         # else:
         #     if instance.get_order():
         #         new_state = Reservation.WAITING_FOR_PAYMENT
@@ -874,10 +899,10 @@ class ReservationViewSetMixin(ReservationCacheMixin):
         # Perform the lookup filtering.
         lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
         assert lookup_url_kwarg in self.kwargs, (
-            'Expected view %s to be called with a URL keyword argument '
-            'named "%s". Fix your URL conf, or set the `.lookup_field` '
-            'attribute on the view correctly.' %
-            (self.__class__.__name__, lookup_url_kwarg)
+                'Expected view %s to be called with a URL keyword argument '
+                'named "%s". Fix your URL conf, or set the `.lookup_field` '
+                'attribute on the view correctly.' %
+                (self.__class__.__name__, lookup_url_kwarg)
         )
         filter_kwargs = {self.lookup_field + '__istartswith': self.kwargs[lookup_url_kwarg]}
         try:
@@ -890,14 +915,12 @@ class ReservationViewSetMixin(ReservationCacheMixin):
 
         return obj
 
-
     @action(detail=False, methods=['post'])
     def validate(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
         ew_list = serializer.warn_and_serialize(request)
         serialized_warnings = ew_list
-        #serialized_warnings = ReservationValidationResultItemSerializer(ew_list, many=True)
+        # serialized_warnings = ReservationValidationResultItemSerializer(ew_list, many=True)
         # serialized_warnings = ReservationValidationResultSerializer(data={
         #     'results': ew_list,
         # })
@@ -967,14 +990,19 @@ class ReservationValidationResultSerializer(serializers.Serializer):
     results = serializers.ListField(child=ReservationValidationResultItemSerializer())
 
 
-class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-    pass
+#
+# class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+#     pass
+#
 
-
-class ReservationDetailViewSet(ReservationViewSetMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin,
+                             mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    # mixins.ListModelMixin, mixins.CreateModelMixin,
     filter_backends = (DjangoFilterBackend, ReservationFilterBackend,)
 
 
-register_view(ReservationDetailViewSet, 'reservation')
+ReservationDetailViewSet = ReservationListViewSet
+
+# register_view(ReservationDetailViewSet, 'reservation')
 register_view(ReservationListViewSet, 'reservation')
 # register_view(ReservationCancelReasonCategoryViewSet, 'cancel_reason_category')
