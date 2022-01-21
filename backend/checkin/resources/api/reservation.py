@@ -219,7 +219,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
         self.is_valid()
 
         result = {
-            'errors': list(),  # serializer.errors
+            'errors': dict(),  # serializer.errors
             'warnings': list()  # custom models-specific warnings
         }
 
