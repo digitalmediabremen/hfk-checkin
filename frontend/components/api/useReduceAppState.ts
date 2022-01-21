@@ -15,7 +15,7 @@ export const initialAppState: AppState = {
     currentLocale: getTypeSafeLocale(),
     status: undefined,
     theme: createTheme(false, false, "light"),
-    reservationValidationObservationCount: 0
+    reservationValidationObservationCount: 0,
 };
 
 const useReduceAppState = () =>
@@ -66,10 +66,6 @@ const useReduceAppState = () =>
                     return {
                         ...previousState,
                         reservationRequest: undefined,
-                        reservationValidation: validateReservation(
-                            {},
-                            previousState.currentLocale
-                        ),
                     };
                 }
 
@@ -87,16 +83,11 @@ const useReduceAppState = () =>
                     resource_uuid,
                     selectedUnitId,
                 };
-                const withUpdatedValidation = {
+
+                return {
                     ...previousState,
                     reservationRequest: withUpdatedComputeds,
-                    reservationValidation: validateReservation(
-                        withUpdatedComputeds,
-                        previousState.currentLocale
-                    ),
                 };
-                // console.log("updated reservation state", withUpdatedValidation);
-                return withUpdatedValidation;
             case "updateReservationRequestTemplate":
                 return {
                     ...previousState,
@@ -162,6 +153,11 @@ const useReduceAppState = () =>
                     ...previousState,
                     reservationValidationObservationCount:
                         previousState.reservationValidationObservationCount - 1,
+                };
+            case "updateValidation":
+                return {
+                    ...previousState,
+                    reservationValidation: action.validation,
                 };
             default:
                 assertNever(
