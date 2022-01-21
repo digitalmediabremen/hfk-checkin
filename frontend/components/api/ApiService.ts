@@ -301,7 +301,7 @@ export const validateReservationRequest = async (
         data: NewReservationValidationFixLater
     ): NewReservationValidation {
         const mappedErrors = (
-            Object.entries(data || []) as Entries<ValidationErrorDict>
+            Object.entries(data.errors || []) as Entries<ValidationErrorDict>
         ).map(([key, value]) => ({
             type:
                 key === "non_field_errors"

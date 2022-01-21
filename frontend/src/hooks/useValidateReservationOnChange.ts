@@ -38,6 +38,7 @@ export default function useValidateReservationOnChange() {
     useEffect(handleReservationRequestUpdate, [
         appState.reservationRequest,
         appState.reservationValidationObservationCount,
+        appState.currentLocale,
     ]);
 
     function handleValidationUpdate() {

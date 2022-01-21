@@ -2,7 +2,6 @@ import { Reducer, useReducer } from "react";
 import { createExpressionWithTypeArguments } from "typescript";
 import { AppAction, AppState } from "../../src/model/AppState";
 import { assertNever, empty, notEmpty } from "../../src/util/TypeUtil";
-import validateReservation from "../../src/util/ReservationValidationUtil";
 import createTheme from "../../styles/theme";
 import Locale from "../../src/model/api/Locale";
 import { getTypeSafeLocale } from "../../src/util/LocaleUtil";
@@ -117,10 +116,6 @@ const useReduceAppState = () =>
                 return {
                     ...previousState,
                     currentLocale: action.locale as unknown as Locale,
-                    reservationValidation: validateReservation(
-                        previousState.reservationRequest || {},
-                        action.locale
-                    ),
                 };
             case "updateTheme":
                 return {

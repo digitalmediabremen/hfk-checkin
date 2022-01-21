@@ -1,10 +1,12 @@
 import { useCallback, useEffect } from "react";
 import { useAppState } from "../../components/common/AppStateProvider";
 import {
+    ValidationLevel,
+    ValidationType,
+} from "../model/api/NewReservationValidationFixLater";
+import {
     getValidationObject,
     hasValidationObject,
-    ValidationLevel,
-    ValidationType
 } from "../util/ReservationValidationUtil";
 import useStatus from "./useStatus";
 
@@ -14,19 +16,19 @@ export default function useValidation() {
 
     useEffect(() => {
         dispatch({
-            type: "observeValidation"
-        })
+            type: "observeValidation",
+        });
 
         return () => {
             dispatch({
-                type: "unobserveValidation"
-            })
-        }
+                type: "unobserveValidation",
+            });
+        };
     }, []);
 
     const allErrors = appState.reservationValidation
         .filter((r) => r.level === "error")
-        .map((r) => r.message)
+        .map((r) => r.detail)
         .join("\n\n");
     const hasErrors = appState.reservationValidation.some(
         (r) => r.level === "error"
@@ -39,7 +41,7 @@ export default function useValidation() {
     const has = useCallback(
         (type: ValidationType, level?: ValidationLevel) =>
             hasValidationObject(appState.reservationValidation, type, level),
-        [appState]
+        [appState.reservationValidation]
     );
 
     const get = useCallback(
@@ -48,27 +50,16 @@ export default function useValidation() {
                 appState.reservationValidation,
                 type,
                 level
-            ).map((v) => v.message),
-        [appState]
+            ).map((v) => v.detail),
+        [appState.reservationValidation]
     );
 
-    // show errors to the user
-    const userValidate = () => {
-        if (hasErrors) {
-            setError(allErrors);
-            return false;
-        }
-
-        return true;
-    };
-
     return {
-        has, 
+        has,
         hasError: (type: ValidationType) => has(type, "error"),
         getError: get,
         allErrors,
         hasErrors,
         hasNotices,
-        userValidate,
     };
 }

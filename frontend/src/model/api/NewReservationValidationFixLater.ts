@@ -10,7 +10,6 @@ const testResult = [
     },
 ];
 
-
 export type ValidationType =
     | "ReservationCollisionWarning"
     | "ReservationCapacityCriticalWarning"
@@ -23,8 +22,13 @@ export type ValidationType =
     | "ReservationFieldError"
     | "ReservationNonFieldError";
 
-type ValidationFieldContext = `field.${ReservationFieldKeys}`
-export type ValidationContext = "capacity" | "resource" | "datetime" | "access" | ValidationFieldContext
+type ValidationFieldContext = `field.${ReservationFieldKeys}`;
+export type ValidationContext =
+    | "capacity"
+    | "resource"
+    | "datetime"
+    | "access"
+    | ValidationFieldContext;
 
 export type ValidationLevel = "notice" | "warning" | "error";
 
@@ -36,11 +40,14 @@ export interface ValidationObject {
 }
 
 type ReservationFieldKeys = Exclude<keyof DeepWritable<Reservation>, undefined>;
-export type ValidationErrorDict = Record<ReservationFieldKeys | "non_field_errors", Array<string>>;
+export type ValidationErrorDict = Record<
+    ReservationFieldKeys | "non_field_errors",
+    Array<string>
+>;
 
 export default interface NewReservationValidationFixLater {
-    errors?: ValidationErrorDict,
-    warnings?: Array<ValidationObject>
-};
+    errors?: Partial<ValidationErrorDict>;
+    warnings?: Array<ValidationObject>;
+}
 
 export type NewReservationValidation = Array<ValidationObject>;

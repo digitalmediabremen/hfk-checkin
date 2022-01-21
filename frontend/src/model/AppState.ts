@@ -1,12 +1,10 @@
+import Locale from "./api/Locale";
+import MyProfile from "./api/MyProfile";
 import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
-import Reservation from "./api/Reservation";
-import { Validation } from "../util/ReservationValidationUtil";
-import Theme, { ColorScheme } from "./Theme";
-import Status from "./Status";
-import MyProfile from "./api/MyProfile";
-import Locale from "./api/Locale";
 import { NewReservationValidation } from "./api/NewReservationValidationFixLater";
+import Status from "./Status";
+import Theme, { ColorScheme } from "./Theme";
 
 export type TransitionDirection = "left" | "right";
 
