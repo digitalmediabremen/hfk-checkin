@@ -17,7 +17,7 @@ export default function useDelayedCallback<T extends unknown[]>(
 
     const update = (...value: T) => {
         setValue(Math.random());
-        setParam(value)
+        setParam(value);
     };
 
     return update;

@@ -22,7 +22,7 @@ export function useReservationValidation() {
 
 export default function useValidateReservationOnChange() {
     const api = useReservationValidation();
-    const { appState } = useAppState();
+    const { appState, dispatch } = useAppState();
 
     useEffect(
         () => console.log(appState.reservationValidationObservationCount),
@@ -34,6 +34,7 @@ export default function useValidateReservationOnChange() {
         const reservationBlueprint = appState.reservationRequest;
         if (!reservationBlueprint) return;
         api.validate(reservationBlueprint);
+        console.log("validate");
     }, 1000);
     useEffect(handleReservationRequestUpdate, [
         appState.reservationRequest,
@@ -42,8 +43,12 @@ export default function useValidateReservationOnChange() {
     ]);
 
     function handleValidationUpdate() {
-        // if (api.state !== "error") return;
-        console.log("validation result", api.state);
+        if (api.state !== "success") return;
+        dispatch({
+            type: "updateValidation",
+            validation: api.result,
+        });
+        console.log("validation result", api.result);
     }
-    useEffect(handleValidationUpdate, [api.state]);
+    useEffect(handleValidationUpdate, [api.state, api.result]);
 }
