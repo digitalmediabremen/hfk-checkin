@@ -44,6 +44,7 @@ const Page: React.FunctionComponent<PageProps> = ({
 }) => {
     const theme = useTheme();
     const height = use100vh();
+    if (!active) return null;
     return (
         <>
             <style jsx>{`
