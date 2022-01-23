@@ -14,14 +14,15 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
 }) => {
     const theme = useTheme();
     const { status, empty } = useStatus();
-    const [currentStatus, setCurrentStatus] = useState<
-        | {
-              isError: boolean;
-              message: string;
-              id: number;
-          }
-        | undefined
-    >(undefined);
+    const [currentStatus, setCurrentStatus] =
+        useState<
+            | {
+                  isError: boolean;
+                  message: string;
+                  id: number;
+              }
+            | undefined
+        >(undefined);
 
     const remove = () => {
         setCurrentStatus(undefined);
@@ -33,7 +34,7 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
         const timer = window.setTimeout(() => {
             setCurrentStatus(undefined);
             console.log("remove");
-        }, 2000);
+        }, 3000);
         return () => {
             clearTimeout(timer);
         };
