@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { usePageVisibility } from "react-page-visibility";
 import { useApi } from "../../components/api/ApiHooks";
 import { validateReservationRequest } from "../../components/api/ApiService";
 import { useAppState } from "../../components/common/AppStateProvider";
@@ -23,6 +24,7 @@ export function useReservationValidation() {
 export default function useValidateReservationOnChange() {
     const api = useReservationValidation();
     const { appState, dispatch } = useAppState();
+    const isPageVisible = usePageVisibility();
 
     useEffect(
         () => console.log(appState.reservationValidationObservationCount),
@@ -31,15 +33,17 @@ export default function useValidateReservationOnChange() {
 
     const handleReservationRequestUpdate = useDelayedCallback(() => {
         if (appState.reservationValidationObservationCount === 0) return;
+        if (!isPageVisible) return;
         const reservationBlueprint = appState.reservationRequest;
         if (!reservationBlueprint) return;
         api.validate(reservationBlueprint);
         console.log("validate");
-    }, 1000);
+    }, 500);
     useEffect(handleReservationRequestUpdate, [
         appState.reservationRequest,
         appState.reservationValidationObservationCount,
         appState.currentLocale,
+        isPageVisible,
     ]);
 
     function handleValidationUpdate() {

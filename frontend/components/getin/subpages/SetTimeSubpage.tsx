@@ -50,20 +50,19 @@ function getResourceSlotSizeInSeconds(resource: Resource | undefined) {
 }
 
 function useRoundTimeToNearestSlotSize() {
-    const [rounded, setRounded] = useState(false);
     const { setNotice } = useStatus();
     return (time: Time | undefined, slotSizeInSeconds: number) => {
         if (!time) return undefined;
         const millis = time.getTime();
         const newMillis =
-            Math.floor(millis / (slotSizeInSeconds * 1000)) *
+            Math.round(millis / (slotSizeInSeconds * 1000)) *
             slotSizeInSeconds *
             1000;
         const roundedTime = createTimeFromDate(new Date(newMillis));
         if (roundedTime.getTime() !== time.getTime()) {
             console.log("fire notice");
             setNotice(
-                "Dein Datum wurde auf die nächste Verfügbare grösse gerundet."
+                "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
             );
         }
         return roundedTime;

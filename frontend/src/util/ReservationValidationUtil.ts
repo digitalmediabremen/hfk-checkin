@@ -6,24 +6,27 @@ import {
 } from "../model/api/NewReservationValidationFixLater";
 
 export function hasValidationObject(
-    v: NewReservationValidation,
-    type?: ValidationType,
-    level?: ValidationLevel,
-    group?: ValidationContext
-) {
-    return getValidationObject(v, type, level, group).length > 0;
-}
-
-export function getValidationObject(
-    v: NewReservationValidation,
+    validationArray: NewReservationValidation,
     type?: ValidationType,
     level?: ValidationLevel,
     context?: ValidationContext
 ) {
-    return v.filter(
-        (r) =>
-            r.type === type &&
-            (level ? r.level === level : true) &&
-            (context ? r.context?.includes(context) : true)
+    // console.log(`check for ${type} ${level} ${context}`, validationArray);
+    return (
+        getValidationObject(validationArray, type, level, context).length > 0
+    );
+}
+
+export function getValidationObject(
+    validationArray: NewReservationValidation,
+    type?: ValidationType,
+    level?: ValidationLevel,
+    context?: ValidationContext
+) {
+    return validationArray.filter(
+        (validationObject) =>
+            validationObject.type === type &&
+            (level ? validationObject.level === level : true) &&
+            (context ? validationObject.context?.includes(context) : true)
     );
 }
