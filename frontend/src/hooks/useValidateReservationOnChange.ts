@@ -26,10 +26,10 @@ export default function useValidateReservationOnChange() {
     const { appState, dispatch } = useAppState();
     const isPageVisible = usePageVisibility();
 
-    useEffect(
-        () => console.log(appState.reservationValidationObservationCount),
-        [appState.reservationValidationObservationCount]
-    );
+    // useEffect(
+    //     () => console.log(appState.reservationValidationObservationCount),
+    //     [appState.reservationValidationObservationCount]
+    // );
 
     const handleReservationRequestUpdate = useDelayedCallback(() => {
         if (appState.reservationValidationObservationCount === 0) return;
@@ -37,7 +37,6 @@ export default function useValidateReservationOnChange() {
         const reservationBlueprint = appState.reservationRequest;
         if (!reservationBlueprint) return;
         api.validate(reservationBlueprint);
-        console.log("validate");
     }, 500);
     useEffect(handleReservationRequestUpdate, [
         appState.reservationRequest,
@@ -52,7 +51,6 @@ export default function useValidateReservationOnChange() {
             type: "updateValidation",
             validation: api.result,
         });
-        console.log("validation result", api.result);
     }
     useEffect(handleValidationUpdate, [api.result]);
 }

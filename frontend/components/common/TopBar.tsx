@@ -33,7 +33,6 @@ const TopBar: React.FunctionComponent<TopBarProps> = ({
         if (currentStatus.isError) return;
         const timer = window.setTimeout(() => {
             setCurrentStatus(undefined);
-            console.log("remove");
         }, 3000);
         return () => {
             clearTimeout(timer);
