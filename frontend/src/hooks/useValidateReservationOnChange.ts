@@ -43,12 +43,12 @@ export default function useValidateReservationOnChange() {
     ]);
 
     function handleValidationUpdate() {
-        if (api.state !== "success") return;
+        if (!api.result) return;
         dispatch({
             type: "updateValidation",
             validation: api.result,
         });
         console.log("validation result", api.result);
     }
-    useEffect(handleValidationUpdate, [api.state, api.result]);
+    useEffect(handleValidationUpdate, [api.result]);
 }
