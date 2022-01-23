@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, Flag, Info, Menu, Search, X } from "react-feather";
+import { ArrowRight, Info, Menu, Search, X } from "react-feather";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
@@ -8,12 +8,11 @@ import useResources from "../../../src/hooks/useResources";
 import useTheme from "../../../src/hooks/useTheme";
 import useUnits from "../../../src/hooks/useUnits";
 import useValidation from "../../../src/hooks/useValidation";
+import { ValidationObject } from "../../../src/model/api/NewReservationValidationFixLater";
 import Resource from "../../../src/model/api/Resource";
 import { scrollIntoView } from "../../../src/util/DomUtil";
 import { useResourceFormValuePresenter } from "../../../src/util/ReservationPresenterUtil";
-import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
-import Fade from "../../common/Fade";
 import FormCheckbox from "../../common/FormCheckbox";
 import FormElement from "../../common/FormElement";
 import FormElementBase from "../../common/FormElementBase";
@@ -24,9 +23,22 @@ import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 import ResourceListItem from "../../common/ResourceListItem";
 import SectionTitle from "../../common/SectionTitle";
-import FormText from "../../common/FormText";
+import ValidationResult from "../../common/ValidationResult";
 
 interface SetRoomSubpageProps {}
+
+export function resourcePageValidationFilter(
+    validationObject: ValidationObject
+) {
+    if (validationObject.context?.includes("access")) return true;
+    return false;
+}
+
+export function ResourceValidationIconSummary() {
+    const { getHighestValidationIcon } = useValidation();
+    const Icon = getHighestValidationIcon(resourcePageValidationFilter);
+    return !!Icon ? <Icon /> : null;
+}
 
 const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const [searchValue, setSearchValue] = useState("");
@@ -52,7 +64,6 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const { has, getError } = useValidation();
     const theme = useTheme();
     const resourceFormValuePresenter = useResourceFormValuePresenter();
-
 
     useEffect(() => {
         unitsApi.requestUnits();
@@ -128,7 +139,7 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
     const handleResourceSelect = useCallback(
         (resource: Resource) => {
             const handle = () => {
-                const selected = resource.uuid === selectedResource?.uuid
+                const selected = resource.uuid === selectedResource?.uuid;
                 if (!selected) {
                     setSelectedResource(resource);
                 } else {
@@ -271,27 +282,30 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         />
                     )}
 
-                    <Fade in={has("missingResourcePermissions")}>
-                        <Notice
-                            error
-                            title={getError("missingResourcePermissions").join(
-                                "\n"
-                            )}
-                            bottomSpacing={4}
-                        >
-                            {t(
-                                "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern."
-                            )}
-                            <br />
-                            <NewButton
-                                noOutline
-                                iconRight={<ArrowRight strokeWidth={1} />}
-                                onClick={() => goForward("message")}
-                            >
-                                {t("Kommentar hinzufügen")}
-                            </NewButton>
-                        </Notice>
-                    </Fade>
+                    {selectedResource && (
+                        <ValidationResult filter={resourcePageValidationFilter}>
+                            {(validationObject) =>
+                                validationObject.type ===
+                                    "ReservationPermissionCriticalWarning" && (
+                                    <>
+                                        {t(
+                                            "Wenn du dies für einen Fehler hälst, solltest du im Kommentar der Buchung deine Situation schildern."
+                                        )}
+                                        <br />
+                                        <NewButton
+                                            noOutline
+                                            iconRight={
+                                                <ArrowRight strokeWidth={1} />
+                                            }
+                                            onClick={() => goForward("message")}
+                                        >
+                                            {t("Kommentar hinzufügen")}
+                                        </NewButton>
+                                    </>
+                                )
+                            }
+                        </ValidationResult>
+                    )}
 
                     <FormCheckbox
                         value={checked ?? false}
@@ -302,15 +316,11 @@ const SetRoomSubpage: React.FunctionComponent<SetRoomSubpageProps> = ({}) => {
                         bottomSpacing={2}
                     />
 
-                    {!has("missingResourcePermissions") && (
-                        <>
-                            <Notice>
-                                {t(
-                                    'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Anfrage kopieren"'
-                                )}
-                            </Notice>
-                        </>
-                    )}
+                    <Notice>
+                        {t(
+                            'Jeder Raum muss einzeln angefragt werden. Wenn du mehrere Räume für den gleichen Zeitraum anfragen möchtest, klicke nach dem Absenden dieser Anfrage auf "Anfrage kopieren"'
+                        )}
+                    </Notice>
                 </>
             )}
         </>

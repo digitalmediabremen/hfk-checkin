@@ -1,11 +1,7 @@
-import {
-    parse,
-    roundToNearestMinutes,
-    differenceInMilliseconds,
-} from "date-fns";
+import { parse } from "date-fns";
 import React, { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "react-feather";
-import { NewLineKind } from "ts-morph";
+import { transformValue } from "superjson/dist/transformer";
 import { requestSubpages } from "../../../config";
 import { useTranslation } from "../../../localization";
 import useDelayedCallback from "../../../src/hooks/useDelayedCallback";
@@ -14,10 +10,10 @@ import useStatus from "../../../src/hooks/useStatus";
 import useTheme from "../../../src/hooks/useTheme";
 import useValidation from "../../../src/hooks/useValidation";
 import FullCalendarEventOnResource from "../../../src/model/api/FullCalendarEventOnResource";
+import { ValidationObject } from "../../../src/model/api/NewReservationValidationFixLater";
 import Resource from "../../../src/model/api/Resource";
 import {
     addDateTime,
-    createDateNow,
     createDefaultTime,
     createTimeFromDate,
     duration,
@@ -27,12 +23,12 @@ import {
 } from "../../../src/util/DateTimeUtil";
 import { notEmpty } from "../../../src/util/TypeUtil";
 import useSubPage from "../../api/useSubPage";
-import Fade from "../../common/Fade";
 import FormDateInput from "../../common/FormDateInput";
 import FormTimeInput from "../../common/FormTimeInput";
 import NewButton from "../../common/NewButton";
 import Notice from "../../common/Notice";
 import ResourceCalendar from "../../common/ResourceCalendar";
+import ValidationResult from "../../common/ValidationResult";
 
 interface SetTimeSubpageProps {}
 
@@ -61,12 +57,24 @@ function useRoundTimeToNearestSlotSize() {
         const roundedTime = createTimeFromDate(new Date(newMillis));
         if (roundedTime.getTime() !== time.getTime()) {
             console.log("fire notice");
-            setNotice(
-                "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
-            );
+            // setNotice(
+            //     "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
+            // );
         }
         return roundedTime;
     };
+}
+
+export function TimeValidationIconSummary() {
+    const { getHighestValidationIcon } = useValidation();
+    const Icon = getHighestValidationIcon(timePageValidationFilter);
+    return !!Icon ? <Icon /> : null;
+}
+
+export function timePageValidationFilter(validationObject: ValidationObject) {
+    if (validationObject.context?.includes("datetime")) return true;
+    if (validationObject.context?.includes("capacity")) return true;
+    return false;
 }
 
 const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
@@ -187,42 +195,26 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
             </div>
 
             {/* show notices after booking request */}
-
-            {hasError("ReservationCapacityCriticalWarning") && (
-                <Notice
-                    error
-                    bottomSpacing={2}
-                    title={getError("ReservationCapacityCriticalWarning").join(
-                        "\n"
-                    )}
-                >
-                    {t(
-                        "Bitte wähle ein frühreres Datum aus oder gib einen Buchungsgrund an."
-                    )}
-                    <br />
-                    <br />
-                    <NewButton
-                        noOutline
-                        iconRight={<ArrowRight strokeWidth={1} />}
-                        onClick={() => goForward("purpose")}
-                    >
-                        {t("Buchungsgrund angeben")}
-                    </NewButton>
-                </Notice>
-            )}
-
-            {/* <Fade in={!exceedsBookableRange}>
-                <Notice bottomSpacing={2}>
-                    {t(
-                        "Bitte rechne mit einer Bearbeitungszeit von mind. 48 Stunden."
-                    )}
-                </Notice>
-                <Notice bottomSpacing={0}>
-                    {t(
-                        "Wichtig: Am Wochenende werden in der Regel keine Anfragen bearbeitet. Willst du also eine Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage bis spätestens Donnerstag 10 Uhr."
-                    )}
-                </Notice>
-            </Fade> */}
+            <ValidationResult filter={timePageValidationFilter}>
+                {(o) =>
+                    o.type === "ReservationCapacityCriticalWarning" && (
+                        <>
+                            {t(
+                                "Bitte wähle ein anderes Datum aus oder gib einen Buchungsgrund an."
+                            )}
+                            <br />
+                            <br />
+                            <NewButton
+                                noOutline
+                                iconRight={<ArrowRight strokeWidth={1} />}
+                                onClick={() => goForward("purpose")}
+                            >
+                                {t("Grund angeben")}
+                            </NewButton>
+                        </>
+                    )
+                }
+            </ValidationResult>
 
             {resource && (
                 <ResourceCalendar
@@ -236,16 +228,6 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     date={begin}
                 />
             )}
-
-            {/* <FormElementBase>
-                <FormElementLabel name="Von" />
-                <input type="time" value="10:20"></input>
-            </FormElementBase>
-
-            <FormElementBase>
-                <FormElementLabel name="Bis" />
-                <input type="time" value="11:33"></input>
-            </FormElementBase> */}
         </>
     );
 };

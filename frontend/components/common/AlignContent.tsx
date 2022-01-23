@@ -23,16 +23,19 @@ export const AvailableHeight: React.FunctionComponent<AvailableHeightProps> = ({
     const [containerHeight, setContainerHeight] = React.useState<number>();
     const measuredRef = React.useRef<HTMLDivElement>(null);
     const appHeight = use100vh();
+    const updateRef = React.useRef<number>(0);
 
     function updateContainerHeight(offsetTop: number) {
         const footerHeight = noFooter ? 0 : theme.footerHeight();
         if (!appHeight) return;
-        const height = appHeight - (offsetTop + footerHeight + theme.spacing(2));
+        const height =
+            appHeight - (offsetTop + footerHeight + theme.spacing(2));
         setContainerHeight(height);
     }
 
     React.useEffect(() => {
-        if (measuredRef.current === null) return;
+        if (measuredRef.current === null || updateRef.current > 4) return;
+        updateRef.current += 1;
         updateContainerHeight(measuredRef.current.getBoundingClientRect().top);
     });
 

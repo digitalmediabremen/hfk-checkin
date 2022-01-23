@@ -1,3 +1,4 @@
+import { AlertTriangle, AlertCircle } from "react-feather";
 import {
     NewReservationValidation,
     ValidationContext,
@@ -29,4 +30,11 @@ export function getValidationObject(
             (level ? validationObject.level === level : true) &&
             (context ? validationObject.context?.includes(context) : true)
     );
+}
+
+export function getValidationLevelIcon(level?: ValidationLevel) {
+    if (level === "error") return AlertTriangle;
+    else if (level === "warning") return AlertTriangle;
+    else if (level === "notice") return AlertCircle;
+    return null;
 }

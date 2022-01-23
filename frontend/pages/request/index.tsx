@@ -11,6 +11,14 @@ import { LoadingInline } from "../../components/common/Loading";
 import NewButton from "../../components/common/NewButton";
 import SectionTitle from "../../components/common/SectionTitle";
 import Subtitle from "../../components/common/Subtitle";
+import {
+    resourcePageValidationFilter,
+    ResourceValidationIconSummary,
+} from "../../components/getin/subpages/SelectResourceSubPage";
+import {
+    timePageValidationFilter,
+    TimeValidationIconSummary,
+} from "../../components/getin/subpages/SetTimeSubpage";
 import SubpageCollection from "../../components/getin/subpages/SubpageCollection";
 import { requestSubpages } from "../../config";
 import features from "../../features";
@@ -35,9 +43,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
     const { t, locale } = useTranslation("request");
     const { handlerProps, direction, activeSubPage } =
         useSubPage(requestSubpages);
-    const { hasError } = useValidation();
-
-    const ValidationIcon = <AlertCircle />;
+    const { hasError, getHighestValidationIcon } = useValidation();
 
     const { reservation } = useReservationRequest();
     const { message: comment } = reservation;
@@ -71,9 +77,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 label={t("Raum")}
                 shortLabel={t("Raum")}
                 arrow
-                actionIcon={
-                    hasError("missingResourcePermissions") && ValidationIcon
-                }
+                actionIcon={<ResourceValidationIconSummary />}
                 extendedWidth
                 bottomSpacing={2}
             />
@@ -83,7 +87,7 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 value={timeFormValuePresenter(reservation, locale)}
                 shortLabel={t("Zeit")}
                 arrow
-                actionIcon={hasError("exceedsBookableRange") && ValidationIcon}
+                actionIcon={<TimeValidationIconSummary />}
                 extendedWidth
             />
             <SectionTitle center>{t("optionale angaben")}</SectionTitle>
@@ -102,13 +106,9 @@ const RequestRoomPage: NextPage<{ profile: MyProfile }> = ({ profile }) => {
                 label={t("Buchungsgrund")}
                 shortLabel={t("Grund")}
                 arrow
-                actionIcon={hasError("needsExceptionReason") && ValidationIcon}
                 extendedWidth
                 maxRows={2}
-                dotted={
-                    !hasError("needsExceptionReason") &&
-                    !purposeFormValuePresenter(reservation, locale)
-                }
+                dotted={!purposeFormValuePresenter(reservation, locale)}
             />
             <FormElement
                 {...handlerProps("message")}

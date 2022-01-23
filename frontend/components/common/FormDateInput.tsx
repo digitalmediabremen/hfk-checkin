@@ -1,4 +1,3 @@
-import "date-input-polyfill";
 import React, { ChangeEvent, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "../../localization";
 import {
@@ -32,9 +31,9 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        async function im() {}
-        im();
-    });
+        // @ts-expect-error
+        import("date-input-polyfill");
+    }, []);
 
     const value =
         notEmpty(minValue) && notEmpty(_value)
@@ -46,7 +45,7 @@ const FormDateInput: React.FunctionComponent<FormDateInputProps> = ({
     const handleChange = useCallback(
         (event: Event | ChangeEvent<HTMLInputElement>) => {
             // typecast event instances
-            const e = (event as unknown) as ChangeEvent<HTMLInputElement>;
+            const e = event as unknown as ChangeEvent<HTMLInputElement>;
             const dateString = e.target.value as string | null;
 
             // validate input
