@@ -47,6 +47,8 @@ function getResourceSlotSizeInSeconds(resource: Resource | undefined) {
 
 function useRoundTimeToNearestSlotSize() {
     const { setNotice } = useStatus();
+    const { t } = useTranslation("request-time");
+
     return (time: Time | undefined, slotSizeInSeconds: number) => {
         if (!time) return undefined;
         const millis = time.getTime();
@@ -57,7 +59,9 @@ function useRoundTimeToNearestSlotSize() {
         const roundedTime = createTimeFromDate(new Date(newMillis));
         if (roundedTime.getTime() !== time.getTime()) {
             setNotice(
-                "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
+                t(
+                    "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
+                )
             );
         }
         return roundedTime;
@@ -77,7 +81,6 @@ export function timePageValidationFilter(validationObject: ValidationObject) {
 }
 
 const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
-    const { hasError, getError } = useValidation();
     const { t } = useTranslation("request-time");
     const { goForward } = useSubPage(requestSubpages);
     const firstRender = useRef(true);
@@ -89,25 +92,20 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const [resource] = useReservationState("resource");
     const resourceSlotSize = getResourceSlotSizeInSeconds(resource);
     const [date, setDate] = useState<Date | undefined>(begin);
+    const roundTimeToNearestSlotSize = useRoundTimeToNearestSlotSize();
     const defaultBegin = createTimeFromDate(
         addDateTime(createDefaultTime(), duration.hours(0))
     );
     const defaultEnd = createTimeFromDate(
         addDateTime(defaultBegin, duration.hours(2))
     );
-    const roundTimeToNearestSlotSize = useRoundTimeToNearestSlotSize();
     const [timeFrom, setTimeFrom] = useState<Time | undefined>(
-        roundTimeToNearestSlotSize(
-            begin ? createTimeFromDate(begin) : defaultBegin,
-            resourceSlotSize
-        )
+        begin ? createTimeFromDate(begin) : defaultBegin
     );
     const [timeTo, setTimeTo] = useState<Time | undefined>(
-        roundTimeToNearestSlotSize(
-            end ? createTimeFromDate(end) : defaultEnd,
-            resourceSlotSize
-        )
+        end ? createTimeFromDate(end) : defaultBegin
     );
+
     const hasOverlap =
         notEmpty(timeFrom) && notEmpty(timeTo) && smallerThan(timeTo, timeFrom);
     const [currentRequestEventArray, setCurrentRequestEventArray] =
