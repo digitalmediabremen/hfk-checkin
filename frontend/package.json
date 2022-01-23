@@ -5,8 +5,8 @@
     "scripts": {
         "dev": "next dev",
         "build": "if-env NEXT_PUBLIC_ENVIRONMENT=production && npm run build:production || npm run build:staging",
-        "build:production": "npm run translate -- --quiet && npm run gen && next build",
-        "build:staging": "npm run gen && next build",
+        "build:production": "npm run translate -- --quiet && next build",
+        "build:staging": "next build",
         "postbuild": "rimraf ./.next/**/*.js.map",
         "test-build": "next build",
         "start": "next start -p $PORT",
