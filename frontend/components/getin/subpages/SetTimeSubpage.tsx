@@ -57,9 +57,9 @@ function useRoundTimeToNearestSlotSize() {
         const roundedTime = createTimeFromDate(new Date(newMillis));
         if (roundedTime.getTime() !== time.getTime()) {
             console.log("fire notice");
-            // setNotice(
-            //     "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
-            // );
+            setNotice(
+                "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
+            );
         }
         return roundedTime;
     };
