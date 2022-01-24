@@ -62,6 +62,8 @@ def convert_type(model, generic_model, direct_model, transfer_fields, out_method
 
     for instance in qs:
         dp_dict = generate_direct_permission_dict(instance, transfer_fields, using)
+        out_method("DEBUG: ")
+        out_method(dp_dict)
         direct_model.objects.create(**dp_dict)
         created_count += 1
         instance.delete()
