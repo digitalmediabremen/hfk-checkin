@@ -123,6 +123,10 @@ class AttendanceSerializer(serializers.ModelSerializer):
         return super().create(validated_data=validated_data)
 
 
+def not_in_past_validator(value):
+    if value < timezone.now():
+        raise serializers.ValidationError('Cannot make reservations in the past.')
+
 class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, ModifiableModelSerializerMixin):
     from checkin.users.api import SimpleUserProfileSerializer
     # uuid = serializers.ReadOnlyField()
@@ -130,7 +134,7 @@ class ReservationSerializer(ExtraDataMixin, TranslatedModelSerializer, Modifiabl
     resource = ResourceSerializer(read_only=True)
     resource_uuid = serializers.PrimaryKeyRelatedField(queryset=ResourceListViewSet.queryset, source='resource')
     begin = NullableDateTimeField()
-    end = NullableDateTimeField()
+    end = NullableDateTimeField(validators=[not_in_past_validator])
     # organizer = EmailField(source='user.email', read_only=True) # or depending on permission
     # TODO do all users have permission to show / see organizers?!
     organizer = SimpleUserProfileSerializer(source='user', read_only=True)
@@ -998,9 +1002,8 @@ class ReservationValidationResultSerializer(serializers.Serializer):
 class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin,
                              mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     # mixins.ListModelMixin, mixins.CreateModelMixin,
-    filter_backends = (DjangoFilterBackend, ReservationFilterBackend,)
-
-
+    pass
+    
 ReservationDetailViewSet = ReservationListViewSet
 
 # register_view(ReservationDetailViewSet, 'reservation')
