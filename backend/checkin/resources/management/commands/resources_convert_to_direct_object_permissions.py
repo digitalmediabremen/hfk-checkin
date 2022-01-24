@@ -38,6 +38,7 @@ def convert_type(model, generic_model, direct_model, transfer_fields, out_method
     qs = generic_model.objects.filter(content_type=ct)
     created_count = 0
     deleted_count = 0
+    skipped_count = 0
 
     if qs.exists():
         count = qs.count()
@@ -64,12 +65,15 @@ def convert_type(model, generic_model, direct_model, transfer_fields, out_method
         dp_dict = generate_direct_permission_dict(instance, transfer_fields, using)
         out_method("DEBUG: ")
         out_method(dp_dict)
-        direct_model.objects.create(**dp_dict)
-        created_count += 1
+        try:
+            direct_model.objects.create(**dp_dict)
+            created_count += 1
+        except model.DoesNotExist:
+            skipped_count += 1
         instance.delete()
         deleted_count += 1
 
-    out_method('Successfully converted %i permissions. %d directs were created, %d generics were deleted.' % (count, created_count, deleted_count))
+    out_method('Successfully converted %i permissions. %d directs were created, %d were skipped since Model instance did not exist, %d generics were deleted.' % (count, created_count, skipped_count, deleted_count))
     return created_count, deleted_count
 
 def convert_all(out_method=print, using='default', no_input=False):
