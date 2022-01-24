@@ -933,12 +933,6 @@ class ReservationViewSetMixin(ReservationCacheMixin):
         # headers = self.get_success_headers(serializer.data)
         return Response(serialized_warnings, status=status.HTTP_200_OK)
 
-    # development helper to use regular view for validation with ?validate=ture as query params
-    def create(self, request, *args, **kwargs):
-        if request.query_params.get('validate'):
-            return self.validate(request, *args, **kwargs)
-        return super(ReservationListViewSet, self).create(request, *args, **kwargs)
-
 
 # class ReservationCancelReasonCategoryViewSet(viewsets.ReadOnlyModelViewSet):
 #     queryset = ReservationCancelReasonCategory.objects.all()
