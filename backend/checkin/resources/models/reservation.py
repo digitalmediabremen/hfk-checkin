@@ -738,15 +738,20 @@ class Reservation(ModifiableModel, UUIDModelMixin, EmailRelatedMixin):
             if collisions_type_blocked.exists():
                 raise ValidationError(gettext("This resource is blocked during this time. Sorry."))
 
+        if self.resource.access_restricted:# and not self.resource.can_make_reservations(self.user):
+            warnings.warn(gettext(
+                "Access to this resource might be limited."), ReservationPermissionWarning)
+
         if not self.resource.can_make_reservations(self.user):
-            warnings.warn(gettext("%s is not explicitly permitted to make reservations on this resource.") % self.user, ReservationPermissionCriticalWarning)
+            warnings.warn(gettext("You (%s) may not permitted to reserve this resource. Your request will be forwarded to the resource delegate.") % self.user.get_full_name(), ReservationPermissionCriticalWarning)
+
 
         request_user_is_admin = request_user and self.resource.is_admin(request_user)
 
         if not isinstance(self.end, datetime.datetime) or not isinstance(self.begin, datetime.datetime):
             raise ValidationError(gettext("Begin or end are not valid dates."))
         if self.end <= self.begin:
-            raise ValidationError(gettext("You must end the reservation after it has begun"))
+            raise ValidationError(gettext("You must end the reservation after it has begun."))
 
         # Check that begin and end times are on valid time slots.
         # TODO implement opening hours
