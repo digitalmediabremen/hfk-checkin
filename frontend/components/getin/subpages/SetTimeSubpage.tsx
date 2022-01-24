@@ -33,9 +33,9 @@ import ValidationResult from "../../common/ValidationResult";
 interface SetTimeSubpageProps {}
 
 function getResourceSlotSizeInSeconds(resource: Resource | undefined) {
-    if (!resource) return 60;
+    if (!resource) return undefined;
     const { slot_size } = resource;
-    if (!slot_size) return 60;
+    if (!slot_size) return undefined;
     const parsedDate = createTimeFromDate(
         parse(slot_size, "HH:mm:ss", new Date())
     );
@@ -43,29 +43,6 @@ function getResourceSlotSizeInSeconds(resource: Resource | undefined) {
         parsedDate.getTime() - parsedDate.getTimezoneOffset() * 60 * 1000;
     const seconds = millis / 1000;
     return seconds;
-}
-
-function useRoundTimeToNearestSlotSize() {
-    const { setNotice } = useStatus();
-    const { t } = useTranslation("request-time");
-
-    return (time: Time | undefined, slotSizeInSeconds: number) => {
-        if (!time) return undefined;
-        const millis = time.getTime();
-        const newMillis =
-            Math.round(millis / (slotSizeInSeconds * 1000)) *
-            slotSizeInSeconds *
-            1000;
-        const roundedTime = createTimeFromDate(new Date(newMillis));
-        if (roundedTime.getTime() !== time.getTime()) {
-            setNotice(
-                t(
-                    "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet."
-                )
-            );
-        }
-        return roundedTime;
-    };
 }
 
 export function TimeValidationIconSummary() {
@@ -92,7 +69,6 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
     const [resource] = useReservationState("resource");
     const resourceSlotSize = getResourceSlotSizeInSeconds(resource);
     const [date, setDate] = useState<Date | undefined>(begin);
-    const roundTimeToNearestSlotSize = useRoundTimeToNearestSlotSize();
     const defaultBegin = createTimeFromDate(
         addDateTime(createDefaultTime(), duration.hours(0))
     );
@@ -103,7 +79,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
         begin ? createTimeFromDate(begin) : defaultBegin
     );
     const [timeTo, setTimeTo] = useState<Time | undefined>(
-        end ? createTimeFromDate(end) : defaultBegin
+        end ? createTimeFromDate(end) : defaultEnd
     );
 
     const hasOverlap =
@@ -166,11 +142,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     width="half"
                     label={t("Von")}
                     value={timeFrom}
-                    onChange={(time) =>
-                        setTimeFrom(
-                            roundTimeToNearestSlotSize(time, resourceSlotSize)
-                        )
-                    }
+                    onChange={setTimeFrom}
                     bottomSpacing={1}
                     extendedWidth
                     step={resourceSlotSize}
@@ -179,11 +151,7 @@ const SetTimeSubpage: React.FunctionComponent<SetTimeSubpageProps> = ({}) => {
                     width="half"
                     label={t("Bis")}
                     value={timeTo}
-                    onChange={(time) =>
-                        setTimeTo(
-                            roundTimeToNearestSlotSize(time, resourceSlotSize)
-                        )
-                    }
+                    onChange={setTimeTo}
                     bottomSpacing={4}
                     hasOverlap={hasOverlap}
                     extendedWidth
