@@ -26,16 +26,11 @@ const ResourceListPage: NextPage<ResourceListPageProps> = ({ resources }) => {
     const height = (use100vh() || 500) - theme.topBarHeight();
     const listItemHeight = useResourceListItemHeight();
     const router = useRouter();
-    
 
     const handleResourceSelect = useCallback(
         ({ name, uuid, unit }: Resource) => {
             const handle = () => {
-                const [url, as] = appUrls.resource(
-                    unit.slug,
-                    uuid,
-                    name
-                );
+                const [url, as] = appUrls.resource(unit.slug, uuid, name);
                 router.push(url, as);
             };
 
@@ -97,16 +92,16 @@ export const getStaticPaths: GetStaticPaths<ResourceListPageParams> =
 export const getStaticProps: GetStaticProps<
     ResourceListPageProps,
     ResourceListPageParams
-> = async ({params}) => {
+> = async ({ params }) => {
     if (!params?.unitslug) {
         return {
-            notFound: true
-        }
+            notFound: true,
+        };
     }
     const { data: resources, error } = await getResourcesRequest({
         requestParameters: {
-            unit: params?.unitslug
-        }
+            unit_slug: params?.unitslug,
+        },
     });
     if (!resources) throw Error(error);
     return {

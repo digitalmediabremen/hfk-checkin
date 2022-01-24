@@ -17,7 +17,7 @@ export default function useResources<P extends boolean>(paginate: P) {
                 () =>
                     getResourcesRequest({
                         requestParameters: {
-                            unit: unitSlug,
+                            unit_slug: unitSlug,
                             search,
                             offset,
                             limit,
