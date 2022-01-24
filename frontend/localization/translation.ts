@@ -11,6 +11,9 @@ const translation: Translation = {
             "+{days}T": "+{days}D",
             jetzt: "now",
             Heute: "Today",
+            heute: "today",
+            zurück: "prev",
+            vor: "next",
             "Raum übernehmen": "Reuse room",
             "Zeit übernehmen": "Reuse time",
             "Wähle die Angaben aus, die du aus der Buchung #{identifier} übernehmen möchtest.":
@@ -27,9 +30,6 @@ const translation: Translation = {
             Morgen: "Tomorrow",
             Einstellungen: "Settings",
             Datenschutz: "Privacy",
-            heute: "today",
-            zurück: "prev",
-            vor: "next",
         },
         reservation: {
             "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
@@ -80,12 +80,51 @@ const translation: Translation = {
             Anfang: "Begin",
             Ende: "End",
             "Weitere Teilnehmer||Teilnehmerinnen": "Additional attendees",
-            'Du hast keine Berechtigung den Raum "{resource}" zu buchen.':
-                'You don\'t have permission to book this room "{resource}".',
-            "Ein Ausnahmegrund muss angegeben werden.":
-                "Please specify an exception.",
-            "Du musst noch den Raum auswählen.": "Please select a room.",
-            "Du musst noch eine Zeit angeben.": "Please select date and time.",
+        },
+        setprofile: {
+            "Noch keine Zugangsberechtigungen": "No access permissions",
+            "Alle {total} Berechtigungen sind aktiv":
+                "All access permissions active",
+            "{synced} von {total} deiner Berechtigungen sind synchronisiert":
+                "{synced} of {total} of permissions synchronized",
+            "Vor {distance} zuletzt synchronisiert":
+                "Permissions synced {distance} ago",
+            Automatisch: "Automatic",
+            Hell: "Light",
+            Dunkel: "Dark",
+            "{fieldName} darf nicht leer sein.": "{fieldName} can't be empty.",
+            "Wirklich ausloggen?": "Are you sure?",
+            "Profil erstellen": "Create profile",
+            "Profil ändern": "Change profile",
+            "Willst du wirklich eine neue Schlüsselkarte beantragen?":
+                "Please confirm your keycard request",
+            "Eingeloggt als": "Logged in as",
+            Ausloggen: "Log out",
+            Vorname: "First name",
+            Nachname: "Surname",
+            Telefonnummer: "Phone number",
+            "Keine gültige Telefonnummer": "Not a valid phone number",
+            "setprofile-accept-legal":
+                "Your data will only be used, if an infection occurs. With your registration you agree to the prevailing privacy policy that your data is being collected for tracing purposes in the event of an infection. You confirm to have read and understood the HfK rules of hygiene and to follow these rules during the stay at the HfK Bremen. Please find our prevailing privacy policy and the HfK hygiene rules on faq.hfk-bremen.de or on https://www.hfk-bremen.de/corona-downloads and on display at the front desk.",
+            "Die Telefonnummer wird im Falle einer Infektionsnachverfolgung verwendet.":
+                "Your phone number is only used in case of an infection.",
+            Schließkarte: "Keycard",
+            "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet. Fragen zu Schließkarten bitte an {keymail}.":
+                "Keycards / chips are issued by the facility management (Dezernat 4) and set up according to your current room permissions. Questions regarding room permissions to {keymail}",
+            "Wenn du bereits eine Karte besitzt, dann trage die Nummer jetzt hier ein.":
+                "If you own a keycard enter your number here.",
+            Schließkartennummer: "Keycard number",
+            "Noch keine Schließkarte bzw. -chip? Nach der Beantragung kannst du deinen neuen Chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.":
+                "No keycard yet? After you have requested a new card, you can collect your card in person and with a signature at the facility management in room {location} a week later.",
+            "Karte beantragen": "Request keycard",
+            Angefragt: "Requested",
+            "am {date-requested}": "on {date-requested}",
+            "Du kannst deine Schließkarte bzw. -chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.":
+                "In about a week you can collect your keycard in person and with a signature at the facility management in room {location}.",
+            Sprache: "Language",
+            Farben: "Colors",
+            Erstellen: "Create",
+            Speichern: "Save",
         },
         "request-attendees": {
             "Externe Teilnehmer anmelden": "Register externals",
@@ -117,6 +156,12 @@ const translation: Translation = {
             "Raum anfragen": "Request room",
             "Schliessberechtigung anfragen": "Request keycard access",
             Raumliste: "Roomlist",
+            Kapazität: "Capacity",
+            "{capacity} Personen": "{capacity} persons",
+            Fläche: "Area",
+            "{area}m²": "{area}m²",
+            Etage: "Floor",
+            Verantwortliche: "Delegates",
         },
         "request-resource": {
             "Gebäude auswählen": "select building",
@@ -157,17 +202,15 @@ const translation: Translation = {
             "HfK-Mitglied": "HfK-Member",
         },
         "request-time": {
+            "Deine Buchung": "Your request",
             Datum: "Date",
             Von: "Start",
             Bis: "End",
-            "Bitte wähle ein frühreres Datum aus oder gib einen Buchungsgrund an.":
+            "Die Uhrzeit wurde auf den nächsten möglichen Zeitslot der Resource gerundet.":
+                "The time was rounded to the next possible time slot.",
+            "Bitte wähle ein anderes Datum aus oder gib einen Buchungsgrund an.":
                 "Please select an earlier date or specify the purpose of your booking request.",
-            "Buchungsgrund angeben": "State booking purpose",
-            'Der Raum "{resource}" kann maximal {days} Tage im Voraus gebucht werden.':
-                'Room "{resource}" can only be booked {days} days in advance.',
-            "Räume können maximal {days} Tage im Vorraus gebucht werden.":
-                "Rooms can only be booked {days} days in advance.",
-            "Deine Buchung": "Your request",
+            "Grund angeben": "State booking purpose",
         },
         cookieError: {
             "Es gibt ein Cookie Problem.":
@@ -200,53 +243,6 @@ const translation: Translation = {
             "Die Verifizierung mit Identitätsnachweis ist nach der Registrierung notwendig.":
                 "The verification with a photo ID at the front desk after registration is mandatory",
             Gastzugang: "guest access",
-        },
-        setprofile: {
-            Automatisch: "Automatic",
-            Hell: "Light",
-            Dunkel: "Dark",
-            "{fieldName} darf nicht leer sein.": "{fieldName} can't be empty.",
-            "Wirklich ausloggen?": "Are you sure?",
-            "Profil erstellen": "Create profile",
-            "Profil ändern": "Change profile",
-            "Willst du wirklich eine neue Schlüsselkarte beantragen?":
-                "Please confirm your keycard request",
-            "Eingeloggt als": "Logged in as",
-            Ausloggen: "Log out",
-            Vorname: "First name",
-            Nachname: "Surname",
-            Telefonnummer: "Phone number",
-            "Keine gültige Telefonnummer": "Not a valid phone number",
-            "setprofile-accept-legal":
-                "Your data will only be used, if an infection occurs. With your registration you agree to the prevailing privacy policy that your data is being collected for tracing purposes in the event of an infection. You confirm to have read and understood the HfK rules of hygiene and to follow these rules during the stay at the HfK Bremen. Please find our prevailing privacy policy and the HfK hygiene rules on faq.hfk-bremen.de or on https://www.hfk-bremen.de/corona-downloads and on display at the front desk.",
-            "Die Telefonnummer wird im Falle einer Infektionsnachverfolgung verwendet.":
-                "Your phone number is only used in case of an infection.",
-            Schließkarte: "Keycard",
-            "Die Schließkarten bzw. -chips werden von der Hausverwaltung (Dezernat 4) ausgegeben und mit den gültigen Schließberechtigungen ausgestattet. Fragen zu Schließkarten bitte an {keymail}.":
-                "Keycards / chips are issued by the facility management (Dezernat 4) and set up according to your current room permissions. Questions regarding room permissions to {keymail}",
-            "Wenn du bereits eine Karte besitzt, dann trage die Nummer jetzt hier ein.":
-                "If you own a keycard enter your number here.",
-            Schließkartennummer: "Keycard number",
-            "Noch keine Schließkarte bzw. -chip? Nach der Beantragung kannst du deinen neuen Chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.":
-                "No keycard yet? After you have requested a new card, you can collect your card in person and with a signature at the facility management in room {location} a week later.",
-            "Karte beantragen": "Request keycard",
-            "Deine Schließkartennummer kann nachträglich nicht mehr geändert werden.":
-                "Once added your keycard number can't be changed.",
-            Angefragt: "Requested",
-            "am {date-requested}": "on {date-requested}",
-            "Du kannst deine Schließkarte bzw. -chip nach einer Woche persönlich gegen Unterschrift bei der Hausverwaltung im Raum {location} abholen.":
-                "In about a week you can collect your keycard in person and with a signature at the facility management in room {location}.",
-            Sprache: "Language",
-            Farben: "Colors",
-            Erstellen: "Create",
-            Speichern: "Save",
-            "Noch keine Zugangsberechtigungen": "No access permissions",
-            "Alle {total} Berechtigungen sind aktiv":
-                "All access permissions active",
-            "{synced} von {total} deiner Berechtigungen sind synchronisiert":
-                "{synced} of {total} of permissions synchronized",
-            "Vor {distance} zuletzt synchronisiert":
-                "Permissions synced {distance} ago",
         },
         verifyNow: {
             Identitätsprüfung: "Identity check",
@@ -282,6 +278,16 @@ const translation: Translation = {
             "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren.":
                 "or scan the QR code of your location.",
             Einchecken: "Check-in",
+        },
+        resource: {
+            Zugang: "Access",
+            "Dieser Raum ist zugangsbeschränkt.":
+                "This room is access restricted.",
+            "Dieser Raum ist nicht über Getin reservierbar.":
+                "This room is not reservable via getin.",
+            "Raum anfragen": "Request room",
+            Verfügbarkeit: "Availability",
+            "Kalender öffnen": "Open calendar",
         },
     },
 };
