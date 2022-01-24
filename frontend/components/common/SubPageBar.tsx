@@ -6,11 +6,13 @@ import Bar from "./Bar";
 interface SubPageBarProps {
     title: ReactNode;
     onBack?: (subPage?: string) => void;
+    actionIcon?: ReactNode;
 }
 
 const SubPageBar: React.FunctionComponent<SubPageBarProps> = ({
     title,
     onBack,
+    actionIcon,
 }) => {
     const theme = useTheme();
 
@@ -40,15 +42,24 @@ const SubPageBar: React.FunctionComponent<SubPageBarProps> = ({
                     left: 0px;
                     color: ${theme.primaryColor};
                 }
+
+                .push-right {
+                    line-height: 0;
+                    position: absolute;
+                    right: 0px;
+                }
             `}</style>
             <Bar extendedWidth>
-                <div className="header" onClick={() => onBack?.()}>
+                <div className="header">
                     {!!onBack && (
-                        <span className="back">
+                        <span className="back" onClick={() => onBack?.()}>
                             <ArrowLeft strokeWidth={2} />
                         </span>
                     )}
                     <h1 className="title">{title}</h1>
+                    {actionIcon && (
+                        <span className="push-right">{actionIcon}</span>
+                    )}
                 </div>
             </Bar>
         </>

@@ -10,6 +10,7 @@ import NewReservation from "../../src/model/api/NewReservation";
 import validateProfile from "../../src/model/api/MyProfile.validator";
 import Reservation from "../../src/model/api/Reservation";
 import validateReservation from "../../src/model/api/Reservation.validator";
+import validateReservationValidationFixLater from "../../src/model/api/NewReservationValidationFixLater.validator";
 import Resource from "../../src/model/api/Resource";
 import validateResource from "../../src/model/api/Resource.validator";
 import validateUnit from "../../src/model/api/Unit.validator";
@@ -17,7 +18,17 @@ import Unit from "../../src/model/api/Unit";
 import { notEmpty } from "../../src/util/TypeUtil";
 import validateCheckin from "../../src/model/api/Checkin.validator";
 import validateLocation from "../../src/model/api/Location.validator";
+import validateKeycardInfo from "../../src/model/api/KeycardInfo.validator";
+import validateEventOnResource from "../../src/model/api/FullCalendarEventOnResource.validator";
 import * as Sentry from "@sentry/node";
+import FullCalendarEventOnResource from "../../src/model/api/FullCalendarEventOnResource";
+import KeycardInfo from "../../src/model/api/KeycardInfo";
+import NewReservationValidationFixLater, {
+    NewReservationValidation,
+    ValidationErrorDict,
+} from "../../src/model/api/NewReservationValidationFixLater";
+import NewReservationBlueprint from "../../src/model/api/NewReservationBlueprint";
+import { Entries } from "../../src/util/ReservationUtil";
 
 export type ApiResponse<T> =
     | {
@@ -91,7 +102,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         ...otherRequestData,
     })
         .then(async (response) => ({
-            result: (parseJsonWithDate(await response.text()) as unknown) as
+            result: parseJsonWithDate(await response.text()) as unknown as
                 | ApiResponse<ResultType>
                 | undefined,
             status: response.status,
@@ -106,8 +117,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                 if (!result.detail)
                     throw {
                         status: status,
-                        error:
-                            "API responded with wrong format.\n Http Error Codes should contain a detail field",
+                        error: "API responded with wrong format.\n Http Error Codes should contain a detail field",
                     };
                 throw {
                     status: status,
@@ -125,7 +135,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
             return { data: result, status };
         })
         .then((result) => {
-            if (!!responseTypeGuard) {
+            if (!!responseTypeGuard && config.environment !== "production") {
                 console.debug(`Check Model for endpoint "${endpoint}"`);
                 const dateWithDateStrings = JSON.parse(
                     JSON.stringify(result.data)
@@ -136,8 +146,7 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
                     console.error(e);
                     throw {
                         status: status,
-                        error:
-                            "API responded with wrong format.\nReturn object is of wrong type.",
+                        error: "API responded with wrong format.\nReturn object is of wrong type.",
                     };
                 }
             }
@@ -145,14 +154,17 @@ export const apiRequest = async <ResultType extends Record<string, any> = {}>(
         })
         .catch((error) => {
             if (error.error !== undefined) {
-                Sentry.withScope(function (scope) {
-                    scope.setLevel(
-                        error.status >= 500
-                            ? Sentry.Severity.Error
-                            : Sentry.Severity.Warning
-                    );
-                    Sentry.captureException(error.error);
-                });
+                // dont log 400 errors
+                if (error.status >= 500) {
+                    Sentry.withScope(function (scope) {
+                        scope.setLevel(
+                            error.status >= 500
+                                ? Sentry.Severity.Error
+                                : Sentry.Severity.Warning
+                        );
+                        Sentry.captureException(error.error);
+                    });
+                }
                 return error;
             } else {
                 Sentry.captureException(error);
@@ -231,6 +243,13 @@ export const getLocationRequest = async (
 export const getProfileRequest = async (headers?: HeadersInit) =>
     await apiRequest<MyProfile>("profile/me/", { headers }, validateProfile);
 
+export const getKeycardInfoRequest = async (headers?: HeadersInit) =>
+    await apiRequest<KeycardInfo>(
+        "keycard/me/",
+        { headers },
+        validateKeycardInfo
+    );
+
 export const getCheckinRequest = async (
     checkinId: string,
     options?: RequestOptions
@@ -273,12 +292,59 @@ export const updateReservationRequest = async (
         validateReservation
     );
 
-export const requestKeycardRequest = async (
+export const validateReservationRequest = async (
+    reservation: NewReservationBlueprint,
     options?: RequestOptions
-) => await apiRequest<MyProfile>(
-    `profile/me/requestkeycard`,
-    { ...options }
-)
+) => {
+    // this is temporary fix as long the backend does not fullfil the contract described by NewReservationValidation
+    function fixDataStructure(
+        data: NewReservationValidationFixLater
+    ): NewReservationValidation {
+        const mappedErrors = (
+            Object.entries(data.errors || []) as Entries<ValidationErrorDict>
+        ).map(([key, value]) => ({
+            type:
+                key === "non_field_errors"
+                    ? ("ReservationNonFieldError" as const)
+                    : ("ReservationFieldError" as const),
+            context:
+                key !== "non_field_errors" ? [`field.${key}` as const] : [],
+            detail: value.join(", "),
+            level: "error" as const,
+        }));
+        return [...(data.warnings || []), ...mappedErrors];
+    }
+
+    const { data, ...other } =
+        await apiRequest<NewReservationValidationFixLater>(
+            `reservation/validate/`,
+            { ...options, method: "POST", body: JSON.stringify(reservation) },
+            validateReservationValidationFixLater
+        );
+
+    return {
+        data: data ? fixDataStructure(data) : undefined,
+        ...other,
+    };
+};
+
+export const requestKeycardRequest = async (options?: RequestOptions) =>
+    await apiRequest<MyProfile>(`profile/me/requestkeycard`, { ...options });
+
+export const getResourceAvailabilityRequestUrl = (resourceId: string) =>
+    `${config.apiUrl}/space/${resourceId}/availability/`;
+
+export const getResourceAvailabilityRequest = async (
+    resourceId: string,
+    options?: RequestOptions
+) =>
+    await apiRequest<FullCalendarEventOnResource>(
+        `space/${resourceId}/availability/`,
+        {
+            ...options,
+        },
+        validateEventOnResource
+    );
 
 export const getResourceRequest = async (
     resourceId: string,

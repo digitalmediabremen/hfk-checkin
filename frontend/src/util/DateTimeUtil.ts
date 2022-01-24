@@ -91,10 +91,7 @@ export const createTimeNow = (): Time => {
 
 export const createDefaultTime = (): Time => {
     const now = new Date();
-    const d = createTime(
-        now.getHours(),
-        Math.floor(now.getMinutes() / 15) * 15
-    );
+    const d = createTime(now.getHours(), 0);
     return d;
 };
 

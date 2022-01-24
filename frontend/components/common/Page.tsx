@@ -5,24 +5,26 @@ import useTheme from "../../src/hooks/useTheme";
 export const Content: React.FunctionComponent = ({ children }) => {
     const theme = useTheme();
     return (
-    <>
-        <style jsx>
-            {`
-                .content {
-                    margin: ${theme.spacing(2)}px ${theme.spacing(3)}px;
-                    max-width: ${theme.desktopWidth}px;
-                }
-
-                @media screen and (min-width: ${theme.desktopWidth + theme.spacing(6)}px) {
+        <>
+            <style jsx>
+                {`
                     .content {
-                        margin: ${theme.spacing(2)}px auto;
+                        margin: ${theme.spacing(2)}px ${theme.spacing(3)}px;
+                        max-width: ${theme.desktopWidth}px;
                     }
-                }
-            `}
-        </style>
-        <div className="content">{children}</div>
-    </>
-)};
+
+                    @media screen and (min-width: ${theme.desktopWidth +
+                        theme.spacing(6)}px) {
+                        .content {
+                            margin: ${theme.spacing(2)}px auto;
+                        }
+                    }
+                `}
+            </style>
+            <div className="content">{children}</div>
+        </>
+    );
+};
 
 interface PageProps {
     topBar?: ReactNode;
@@ -38,15 +40,18 @@ const Page: React.FunctionComponent<PageProps> = ({
     footer,
     scroll,
     noContentMargin,
-    active
+    active,
 }) => {
     const theme = useTheme();
     const height = use100vh();
+    if (!active) return null;
     return (
         <>
             <style jsx>{`
                 .page {
-                    min-height: ${height! - theme.topBarHeight()}px;
+                    min-height: ${height! -
+                    theme.topBarHeight() -
+                    theme.spacing(2)}px;
                     position: relative;
                     // height: 100%;
                     margin: 0 auto;
@@ -60,8 +65,7 @@ const Page: React.FunctionComponent<PageProps> = ({
                     height: ${height}px;
                     overflow: hidden;
                     background-color: ${theme.secondaryColor};
-                    transition: background-color .15s;
-
+                    transition: background-color 0.15s;
                 }
 
                 .scroll-container {

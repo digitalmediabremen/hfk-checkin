@@ -1,13 +1,48 @@
 import useResizeObserver from "@react-hook/resize-observer";
 import * as React from "react";
+import { use100vh } from "react-div-100vh";
 import useTheme from "../../src/hooks/useTheme";
-type AlignOptions = "center" | "bottom";
+type AlignOptions = "top" | "center" | "bottom";
 
 interface IPushToBottomProps {
     offsetBottomPadding?: true;
     align?: AlignOptions;
     noFooter?: true;
 }
+
+export interface AvailableHeightProps {
+    noFooter?: true;
+    children: (height: number) => React.ReactNode;
+}
+
+export const AvailableHeight: React.FunctionComponent<AvailableHeightProps> = ({
+    children,
+    noFooter,
+}) => {
+    const theme = useTheme();
+    const [containerHeight, setContainerHeight] = React.useState<number>();
+    const measuredRef = React.useRef<HTMLDivElement>(null);
+    const appHeight = use100vh();
+
+    function updateContainerHeight(offsetTop: number) {
+        const footerHeight = noFooter ? 0 : theme.footerHeight();
+        if (!appHeight) return;
+        const height =
+            appHeight - (offsetTop + footerHeight + theme.spacing(2));
+        setContainerHeight(height);
+    }
+
+    React.useEffect(() => {
+        if (measuredRef.current === null) return;
+        updateContainerHeight(measuredRef.current.getBoundingClientRect().top);
+    });
+
+    return (
+        <div ref={measuredRef}>
+            {containerHeight ? children(containerHeight) : null}
+        </div>
+    );
+};
 
 const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     children,
@@ -22,13 +57,15 @@ const AlignContent: React.FunctionComponent<IPushToBottomProps> = ({
     const alignCss = {
         center: "center",
         bottom: "flex-end",
+        top: "flex-start",
     };
+    const appHeight = use100vh();
 
     function updateContainerHeight(offsetTop: number) {
         const footerHeight = noFooter ? 0 : theme.footerHeight();
-        const heightString = `calc(100vh - ${
-            offsetTop + footerHeight + theme.spacing(2)
-        }px)`;
+        const heightString = `calc(${
+            appHeight ? `${appHeight}px` : "100vh"
+        } - ${offsetTop + footerHeight + theme.spacing(2)}px)`;
         setContainerHeight(heightString);
     }
 

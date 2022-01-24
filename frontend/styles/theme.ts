@@ -34,8 +34,8 @@ const createTheme = (
     colorScheme: ColorScheme
 ): Theme => ({
     ...colorPallete[colorScheme],
-    fontSize: isDesktop ? 18 : 16,
-    unit: isDesktop ? 9 : 8,
+    fontSize: isDesktop ? 15 : 16,
+    unit: isDesktop ? 8 : 8,
     spacing: function (u: number) {
         return u * this.unit;
     },

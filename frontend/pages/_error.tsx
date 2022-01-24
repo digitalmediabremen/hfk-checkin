@@ -39,7 +39,6 @@ MyError.getInitialProps = async ({ res, err, asPath }) => {
 
     if (err) {
         Sentry.captureException(err);
-        console.log("test")
 
         // Flushing before returning is necessary if deploying to Vercel, see
         // https://vercel.com/docs/platform/limits#streaming-responses

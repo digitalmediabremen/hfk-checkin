@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import useInitApp from "../../src/hooks/useInitApp";
 import useTheme from "../../src/hooks/useTheme";
 
 interface AppWrapperProps {}
 
 const AppWrapper: React.FunctionComponent<AppWrapperProps> = ({ children }) => {
-    useInitApp();
+    const initialized = useInitApp();
     const theme = useTheme();
 
     return (
@@ -13,6 +13,7 @@ const AppWrapper: React.FunctionComponent<AppWrapperProps> = ({ children }) => {
             <style jsx>{`
                 :global(html, body) {
                     background-color: ${theme.secondaryColor};
+                    visibility: ${initialized ? "visible" : "hidden"};
                 }
             `}</style>
             {children}

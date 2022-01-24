@@ -1,7 +1,7 @@
 import * as React from "react";
 import Layout from "../components/common/Layout";
 import Notice from "../components/common/Notice";
-import Text from "../components/common/Text";
+import FormText from "../components/common/FormText";
 import Title from "../components/common/Title";
 import GetinHelpContentDe from "../components/help/GetinHelpContent-de";
 import HelpContentDe from "../components/help/HelpContent-de";

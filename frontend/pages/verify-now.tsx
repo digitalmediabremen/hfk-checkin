@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useTranslation } from "../localization";
 import Title from "../components/common/Title";
-import Text from "../components/common/Text";
+import FormText from "../components/common/FormText";
 import { Button } from "../components/common/Button";
 import FormGroup from "../components/common/FormGroup";
 import AlignContent from "../components/common/AlignContent";
@@ -54,15 +54,15 @@ const VerifyNowPage: React.FunctionComponent<VerifyProfilePageProps> = (
     return (
         <Layout title={t("Identitätsprüfung")}>
             <Subtitle>{t("Identitätsprüfung")}</Subtitle>
-            <Text paragraph>
+            <FormText paragraph>
                 {t("Bitte zeige diese Angaben dem Personal am Empfang.")}
-            </Text>
+            </FormText>
             <ProfileCenterBig profile={profile!} />
-            <Text paragraph>
+            <FormText paragraph>
                 {t(
                     "Sobald die Angaben durch das Personal geprüft und ihrerseits gespeichert wurden, kann der Prozess abgeschlossen werden."
                 )}
-            </Text>
+            </FormText>
             <AlignContent offsetBottomPadding>
                 <Link href={appUrls.home} passHref>
                     <NewButton componentType="a" noBottomSpacing>

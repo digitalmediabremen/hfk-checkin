@@ -1,11 +1,10 @@
+import Locale from "./api/Locale";
+import MyProfile from "./api/MyProfile";
 import NewReservation from "./api/NewReservation";
 import NewReservationBlueprint from "./api/NewReservationBlueprint";
-import Reservation from "./api/Reservation";
-import { Validation } from "../util/ReservationValidationUtil";
-import Theme, { ColorScheme } from "./Theme";
+import { NewReservationValidation } from "./api/NewReservationValidationFixLater";
 import Status from "./Status";
-import MyProfile from "./api/MyProfile";
-import Locale from "./api/Locale";
+import Theme, { ColorScheme } from "./Theme";
 
 export type TransitionDirection = "left" | "right";
 
@@ -20,7 +19,8 @@ export interface AppState {
     reservationRequest?: NewReservationBlueprint;
     // validation object, updated on every
     // change of reserverationRequest object
-    reservationValidation: Validation;
+    reservationValidation: NewReservationValidation;
+    reservationValidationObservationCount: number;
     // template object from which a new request can be based on
     reservationRequestTemplate?: NewReservation;
     subPageTransitionDirection: TransitionDirection;
@@ -91,4 +91,14 @@ export type AppAction =
     | {
           type: "overwriteColorScheme";
           colorScheme: ColorScheme | undefined;
+      }
+    | {
+          type: "observeValidation";
+      }
+    | {
+          type: "unobserveValidation";
+      }
+    | {
+          type: "updateValidation";
+          validation: NewReservationValidation;
       };

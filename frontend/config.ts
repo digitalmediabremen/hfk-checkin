@@ -1,5 +1,4 @@
-import { getHomeUrl } from "./features";
-import { envToBoolean } from "./features";
+import { envToBoolean, getHomeUrl } from "./features";
 import { notEmpty } from "./src/util/TypeUtil";
 
 const presentOrThrow = (envvar: string | undefined) => {
@@ -56,14 +55,25 @@ export const appUrls = {
         "/reservation/[reservationId]",
         `/reservation/${reservationId}`,
     ],
-    resource: (resource: string): string => "test",
+    resourceList: (unitSlug: string) => [
+        "/room-v2/[unitslug]",
+        `/room-v2/${unitSlug}`,
+    ],
+    resource: (
+        unitSlug: string,
+        resourceShortId: string,
+        resourceName: string
+    ) => [
+        "/room-v2/[unitslug]/[resourcename]/[resourceid]",
+        `/room-v2/${unitSlug}/${resourceName}/${resourceShortId}`,
+    ],
     reservations: "/reservation",
     request: "/request",
     introduction: "/intro",
     privacy: "/privacy",
     help: "/help",
     cookieError: "/cookie-error",
-    room: "/room"
+    room: "/room",
 } as const;
 
 export const requestSubpages = {
@@ -82,7 +92,9 @@ export const requestSubpages = {
 
 export const pageTransitionDuration = 300;
 
-export const environment = presentOrThrow(process.env.NEXT_PUBLIC_ENVIRONMENT) as "production" | "staging" | "development";
+export const environment = presentOrThrow(
+    process.env.NEXT_PUBLIC_ENVIRONMENT
+) as "production" | "staging" | "development";
 export const isClient = typeof window === "object";
 export const isServer = typeof window === "undefined";
 

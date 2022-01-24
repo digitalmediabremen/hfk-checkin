@@ -12,7 +12,7 @@ import NewButton from "../../components/common/NewButton";
 import Notice from "../../components/common/Notice";
 import QRIcon from "../../components/common/QRIcon";
 import Subtitle from "../../components/common/Subtitle";
-import Text from "../../components/common/Text";
+import FormText from "../../components/common/FormText";
 import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
@@ -109,11 +109,11 @@ const CheckInPage: SFC<CheckInPageProps> = () => {
                     <QRIcon />
                 </div>
                 <div className="qr-text">
-                    <Text>
+                    <FormText>
                         {t(
                             "oder nutze den QR-Codes des Standorts um deinen Aufenthalt zu dokumentieren."
                         )}
-                    </Text>
+                    </FormText>
                 </div>
             </div>
 

@@ -13,6 +13,7 @@ import Divider from "../components/common/Divider";
 import FormElement from "../components/common/FormElement";
 import FormPhoneInput from "../components/common/FormPhoneInput";
 import FormTextInput from "../components/common/FormTextInput";
+import KeycardFormElement from "../components/common/KeycardFormElement";
 import Layout from "../components/common/Layout";
 import { LoadingInline } from "../components/common/Loading";
 import NewButton from "../components/common/NewButton";
@@ -20,12 +21,14 @@ import NewFormGroup from "../components/common/NewFormGroup";
 import Notice from "../components/common/Notice";
 import SectionTitle from "../components/common/SectionTitle";
 import SubPageBar from "../components/common/SubPageBar";
+import Key from "../components/icons/Key";
 import { appUrls } from "../config";
 import features from "../features";
 import { useTranslation } from "../localization";
 import useColorSchemeSetting, {
     ColorSchemeSetting,
 } from "../src/hooks/useColorSchemeSetting";
+import useKeycardInfo from "../src/hooks/useKeycardInfo";
 import useRequestKeycard from "../src/hooks/useRequestKeycard";
 import Locale from "../src/model/api/Locale";
 import MyProfile, { ProfileUpdate } from "../src/model/api/MyProfile";
@@ -57,6 +60,7 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
         light: t("Hell"),
         dark: t("Dunkel"),
     };
+
     const { colorSchemeSetting, handleColorSchemeSettingChange } =
         useColorSchemeSetting();
 
@@ -140,6 +144,7 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
     const title = isUserCreation ? t("Profil erstellen") : t("Profil ändern");
 
     const keycardState = (() => {
+        // return "requested"
         if (initialProfile?.keycard_number) return "added";
         else if (initialProfile?.keycard_requested_at_at) return "requested";
         else if (!initialProfile?.keycard_number) return "empty";
@@ -313,20 +318,18 @@ const EditProfilePage: FunctionComponent<EditProfileProps> = () => {
                             )}
                         </Notice>
 
-                        <FormElement
-                            labelIcon={<CreditCard />}
-                            value={initialProfile?.keycard_number}
+                        <KeycardFormElement
                             density="super-narrow"
                             noOutline
                             noPadding
-                            bottomSpacing={1}
+                            bottomSpacing={2}
+                            maxRows={3}
                         />
-
-                        <Notice bottomSpacing={2}>
+                        {/* <Notice bottomSpacing={2}>
                             {t(
                                 "Deine Schließkartennummer kann nachträglich nicht mehr geändert werden."
                             )}
-                        </Notice>
+                        </Notice> */}
                     </>
                 )}
 

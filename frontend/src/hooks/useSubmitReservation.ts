@@ -7,13 +7,10 @@ import { appUrls } from "../../config";
 import NewReservation from "../model/api/NewReservation";
 import Reservation from "../model/api/Reservation";
 import { useReservationRequest } from "./useReservationState";
-import useStatus from "./useStatus";
-import useValidation from "./useValidation";
 
 export default function useSubmitReservation() {
     const api = useApi<Reservation>();
     const { convertModel: validateModel } = useReservationRequest();
-    const { userValidate } = useValidation();
     const { dispatch } = useAppState();
     const router = useRouter();
 
@@ -41,9 +38,6 @@ export default function useSubmitReservation() {
     );
 
     const submit = () => {
-        const isValid = userValidate();
-        if (!isValid) return;
-
         const validReservation = validateModel();
 
         (async () => {

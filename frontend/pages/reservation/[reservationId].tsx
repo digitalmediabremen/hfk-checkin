@@ -1,24 +1,22 @@
 import { useRouter } from "next/router";
-import React, { forwardRef } from "react";
-import { Copy, X, XCircle } from "react-feather";
+import React from "react";
+import { Copy, X } from "react-feather";
 import needsProfile from "../../components/api/needsProfile";
 import showIf from "../../components/api/showIf";
-import useSubPage from "../../components/api/useSubPage";
+import { useSubPageWithState } from "../../components/api/useSubPage";
 import AlignContent from "../../components/common/AlignContent";
 import AnimatedIcon from "../../components/common/CheckinSuccessIcon";
 import CompleteReservation from "../../components/common/CompleteReservation";
+import FormText from "../../components/common/FormText";
 import Layout from "../../components/common/Layout";
 import Loading from "../../components/common/Loading";
 import NewButton from "../../components/common/NewButton";
-import Reservation from "../../components/common/Reservation";
 import SubPage from "../../components/common/SubPage";
 import SubPageBar from "../../components/common/SubPageBar";
 import Subtitle from "../../components/common/Subtitle";
-import Text from "../../components/common/Text";
-import Title from "../../components/common/Title";
 import { AdditionalRequestSubPageProps } from "../../components/getin/subpages/AdditionalRequestSubPage";
 import { createDynamicPage } from "../../components/getin/subpages/SubpageCollection";
-import { appUrls, buildSubPageUrl } from "../../config";
+import { appUrls } from "../../config";
 import features from "../../features";
 import { useTranslation } from "../../localization";
 import useParam from "../../src/hooks/useParam";
@@ -52,12 +50,8 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
     const { setNotice } = useStatus();
 
     const { t } = useTranslation("reservation");
-    const { direction, activeSubPage, subPageProps, handlerProps } = useSubPage(
-        {
-            urlProvider: (name, param) =>
-                buildSubPageUrl(appUrls.reservation(id || "")[1], name, param),
-        }
-    );
+    const { direction, activeSubPage, subPageProps, handlerProps } =
+        useSubPageWithState();
 
     const handleCancel = () => {
         if (!reservation) return;
@@ -73,7 +67,7 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
         (async () => {
             const { error } = await cancel();
             await router.push(appUrls.reservations);
-            
+
             if (!error) {
                 setNotice(
                     t("Deine Buchung {identifier} wurde storniert.", {
@@ -131,9 +125,9 @@ const ReservationPage: React.FunctionComponent<ReservationPageProps> = ({}) => {
                                         {t("Deine Anfrage ist eingegangen.")}
                                     </Subtitle>
                                 </>
-                                <Text paragraph>
+                                <FormText paragraph>
                                     {reservation?.state_verbose}
-                                </Text>
+                                </FormText>
                             </>
                         )}
 

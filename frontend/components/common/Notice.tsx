@@ -2,9 +2,10 @@ import classNames from "classnames";
 import * as React from "react";
 import { AlertCircle } from "react-feather";
 import useTheme from "../../src/hooks/useTheme";
-import Text from "./Text";
+import FormText from "./FormText";
 interface NoticeProps {
     error?: true;
+    warning?: true;
     title?: string;
     bottomSpacing?: number;
 }
@@ -45,7 +46,6 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                     margin-top: ${theme.spacing(0.25)}px;
                     flex: 1;
                     width: calc(100% - ${theme.spacing(5)}px);
-
                 }
             `}</style>
             <div className={classNames("notice-wrapper", { error })}>
@@ -56,7 +56,9 @@ const Notice: React.FunctionComponent<NoticeProps> = ({
                 )}
                 <div className="content">
                     {title && <h3>{title}</h3>}
-                    <Text bottomSpacing={0} secondary={!error}>{children}</Text>
+                    <FormText bottomSpacing={0} secondary={!error}>
+                        {children}
+                    </FormText>
                 </div>
             </div>
         </>

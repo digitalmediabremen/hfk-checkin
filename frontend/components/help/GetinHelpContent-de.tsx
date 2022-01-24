@@ -1,6 +1,6 @@
 import React from "react";
 import Notice from "../common/Notice";
-import Text from "../common/Text";
+import FormText from "../common/FormText";
 import HelpSection, { useOnlyOneOpen } from "./HelpSection";
 
 interface GetinHelpContentDeProps {}
@@ -20,7 +20,7 @@ const GetinHelpContentDe: React.FunctionComponent<GetinHelpContentDeProps> = ({}
                 {...openPropsProvider(1)}
                 title="1. Welche Fristen muss ich bei meiner Anfrage berücksichtigen?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Räume können max. 14 Tage im Voraus gebucht werden. Diese
                     Regel gilt nicht für Prüflinge!
                     <br />
@@ -31,22 +31,22 @@ const GetinHelpContentDe: React.FunctionComponent<GetinHelpContentDeProps> = ({}
                     Wochenende in der Regel keine Anfragen. Willst du also eine
                     Werkstatt für Montag um 10 Uhr buchen, stelle deine Anfrage
                     bis spätestens Donnerstag 10 Uhr.
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(2)}
                 title="2. Kann ich einen Raum für einen längeren Zeitraum buchen?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Räume werden max. für einen Zeitraum von bis zu 7 Tagen am
                     Stück vergeben.
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(3)}
                 title="3. Woher weiß ich, dass meine Anfrage bestätigt wurde?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Wenn du in Getin oben links auf deinen Namen klickst, siehst
                     du alle deine Anfragen. Zu jeder Anfrage siehst du hier den
                     aktuellen Buchungsstatus „angefragt“, „bestätigt“ oder
@@ -54,26 +54,26 @@ const GetinHelpContentDe: React.FunctionComponent<GetinHelpContentDeProps> = ({}
                     <br />
                     Über jede Veränderung an deiner Buchungsanfrage bzw. Buchung
                     wirst du per E-Mail an dein HfK-Postfach informiert.
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(4)}
                 title="4. Warum wurde meine Buchung abgelehnt?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     {" "}
                     Buchungen werden immer dann abgelehnt, wenn der gewünscht
                     Zeitraum schon belegt ist, oder weil deine Anfrage nicht zu
                     dem Raum passt. In der Regel solltest du bei einer Ablehnung
                     eine entsprechende Rückmeldung von der raumverantwortlichen
                     Person erhalten.{" "}
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(5)}
                 title="5. Kann ich Raumanfragen und Raumbuchungen nachträglich ändern?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Ja und nein.
                     <br />
                     <br />
@@ -84,23 +84,23 @@ const GetinHelpContentDe: React.FunctionComponent<GetinHelpContentDeProps> = ({}
                     kannst zum Beispiel die Uhrzeit von Anfragen oder Buchungen
                     im Kontakt mit den buchungsverantwortlichen Personen ändern,
                     bitte verwende hierfür die Getin-Mails.
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(6)}
                 title="6. Wie kann ich meine Raumbuchung stornieren?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Klicke in Getin auf „Buchungsanfragen“ und dort auf die
                     Buchung oder Anfrage, die du stornieren willst. Klicke auf
                     „Stornieren“.
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(7)}
                 title="7. Wie bekomme ich eine Zugangsberechtigung für einen Raum?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Die raumverantwortliche Person muss dich in Getin
                     freischalten. Sobald du einen Raum mit Zugangsbeschränkung
                     anfragst, für den du keine Berechtigung hast, leitet Getin
@@ -109,7 +109,7 @@ const GetinHelpContentDe: React.FunctionComponent<GetinHelpContentDeProps> = ({}
                     Du kannst auch vorab mit der raumverantwortlichen Person,
                     bspw. deiner Professorin, besprechen, dass sie dich in Getin
                     freischaltet, sodass du ihren Raum buchen kannst.{" "}
-                </Text>
+                </FormText>
             </HelpSection>
             {/* <HelpSection
                 {...openPropsProvider(1)}
@@ -123,19 +123,19 @@ Deine Anfrage geht dann an das Raum-Team, das dir einen geeigneten Raum vorschl�
                 {...openPropsProvider(8)}
                 title="8. Muss ich weiterhin Checkin benutzen?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     <b>Ja.</b>
                     <br />
                     <br />
                     Mit Getin buchst Du Räume im Speicher XI und vor Ort
                     dokumentierst du deine Anwesenheit mit Checkin selbst.{" "}
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(9)}
                 title="9. Das Formular funktioniert nicht. Was jetzt?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Bitte schreibe eine Mail an{" "}
                     <a href="mailto:getin@hfk-bremen.de">getin@hfk-bremen.de</a>{" "}
                     und schildere dein Problem. Du wirst schnellstmöglich eine
@@ -146,13 +146,13 @@ Deine Anfrage geht dann an das Raum-Team, das dir einen geeigneten Raum vorschl�
                         raum_kud@hfk-bremen.d
                     </a>{" "}
                     schicken.
-                </Text>
+                </FormText>
             </HelpSection>
             <HelpSection
                 {...openPropsProvider(10)}
                 title="10. Fragen oder Feedback?"
             >
-                <Text paragraph>
+                <FormText paragraph>
                     Fragen oder Feedback zur Selbst-Dokumentation mit Checkin
                     werden unter Punkt 10 „Checkin“ beantwortet. Mails richtest
                     du an{" "}
@@ -173,7 +173,7 @@ Deine Anfrage geht dann an das Raum-Team, das dir einen geeigneten Raum vorschl�
                     <a href="mailto:corona@hfk-bremen.de">
                         corona@hfk-bremen.de
                     </a>{" "}
-                </Text>
+                </FormText>
             </HelpSection>
         </>
     );
