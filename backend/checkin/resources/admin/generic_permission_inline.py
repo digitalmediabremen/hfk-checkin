@@ -192,5 +192,5 @@ class SingleGroupResourcePermissionInline(GroupResourcePermissionInline):
     base_form = SingleUserPermissionInlineForm
 
 
-class UserUnitPermissionInline(TabularInline):
+class UserUnitPermissionInline(UserResourcePermissionInline):
     model = get_obj_perms_model(Unit(), UserObjectPermissionBase, UserObjectPermission)

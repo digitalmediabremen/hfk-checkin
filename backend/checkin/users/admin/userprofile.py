@@ -57,7 +57,7 @@ class UserAdmin(UserAdminImpersonateMixin, DjangoUserAdmin):
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'is_tempuser', 'groups', 'disable_notifications', 'preferred_language', 'profile', 'profile__is_external', 'profile__verified', 'last_login', 'date_joined')
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'is_tempuser', 'groups', 'disable_notifications', 'preferred_language', 'profile__is_external', 'profile__verified', 'last_login', 'date_joined')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
     add_form = UserCreationForm
