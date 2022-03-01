@@ -131,7 +131,7 @@ LOGIN_URL = 'admin:login'
 # Custom model for django-guardian
 GUARDIAN_USER_OBJ_PERMS_MODEL = 'users.TimeEnabledUserObjectPermission'
 GUARDIAN_GROUP_OBJ_PERMS_MODEL = 'users.TimeEnabledGroupObjectPermission'
-GUARDIAN_AUTO_PREFETCH = True
+GUARDIAN_AUTO_PREFETCH = False
 
 # PASSWORDS
 # ------------------------------------------------------------------------------
