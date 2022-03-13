@@ -34,7 +34,7 @@ class AbstractReservableModel(models.Model):
     # reservation_delegates = models.ManyToManyField(AUTH_USER_MODEL, verbose_name=_("Buchungsverantwortliche"),
     #                                                blank=True,
     #                                                related_name='%(app_label)s_%(class)s_reservation_delegated')
-    need_manual_confirmation = models.BooleanField(verbose_name=_('Need manual confirmation'), default=True)
+    need_manual_confirmation = models.BooleanField(verbose_name=_('Need manual confirmation'), help_text=_("If disabled reservation requests will be processed automatically."), default=True)
     #usage = models.ManyToManyField(LocationUsage, verbose_name=_("Nutzungsarten"), blank=True)
     #capacity_comment = models.TextField(_("Bemerkung zur Nutzung / Einschränkungen / Kapazität"), blank=True, null=True)
     # book_via = models.ForeignKey(BookingMethod, verbose_name=_("Buchung via"), on_delete=models.SET_NULL, null=True,
@@ -88,7 +88,7 @@ class AbstractReservableModel(models.Model):
         return not self.allow_overlapping_reservations
 
     def get_reservation_delegates_display(self):
-        return ", ".join([d.get_display_name() for d in self.get_reservation_delegates()])
+        return ", ".join([d.get_display_name() for d in self.get_reservation_delegates(include_unit=False)])
 
     def get_reservation_delegates(self, include_unit=True):
         """
@@ -98,6 +98,21 @@ class AbstractReservableModel(models.Model):
         :return:
         """
         base_perms = ['can_modify_reservations', 'can_modify_reservations_without_notifications']
+        return get_users_with_resource_or_unit_perms_for_resource(self,
+            resource_perms=prefix_resource_perm_codenames(base_perms),
+            unit_perms=prefix_unit_perm_codenames(base_perms),
+            include_unit=include_unit
+        )
+
+    def get_managing_delegates(self, include_unit=False):
+        """
+        Returns list of Users delegated to manage reservations OR access on this resource.
+        Will by default return explicitly given permissions, no Unit or Group permissions.
+        Users might be shown publicly as "contact" for a given Resource.
+
+        :return:
+        """
+        base_perms = ['can_modify_reservations', 'can_modify_access', 'notify_for_reservations', 'notify_for_access']
         return get_users_with_resource_or_unit_perms_for_resource(self,
             resource_perms=prefix_resource_perm_codenames(base_perms),
             unit_perms=prefix_unit_perm_codenames(base_perms),

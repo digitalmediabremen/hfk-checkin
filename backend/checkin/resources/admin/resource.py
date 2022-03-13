@@ -82,32 +82,35 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
         (_('Features'), {
             'fields': ('features',),
         }),
-        (_('Reservation'), {
+        (_('Reservation and Access'), {
             #'classes': ('collapse',),
-            'fields': ('reservable', 'is_public', 'need_manual_confirmation', 'reservation_info',# 'reservation_delegates',
-                       'min_period','max_period','slot_size','max_reservations_per_user',
+            'fields': ('reservable', 'is_public', 'access_restricted', 'need_manual_confirmation', 'reservation_info',)# 'reservation_delegates',
+        }),
+        (_('Reservation parameters'), {
+            'classes': ('collapse',),
+            'fields': ('min_period','max_period','slot_size','max_reservations_per_user',
                        'reservable_max_days_in_advance','reservable_min_days_in_advance',
                        'reservation_requested_notification_extra','reservation_confirmed_notification_extra',
                        'external_reservation_url'),
         }),
-        (_('Access'), {
-            # 'classes': ('collapse',),
-            'fields': ('access_restricted',)#, 'access_delegates', 'access_allowed_to'),
-        }),
+        # (_('Access'), {
+        #     # 'classes': ('collapse',),
+        #     'fields': ('access_restricted',)#, 'access_delegates', 'access_allowed_to'),
+        # }),
         (_('Changes'), {
-            # 'classes': ('collapse',),
+            'classes': ('collapse',),
             'fields': ModifiableModelAdminMixin._fields,
         }),
     )
     #readonly_fields = ('uuid',)
     #autocomplete_fields = ('reservation_delegates','access_delegates', 'access_allowed_to')
     # list_display extra 'need_manual_confirmation',
-    list_display = ('display_numbers','name','alternative_names','get_unit_slug','area','floor_number','get_people_capacity','get_reservation_tools','get_access_tools') # ,'need_manual_confirmation'
+    list_display = ('display_numbers','get_combined_name','get_unit_slug','get_managers','area','get_floor_number','get_people_capacity','get_reservation_tools','get_access_tools') # ,'need_manual_confirmation'
     list_filter = ('unit', MyResourceRelationFilter, 'reservable', 'people_capacity_default', 'access_restricted', 'features', 'type', 'groups', 'floor_number', 'need_manual_confirmation') #,'need_manual_confirmation') # 'public',
     list_select_related = ('unit',)
     ordering = ('unit', 'name')
     search_fields = ('name','alternative_names','numbers','unit__name')
-    list_display_links = ('display_numbers', 'name')
+    list_display_links = ('display_numbers', 'get_combined_name')
     readonly_fields = ('get_people_capacity', 'get_people_capacity_policy', *ModifiableModelAdminMixin._fields)
     list_max_show_all = 1000
     filter_horizontal = ('features',)
@@ -201,6 +204,31 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
     get_unit_slug.short_description = _('Unit')
     get_unit_slug.admin_order_field = 'unit__slug'
 
+    def get_floor_number(self, obj):
+        return obj.floor_number
+    get_floor_number.short_description = _('Floor')
+    get_floor_number.admin_order_field = 'floor_number'
+
+    def get_managers(self, obj):
+        return mark_safe(", ".join([u.mailto_html for u in obj.get_managing_delegates()]))
+    get_managers.short_description = _('Responsible delegates')
+
+    def get_cal_link(self, obj):
+        if not obj.reservable:
+            return ""
+        return format_html('<span class="datetimeshortcuts"><a href="{}"><span class="date-icon" title="{}"></span></a></span>',
+                           reverse('admin:resources_resource_calendar', args=[obj.pk]),
+                           _('Open Calendar'))
+    get_cal_link.short_description = "" # empty on purpose
+
+    def get_combined_name(self, obj):
+        if obj.alternative_names:
+            alt = ", ".join(obj.alternative_names)
+            return format_html('{}<br/><i>{}</i>', obj.name, alt)
+        return obj.name
+    get_combined_name.short_description = _('name / alternative names')
+    get_combined_name.admin_order_field = 'name'
+
     def action_email_reservation_delegates(self, request, queryset):
         emails = []
         for resource in queryset:
@@ -233,18 +261,11 @@ class ResourceAdmin(PopulateCreatedAndModifiedMixin, CommonExcludeMixin, Dynamic
                           )), messages.WARNING)
     action_email_access_delegates.short_description = _('Email access delegates of selected resources')
 
-    def get_cal_link(self, obj):
-        if not obj.reservable:
-            return ""
-        return format_html('<span class="datetimeshortcuts"><a href="{}"><span class="date-icon" title="{}"></span></a></span>',
-                           reverse('admin:resources_resource_calendar', args=[obj.pk]),
-                           _('Open Calendar'))
-    get_cal_link.short_description = "" # empty on purpose
-
     class Media:
         css = {
-            'all': ('admin/css/widgets.css', 'resources/reservation_admin.css'), # for .date-icon class in get_reservation_tools / get_cal_link
+            'all': ("css/django_better_admin_arrayfield.min.css", 'admin/css/widgets.css', 'resources/reservation_admin.css'), # for .date-icon class in get_reservation_tools / get_cal_link
         }
+        js = ("js/django_better_admin_arrayfield.min.js",)
 
     def get_reservation_tools(self, obj):
         html_out = ""

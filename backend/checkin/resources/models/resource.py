@@ -301,7 +301,7 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
                          help_text=_("Speicher XI: X.XX.XXX / Dechanatstraße: X.XX(x)"))
     name = models.CharField(_("Name"), max_length=200)
     alternative_names = ArrayField(models.CharField(max_length=200), verbose_name=_("Alternative names"), blank=True, null=True)
-    description = models.TextField(verbose_name=_("Description"), blank=True, null=True)
+    description = models.TextField(verbose_name=_("Description"), help_text=_("Displayed publicly"), blank=True, null=True)
 
     unit = models.ForeignKey('Unit', verbose_name=_('Unit'), db_index=True,
                              related_name="resources", on_delete=models.PROTECT)
@@ -321,8 +321,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
     floor_number = models.IntegerField(verbose_name=_('Floor number'), help_text=_("-1: Basement, 0: Ground Floor, 1: First Floor"), null=True, blank=True)
     floor_name = models.CharField(verbose_name=_('Floor name'), max_length=200, null=True, blank=True)
     #history = HistoricalRecords()
-    phone_number = models.CharField(verbose_name=_('Phone extension'), max_length=20, null=True, blank=True)
-    email = models.EmailField(verbose_name=_('Email'), max_length=200, null=True, blank=True)
+    phone_number = models.CharField(verbose_name=_('Phone extension'), help_text=_("Usually 4 digits. Please do not enter the full phone number."), max_length=20, null=True, blank=True)
+    email = models.EmailField(verbose_name=_('Email'), help_text=_("Use only if the room has an 'own' email address. Other contacts can be entered as delegates."), max_length=200, null=True, blank=True)
 
     objects = ResourceManager()
     objects_without_annotations = ResourceQuerySet.as_manager()
@@ -755,6 +755,8 @@ class Resource(ModifiableModel, UUIDModelMixin, AbstractReservableModel, Abstrac
             checker = self._permission_checker
         else:
             checker = NoSuperuserObjectPermissionChecker(user)
+            checker.prefetch_perms((self,))
+            checker.prefetch_perms((self.unit,))
 
         # Permissions can be given by resource
         if checker.has_perm('resource:%s' % perm, self):

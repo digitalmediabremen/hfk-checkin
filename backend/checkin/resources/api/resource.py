@@ -218,7 +218,7 @@ class ResourceSerializer(ExtraDataMixin, TranslatedModelSerializer):
 
     def get_access_delegates(self, obj):
         users_names = []
-        for u in obj.get_reservation_delegates(include_unit=False):
+        for u in obj.get_managing_delegates(include_unit=False):
             n = u.get_full_name()
             if n:
                 users_names.append(n)

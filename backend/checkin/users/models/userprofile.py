@@ -12,6 +12,8 @@ from simple_history.models import HistoricalRecords
 from django.contrib.postgres.search import SearchVector
 from dirtyfields import DirtyFieldsMixin
 from django.core.exceptions import ValidationError
+from django.utils.html import format_html
+from django.utils.functional import cached_property
 
 # set to anonyoumous user
 # def get_sentinel_user():
@@ -184,14 +186,24 @@ class User(AbstractUser):
         address_part = self.email
         return '{0} <{1}>'.format(name_part, address_part).strip()
 
-    @property
+    @cached_property
+    def mailto_html(self):
+        name_part = '{0} {1}'.format(self.first_name, self.last_name).strip()
+        address_part = self.email
+        if name_part and address_part:
+            return format_html('<a href="mailto:{1}">{0}</a>', name_part, address_part)
+        if address_part:
+            return format_html('<a href="mailto:{1}">{1}</a>', name_part, address_part)
+        return name_part
+
+    @cached_property
     def is_verified(self):
         if hasattr(self, 'profile'):
             return self.profile.verified
         else:
             return True
 
-    @property
+    @cached_property
     def is_external(self):
         if hasattr(self, 'profile'):
             return self.profile.is_external
