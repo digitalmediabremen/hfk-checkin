@@ -97,6 +97,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'django_premailer',
     'anymail',
+    'django_admin_lightweight_date_hierarchy',
 ]
 
 LOCAL_APPS = [

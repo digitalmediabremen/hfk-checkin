@@ -42,7 +42,7 @@ django = "<3.2"
 dj-database-url = "*"
 argon2 = "*"
 netaddr = "*"
-django-weasyprint = "*"
+django-weasyprint = "<2.0.0"
 segno = "*"
 django-model-history = "*"
 django-simple-history = "*"
@@ -71,6 +71,7 @@ rollbar = "*"
 django-anymail = "*"
 pytest-django = "*"
 django-microsoft-auth = {ref = "caf419afba2d523395bf4ecfa4539429ef991503", git = "https://github.com/AngellusMortis/django_microsoft_auth.git"}
+django-admin-lightweight-date-hierarchy = "*"
 
 [requires]
 python_version = "3.7.10"

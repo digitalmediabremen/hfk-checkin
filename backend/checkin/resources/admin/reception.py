@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from .list_filters import RangeBasedBeginEndDateHierarchyListFilter
 
 from django.conf import settings
 if 'checkin.tracking' in settings.INSTALLED_APPS:
@@ -73,19 +74,25 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
 
     class CheckinAttendanceAdmin(AttendanceAdmin):
         inlines = [CheckinInline]
-        readonly_fields = ('user', 'get_reservation_link', 'get_reservation_organizer', 'get_reservation_resource', 'state','get_comment','get_extra_attendees_on_organizer')
+        readonly_fields = ('user', 'get_reservation_link', 'get_reservation_organizer', 'get_reservation_resource', 'get_begin_time', 'get_end_time', 'state','get_comment')
         fields = readonly_fields
         list_editable = ()
         #list_display = ('user', 'resource', 'get_begin_time','enter_action','get_end_time','leave_action','comment','state')
-        list_display = ['get_user_first_name', 'get_user_last_name','get_extra_attendees_on_organizer', 'resource','get_display_duration','enter_action','leave_action','get_purpose','get_comment_list','state']
-        list_filter = ('state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
+        list_display = ['get_user_first_name', 'get_user_last_name','get_extra_attendees_on_organizer', 'resource','get_display_duration','enter_action','leave_action','get_purpose_or_comments']
+        list_filter = (RangeBasedBeginEndDateHierarchyListFilter,
+                       'state','reservation__resource__unit',#'reservation__resource__unit',#ReservationResourceFilter,
                        # 'resources', 'start', 'end', 'status', 'is_important',
                        ('reservation__begin', DateTimeRangeFilter),
                        ('reservation__end', DateTimeRangeFilter),
                        )
-        list_display_links = ('get_user_first_name', 'get_user_last_name', 'resource', 'get_comment_list')
+        list_display_links = ('get_user_first_name', 'get_user_last_name', 'resource', 'get_purpose_or_comments')
         search_fields = ('reservation__uuid','user__first_name', 'user__last_name', 'user__email','reservation__resource__name','reservation__resource__numbers')
         date_hierarchy = 'reservation__begin'
+        # special for django-admin-lightweight-date-hierarchy:
+        date_hierarchy_drilldown = False
+        # special for RangeBasedDateHierarchyListFilter:
+        range_begin_field = 'reservation__begin'
+        range_end_field = 'reservation__end'
         actions_on_top = True
         ordering = ['reservation__user__first_name', 'reservation__user__last_name', 'reservation__resource']
         #list_display_links = ('user','resource')
@@ -117,13 +124,15 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
         get_user_last_name.admin_order_field = 'reservation__user__last_name'
 
         def get_begin_time(self, obj):
-            return format_html("<strong>{}</strong>", make_naive(obj.reservation.begin, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
+            #eturn format_html("<strong>{}</strong>", make_naive(obj.reservation.begin, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
+            return obj.reservation.begin
         get_begin_time.short_description = _("Begin")
         get_begin_time.allow_tags = True
         get_begin_time.admin_order_field = 'reservation__begin'
 
         def get_end_time(self, obj):
-            return format_html("<strong>{}</strong>", make_naive(obj.reservation.end, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
+            #return format_html("<strong>{}</strong>", make_naive(obj.reservation.end, obj.reservation.resource.get_tz()).time().strftime("%H:%M"))
+            return obj.reservation.end
         get_end_time.short_description = _("End")
         get_end_time.allow_tags = True
         get_begin_time.admin_order_field = 'reservation__end'
@@ -142,9 +151,17 @@ if 'checkin.tracking' in settings.INSTALLED_APPS:
                 return obj.reservation.get_purpose_display()
         get_purpose.short_description = _("Purpose")
 
-        def get_comment_list(self, obj):
+        def get_purpose_or_comments(self, obj):
+            p = self.get_purpose(obj)
+            c = self.get_comment_truncated(obj)
+            if p:
+                return "%s, %s" % (p, c)
+            return c
+        get_purpose_or_comments.short_description = _("Purpose / Comment")
+
+        def get_comment_truncated(self, obj):
             return truncatechars(self.get_comment(obj), 24)
-        get_comment_list.short_description = _("Comment")
+        get_comment_truncated.short_description = _("Comment")
 
         def get_extra_attendees_on_organizer(self, obj):
             if obj and obj.reservation:

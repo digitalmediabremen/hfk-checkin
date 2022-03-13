@@ -102,6 +102,20 @@ class ReservationPermissionCriticalWarning(ReservationCriticalWarning):
     pass
 
 
+def UNIVERSAL_OVERLAP_Q(begin, end, begin_field_name, end_field_name):
+    """
+    Returns Django's Q Object to filter a queryset of a ranged-based model for all overlapping timeframes.
+
+    :param begin: datetime object which marks the beginning of the OVERLAP timeframe
+    :param end: datetime object which marks the beginning of the OVERLAP timeframe
+    :param begin_field_name: string field name of the model which contains the beginning times
+    :param end_field_name: string field name of the model which contains the ending times
+    :return: Q object
+    """
+    return Q(('%s__lt' % begin_field_name, begin)) & Q(('%s__gt' % end_field_name, begin)) | \
+           Q(('%s__lt' % begin_field_name, end)) & Q(('%s__gt' % end_field_name, end)) | \
+           Q(('%s__gte' % begin_field_name, begin)) & Q(('%s__lte' % end_field_name, end))
+
 class ReservationQuerySet(models.QuerySet):
 
     @staticmethod
