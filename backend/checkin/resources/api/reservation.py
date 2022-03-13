@@ -988,18 +988,15 @@ class ReservationValidationResultSerializer(serializers.Serializer):
     results = serializers.ListField(child=ReservationValidationResultItemSerializer())
 
 
-#
-# class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
-#     pass
-#
 
-class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin,
-                             mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    # mixins.ListModelMixin, mixins.CreateModelMixin,
+class ReservationListViewSet(ReservationViewSetMixin, mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
     pass
-    
-ReservationDetailViewSet = ReservationListViewSet
 
-# register_view(ReservationDetailViewSet, 'reservation')
+
+class ReservationDetailViewSet(ReservationViewSetMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    filter_backends = (DjangoFilterBackend, ReservationFilterBackend,)
+
+
+register_view(ReservationDetailViewSet, 'reservation')
 register_view(ReservationListViewSet, 'reservation')
 # register_view(ReservationCancelReasonCategoryViewSet, 'cancel_reason_category')
