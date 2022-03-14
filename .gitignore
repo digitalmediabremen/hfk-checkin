@@ -1,2 +1,3 @@
 
 backend/checkin/settings/local.py
+.DS_Store
