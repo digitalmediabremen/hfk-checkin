@@ -20,7 +20,7 @@ const withTM = require("next-transpile-modules")([
     "@fullcalendar/react",
     "@fullcalendar/common",
     "@fullcalendar/timegrid",
-    "@fullcalendar/daygrid"
+    "@fullcalendar/daygrid",
 ]); // pass the modules you would like to see transpiled
 
 module.exports = withTM(
@@ -110,6 +110,15 @@ module.exports = withTM(
                     {
                         source: "/",
                         destination: features.getHomeUrl(),
+                    },
+                ];
+            },
+            async redirects() {
+                return [
+                    {
+                        source: "/rooms", // automatically becomes /docs/with-basePath
+                        destination: "/rooms/XI", // automatically becomes /docs/another
+                        permanent: false,
                     },
                 ];
             },
