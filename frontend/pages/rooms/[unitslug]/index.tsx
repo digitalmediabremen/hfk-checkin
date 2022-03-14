@@ -1,11 +1,10 @@
-import { NextPage, GetStaticProps, GetStaticPaths } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useCallback } from "react";
 import { use100vh } from "react-div-100vh";
-import slugify from "slugify";
 import {
     getResourcesRequest,
-    getUnitsRequest,
+    getUnitsRequest
 } from "../../../components/api/ApiService";
 import DynamicList from "../../../components/common/DynamicList";
 import Layout from "../../../components/common/Layout";
@@ -16,6 +15,7 @@ import { useTranslation } from "../../../localization";
 import useResourceListItemHeight from "../../../src/hooks/useResourceListItemHeight";
 import useTheme from "../../../src/hooks/useTheme";
 import Resource from "../../../src/model/api/Resource";
+import { normalizeResourceName } from "../../../src/util/ResourceUtil";
 
 type ResourceListPageProps = {
     resources: Resource[];
@@ -29,9 +29,13 @@ const ResourceListPage: NextPage<ResourceListPageProps> = ({ resources }) => {
     const router = useRouter();
 
     const handleResourceSelect = useCallback(
-        ({ name, uuid, unit }: Resource) => {
+        (resource: Resource) => {
             const handle = () => {
-                const [url, as] = appUrls.resource(unit.slug, uuid, slugify(name));
+                const [url, as] = appUrls.resource(
+                    resource.unit.slug,
+                    resource.uuid,
+                    normalizeResourceName(resource)
+                );
                 router.push(url, as);
             };
 
@@ -42,7 +46,7 @@ const ResourceListPage: NextPage<ResourceListPageProps> = ({ resources }) => {
 
     const handleBack = () => {
         router.push(appUrls.home);
-    }
+    };
 
     return (
         <>
@@ -50,7 +54,9 @@ const ResourceListPage: NextPage<ResourceListPageProps> = ({ resources }) => {
             <Layout
                 title={t("Raumliste")}
                 noContentMargin
-                overrideHeader={<SubPageBar title="Raumliste" onBack={handleBack} />}   
+                overrideHeader={
+                    <SubPageBar title="Raumliste" onBack={handleBack} />
+                }
                 overrideActionButton={() => null}
             >
                 <DynamicList
@@ -79,20 +85,21 @@ type ResourceListPageParams = {
     unitslug: string;
 };
 
-export const getStaticPaths: GetStaticPaths<ResourceListPageParams> =
-    async () => {
-        const { data: units, error } = await getUnitsRequest();
-        if (!units) throw Error(error);
-        const paths = units?.map((unit) => ({
-            params: {
-                unitslug: unit.slug,
-            },
-        }));
-        return {
-            paths,
-            fallback: false,
-        };
+export const getStaticPaths: GetStaticPaths<
+    ResourceListPageParams
+> = async () => {
+    const { data: units, error } = await getUnitsRequest();
+    if (!units) throw Error(error);
+    const paths = units?.map((unit) => ({
+        params: {
+            unitslug: unit.slug,
+        },
+    }));
+    return {
+        paths,
+        fallback: false,
     };
+};
 
 export const getStaticProps: GetStaticProps<
     ResourceListPageProps,

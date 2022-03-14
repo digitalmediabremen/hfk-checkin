@@ -2,7 +2,6 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { Calendar } from "react-feather";
-import slugify from "slugify";
 import { isNonNullExpression } from "typescript";
 import {
     getResourceRequest,
@@ -26,6 +25,7 @@ import { useTranslation } from "../../../../../localization";
 import useTheme from "../../../../../src/hooks/useTheme";
 import Resource from "../../../../../src/model/api/Resource";
 import { useResourceFormValuePresenter } from "../../../../../src/util/ReservationPresenterUtil";
+import { normalizeResourceName } from "../../../../../src/util/ResourceUtil";
 import { notEmpty } from "../../../../../src/util/TypeUtil";
 
 type ResourcePageProps = {
@@ -198,7 +198,7 @@ export const getStaticPaths: GetStaticPaths<ResourcePageParams> = async (
     const paths = resources?.map((resource) => ({
         params: {
             unitslug: resource.unit.slug,
-            resourcename: slugify(resource.name),
+            resourcename: normalizeResourceName(resource),
             resourceid: resource.uuid,
         },
     }));
