@@ -30,6 +30,7 @@ const translation: Translation = {
             Morgen: "Tomorrow",
             Einstellungen: "Settings",
             Datenschutz: "Privacy",
+            Raumliste: "Room list",
         },
         reservation: {
             "Es gibt keine bevorstehenden Buchungen.": "No upcoming bookings.",
@@ -64,7 +65,7 @@ const translation: Translation = {
             Raum: "Room",
             "Teilnehmer||Teilnehmerinnen": "Attendees",
             "Teilnehmer||Teilnehmerin hinzufügen": "Add attendee",
-            Raumliste: "Rooms",
+            Raumliste: "Room list",
             "Neue Anfrage": "New booking request",
             Zeit: "time",
             "optionale angaben": "optional information",

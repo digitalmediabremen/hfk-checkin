@@ -73,7 +73,7 @@ export const appUrls = {
     privacy: "/privacy",
     help: "/help",
     cookieError: "/cookie-error",
-    room: "/room",
+    room: "/rooms",
 } as const;
 
 export const requestSubpages = {

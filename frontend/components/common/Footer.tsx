@@ -49,6 +49,9 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                 `}
             </style>
             <div className="footer">
+            <Link href={appUrls.room}>
+                    <a>{t("Raumliste")}</a>
+                </Link>
                 <Link href={appUrls.setprofile}>
                     <a>{t("Einstellungen")}</a>
                 </Link>
