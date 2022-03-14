@@ -97,9 +97,9 @@ const ResourceAccessSection: React.FunctionComponent<ResourceAccessSectionProps>
                                 >
                                     {t("Kalender öffnen")}
                                 </NewButton>
-                                <Notice>
+                                {/* <Notice>
                                     Füge den Ical Link zu deinem Kalender hinzu
-                                </Notice>
+                                </Notice> */}
                             </>
                         ) : (
                             <ResourceCalendar resource={resource} />

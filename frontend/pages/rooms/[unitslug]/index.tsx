@@ -2,6 +2,7 @@ import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { useRouter } from "next/router";
 import React, { useCallback } from "react";
 import { use100vh } from "react-div-100vh";
+import slugify from "slugify";
 import {
     getResourcesRequest,
     getUnitsRequest,
@@ -30,7 +31,7 @@ const ResourceListPage: NextPage<ResourceListPageProps> = ({ resources }) => {
     const handleResourceSelect = useCallback(
         ({ name, uuid, unit }: Resource) => {
             const handle = () => {
-                const [url, as] = appUrls.resource(unit.slug, uuid, name);
+                const [url, as] = appUrls.resource(unit.slug, uuid, slugify(name));
                 router.push(url, as);
             };
 
@@ -39,13 +40,17 @@ const ResourceListPage: NextPage<ResourceListPageProps> = ({ resources }) => {
         [router]
     );
 
+    const handleBack = () => {
+        router.push(appUrls.home);
+    }
+
     return (
         <>
             <style jsx>{``}</style>
             <Layout
                 title={t("Raumliste")}
                 noContentMargin
-                overrideHeader={<SubPageBar title="Raumliste" />}
+                overrideHeader={<SubPageBar title="Raumliste" onBack={handleBack} />}   
                 overrideActionButton={() => null}
             >
                 <DynamicList

@@ -1,15 +1,15 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import React, { FunctionComponent } from "react";
+import React from "react";
 import { Calendar } from "react-feather";
+import slugify from "slugify";
 import { isNonNullExpression } from "typescript";
 import {
     getResourceRequest,
-    getResourcesRequest,
+    getResourcesRequest
 } from "../../../../../components/api/ApiService";
-import useSubPage, {
-    useSubPageWithState,
+import {
+    useSubPageWithState
 } from "../../../../../components/api/useSubPage";
 import Divider from "../../../../../components/common/Divider";
 import FormElement from "../../../../../components/common/FormElement";
@@ -198,7 +198,7 @@ export const getStaticPaths: GetStaticPaths<ResourcePageParams> = async (
     const paths = resources?.map((resource) => ({
         params: {
             unitslug: resource.unit.slug,
-            resourcename: resource.name,
+            resourcename: slugify(resource.name),
             resourceid: resource.uuid,
         },
     }));

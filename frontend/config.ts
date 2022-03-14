@@ -56,16 +56,16 @@ export const appUrls = {
         `/reservation/${reservationId}`,
     ],
     resourceList: (unitSlug: string) => [
-        "/room-v2/[unitslug]",
-        `/room-v2/${unitSlug}`,
+        "/rooms/[unitslug]",
+        `/rooms/${unitSlug}`,
     ],
     resource: (
         unitSlug: string,
         resourceShortId: string,
         resourceName: string
     ) => [
-        "/room-v2/[unitslug]/[resourcename]/[resourceid]",
-        `/room-v2/${unitSlug}/${resourceName}/${resourceShortId}`,
+        "/rooms/[unitslug]/[resourcename]/[resourceid]",
+        `/rooms/${unitSlug}/${resourceName}/${resourceShortId}`,
     ],
     reservations: "/reservation",
     request: "/request",
