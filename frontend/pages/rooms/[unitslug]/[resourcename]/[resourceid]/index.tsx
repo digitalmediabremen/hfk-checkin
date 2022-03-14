@@ -2,7 +2,6 @@ import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { Calendar } from "react-feather";
-import { isNonNullExpression } from "typescript";
 import {
     getResourceRequest,
     getResourcesRequest
@@ -83,7 +82,7 @@ const ResourcePage: NextPage<ResourcePageProps> = ({ resource }) => {
                         actionIcon={actionIcon}
                     />
                 }
-                overrideActionButton={() => isNonNullExpression}
+                overrideActionButton={() => null}
             >
                 <FormElement
                     value={resourceFormValuePresenter(resource)}
