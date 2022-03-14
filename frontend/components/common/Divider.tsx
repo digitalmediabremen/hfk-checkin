@@ -19,7 +19,7 @@ const Divider: React.FunctionComponent<DividerProps> = ({ noSpacing }) => {
                 @media screen and (min-width: ${theme.desktopWidth}px) {
                     hr {
                         margin: ${theme.spacing(noSpacing ? 0 : 2)}px
-                        -50vw;
+                        calc((100vw - ${theme.desktopWidth}px) / -2);
                     }
                 }
             `}</style>
