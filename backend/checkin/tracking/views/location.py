@@ -11,7 +11,10 @@ from django.conf import settings
 from django.views.generic import DetailView, ListView
 
 from django_weasyprint import WeasyTemplateResponseMixin, WeasyTemplateView
-from django_weasyprint.views import CONTENT_TYPE_PNG
+try:
+    from django_weasyprint.views import CONTENT_TYPE_PNG
+except ImportError:
+    CONTENT_TYPE_PNG = "image/png"
 
 import segno
 from os import environ
