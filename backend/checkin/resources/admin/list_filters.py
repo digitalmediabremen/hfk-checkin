@@ -138,6 +138,24 @@ class MyReservationRelationFilter(admin.SimpleListFilter):
             ('myedits', _('Last edited by me')),
         )
 
+    def choices(self, changelist):
+        # change default "all" label
+        choices = list(super().choices(changelist))
+        choices[0]['display'] = _('indifferent')
+        return choices
+
+    def queryset(self, request, queryset):
+        if self.value() == 'all':
+            return queryset
+        elif self.value() == 'delegatedtome':
+            return queryset.filter(resource__in=Resource.objects.get_resources_reservation_delegated_to_user(request.user, with_unit=False))
+        elif self.value() == 'udelegatedtome':
+            return queryset.filter(resource__in=Resource.objects.get_resources_reservation_delegated_to_user(request.user, with_unit=True))
+        elif self.value() == 'myown':
+            return queryset.filter(created_by=request.user)
+        elif self.value() == 'myedits':
+            return queryset.filter(modified_by=request.user)
+
 
 class RangeBasedBeginEndDateHierarchyListFilter(admin.ListFilter):
     # from: https://hakibenita.com/django-admin-range-based-date-hierarchy
