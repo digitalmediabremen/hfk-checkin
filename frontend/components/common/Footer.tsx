@@ -1,7 +1,7 @@
 import Link from "next/link";
 import * as React from "react";
 import { HelpCircle } from "react-feather";
-import { appUrls, backendUrl } from "../../config";
+import { appDisabled, appUrls, backendUrl } from "../../config";
 import { useTranslation } from "../../localization";
 import useTheme from "../../src/hooks/useTheme";
 import { useAppState } from "./AppStateProvider";
@@ -49,24 +49,30 @@ const Footer: React.FunctionComponent<IFooterProps> = (props) => {
                 `}
             </style>
             <div className="footer">
-            <Link href={appUrls.room}>
-                    <a>{t("Raumliste")}</a>
-                </Link>
-                <Link href={appUrls.setprofile}>
-                    <a>{t("Einstellungen")}</a>
-                </Link>
-                <Link href={appUrls.help}>
-                    <a>
-                        <span>
-                            {t("Hilfe")}{" "}
-                            <HelpCircle strokeWidth={(1 / 20) * 24} size={20} />{" "}
-                        </span>
-                    </a>
-                </Link>
+                {!appDisabled && (
+                    <>
+                        <Link href={appUrls.room}>
+                            <a>{t("Raumliste")}</a>
+                        </Link>
+                        <Link href={appUrls.setprofile}>
+                            <a>{t("Einstellungen")}</a>
+                        </Link>
+                        <Link href={appUrls.help}>
+                            <a>
+                                <span>
+                                    {t("Hilfe")}{" "}
+                                    <HelpCircle
+                                        strokeWidth={(1 / 20) * 24}
+                                        size={20}
+                                    />{" "}
+                                </span>
+                            </a>
+                        </Link>
+                    </>
+                )}
                 <Link href={appUrls.privacy}>
                     <a>{t("Datenschutz")}</a>
                 </Link>
-                
             </div>
         </>
     );
