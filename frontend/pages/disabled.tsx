@@ -16,7 +16,8 @@ const ContentDe: React.FunctionComponent<ContentProps> = ({ title }) => (
         <FormText paragraph>
             Aufgrund der momentanen Situation ist eine Registrierung über
             Checkin nicht nötig. Nähere Informationen zur Corona-Lage und zur
-            Raumbuchung gibt es hier: HFK — FAQ (hfk-bremen.de)
+            Raumbuchung gibt es hier:{" "}
+            <a href="https://faq.hfk-bremen.de/">HFK — FAQ (hfk-bremen.de)</a>
         </FormText>
     </>
 );
@@ -27,7 +28,8 @@ const ContentEn: React.FunctionComponent<ContentProps> = ({ title }) => (
         <FormText paragraph>
             Due to the current situation, registration via Checkin is not
             necessary. More information on the Corona situation and on room
-            booking can be found here: HFK — FAQ (hfk-bremen.de)
+            booking can be found here:{" "}
+            <a href="https://faq.hfk-bremen.de/">HFK — FAQ (hfk-bremen.de)</a>
         </FormText>
     </>
 );
