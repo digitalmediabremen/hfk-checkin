@@ -23,7 +23,7 @@ export const authRedirectUrl = `${backendBase}/login/redirect`;
 export const apiUrl = `${backendBase}/api`;
 export const backendUrl = `${backendBase}/backend`;
 export const appBase = presentOrThrow(process.env.NEXT_PUBLIC_BASE_URL);
-export const appDisabled = envToBoolean(process.env.NEXT_PUBLIC_DISABLED);
+export const appDisabled = envToBoolean(process.env.NEXT_PUBLIC_APP_DISABLED);
 
 export const bookingDisabled = envToBoolean(process.env.BOOKING_DISABLED);
 
