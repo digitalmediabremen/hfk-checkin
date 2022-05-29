@@ -10,7 +10,7 @@ const AppWrapper: React.FunctionComponent<AppWrapperProps> = ({ children }) => {
     const initialized = useInitApp();
     const theme = useTheme();
     const router = useRouter();
-    const ignoreRoutes = ["/disabled", "/privacy", "/set-profile"];
+    const ignoreRoutes = ["/disabled", "/privacy"];
     useEffect(() => {
         if (!appDisabled) return;
         if (ignoreRoutes.includes(router.pathname)) return;
